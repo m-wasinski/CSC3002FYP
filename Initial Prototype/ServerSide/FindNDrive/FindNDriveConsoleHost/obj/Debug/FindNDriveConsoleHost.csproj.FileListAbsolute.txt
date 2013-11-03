@@ -8,3 +8,13 @@ C:\CSC3002FYP\FindNDrive\FindNDriveConsoleHost\bin\Debug\DomainObjects.pdb
 C:\CSC3002FYP\FindNDrive\FindNDriveConsoleHost\obj\Debug\FindNDriveConsoleHost.csprojResolveAssemblyReference.cache
 C:\CSC3002FYP\FindNDrive\FindNDriveConsoleHost\obj\Debug\FindNDriveConsoleHost.exe
 C:\CSC3002FYP\FindNDrive\FindNDriveConsoleHost\obj\Debug\FindNDriveConsoleHost.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\FindNDriveConsoleHost.exe.config
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\obj\Debug\FindNDriveConsoleHost.exe
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\obj\Debug\FindNDriveConsoleHost.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\FindNDriveConsoleHost.exe
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\FindNDriveConsoleHost.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\FindNDriveServices.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\DomainObjects.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\FindNDriveServices.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\DomainObjects.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\obj\Debug\FindNDriveConsoleHost.csprojResolveAssemblyReference.cache

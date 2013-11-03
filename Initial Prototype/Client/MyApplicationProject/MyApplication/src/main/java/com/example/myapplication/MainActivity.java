@@ -41,7 +41,7 @@ import java.util.List;
 public class MainActivity extends ActionBarActivity {
 
     private TextView textView1;
-
+    private Thread _networkThread;
 
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     @Override
@@ -54,8 +54,59 @@ public class MainActivity extends ActionBarActivity {
                     .commit();
         }
 
-        textView1 = (TextView) findViewById(R.id.TextView1);
-        GetPersons();
+
+        _networkThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String USER_ID = "GetUserResult";
+                final String TAG_ID = "Id";
+                final String TAG_FIRST_NAME = "FirstName";
+                final String TAG_LAST_NAME = "LastName";
+                final String TAG_AGE = "Age";
+                textView1 = (TextView) findViewById(R.id.TextView1);
+                AsynchNetworkConnector aNetworkConnector = new AsynchNetworkConnector();
+                aNetworkConnector.execute();
+            }
+        });
+
+        _networkThread.start();
+
+        //JSON Node Names
+        final String USER_ID = "GetUserResult";
+        final String TAG_ID = "Id";
+        final String TAG_FIRST_NAME = "FirstName";
+        final String TAG_LAST_NAME = "LastName";
+        final String TAG_AGE = "Age";
+
+        JSONArray user = null;
+
+        // Creating new JSON Parser
+        JSONParser jParser = new JSONParser();
+
+        // Getting JSON from URL
+        //JSONObject json = jParser.getJSONFromUrl("http://192.168.1.80:8080/prototypeservice/user");
+        //user = json.getJSONArray(USER_ID);
+        /*try {
+            // Getting JSON Array
+            //user = json.getJSONArray(USER_ID);
+            //textView1.setText("Length " + user.length());
+            //JSONObject c = user.getJSONObject(0);
+
+            // Storing  JSON item in a Variable
+            //String id = c.getString(TAG_ID);
+            //String firstName = c.getString(TAG_FIRST_NAME);
+            //String lasttName = c.getString(TAG_LAST_NAME);
+            //String age = c.getString(TAG_AGE);
+
+            //textView1.setText(id + " " + firstName + " " + lasttName);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            textView1.setText(e.toString());
+        } catch (NetworkOnMainThreadException e)
+        {
+
+        }*/
     }
 
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
@@ -79,10 +130,11 @@ public class MainActivity extends ActionBarActivity {
                         BufferedReader reader = new BufferedReader(new InputStreamReader(jc.getInputStream()));
 
                         String line = reader.readLine();
-                        textView1.setText(line);
-                        JSONObject jsonResponse = new JSONObject(line);
-                        JSONArray jsonArray = jsonResponse.getJSONArray("GetUserResult");
 
+                        JSONObject jsonResponse = new JSONObject(line);
+
+                        JSONArray jsonArray = jsonResponse.getJSONArray("GetUserResult");
+                    textView1.setText("Test " + getString(jsonArray.length()) );
                         for (int i = 0; i < jsonArray.length(); i++) {
 
                             JSONObject jObject = (JSONObject)jsonArray.get(i);

@@ -6,3 +6,11 @@ C:\CSC3002FYP\FindNDrive\FindNDriveServices\obj\Debug\FindNDriveServices.dll
 C:\CSC3002FYP\FindNDrive\FindNDriveServices\obj\Debug\FindNDriveServices.pdb
 C:\CSC3002FYP\FindNDrive\FindNDriveServices\bin\Debug\DomainObjects.dll
 C:\CSC3002FYP\FindNDrive\FindNDriveServices\bin\Debug\DomainObjects.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveServices\bin\Debug\FindNDriveServices.dll.config
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveServices\bin\Debug\FindNDriveServices.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveServices\bin\Debug\FindNDriveServices.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveServices\bin\Debug\DomainObjects.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveServices\bin\Debug\DomainObjects.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveServices\obj\Debug\FindNDriveServices.csprojResolveAssemblyReference.cache
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveServices\obj\Debug\FindNDriveServices.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveServices\obj\Debug\FindNDriveServices.pdb

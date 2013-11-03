@@ -13,7 +13,7 @@ namespace FindNDriveConsoleHost
     {
         static void Main(string[] args)
         {
-            var host = new ServiceHost(typeof(PrototypeService));
+            var host = new ServiceHost(typeof(UserService));
 
             /*host.AddServiceEndpoint(typeof (IPrototypeService),
                 new BasicHttpBinding(), "http://localhost:8080/prototype/basic");

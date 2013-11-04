@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using DomainObjects;
 using FindNDriveDataAccessLayer;
 using FindNDriveInfrastructureDataAccessLayer;
-using FindNDriveServices;
-using FindNDriveServices.Contracts;
 using FindNDriveServices.Services;
 
 namespace FindNDriveConsoleHost

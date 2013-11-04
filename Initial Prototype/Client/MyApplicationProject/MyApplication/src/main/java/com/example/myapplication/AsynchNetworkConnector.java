@@ -103,9 +103,9 @@ public class AsynchNetworkConnector extends AsyncTask <TextView, String, Boolean
             // Build JSON string
             JSONStringer userInfo = new JSONStringer()
                     .object().key("User")
-                    .object().key("FirstName").value("Aleksandra")
-                    .key("LastName").value("Szczypior")
-                    .key("Age").value(20)
+                    .object().key("FirstName").value("ExampleName")
+                    .key("LastName").value("ExampleLastName")
+                    .key("Age").value(30)
                     .endObject()
                     .key("UserName").value("Alesia")
                     .key("Password").value("test")

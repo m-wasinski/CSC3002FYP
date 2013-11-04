@@ -1,0 +1,10 @@
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\InfrastructureDataAccessLayer\bin\Debug\InfrastructureDataAccessLayer.dll.config
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\InfrastructureDataAccessLayer\bin\Debug\InfrastructureDataAccessLayer.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\InfrastructureDataAccessLayer\bin\Debug\InfrastructureDataAccessLayer.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\InfrastructureDataAccessLayer\bin\Debug\EntityFramework.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\InfrastructureDataAccessLayer\bin\Debug\EntityFramework.SqlServer.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\InfrastructureDataAccessLayer\bin\Debug\EntityFramework.xml
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\InfrastructureDataAccessLayer\bin\Debug\EntityFramework.SqlServer.xml
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\InfrastructureDataAccessLayer\obj\Debug\FindNDriveInfrastructureDataAccessLayer.csprojResolveAssemblyReference.cache
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\InfrastructureDataAccessLayer\obj\Debug\InfrastructureDataAccessLayer.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\InfrastructureDataAccessLayer\obj\Debug\InfrastructureDataAccessLayer.pdb

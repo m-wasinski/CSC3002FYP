@@ -67,15 +67,11 @@ public class AsynchNetworkConnector extends AsyncTask <TextView, String, Boolean
 
         URI uri = null;
         try {
-            DefaultHttpClient httpClient = new DefaultHttpClient();
+
+            //Logging in.
+            /*DefaultHttpClient httpClient = new DefaultHttpClient();
             uri = new URI("http://192.168.1.80:8080/userservice/login");
             HttpPost postRequest = new HttpPost(uri);
-
-            JSONObject obj = new JSONObject();
-
-            obj.put("UserName", username);
-            obj.put("Password", password);
-
             // Build JSON string
             JSONStringer userInfo = new JSONStringer().object()
                     .key("UserName").value("UserName")
@@ -87,22 +83,51 @@ public class AsynchNetworkConnector extends AsyncTask <TextView, String, Boolean
             postRequest.setEntity(se);
 
             HttpResponse httpResponse = httpClient.execute(postRequest);
-            HttpEntity httpEntity = httpResponse.getEntity();
-
-
-
             String wtf = EntityUtils.toString(httpResponse.getEntity());
+
             // Read response data into buffer
-            /*char[] buffer = new char[(int)httpEntity.getContentLength()];
-            InputStream stream = httpEntity.getContent();
-            InputStreamReader reader = new InputStreamReader(stream);
-            reader.read(buffer);*/
+            //char[] buffer = new char[(int)httpEntity.getContentLength()];
+            //InputStream stream = httpEntity.getContent();
+            //InputStreamReader reader = new InputStreamReader(stream);
+            //reader.read(buffer);
+
+            JSONObject plates = new JSONObject(wtf);
+
+            Log.e("HTTP RESPONSE: ", "MESSAGE: "+plates.toString());*/
+
+
+            //Registering.
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            uri = new URI("http://192.168.1.80:8080/userservice/register");
+            HttpPost postRequest = new HttpPost(uri);
+            // Build JSON string
+            JSONStringer userInfo = new JSONStringer()
+                    .object().key("User")
+                    .object().key("FirstName").value("Aleksandra")
+                    .key("LastName").value("Szczypior")
+                    .key("Age").value(20)
+                    .endObject()
+                    .key("UserName").value("Alesia")
+                    .key("Password").value("test")
+                    .key("ConfirmedPassword").value("test").endObject();
+
+            StringEntity se = new StringEntity(userInfo.toString(),"UTF-8");
+
+            se.setContentType("application/json;charset=UTF-8");
+            postRequest.setEntity(se);
+
+            HttpResponse httpResponse = httpClient.execute(postRequest);
+            String wtf = EntityUtils.toString(httpResponse.getEntity());
+
+            // Read response data into buffer
+            //char[] buffer = new char[(int)httpEntity.getContentLength()];
+            //InputStream stream = httpEntity.getContent();
+            //InputStreamReader reader = new InputStreamReader(stream);
+            //reader.read(buffer);
+
             JSONObject plates = new JSONObject(wtf);
 
             Log.e("HTTP RESPONSE: ", "MESSAGE: "+plates.toString());
-
-            //Log.e("HTTP RESPONSE: ", ""+httpResponse.getStatusLine().getStatusCode());
-
         } catch (URISyntaxException e) {
             Log.e("URISyntaxException: ", e.toString());
             e.printStackTrace();

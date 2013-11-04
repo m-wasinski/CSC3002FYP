@@ -18,3 +18,16 @@ C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\FindNDriveServices.pdb
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\DomainObjects.pdb
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\obj\Debug\FindNDriveConsoleHost.csprojResolveAssemblyReference.cache
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\FindNDriveDataAccessLayer.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\FindNDriveInfrastructureDataAccessLayer.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\EntityFramework.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\FindNDriveDataAccessLayer.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\FindNDriveInfrastructureDataAccessLayer.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\EntityFramework.xml
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\EntityFramework.SqlServer.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\EntityFramework.SqlServer.xml
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\Unity.Wcf.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\Microsoft.Practices.Unity.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\FindNDriveInfrastructureCore.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\Microsoft.Practices.Unity.xml
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveConsoleHost\bin\Debug\FindNDriveInfrastructureCore.pdb

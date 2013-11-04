@@ -1,23 +1,24 @@
-﻿using System.Runtime.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 
 namespace DomainObjects
 {
     /// <summary>
     /// Represents User entity for the first prototype service contract.
     /// </summary>
-    [DataContract(Namespace = "http://localhost/Prototype")]
+    //[DataContract(Namespace = "http://localhost/Prototype")]
     public class User
     {
-        [DataMember]
-        public int Id;
+        [ScaffoldColumn(false)]
+        public virtual int Id { get; set; }
 
         [DataMember]
-        public string FirstName;
+        public virtual string FirstName { get; set; }
 
         [DataMember]
-        public string LastName;
+        public virtual string LastName { get; set; }
 
         [DataMember]
-        public int Age;
+        public virtual int Age { get; set; }
     }
 }

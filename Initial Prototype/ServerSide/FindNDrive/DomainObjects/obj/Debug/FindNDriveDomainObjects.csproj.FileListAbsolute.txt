@@ -2,3 +2,8 @@ C:\CSC3002FYP\FindNDrive\DomainObjects\bin\Debug\DomainObjects.dll
 C:\CSC3002FYP\FindNDrive\DomainObjects\bin\Debug\DomainObjects.pdb
 C:\CSC3002FYP\FindNDrive\DomainObjects\obj\Debug\DomainObjects.dll
 C:\CSC3002FYP\FindNDrive\DomainObjects\obj\Debug\DomainObjects.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Debug\DomainObjects.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Debug\DomainObjects.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\obj\Debug\FindNDriveDomainObjects.csprojResolveAssemblyReference.cache
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\obj\Debug\DomainObjects.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\obj\Debug\DomainObjects.pdb

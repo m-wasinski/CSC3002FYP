@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Unity3.Wcf</id>
+    <version>1.0.0</version>
+    <title>Unity.Wcf For Unity 3.x</title>
+    <authors>Rolosoft Ltd</authors>
+    <owners>Rolosoft Ltd</owners>
+    <licenseUrl>http://unitywcf.codeplex.com/license</licenseUrl>
+    <projectUrl>http://unitywcf.codeplex.com/</projectUrl>
+    <iconUrl>https://dl.dropboxusercontent.com/u/32051584/logos/rsftlogo32x32.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This is a fork of the Unity.Wcf library from DevTrends.
+
+It allows simple Integration of Microsoft's Unity IoC container with WCF.
+
+This is a signed assembly for maximum compatability when using in signed / unsigned projects or GAC.</description>
+    <summary>IoC container for Unity 3 with WCF.</summary>
+    <releaseNotes>Initial release. Forked from DevTrends Unity.Wcf to include updated Unity support together with signed assembly.</releaseNotes>
+    <copyright>Copyright 2013</copyright>
+    <language>en-US</language>
+    <tags>wcf unity ioc di</tags>
+    <dependencies>
+      <dependency id="Unity" version="3.0.1304.0" />
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.0" />
+      <frameworkAssembly assemblyName="System.ServiceModel" targetFramework=".NETFramework4.0" />
+      <frameworkAssembly assemblyName="System.ServiceModel.Activation" targetFramework=".NETFramework4.0" />
+    </frameworkAssemblies>
+    <references>
+      <reference file="Unity.Wcf.dll" />
+    </references>
+  </metadata>
+</package>

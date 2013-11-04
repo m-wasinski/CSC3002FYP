@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.ServiceModel;
+using System.Web.UI;
 using DomainObjects;
+using FindNDriveDataAccessLayer;
 using FindNDriveServices.Contracts;
 using FindNDriveServices.DTOs;
 using FindNDriveServices.ServiceResponses;
+using WebMatrix.WebData;
 
 namespace FindNDriveServices.Services
 {
@@ -14,11 +17,26 @@ namespace FindNDriveServices.Services
     public class UserService : IUserService
     {
 
+     /// <summary>
+     /// The scrum unit of work, which provides access to the required Repositories, and exposes
+     /// a commit method to complete the unit of work.
+     /// </summary>
+     private readonly FindNDriveUnitOfWork _findNDriveUnitOfWork;
+
+     public UserService(FindNDriveUnitOfWork findNDriveUnitOf)
+     {
+         _findNDriveUnitOfWork = findNDriveUnitOf;
+     }
+
+     public UserService()
+     {
+            
+     }
      public ServiceResponse<User> LoginUser(LoginDTO login)
      {     
 
-         Debug.WriteLine("Service Called! " + login.Password);
-         ServiceResponse<User> response =  new ServiceResponse<User>
+         Debug.WriteLine("LoginUser method called: " + login.Password);
+         return new ServiceResponse<User>
          {
              Result = new User
              {
@@ -30,13 +48,34 @@ namespace FindNDriveServices.Services
               ServiceReponseCode = (login.Password == "testpassword") ? ServiceResponseCode.Success : ServiceResponseCode.Failure, 
              ErrorMessages = null
          };
-
-         return response;
      }
 
-     public ServiceResponse<User> RegisterUser()
+     public ServiceResponse<User> RegisterUser(RegisterDTO register)
      {
-         throw new System.NotImplementedException();
+         Debug.WriteLine("RegisterUser method called:  " + register.User.FirstName);
+         var user = new User()
+         {
+             Age = register.User.Age,
+             FirstName = register.User.FirstName,
+             LastName = register.User.LastName
+         };
+         // Register user
+         //WebSecurity.CreateUserAndAccount(user.FirstName, user.LastName);
+         //var newId = WebSecurity.GetUserId(user.FirstName);
+         //user.Id = 2;
+
+         // Add to DB set
+         this._findNDriveUnitOfWork.UserRepository.Add(user);
+         this._findNDriveUnitOfWork.Commit();
+         User newUser = null;
+         newUser = this._findNDriveUnitOfWork.UserRepository.Find(user.Id);
+         Debug.WriteLine("New user Id:  " + newUser.Id);
+         return new ServiceResponse<User>
+         {
+             Result = newUser,
+             ServiceReponseCode = ServiceResponseCode.Success,
+             ErrorMessages = null
+         };
      }
 
      public ServiceResponse<User> GetUsers()

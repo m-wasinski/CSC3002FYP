@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.ServiceModel;
 using System.Web.UI;
@@ -34,9 +35,9 @@ namespace FindNDriveServices.Services
      }
      public ServiceResponse<User> LoginUser(LoginDTO login)
      {     
-
+         throw new NotFiniteNumberException();
          Debug.WriteLine("LoginUser method called: " + login.Password);
-         return new ServiceResponse<User>
+         /*return new ServiceResponse<User>
          {
              Result = new User
              {
@@ -47,13 +48,14 @@ namespace FindNDriveServices.Services
              }, 
               ServiceReponseCode = (login.Password == "testpassword") ? ServiceResponseCode.Success : ServiceResponseCode.Failure, 
              ErrorMessages = null
-         };
+         };*/
      }
 
      public ServiceResponse<User> RegisterUser(RegisterDTO register)
      {
          Debug.WriteLine("RegisterUser method called:  " + register.User.FirstName);
-         var user = new User()
+         throw new NotImplementedException();
+         /*var user = new User()
          {
              Age = register.User.Age,
              FirstName = register.User.FirstName,
@@ -75,7 +77,7 @@ namespace FindNDriveServices.Services
              Result = newUser,
              ServiceReponseCode = ServiceResponseCode.Success,
              ErrorMessages = null
-         };
+         };*/
      }
 
      public ServiceResponse<User> GetUsers()

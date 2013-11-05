@@ -19,7 +19,7 @@ namespace FindNDriveDataAccessLayer.Migrations
         {
             //  This method will be called after migrating to the latest version.
 
-            context.User.AddOrUpdate(
+            /*context.User.AddOrUpdate(
                 _ => _.Id,
                 new User
                 {
@@ -27,7 +27,7 @@ namespace FindNDriveDataAccessLayer.Migrations
                     FirstName = "Michal",
                     LastName = "Wasinski",
                     Age = 23
-                });
+                });*/
         }
     }
 }

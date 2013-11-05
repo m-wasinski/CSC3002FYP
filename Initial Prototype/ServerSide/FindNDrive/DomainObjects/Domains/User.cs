@@ -12,13 +12,24 @@ namespace DomainObjects
         [ScaffoldColumn(false)]
         public virtual int Id { get; set; }
 
+        [EmailAddress]
+        [Required]
+        public virtual string EmailAddress { get; set; }
+
         [DataMember]
+        [Required]
         public virtual string FirstName { get; set; }
 
+        [Required]
         [DataMember]
         public virtual string LastName { get; set; }
 
+        [Required]
         [DataMember]
-        public virtual int Age { get; set; }
+        public virtual DateTimeFormat DateOfBirth { get; set; }
+
+        [Required]
+        [DataMember]
+        public virtual Gender Gender { get; set; }
     }
 }

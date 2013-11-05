@@ -71,12 +71,15 @@
     <Reference Include="WebMatrix.WebData, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Contracts\ICarShareService.cs" />
+    <Compile Include="DTOs\CarShareDTO.cs" />
     <Compile Include="DTOs\LoginDTO.cs" />
     <Compile Include="DTOs\RegisterDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Contracts\IUserService.cs" />
     <Compile Include="ServiceResponses\ServiceResponse.cs" />
     <Compile Include="ServiceResponses\ServiceResponseCode.cs" />
+    <Compile Include="Services\CarShareService.cs" />
     <Compile Include="Services\UserService.cs" />
     <Compile Include="WcfServiceFactory.cs" />
   </ItemGroup>

@@ -16,13 +16,14 @@ namespace FindNDriveDataAccessLayer
         * Each IRepository<T> repesents a repository available in the database. 
         **/
         public IRepository<User> UserRepository { get; set; }
-        public IRepository<CarShare> CarShare { get; set; }
+        public IRepository<CarShare> CarShareRepository { get; set; }
 
         public FindNDriveUnitOfWork(DbContext dbContext, IRepository<User> userRepository, IRepository<CarShare> carShareRepository)
         {
             _dbContext = dbContext;
             UserRepository = userRepository;
-            CarShare = carShareRepository;
+            CarShareRepository = carShareRepository;
+            dbContext.Configuration.LazyLoadingEnabled = true;
         }
 
         public void Commit()

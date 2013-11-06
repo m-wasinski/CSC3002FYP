@@ -10,9 +10,7 @@ namespace FindNDriveConsoleHost
 {
     class Program
     {
-        private static volatile bool serverRunnning;
-       
-        //private readonly IObjectContainer _objectContainer;
+
         static void Main(string[] args)
         {
             ApplicationContext testDbContext = new ApplicationContext();
@@ -24,8 +22,8 @@ namespace FindNDriveConsoleHost
           
 
             UserService testservice = new UserService(testUnitOfWork);
-
-            var host = new ServiceHost(testservice);
+            CarShareService carShareService = new CarShareService(testUnitOfWork);
+            var host = new ServiceHost(carShareService);
 
             /*var thread = new Thread(
                 () =>
@@ -77,7 +75,6 @@ namespace FindNDriveConsoleHost
                 DateOfBirth = new DateTime(1992, 11, 15),
                 EmailAddress = "alex1710@vp.pl",
                 Gender = Gender.Female,
-                CarShares = new List<CarShare>()
             };
 
             try

@@ -37,9 +37,5 @@ namespace DomainObjects
         [Required]
         [DataMember]
         public virtual Gender Gender { get; set; }
-
-        [Required]
-        [DataMember]
-        public virtual List<CarShare> CarShares { get; set; }
     }
 }

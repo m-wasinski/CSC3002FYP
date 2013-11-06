@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.ServiceModel;
 using System.Web.UI;
 using DomainObjects;
@@ -54,7 +55,7 @@ namespace FindNDriveServices.Services
 
      public ServiceResponse<User> RegisterUser(RegisterDTO register)
      {
-         Debug.WriteLine("RegisterUser method called:  " + register.User.FirstName + " " + register.User.LastName + " " + register.User.Gender);
+         Debug.WriteLine("RegisterUser method called:  " + register.User.FirstName + " " + register.User.LastName + " " + register.User.Gender + " " + register.User.DateOfBirth);
 
          /*var user = new User()
          {
@@ -73,19 +74,37 @@ namespace FindNDriveServices.Services
          User newUser = null;
          newUser = this._findNDriveUnitOfWork.UserRepository.Find(user.Id);
          Debug.WriteLine("New user Id:  " + newUser.Id);*/
+         
+
+         /*var testDriver = new User
+         {
+             FirstName = "Aleksandra",
+             LastName = "Szczypior",
+             EmailAddress = "alex1710@vp.pl",
+             Gender = Gender.Female,
+         };
+
+         var testCarShare = new CarShare()
+         {
+             DateOfDeparture = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day),
+             DepartureCity = "Belfast",
+             Description = "Test Car Share",
+             DestinationCity = "Lurgan",
+             Driver = testDriver,
+             Fee = 0.00,
+             AvailableSeats = 4,
+             Participants = new List<User>(),
+             SmokersAllowed = false,
+             WomenOnly = false,
+         };*/
+
+         //testDriver.CarShares.Add(testCarShare);
+         
          return new ServiceResponse<User>
          {
-             Result = new User
-             {
-                 FirstName = "Aleksandra",
-                 LastName = "Szczypior",
-                 DateOfBirth = new DateTime(1992, 11, 15),
-                 EmailAddress = "alex1710@vp.pl",
-                 Gender = Gender.Female,
-                 CarShares = new List<CarShare>()
-             },
+             Result = _findNDriveUnitOfWork.UserRepository.AsQueryable().First(_ => _.Id == 1),
              ServiceReponseCode = ServiceResponseCode.Success,
-             ErrorMessages = null
+             ErrorMessages = new List<string>() {"testerror"}
          };
      }
 

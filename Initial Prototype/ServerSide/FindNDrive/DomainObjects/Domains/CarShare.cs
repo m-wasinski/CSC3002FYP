@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using DomainObjects.Enums;
 
@@ -11,6 +13,10 @@ namespace DomainObjects
         public virtual int Id { get; set; }
 
         [Required]
+        [DataMember]
+        public virtual User Driver { get; set; }
+
+        [Required]
         public virtual string DepartureCity { get; set; }
 
         [DataMember]
@@ -19,15 +25,15 @@ namespace DomainObjects
 
         [Required]
         [DataMember]
-        public virtual DateTimeFormat DateOfDeparture { get; set; }
+        [DataType(DataType.Date)]
+        [Column(TypeName = "DateTime2")]
+        public virtual DateTime DateOfDeparture { get; set; }
 
         [Required]
         [DataMember]
-        public virtual DateTimeFormat TimeOfDeparture { get; set; }
-
-        [Required]
-        [DataMember]
-        public virtual User Driver { get; set; }
+        [DataType(DataType.Time)]
+        [Column(TypeName = "DateTime2")]
+        public virtual DateTime TimeOfDeparture { get; set; }
 
         [Required]
         [DataMember]
@@ -39,10 +45,10 @@ namespace DomainObjects
 
         [Required]
         [DataMember]
-        public virtual int NoOfSeats { get; set; }
+        public virtual int AvailableSeats { get; set; }
 
-        [Required]
         [DataMember]
+        [Required]
         public virtual List<User> Participants { get; set; }
 
         [Required]

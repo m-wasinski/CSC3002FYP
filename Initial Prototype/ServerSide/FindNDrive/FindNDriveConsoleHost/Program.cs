@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 using DomainObjects;
 using FindNDriveDataAccessLayer;
@@ -15,9 +16,12 @@ namespace FindNDriveConsoleHost
         static void Main(string[] args)
         {
             ApplicationContext testDbContext = new ApplicationContext();
-            EntityFrameworkRepository<User> testEntityFrameworkRepository = new EntityFrameworkRepository<User>(testDbContext);
-            FindNDriveUnitOfWork testUnitOfWork = new FindNDriveUnitOfWork(testDbContext, new EntityFrameworkRepository<User>(testDbContext));
-           
+
+            EntityFrameworkRepository<User> userEntityFrameworkRepository = new EntityFrameworkRepository<User>(testDbContext);
+            EntityFrameworkRepository<CarShare> carShareEntityFrameworkRepository = new EntityFrameworkRepository<CarShare>(testDbContext);
+
+            FindNDriveUnitOfWork testUnitOfWork = new FindNDriveUnitOfWork(testDbContext, userEntityFrameworkRepository, carShareEntityFrameworkRepository);
+          
 
             UserService testservice = new UserService(testUnitOfWork);
 
@@ -66,18 +70,37 @@ namespace FindNDriveConsoleHost
 
             host.AddServiceEndpoint(typeof(IPrototypeService),
                 new NetTcpBinding(), "net.tcp://localhost:8081/evals");*/
+            var aleksandra = new User
+            {
+                FirstName = "Aleksandra",
+                LastName = "Szczypior",
+                DateOfBirth = new DateTime(1992, 11, 15),
+                EmailAddress = "alex1710@vp.pl",
+                Gender = Gender.Female,
+                CarShares = new List<CarShare>()
+            };
 
             try
             {
                 host.Open();
-               /* testEntityFrameworkRepository.Add(new User
-             {
-                 Id = 2,
-                 FirstName = "Aleksandra",
-                 LastName = "Szczypior",
-                 Age = 20
-             } );
-                testUnitOfWork.Commit();*/
+                userEntityFrameworkRepository.Add(aleksandra);
+
+                carShareEntityFrameworkRepository.Add(new CarShare()
+                {
+                    DateOfDeparture = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day),
+                    DepartureCity = "Belfast",
+                    Description = "Test Car Share",
+                    DestinationCity = "Lurgan",
+                    Driver = aleksandra,
+                    Fee = 0.00,
+                    AvailableSeats = 4,
+                    Participants = new List<User>(),
+                    SmokersAllowed = false,
+                    WomenOnly = false,
+                });
+
+                testUnitOfWork.Commit();
+            
                 PrintServiceInfo(host);
                 Console.ReadLine();
                 host.Close();

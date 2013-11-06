@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 namespace DomainObjects
@@ -14,6 +17,7 @@ namespace DomainObjects
 
         [EmailAddress]
         [Required]
+        [DataMember]
         public virtual string EmailAddress { get; set; }
 
         [DataMember]
@@ -26,10 +30,16 @@ namespace DomainObjects
 
         [Required]
         [DataMember]
-        public virtual DateTimeFormat DateOfBirth { get; set; }
+        [DataType(DataType.Date)]
+        [Column(TypeName = "DateTime2")]
+        public virtual DateTime DateOfBirth { get; set; }
 
         [Required]
         [DataMember]
         public virtual Gender Gender { get; set; }
+
+        [Required]
+        [DataMember]
+        public virtual List<CarShare> CarShares { get; set; }
     }
 }

@@ -7,3 +7,5 @@ C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Debug\Do
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\obj\Debug\FindNDriveDomainObjects.csprojResolveAssemblyReference.cache
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\obj\Debug\DomainObjects.dll
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\obj\Debug\DomainObjects.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Debug\Newtonsoft.Json.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Debug\Newtonsoft.Json.xml

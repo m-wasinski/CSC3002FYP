@@ -14,6 +14,7 @@ namespace FindNDriveDataAccessLayer
          * Each DbSet<T> repesents a collection of entitites that can be queried from the database. 
          **/
         public DbSet<User> User { get; set; }
+        public DbSet<CarShare> CarShares { get; set; }
 
         public ApplicationContext()
             : this("FindNDriveConnectionString")

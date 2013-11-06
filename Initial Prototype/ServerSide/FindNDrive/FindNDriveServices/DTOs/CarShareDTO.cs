@@ -17,10 +17,12 @@ namespace FindNDriveServices.DTOs
 
         [Required]
         [DataMember]
+        [DataType(DataType.Date)]
         public virtual DateTimeFormat DateOfDeparture { get; set; }
 
         [Required]
         [DataMember]
+        [DataType(DataType.Time)]
         public virtual DateTimeFormat TimeOfDeparture { get; set; }
 
         [Required]

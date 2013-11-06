@@ -32,3 +32,5 @@ C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveServices\bin\Deb
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveServices\bin\Debug\FindNDriveInfrastructureCore.pdb
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveServices\bin\Debug\Microsoft.Practices.Unity.xml
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveServices\bin\Debug\Microsoft.Practices.Unity.Configuration.xml
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveServices\bin\Debug\Newtonsoft.Json.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveServices\bin\Debug\Newtonsoft.Json.xml

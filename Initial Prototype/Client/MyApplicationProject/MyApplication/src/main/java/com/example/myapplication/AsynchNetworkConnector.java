@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -23,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -111,9 +114,20 @@ public class AsynchNetworkConnector extends AsyncTask <TextView, String, Boolean
                     .key("Password").value("test")
                     .key("ConfirmedPassword").value("test").endObject();
 
-            StringEntity se = new StringEntity(userInfo.toString(),"UTF-8");
+            User user = new User("alex1710@vp.pl", "Aleksandra", "Szczypior", Gender.Female);
+            RegisterDTO regdto = new RegisterDTO(user, "testpassword", "testpassword");
+
+            Gson gson = new Gson();
+            String jsonuser = gson.toJson(regdto);
+
+            Log.e("PARSED JSON: ", "CONVERTED JSON GSON: "+jsonuser);
+
+            StringEntity se = new StringEntity(jsonuser,"UTF-8");
+
+            //Log.e("HTTP RESPONSE: ", "CONVERTED JSON: "+userInfo.toString());
 
             se.setContentType("application/json;charset=UTF-8");
+
             postRequest.setEntity(se);
 
             HttpResponse httpResponse = httpClient.execute(postRequest);
@@ -125,9 +139,9 @@ public class AsynchNetworkConnector extends AsyncTask <TextView, String, Boolean
             //InputStreamReader reader = new InputStreamReader(stream);
             //reader.read(buffer);
 
-            JSONObject plates = new JSONObject(wtf);
-
-            Log.e("HTTP RESPONSE: ", "MESSAGE: "+plates.toString());
+            //JSONObject plates = new JSONObject(wtf);
+            Log.e("HTTP RESPONSE: ", "HTTP RESPONSE "+wtf);
+            //Log.e("HTTP RESPONSE: ", "MESSAGE: "+plates.toString());
         } catch (URISyntaxException e) {
             Log.e("URISyntaxException: ", e.toString());
             e.printStackTrace();

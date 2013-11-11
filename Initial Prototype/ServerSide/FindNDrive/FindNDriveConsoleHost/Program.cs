@@ -1,118 +1,107 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ServiceModel;
-using DomainObjects;
+using System.Threading;
+using DomainObjects.Constants;
+using DomainObjects.Domains;
+using DomainObjects.DOmains;
 using FindNDriveDataAccessLayer;
 using FindNDriveInfrastructureDataAccessLayer;
-using FindNDriveServices.Services;
+using FindNDriveServices2.DTOs;
+using FindNDriveServices2.Services;
+using WebMatrix.WebData;
 
 namespace FindNDriveConsoleHost
-{
+{   
+    /// <summary>
+    /// Used temporarily to create and host my web services.
+    /// Endpoints for these services are stored in App.config in FindNDriveConsoleHost project.
+    /// </summary>
     class Program
     {
-
         static void Main(string[] args)
         {
-            ApplicationContext testDbContext = new ApplicationContext();
+            //Create dbcontext, user entity framework repository, car share entity framework repository and a unit of work.
+            var testDbContext = new ApplicationContext();
+            var userEntityFrameworkRepository = new EntityFrameworkRepository<User>(testDbContext);
+            var carShareEntityFrameworkRepository = new EntityFrameworkRepository<CarShare>(testDbContext);
+            var testUnitOfWork = new FindNDriveUnitOfWork(testDbContext, userEntityFrameworkRepository, carShareEntityFrameworkRepository);
 
-            EntityFrameworkRepository<User> userEntityFrameworkRepository = new EntityFrameworkRepository<User>(testDbContext);
-            EntityFrameworkRepository<CarShare> carShareEntityFrameworkRepository = new EntityFrameworkRepository<CarShare>(testDbContext);
-
-            FindNDriveUnitOfWork testUnitOfWork = new FindNDriveUnitOfWork(testDbContext, userEntityFrameworkRepository, carShareEntityFrameworkRepository);
-          
-
-            UserService testservice = new UserService(testUnitOfWork);
-            CarShareService carShareService = new CarShareService(testUnitOfWork);
-            var host = new ServiceHost(carShareService);
-
-            /*var thread = new Thread(
+            WebSecurity.InitializeDatabaseConnection("FindNDriveConnectionString", "User", "Id", "UserName", true);
+            
+            //Spawn these two services in two separate threads to ensure they both run concurrently.
+            var userServiceThread = new Thread(
                 () =>
                 {
-                    // var testDataPath = Directory.GetCurrentDirectory();
+                    //var baseAddress = new Uri("https://asus:8050/userservice.svc");
+                    //var factory = new WcfServiceFactory("FindNDriveConnectionString");
+                    //var serviceHost = factory.Foo(typeof(UserService), baseAddress);
 
-                    //var baseAddress = new Uri(address);
-                    var factory = new WcfServiceFactory("FindNDriveConnectionString");
-                    var serviceHost = factory.Foo(typeof(UserService), new Uri("UserServiceEndpoint"));
+                    //serviceHost.AddServiceEndpoint(typeof(IUserService), new WebHttpBinding(), baseAddress);
 
-                    //serviceHost.AddServiceEndpoint(typeof(IUserService), new WSHttpBinding(), baseAddress);
-
-                    serviceHost.Open();
-
-                    serverRunnning = true;
-
-                    var addresses = serviceHost.BaseAddresses;
-
-                    // When Teardown is called we can end this service host
-                    while (serverRunnning)
+                    var userService = new UserService(testUnitOfWork);
+                    var host = new ServiceHost(userService);
+                
+                    try
                     {
-                        // Black this thread until we are allowed to stop the server running
-                        Thread.Sleep(1000);
+                        host.Open();
+                        var serviceResponse = userService.RegisterUser(new RegisterDTO()
+                        {
+                            Password = "test",
+                            ConfirmedPassword = "Test",
+                            User = new User()
+                            {   
+                                UserName = "Alesia92",
+                                FirstName = "Aleksandra",
+                                LastName = "Szczypior",
+                                EmailAddress = "wasinskimichal@gmail.com",
+                                Gender = Gender.Female,
+                                DateOfBirth = new DateTime(1992, 11, 15)
+                            }
+                        });
+
+                        PrintServiceInfo(host);
                     }
-
-                    serviceHost.Close();
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        host.Abort();
+                        
+                    }
                 });
-            thread.Start();
+            userServiceThread.Start();
 
-            // Block until the server is up and running
-            while (serverRunnning)
-            {
-                // Block
-                Thread.Sleep(1000);
-            }*/
+            var carShareServiceThread = new Thread(
+                () =>
+                {   
+                    var carShareService = new CarShareService(testUnitOfWork);
+                    var host = new ServiceHost(carShareService);
 
-            /*host.AddServiceEndpoint(typeof (IPrototypeService),
-                new BasicHttpBinding(), "http://localhost:8080/prototype/basic");
+                    try
+                    {
+                        host.Open();
+                        PrintServiceInfo(host);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        host.Abort();
 
-            host.AddServiceEndpoint(typeof(IPrototypeService),
-                new WSHttpBinding(), "http://localhost:8080/prototype/ws");
-
-            host.AddServiceEndpoint(typeof(IPrototypeService),
-                new NetTcpBinding(), "net.tcp://localhost:8081/evals");*/
-            var aleksandra = new User
-            {
-                FirstName = "Aleksandra",
-                LastName = "Szczypior",
-                DateOfBirth = new DateTime(1992, 11, 15),
-                EmailAddress = "alex1710@vp.pl",
-                Gender = Gender.Female,
-            };
-
-            try
-            {
-                host.Open();
-                userEntityFrameworkRepository.Add(aleksandra);
-
-                carShareEntityFrameworkRepository.Add(new CarShare()
-                {
-                    DateOfDeparture = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day),
-                    DepartureCity = "Belfast",
-                    Description = "Test Car Share",
-                    DestinationCity = "Lurgan",
-                    Driver = aleksandra,
-                    Fee = 0.00,
-                    AvailableSeats = 4,
-                    Participants = new List<User>(),
-                    SmokersAllowed = false,
-                    WomenOnly = false,
+                    }
                 });
-
-                testUnitOfWork.Commit();
+            carShareServiceThread.Start();
             
-                PrintServiceInfo(host);
-                Console.ReadLine();
-                host.Close();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                host.Abort();
-                Console.ReadLine();
-            }
+            
+
+            Console.ReadLine();
         }
 
+        /// <summary>
+        /// Outputs information about servicehost passed in as a parameter.
+        /// </summary>
+        /// <param name="host"></param>
         static void PrintServiceInfo(ServiceHost host)
         {
-            Console.WriteLine(" {0} is up an running with these endpoints:",
+            Console.WriteLine(" {0} is now running with the following endpoints:",
                 host.Description.ServiceType);
 
             foreach (var se in host.Description.Endpoints)

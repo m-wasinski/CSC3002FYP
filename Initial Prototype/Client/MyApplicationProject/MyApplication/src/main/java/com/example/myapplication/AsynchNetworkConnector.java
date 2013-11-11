@@ -10,6 +10,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -33,6 +34,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
+
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by Michal on 03/11/13.
@@ -106,8 +109,9 @@ public class AsynchNetworkConnector extends AsyncTask <TextView, String, Boolean
 
 
             //Registering.
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            uri = new URI("http://192.168.1.80:8080/carshareservice/get");
+
+            HttpClient httpClient = MainActivity.getNewHttpClient();
+            uri = new URI("https://asus:443/Services/UserService.svc/login");
 
             CarShareDTO carsharedto = new CarShareDTO();
 
@@ -126,11 +130,14 @@ public class AsynchNetworkConnector extends AsyncTask <TextView, String, Boolean
 
 
 
-            User user = new User("alex1710@vp.pl", "Aleksandra", "Szczypior", Gender.Female, date);
-            RegisterDTO regdto = new RegisterDTO(user, "testpassword", "testpassword");
+            User newUser = new User("Alesia", "alex1710@vp.pl", "Aleksandra", "Szczypior", date, Gender.Female);
+            RegisterDTO registerDTO = new RegisterDTO(newUser, "testpassword", "testpassword");
+
+            LoginDTO loginDTO = new LoginDTO("Alesia", "testpassword2");
+
 
             Gson gson = new Gson();
-            String jsonuser = gson.toJson(carsharedto);
+            String jsonuser = gson.toJson(loginDTO);
 
           //  Log.e("PARSED JSON: ", "CONVERTED JSON GSON: "+jsonuser);
 
@@ -153,9 +160,9 @@ public class AsynchNetworkConnector extends AsyncTask <TextView, String, Boolean
             //InputStreamReader reader = new InputStreamReader(stream);
             //reader.read(buffer);
 
-            JSONObject plates = new JSONObject(wtf);
-            //Log.e("HTTP RESPONSE: ", "HTTP RESPONSE "+wtf);
-            Log.e("HTTP RESPONSE: ", "MESSAGE: "+plates.toString());
+            //JSONObject plates = new JSONObject(wtf);
+            Log.e("HTTP RESPONSE: ", "HTTP RESPONSE "+wtf);
+            //Log.e("HTTP RESPONSE: ", "MESSAGE: "+plates.toString());
 
 
             //Log.e("HTTP RESPONSE: ", "RESPONSE CODE: " + response.Result.toString());
@@ -165,9 +172,11 @@ public class AsynchNetworkConnector extends AsyncTask <TextView, String, Boolean
             ServiceResponse<ArrayList<CarShareDTO>> test = gson.fromJson(wtf, fooType);
             Log.e("HTTP RESPONSE: ", "MESSAGE: "+test.Result.size());
 
-            CarShareDTO sharedto = test.Result.get(0);
+            CarShareDTO sharedto = test.Result.get(7);
             User testdriver = sharedto.GetUser();
-            Log.e("HTTP RESPONSE: ", "MESSAGE: "+testdriver.GetFirstName());
+
+            Log.e("HTTP RESPONSE: ", "MESSAGE: "+sharedto.GetParticipants().size());
+
             //User parsedUser = (User)response.Result;
             //User test = gson.fromJson(plates.toString(), fooType);
 
@@ -178,9 +187,6 @@ public class AsynchNetworkConnector extends AsyncTask <TextView, String, Boolean
             //Log.e("HTTP RESPONSE: ", "USER LIST: ");
         } catch (URISyntaxException e) {
             Log.e("URISyntaxException: ", e.toString());
-            e.printStackTrace();
-        }catch (JSONException e) {
-            Log.e("JSONException: ", e.toString());
             e.printStackTrace();
         }catch (UnsupportedEncodingException e){
             Log.e("UnsupportedEncodingException: ", e.toString());

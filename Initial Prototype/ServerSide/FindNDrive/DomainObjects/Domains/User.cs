@@ -1,19 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
+using DomainObjects.Constants;
 
-namespace DomainObjects
+namespace DomainObjects.DOmains
 {
     /// <summary>
-    /// Represents User entity for the first prototype service contract.
+    /// Represents User entity.
     /// </summary>
-    //[DataContract(Namespace = "http://localhost/Prototype")]
     public class User
     {
         [ScaffoldColumn(false)]
         public virtual int Id { get; set; }
+
+        [Required]
+        [DataMember]
+        public virtual string UserName { get; set; }
 
         [EmailAddress]
         [Required]
@@ -37,5 +40,8 @@ namespace DomainObjects
         [Required]
         [DataMember]
         public virtual Gender Gender { get; set; }
+
+        [DataMember]
+        public virtual Roles Role { get; set; }
     }
 }

@@ -4,6 +4,8 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using DomainObjects;
+using DomainObjects.Domains;
+using DomainObjects.DOmains;
 using FindNDriveInfrastructureDataAccessLayer;
 
 namespace FindNDriveDataAccessLayer
@@ -23,7 +25,6 @@ namespace FindNDriveDataAccessLayer
             _dbContext = dbContext;
             UserRepository = userRepository;
             CarShareRepository = carShareRepository;
-            dbContext.Configuration.LazyLoadingEnabled = true;
         }
 
         public void Commit()

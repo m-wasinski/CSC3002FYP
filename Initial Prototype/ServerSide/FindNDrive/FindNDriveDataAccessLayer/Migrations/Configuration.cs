@@ -1,14 +1,13 @@
-using System.Collections.Generic;
-using DomainObjects;
+using System;
+using DomainObjects.Constants;
+using DomainObjects.DOmains;
+using WebMatrix.WebData;
 
 namespace FindNDriveDataAccessLayer.Migrations
 {
-    using System;
-    using System.Data.Entity;
     using System.Data.Entity.Migrations;
-    using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<FindNDriveDataAccessLayer.ApplicationContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<ApplicationContext>
     {
         public Configuration()
         {
@@ -18,16 +17,31 @@ namespace FindNDriveDataAccessLayer.Migrations
         protected override void Seed(ApplicationContext context)
         {
             //  This method will be called after migrating to the latest version.
+            if (!WebSecurity.Initialized)
+            {
+                WebSecurity.InitializeDatabaseConnection("FindNDriveConnectionString", "User", "Id", "UserName", true); 
+            }
 
-            /*context.User.AddOrUpdate(
-                _ => _.Id,
-                new User
-                {
-                    Id = 1,
-                    FirstName = "Michal",
-                    LastName = "Wasinski",
-                    Age = 23
-                });*/
+            AddAdministrator(context);
+        }
+
+        private static void AddAdministrator(ApplicationContext context)
+        {
+            var administrator = new User()
+            {
+                DateOfBirth = new DateTime(1990, 11, 11),
+                EmailAddress = "wasinskimichal@gmail.com",
+                FirstName = "Michal",
+                LastName = "Wasinski",
+                Gender = Gender.Male,
+                UserName = "Admin",
+                Role = Roles.Administrator,
+                Id = 1
+            };
+
+            context.User.AddOrUpdate(_ => _.Id, administrator);
+          
+            WebSecurity.CreateUserAndAccount("Administrator", "AdminPassword1234");
         }
     }
 }

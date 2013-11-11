@@ -2,6 +2,9 @@
 using System.Data.Entity;
 using System.ServiceModel;
 using DomainObjects;
+using DomainObjects.Domains;
+using DomainObjects.DOmains;
+using DomainObjects.Enums;
 using FindNDriveDataAccessLayer;
 using FindNDriveInfrastructureCore.Util;
 using FindNDriveInfrastructureDataAccessLayer;
@@ -15,7 +18,7 @@ namespace FindNDriveServices
 {
     public class WcfServiceFactory : UnityServiceHostFactory
     {
-        private readonly string connectionString;
+        private readonly string _connectionString;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WcfServiceFactory"/> class.
@@ -27,7 +30,7 @@ namespace FindNDriveServices
 
         public WcfServiceFactory(string connectionString)
         {
-            this.connectionString = connectionString;
+            _connectionString = connectionString;
         }
 
         public ServiceHost Foo(Type serviceType, Uri baseAddress)
@@ -43,8 +46,8 @@ namespace FindNDriveServices
         protected override void ConfigureContainer(IUnityContainer container)
         {
             //this.InitializeMembership();
-            this.RegisterUnitOfWork(container);
-            this.RegisterServices(container);
+            RegisterUnitOfWork(container);
+            RegisterServices(container);
         }
 
         /// <summary>
@@ -55,7 +58,7 @@ namespace FindNDriveServices
             // If web security has already been initialized then don't do it again, Since this will be run per scenario.
             if (!WebSecurity.Initialized)
             {
-                WebSecurity.InitializeDatabaseConnection(this.connectionString, "User", "Id", "Username", true);
+                WebSecurity.InitializeDatabaseConnection(this._connectionString, "User", "Id", "Username", true);
             }
         }
 
@@ -79,7 +82,7 @@ namespace FindNDriveServices
         private void RegisterUnitOfWork(IUnityContainer container)
         {
             container.RegisterType<DbContext, ApplicationContext>(new PerResolveLifetimeManager(),
-                new InjectionConstructor(this.connectionString));
+                new InjectionConstructor(this._connectionString));
             container.RegisterType<IRepository<User>, EntityFrameworkRepository<User>>();
 
             container.RegisterType<FindNDriveUnitOfWork, FindNDriveUnitOfWork>();

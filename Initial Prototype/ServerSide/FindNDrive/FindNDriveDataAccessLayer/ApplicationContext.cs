@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data.Entity;
-using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using System.Web;
-using DomainObjects;
+﻿using System.Data.Entity;
+using DomainObjects.Domains;
+using DomainObjects.DOmains;
 
 namespace FindNDriveDataAccessLayer
 {
@@ -19,16 +14,13 @@ namespace FindNDriveDataAccessLayer
 
         public ApplicationContext()
             : this("FindNDriveConnectionString")
-        {
-            Configuration.ProxyCreationEnabled = false;
-           
+        {   
         }
 
 
         public ApplicationContext(string connectionString)
             : base(connectionString)
         {
-            Configuration.ProxyCreationEnabled = false;
         }
     }
 }

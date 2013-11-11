@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
-using DomainObjects.Enums;
+using DomainObjects.Constants;
+using DomainObjects.DOmains;
 
-namespace DomainObjects
+namespace DomainObjects.Domains
 {
     public class CarShare
     {
-        [ScaffoldColumn(false)]
         public virtual int Id { get; set; }
 
         [Required]
         [DataMember]
-        public virtual User Driver { get; set; }
+        public virtual int UserId { get; set; }
 
         [Required]
         public virtual string DepartureCity { get; set; }
@@ -48,8 +48,7 @@ namespace DomainObjects
         public virtual int AvailableSeats { get; set; }
 
         [DataMember]
-        [Required]
-        public virtual List<User> Participants { get; set; }
+        public virtual ICollection<User> Participants { get; set; }
 
         [Required]
         [DataMember]
@@ -61,7 +60,7 @@ namespace DomainObjects
 
         [Required]
         [DataMember]
-        public virtual VehicleType VehicleType { get; set; }
+        public virtual VehicleTypes VehicleTypes { get; set; }
 
     }
 }

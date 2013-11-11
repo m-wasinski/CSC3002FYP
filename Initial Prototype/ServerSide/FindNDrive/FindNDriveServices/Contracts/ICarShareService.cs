@@ -2,6 +2,7 @@
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using DomainObjects;
+using DomainObjects.Domains;
 using FindNDriveServices.DTOs;
 using FindNDriveServices.ServiceResponses;
 

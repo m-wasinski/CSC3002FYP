@@ -5,6 +5,9 @@ using System.Linq;
 using System.ServiceModel;
 using System.Web.UI;
 using DomainObjects;
+using DomainObjects.Domains;
+using DomainObjects.DOmains;
+using DomainObjects.Enums;
 using FindNDriveDataAccessLayer;
 using FindNDriveServices.Contracts;
 using FindNDriveServices.DTOs;
@@ -53,58 +56,24 @@ namespace FindNDriveServices.Services
          };*/
      }
 
+     /// <summary>
+     /// Registers a new user.
+     /// </summary>
+     /// <param name="register"></param>
+     /// <returns></returns>
      public ServiceResponse<User> RegisterUser(RegisterDTO register)
      {
-         Debug.WriteLine("RegisterUser method called:  " + register.User.FirstName + " " + register.User.LastName + " " + register.User.Gender + " " + register.User.DateOfBirth);
+         //Debug.WriteLine("RegisterUser method called:  " + register.User.FirstName + " " + register.User.LastName + " " + register.User.Gender + " " + register.User.DateOfBirth);
 
-         /*var user = new User()
-         {
-             Age = register.User.Age,
-             FirstName = register.User.FirstName,
-             LastName = register.User.LastName
-         };
-         // Register user
-         //WebSecurity.CreateUserAndAccount(user.FirstName, user.LastName);
-         //var newId = WebSecurity.GetUserId(user.FirstName);
-         //user.Id = 2;
+         WebSecurity.CreateUserAndAccount(register.User.EmailAddress, register.Password);
+         var newUser = register.User;
+         _findNDriveUnitOfWork.UserRepository.Add(newUser);
+         _findNDriveUnitOfWork.Commit();
 
-         // Add to DB set
-         this._findNDriveUnitOfWork.UserRepository.Add(user);
-         this._findNDriveUnitOfWork.Commit();
-         User newUser = null;
-         newUser = this._findNDriveUnitOfWork.UserRepository.Find(user.Id);
-         Debug.WriteLine("New user Id:  " + newUser.Id);*/
-         
-
-         /*var testDriver = new User
-         {
-             FirstName = "Aleksandra",
-             LastName = "Szczypior",
-             EmailAddress = "alex1710@vp.pl",
-             Gender = Gender.Female,
-         };
-
-         var testCarShare = new CarShare()
-         {
-             DateOfDeparture = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day),
-             DepartureCity = "Belfast",
-             Description = "Test Car Share",
-             DestinationCity = "Lurgan",
-             Driver = testDriver,
-             Fee = 0.00,
-             AvailableSeats = 4,
-             Participants = new List<User>(),
-             SmokersAllowed = false,
-             WomenOnly = false,
-         };*/
-
-         //testDriver.CarShares.Add(testCarShare);
-         
          return new ServiceResponse<User>
          {
-             Result = _findNDriveUnitOfWork.UserRepository.AsQueryable().First(_ => _.Id == 1),
-             ServiceReponseCode = ServiceResponseCode.Success,
-             ErrorMessages = new List<string>() {"testerror"}
+             Result = newUser,
+             ServiceReponseCode = ServiceResponseCode.Success
          };
      }
 

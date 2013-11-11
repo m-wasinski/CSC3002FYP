@@ -45,8 +45,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Domains\CarShare.cs" />
-    <Compile Include="Enums\Gender.cs" />
-    <Compile Include="Enums\VehicleType.cs" />
+    <Compile Include="Constants\Gender.cs" />
+    <Compile Include="Constants\Roles.cs" />
+    <Compile Include="Constants\VehicleTypes.cs" />
     <Compile Include="Domains\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
-using DomainObjects;
+using DomainObjects.Domains;
+using DomainObjects.DOmains;
 using DomainObjects.Enums;
 
 namespace FindNDriveServices.DTOs

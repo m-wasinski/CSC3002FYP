@@ -1,6 +1,9 @@
 ﻿using System.ServiceModel;
 using System.ServiceModel.Web;
 using DomainObjects;
+using DomainObjects.Domains;
+using DomainObjects.DOmains;
+using DomainObjects.Enums;
 using FindNDriveServices.DTOs;
 using FindNDriveServices.ServiceResponses;
 

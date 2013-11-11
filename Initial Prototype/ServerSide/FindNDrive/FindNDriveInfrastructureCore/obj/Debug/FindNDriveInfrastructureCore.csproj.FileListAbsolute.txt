@@ -1,4 +1,5 @@
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveInfrastructureCore\bin\Debug\FindNDriveInfrastructureCore.dll
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveInfrastructureCore\bin\Debug\FindNDriveInfrastructureCore.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveInfrastructureCore\obj\Debug\FindNDriveInfrastructureCore.csprojResolveAssemblyReference.cache
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveInfrastructureCore\obj\Debug\FindNDriveInfrastructureCore.dll
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveInfrastructureCore\obj\Debug\FindNDriveInfrastructureCore.pdb

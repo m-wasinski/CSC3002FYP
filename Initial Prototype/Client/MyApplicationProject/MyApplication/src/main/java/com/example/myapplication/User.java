@@ -9,14 +9,23 @@ import java.util.List;
  */
 public class User {
 
-    public String GetFirstName() {return FirstName;}
+    public int GetId() {return Id;}
 
-    public String GetDateOfBirth() {return DateOfBirth;}
+    public String GetUserName() {return UserName;}
+
+    public String GetEmail() {return EmailAddress; }
+
+    public String GetFirstName() {return FirstName;}
 
     public String GetLastName() {return LastName;}
 
+    public String GetDateOfBirth() {return DateOfBirth;}
 
-    private String Email;
+    private int Id;
+
+    private String UserName;
+
+    private String EmailAddress;
 
     private String FirstName;
 
@@ -29,9 +38,10 @@ public class User {
     private Date DoB;
 
 
-    public User(String email, String first, String last, int s, long dob)
+    public User(String userName, String email, String first, String last, long dob, int s)
     {
-        Email = email;
+        UserName = userName;
+        EmailAddress = email;
         FirstName = first;
         LastName = last;
         Gender = s;

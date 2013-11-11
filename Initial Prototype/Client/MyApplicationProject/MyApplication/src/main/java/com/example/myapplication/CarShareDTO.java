@@ -7,6 +7,7 @@ import java.util.List;
  */
 public class CarShareDTO {
     public User GetUser() {return Driver;}
+    public List<User> GetParticipants() {return Participants;}
     private User Driver;
 
     private String DepartureCity;

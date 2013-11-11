@@ -6,6 +6,9 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using DomainObjects;
+using DomainObjects.Domains;
+using DomainObjects.DOmains;
+using DomainObjects.Enums;
 
 namespace FindNDriveServices.DTOs
 {

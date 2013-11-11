@@ -1,17 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindNDriveServices", "FindNDriveServices\FindNDriveServices.csproj", "{15B3E0D2-6217-493A-A690-158C497F5318}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindNDriveDomainObjects", "DomainObjects\FindNDriveDomainObjects.csproj", "{2FE3E5E1-2D9F-4791-B60F-86FC293A8240}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindNDriveConsoleHost", "FindNDriveConsoleHost\FindNDriveConsoleHost.csproj", "{3E6AE073-DF63-453A-AEC6-DF79A4DD0477}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindNDriveInfrastructureDataAccessLayer", "FindNDriveInfrastructureDataAccessLayer\FindNDriveInfrastructureDataAccessLayer.csproj", "{893FF91F-37FF-4230-BA88-4A0414521633}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindNDriveDataAccessLayer", "FindNDriveDataAccessLayer\FindNDriveDataAccessLayer.csproj", "{6FEF620A-4B02-48D3-B1ED-A7AEBCC47DEA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindNDriveInfrastructureCore", "FindNDriveInfrastructureCore\FindNDriveInfrastructureCore.csproj", "{315FFCF8-0595-41A9-AB9A-56495FB93FD7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindNDriveServices2", "FindNDriveServices2\FindNDriveServices2.csproj", "{FC80B470-8A56-4BF8-AFF6-BD33176F79A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindNDriveDataAccessLayer", "FindNDriveDataAccessLayer\FindNDriveDataAccessLayer.csproj", "{6FEF620A-4B02-48D3-B1ED-A7AEBCC47DEA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{15B3E0D2-6217-493A-A690-158C497F5318}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{15B3E0D2-6217-493A-A690-158C497F5318}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{15B3E0D2-6217-493A-A690-158C497F5318}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{15B3E0D2-6217-493A-A690-158C497F5318}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2FE3E5E1-2D9F-4791-B60F-86FC293A8240}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2FE3E5E1-2D9F-4791-B60F-86FC293A8240}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FE3E5E1-2D9F-4791-B60F-86FC293A8240}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -35,14 +31,18 @@ Global
 		{893FF91F-37FF-4230-BA88-4A0414521633}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{893FF91F-37FF-4230-BA88-4A0414521633}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{893FF91F-37FF-4230-BA88-4A0414521633}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6FEF620A-4B02-48D3-B1ED-A7AEBCC47DEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6FEF620A-4B02-48D3-B1ED-A7AEBCC47DEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6FEF620A-4B02-48D3-B1ED-A7AEBCC47DEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6FEF620A-4B02-48D3-B1ED-A7AEBCC47DEA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{315FFCF8-0595-41A9-AB9A-56495FB93FD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{315FFCF8-0595-41A9-AB9A-56495FB93FD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{315FFCF8-0595-41A9-AB9A-56495FB93FD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{315FFCF8-0595-41A9-AB9A-56495FB93FD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC80B470-8A56-4BF8-AFF6-BD33176F79A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC80B470-8A56-4BF8-AFF6-BD33176F79A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC80B470-8A56-4BF8-AFF6-BD33176F79A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC80B470-8A56-4BF8-AFF6-BD33176F79A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FEF620A-4B02-48D3-B1ED-A7AEBCC47DEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FEF620A-4B02-48D3-B1ED-A7AEBCC47DEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FEF620A-4B02-48D3-B1ED-A7AEBCC47DEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FEF620A-4B02-48D3-B1ED-A7AEBCC47DEA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

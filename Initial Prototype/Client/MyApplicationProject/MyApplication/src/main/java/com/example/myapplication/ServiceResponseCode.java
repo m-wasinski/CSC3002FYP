@@ -3,7 +3,7 @@ package com.example.myapplication;
 /**
  * Created by Michal on 06/11/13.
  */
-public class ServiceResponseCode {
-    public static int Success;
-    public static int Failure;
+class ServiceResponseCodes {
+    public static int Success = 0;
+    public static int Failure = 1;
 }

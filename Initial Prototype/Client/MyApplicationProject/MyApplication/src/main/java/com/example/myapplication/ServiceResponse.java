@@ -9,6 +9,6 @@ import java.util.List;
  */
 public class ServiceResponse<T> {
     public T Result;
-    public ServiceResponseCode ServiceResponseCode;
+    public int ServiceResponseCode;
     public List<String> ErrorMessages;
 }

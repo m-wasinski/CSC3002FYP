@@ -1,10 +1,10 @@
 package com.example.myapplication;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.NetworkOnMainThreadException;
 import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,16 +13,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
@@ -34,9 +28,7 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -47,8 +39,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyStore;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -60,6 +50,10 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent intent = new Intent(this, WelcomeActivity.class);
+        startActivity(intent);
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
@@ -67,7 +61,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
 
-        _networkThread = new Thread(new Runnable() {
+  /*      _networkThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 final String USER_ID = "GetUserResult";
@@ -78,13 +72,13 @@ public class MainActivity extends ActionBarActivity {
                 textView1 = (TextView) findViewById(R.id.TextView1);
                 AsynchNetworkConnector aNetworkConnector = new AsynchNetworkConnector();
                 aNetworkConnector.execute();
-            }
-        });
+            }*/
+      //  });
 
-        _networkThread.start();
+        //_networkThread.start();
 
         //JSON Node Names
-        final String USER_ID = "GetUserResult";
+       /* final String USER_ID = "GetUserResult";
         final String TAG_ID = "Id";
         final String TAG_FIRST_NAME = "FirstName";
         final String TAG_LAST_NAME = "LastName";
@@ -93,7 +87,7 @@ public class MainActivity extends ActionBarActivity {
         JSONArray user = null;
 
         // Creating new JSON Parser
-        JSONParser jParser = new JSONParser();
+        JSONParser jParser = new JSONParser();*/
 
         // Getting JSON from URL
         //JSONObject json = jParser.getJSONFromUrl("http://192.168.1.80:8080/prototypeservice/user");

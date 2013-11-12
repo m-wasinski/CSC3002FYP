@@ -4,5 +4,12 @@
     <string name="app_name">My Application</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="UserNameHint">Username</string>
+    <string name="PasswordHint">Password</string>
+    <string name="LoginLabel">Login</string>
+    <string name="EmailHint">Email Address</string>
+    <string name="FirstNameHint">First Name</string>
+    <string name="LastNameHint">Last Name</string>
+    <string name="ConfirmPasswordHint">Confirm Password</string>
 
 </resources>

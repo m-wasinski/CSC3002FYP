@@ -6,15 +6,6 @@
     tools:context=".MainActivity"
     tools:ignore="MergeRootFrame">
 
-    <TextView
-        android:id="@+id/TextView1"
-        android:layout_height="200px"
-        android:layout_width="300px"/>
-
-    <ListView
-        android:id="@+id/ListView01"
-        android:layout_height="500px"
-        android:layout_width="500px"></ListView>
 
 </FrameLayout>
 

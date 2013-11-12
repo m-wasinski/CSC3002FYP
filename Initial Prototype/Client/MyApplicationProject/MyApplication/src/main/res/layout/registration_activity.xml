@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <EditText
+        android:layout_width="500px"
+        android:layout_height="100px"
+        android:id="@+id/UserNameTextField"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:hint="@string/UserNameHint"/>
+
+    <EditText
+        android:layout_width="500px"
+        android:layout_height="100px"
+        android:id="@+id/EmailTextField"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="120dp"
+        android:hint="@string/EmailHint"/>
+
+    <EditText
+        android:layout_width="500px"
+        android:layout_height="100px"
+        android:id="@+id/FirstNameTestField"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="190dp"
+        android:hint="@string/FirstNameHint"/>
+
+    <EditText
+        android:layout_width="500px"
+        android:layout_height="100px"
+        android:id="@+id/LastNameTestField"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="260dp"
+        android:hint="@string/LastNameHint"/>
+
+    <EditText
+        android:layout_width="500px"
+        android:layout_height="100px"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/RegistrationPasswordTextField"
+        android:hint="@string/PasswordHint"
+        android:layout_marginTop="330dp"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="500px"
+        android:layout_height="100px"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/RegistrationConfirmPasswordTextField"
+        android:hint="@string/ConfirmPasswordHint"
+        android:layout_marginTop="400dp"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="500px"
+        android:layout_height="100px"
+        android:text="Register"
+        android:id="@+id/RegisterNewUserButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="460dp"/>
+
+
+</RelativeLayout>

@@ -37,6 +37,7 @@ public class User {
 
     private Date DoB;
 
+    public User(){}
 
     public User(String userName, String email, String first, String last, long dob, int s)
     {

@@ -19,5 +19,11 @@ namespace FindNDriveServices2.DTOs
         /// </summary>
         [DataMember(IsRequired = true)]
         public string Password { get; set; }
+
+        /// <summary>
+        /// Indicates whether user wants to create a session.
+        /// </summary>
+        [DataMember]
+        public bool RememberMe { get; set; }
     }
 }

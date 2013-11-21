@@ -1,6 +1,8 @@
 using System;
 using DomainObjects.Constants;
 using DomainObjects.DOmains;
+using DomainObjects.Domains;
+using FindNDriveServices2;
 using WebMatrix.WebData;
 
 namespace FindNDriveDataAccessLayer.Migrations
@@ -27,7 +29,7 @@ namespace FindNDriveDataAccessLayer.Migrations
 
         private static void AddAdministrator(ApplicationContext context)
         {
-            var administrator = new User()
+            var administrator = new User
             {
                 DateOfBirth = new DateTime(1990, 11, 11),
                 EmailAddress = "wasinskimichal@gmail.com",
@@ -40,7 +42,16 @@ namespace FindNDriveDataAccessLayer.Migrations
             };
 
             context.User.AddOrUpdate(_ => _.Id, administrator);
-          
+            var session = new Session()
+            {
+                UserId = administrator.Id,
+                SessionType = SessionTypes.Permanent,
+                Token = SessionHelper.GenerateNewSessionId(),
+                LastKnownId = "Test",
+                SessionExpirationDate = DateTime.Now.AddDays(14)
+            };
+
+            context.Sessions.AddOrUpdate(_ => _.UserId, session);
             WebSecurity.CreateUserAndAccount("Administrator", "AdminPassword1234");
         }
     }

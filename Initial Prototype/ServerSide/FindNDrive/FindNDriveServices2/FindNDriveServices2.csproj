@@ -60,6 +60,7 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Activation" />
+    <Reference Include="System.ServiceModel.Activities" />
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -100,9 +101,13 @@
   <ItemGroup>
     <Compile Include="Contracts\ICarShareService.cs" />
     <Compile Include="Contracts\IUserService.cs" />
+    <Compile Include="CustomEndpointBehaviour.cs" />
+    <Compile Include="CustomMessageInspector.cs" />
     <Compile Include="DTOs\CarShareDTO.cs" />
     <Compile Include="DTOs\LoginDTO.cs" />
     <Compile Include="DTOs\RegisterDTO.cs" />
+    <Compile Include="DTOs\UserDTO.cs" />
+    <Compile Include="MyServiceHostFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceResponses\ServiceResponse.cs" />
     <Compile Include="ServiceResponses\ServiceResponseCode.cs" />
@@ -112,6 +117,7 @@
     <Compile Include="Services\UserService.svc.cs">
       <DependentUpon>UserService.svc</DependentUpon>
     </Compile>
+    <Compile Include="SessionHelper.cs" />
     <Compile Include="WcfServiceFactory.cs" />
   </ItemGroup>
   <ItemGroup>

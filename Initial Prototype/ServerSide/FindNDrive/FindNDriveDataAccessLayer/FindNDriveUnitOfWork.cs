@@ -19,12 +19,14 @@ namespace FindNDriveDataAccessLayer
         **/
         public IRepository<User> UserRepository { get; set; }
         public IRepository<CarShare> CarShareRepository { get; set; }
-
-        public FindNDriveUnitOfWork(DbContext dbContext, IRepository<User> userRepository, IRepository<CarShare> carShareRepository)
+        public IRepository<Session> SessionRepository { get; set; }
+ 
+        public FindNDriveUnitOfWork(DbContext dbContext, IRepository<User> userRepository, IRepository<CarShare> carShareRepository, IRepository<Session> sessionRepository)
         {
             _dbContext = dbContext;
             UserRepository = userRepository;
             CarShareRepository = carShareRepository;
+            SessionRepository = sessionRepository;
         }
 
         public void Commit()

@@ -1,10 +1,13 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace FindNDriveServices2.ServiceResponses
 {
     /// <summary>
     /// The service response code value returned in ServiceResponse.
     /// </summary>
+    [DataContract]
+    [Serializable]
     public enum ServiceResponseCode
     {
         /// <summary>

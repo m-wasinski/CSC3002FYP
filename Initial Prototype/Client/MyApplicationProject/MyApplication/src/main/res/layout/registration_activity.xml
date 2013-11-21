@@ -7,37 +7,19 @@
         android:layout_width="500px"
         android:layout_height="100px"
         android:id="@+id/UserNameTextField"
+        android:layout_marginTop="100dp"
+        android:hint="@string/UserNameHint"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-        android:hint="@string/UserNameHint"/>
+        android:layout_centerHorizontal="true"/>
 
     <EditText
         android:layout_width="500px"
         android:layout_height="100px"
         android:id="@+id/EmailTextField"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="120dp"
-        android:hint="@string/EmailHint"/>
-
-    <EditText
-        android:layout_width="500px"
-        android:layout_height="100px"
-        android:id="@+id/FirstNameTestField"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="190dp"
-        android:hint="@string/FirstNameHint"/>
-
-    <EditText
-        android:layout_width="500px"
-        android:layout_height="100px"
-        android:id="@+id/LastNameTestField"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="260dp"
-        android:hint="@string/LastNameHint"/>
+        android:layout_marginTop="20dp"
+        android:hint="@string/EmailHint"
+        android:layout_below="@+id/UserNameTextField"
+        android:layout_centerHorizontal="true"/>
 
     <EditText
         android:layout_width="500px"
@@ -46,8 +28,10 @@
         android:ems="10"
         android:id="@+id/RegistrationPasswordTextField"
         android:hint="@string/PasswordHint"
-        android:layout_marginTop="330dp"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerVertical="true"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/EmailTextField"
+        android:layout_centerHorizontal="true"/>
 
     <EditText
         android:layout_width="500px"
@@ -56,16 +40,18 @@
         android:ems="10"
         android:id="@+id/RegistrationConfirmPasswordTextField"
         android:hint="@string/ConfirmPasswordHint"
-        android:layout_marginTop="400dp"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/RegistrationPasswordTextField"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"/>
 
     <Button
         android:layout_width="500px"
         android:layout_height="100px"
         android:text="Register"
         android:id="@+id/RegisterNewUserButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="460dp"/>
+        android:layout_below="@+id/RegistrationConfirmPasswordTextField"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>

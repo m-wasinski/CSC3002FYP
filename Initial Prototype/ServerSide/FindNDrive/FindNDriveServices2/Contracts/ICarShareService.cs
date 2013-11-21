@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Security.Permissions;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using DomainObjects.Domains;
@@ -11,6 +12,7 @@ namespace FindNDriveServices2.Contracts
     public interface ICarShareService
     {
         [OperationContract]
+        [PrincipalPermission(SecurityAction.Demand, Authenticated = true)]
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,

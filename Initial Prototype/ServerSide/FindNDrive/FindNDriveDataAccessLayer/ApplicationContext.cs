@@ -11,7 +11,7 @@ namespace FindNDriveDataAccessLayer
          **/
         public DbSet<User> User { get; set; }
         public DbSet<CarShare> CarShares { get; set; }
-
+        public DbSet<Session> Sessions { get; set; }
         public ApplicationContext()
             : this("FindNDriveConnectionString")
         {   
@@ -20,6 +20,11 @@ namespace FindNDriveDataAccessLayer
 
         public ApplicationContext(string connectionString)
             : base(connectionString)
+        {
+        }
+
+        // Define the model relationships, if C# isn't able to infer them itself
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
         }
     }

@@ -1,13 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using DomainObjects.Constants;
 using DomainObjects.DOmains;
 
 namespace FindNDriveServices2.DTOs
 {
+    [DataContract]
     public class CarShareDTO
     {
+        [DataMember]
         [Required]
         public virtual string DepartureCity { get; set; }
 
@@ -18,12 +22,14 @@ namespace FindNDriveServices2.DTOs
         [Required]
         [DataMember]
         [DataType(DataType.Date)]
-        public virtual DateTimeFormat DateOfDeparture { get; set; }
+        [Column(TypeName = "DateTime2")]
+        public virtual DateTime DateOfDeparture { get; set; }
 
         [Required]
+        [DataType(DataType.Date)]
         [DataMember]
-        [DataType(DataType.Time)]
-        public virtual DateTimeFormat TimeOfDeparture { get; set; }
+        [Column(TypeName = "DateTime2")]
+        public virtual DateTime TimeOfDeparture { get; set; }
 
         [Required]
         [DataMember]

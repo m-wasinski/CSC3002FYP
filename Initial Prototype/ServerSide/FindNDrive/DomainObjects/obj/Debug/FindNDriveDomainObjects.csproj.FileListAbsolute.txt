@@ -9,3 +9,8 @@ C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Debug\Ne
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\obj\Debug\FindNDriveDomainObjects.csprojResolveAssemblyReference.cache
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\obj\Debug\DomainObjects.dll
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\obj\Debug\DomainObjects.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Debug\DomainObjects.dll.config
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Debug\EntityFramework.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Debug\EntityFramework.SqlServer.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Debug\EntityFramework.xml
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Debug\EntityFramework.SqlServer.xml

@@ -8,6 +8,8 @@ namespace FindNDriveInfrastructureDataAccessLayer
 
         void Remove(T entity);
 
+        void Update(T entity); 
+
         T Find(int id);
 
         IQueryable<T> AsQueryable();

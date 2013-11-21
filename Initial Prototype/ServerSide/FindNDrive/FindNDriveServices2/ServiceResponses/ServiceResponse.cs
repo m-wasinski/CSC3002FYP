@@ -19,7 +19,7 @@ namespace FindNDriveServices2.ServiceResponses
         /// to interact with any additional Result properties.
         /// </summary>
         [DataMember]
-        public ServiceResponseCode ServiceReponseCode { get; set; }
+        public ServiceResponseCode ServiceResponseCode { get; set; }
 
         /// <summary>
         /// Gets or sets the error messages.

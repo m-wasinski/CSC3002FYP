@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using System.ServiceModel.Activation;
+using System.Threading;
+using System.Web;
 using DomainObjects.Domains;
 using FindNDriveDataAccessLayer;
 using FindNDriveServices2.Contracts;
@@ -11,13 +14,14 @@ using Omu.ValueInjecter;
 namespace FindNDriveServices2.Services
 {
     [ServiceBehavior(
-        InstanceContextMode = InstanceContextMode.Single,
-        ConcurrencyMode = ConcurrencyMode.Multiple)]
+           InstanceContextMode = InstanceContextMode.PerCall,
+           ConcurrencyMode = ConcurrencyMode.Multiple)]
+    [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class CarShareService : ICarShareService
     {
         public CarShareService()
         {
-
+            Thread.CurrentPrincipal = HttpContext.Current.User;
         }
         private readonly FindNDriveUnitOfWork _findNDriveUnitOfWork;
 
@@ -89,7 +93,11 @@ namespace FindNDriveServices2.Services
             //    ErrorMessages = new List<string>() { "testerror" }
             //};
 
-            throw new NotImplementedException();
+            return new ServiceResponse<List<CarShare>>()
+            {
+                Result = null,
+                ServiceResponseCode = ServiceResponseCode.Success
+            };
         }
 
         public ServiceResponse<CarShare> CreateNewCarShareListing(CarShareDTO carShareDTO)

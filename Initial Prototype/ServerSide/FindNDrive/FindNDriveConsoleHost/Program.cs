@@ -24,7 +24,8 @@ namespace FindNDriveConsoleHost
             var testDbContext = new ApplicationContext();
             var userEntityFrameworkRepository = new EntityFrameworkRepository<User>(testDbContext);
             var carShareEntityFrameworkRepository = new EntityFrameworkRepository<CarShare>(testDbContext);
-            var testUnitOfWork = new FindNDriveUnitOfWork(testDbContext, userEntityFrameworkRepository, carShareEntityFrameworkRepository);
+            var sessionEntityFrameworkRepository = new EntityFrameworkRepository<Session>(testDbContext);
+            var testUnitOfWork = new FindNDriveUnitOfWork(testDbContext, userEntityFrameworkRepository, carShareEntityFrameworkRepository, sessionEntityFrameworkRepository);
 
             WebSecurity.InitializeDatabaseConnection("FindNDriveConnectionString", "User", "Id", "UserName", true);
             

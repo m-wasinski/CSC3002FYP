@@ -14,12 +14,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import android.view.Window;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.myapplication.Constants.Constants;
+import com.example.myapplication.DomainObjects.ServiceResponse;
+import com.example.myapplication.DomainObjects.User;
 import com.example.myapplication.Experimental.MySSLSocketFactory;
 import com.example.myapplication.Helpers.ApplicationFileManager;
 import com.example.myapplication.Helpers.DeviceID;
+import com.example.myapplication.Helpers.UserHelper;
+import com.example.myapplication.Interfaces.OnLoginCompleted;
 import com.example.myapplication.R;
+import com.google.gson.Gson;
 
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
@@ -46,24 +54,25 @@ import java.net.URLConnection;
 import java.security.KeyStore;
 import java.util.ArrayList;
 
-public class MainActivity extends ActionBarActivity {
-
-    private TextView textView1;
-    private Thread _networkThread;
+public class MainActivity extends ActionBarActivity implements OnLoginCompleted {
 
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
-        Log.e("Device ID", DeviceID.getID());
+
         PerformStartupFileCheck();
-        if( getIntent().getBooleanExtra("Exit me", false)){
-            finish();
-            return; // add this to prevent from doing unnecessary stuffs
+
+        ApplicationFileManager fileManager = new ApplicationFileManager();
+
+        if (fileManager.CookieExists())
+        {
+            UserHelper userHelper = new UserHelper();
+            userHelper.AttemptAutoLogin(this);
         }
-        Intent intent = new Intent(this, WelcomeActivity.class);
-        startActivity(intent);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -105,6 +114,27 @@ public class MainActivity extends ActionBarActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onTaskCompleted(ServiceResponse<User> serviceResponse) {
+        if (serviceResponse.ServiceResponseCode == Constants.ServiceResponseSuccess)
+        {
+            Gson gson = new Gson();
+            Intent intent = new Intent(this, HomeActivity.class);
+            intent.putExtra("CurrentUser", gson.toJson(serviceResponse.Result));
+            startActivity(intent);
+
+        }
+        else
+        {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            Toast toast = Toast.makeText(this, "Your session has expired, please re-login.", Toast.LENGTH_LONG);
+            toast.show();
+        }
+
+        finish();
     }
 
     /**

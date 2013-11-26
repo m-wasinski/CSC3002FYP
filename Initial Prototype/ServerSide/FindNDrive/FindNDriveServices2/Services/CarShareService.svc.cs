@@ -1,119 +1,107 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ServiceModel;
-using System.ServiceModel.Activation;
-using System.Threading;
-using System.Web;
-using DomainObjects.Domains;
-using FindNDriveDataAccessLayer;
-using FindNDriveServices2.Contracts;
-using FindNDriveServices2.DTOs;
-using FindNDriveServices2.ServiceResponses;
-using Omu.ValueInjecter;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="CarShareService.svc.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   Defines the CarShareService type.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace FindNDriveServices2.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.ServiceModel;
+    using System.ServiceModel.Activation;
+    using System.Threading;
+    using System.Web;
+    using DomainObjects.Domains;
+    using FindNDriveDataAccessLayer;
+    using FindNDriveServices2.Contracts;
+    using FindNDriveServices2.DTOs;
+    using FindNDriveServices2.ServiceResponses;
+
+    /// <summary>
+    /// The car share service.
+    /// </summary>
     [ServiceBehavior(
            InstanceContextMode = InstanceContextMode.PerCall,
            ConcurrencyMode = ConcurrencyMode.Multiple)]
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class CarShareService : ICarShareService
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CarShareService"/> class.
+        /// </summary>
         public CarShareService()
         {
             Thread.CurrentPrincipal = HttpContext.Current.User;
         }
+
+        /// <summary>
+        /// The _find n drive unit of work.
+        /// </summary>
         private readonly FindNDriveUnitOfWork _findNDriveUnitOfWork;
 
-        public CarShareService(FindNDriveUnitOfWork findNDriveUnitOf)
-        {
-            _findNDriveUnitOfWork = findNDriveUnitOf;
+        /// <summary>
+        /// The _session manager.
+        /// </summary>
+        private readonly SessionManager _sessionManager;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CarShareService"/> class.
+        /// </summary>
+        /// <param name="findNDriveUnitOf">
+        /// The find n drive unit of.
+        /// </param>
+        public CarShareService(FindNDriveUnitOfWork findNDriveUnitOf, SessionManager sessionManager)
+        {
+            if (findNDriveUnitOf != null)
+            {
+                this._findNDriveUnitOfWork = findNDriveUnitOf;
+            }
+
+            this._sessionManager = sessionManager;
         }
 
-        public ServiceResponse<List<CarShare>> GetCarShareListings(CarShareDTO carShareDTO)
+        /// <summary>
+        /// The get car share listings by user.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        public ServiceResponse<List<CarShare>> GetCarShareListingsByUser(int id)
         {
-            //var aleksandra = new User
-            //{
-            //    FirstName = "Aleksandra",
-            //    LastName = "Szczypior",
-            //    DateOfBirth = new DateTime(1992, 11, 15),
-            //    EmailAddress = "alex1710@vp.pl",
-            //    Gender = Gender.Female,
-            //};
+            var carShares =
+                _findNDriveUnitOfWork.CarShareRepository.AsQueryable().IncludeAll().Where(_ => _.UserId == id).ToList();
 
-            //    _findNDriveUnitOfWork.UserRepository.Add(aleksandra);
-
-            //    _findNDriveUnitOfWork.CarShareRepository.Add(new CarShare()
-            //    {
-            //        DateOfDeparture = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day),
-            //        DepartureCity = "Belfast",
-            //        Description = "Test Car Share",
-            //        DestinationCity = "Lurgan",
-            //        Driver = aleksandra,
-            //        Fee = 0.00,
-            //        AvailableSeats = 4,
-            //        SmokersAllowed = false,
-            //        WomenOnly = false,
-            //    });
-
-            //_findNDriveUnitOfWork.Commit();
-
-            //var proxies = 
-            //_findNDriveUnitOfWork.CarShareRepository.AsQueryable()
-            //    .ToList()
-            //    .Select(
-            //        _ =>
-            //            new CarShare()
-            //            {
-            //                Id = _.Id,
-            //                Driver = new User().InjectFrom(_.Driver) as User,
-            //                DepartureCity = _.DestinationCity,
-            //                DestinationCity = _.DestinationCity,
-            //                DateOfDeparture = _.DateOfDeparture,
-            //                TimeOfDeparture = _.TimeOfDeparture,
-            //                Description = _.Description,
-            //                Fee = _.Fee,
-            //                AvailableSeats = _.AvailableSeats,
-            //                Participants = new Collection<User>().InjectFrom(_.Participants) as Collection<User>,
-            //                SmokersAllowed = _.SmokersAllowed,
-            //                WomenOnly = _.WomenOnly,
-            //                VehicleType = _.VehicleType
-            //            })
-            //    .ToList();
-
-
-
-
-            //Debug.WriteLine("Service Called! " + proxies.Count);
-            //return new ServiceResponse<List<CarShare>>
-            //{
-            //    Result = proxies,
-            //    ServiceReponseCode = ServiceResponseCode.Success,
-            //    ErrorMessages = new List<string>() { "testerror" }
-            //};
-
-            return new ServiceResponse<List<CarShare>>()
+            return new ServiceResponse<List<CarShare>>
             {
-                Result = null,
+                Result = carShares,
                 ServiceResponseCode = ServiceResponseCode.Success
             };
         }
 
+        /// <summary>
+        /// The create new car share listing.
+        /// </summary>
+        /// <param name="carShareDTO">
+        /// The car share dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
         public ServiceResponse<CarShare> CreateNewCarShareListing(CarShareDTO carShareDTO)
         {
             throw new NotImplementedException();
-        }
-
-        public static ICollection<TTo> InjectFrom<TFrom, TTo>(ICollection<TTo> to, IEnumerable<TFrom> from) where TTo : new()
-        {
-            foreach (var source in from)
-            {
-                var target = new TTo();
-                target.InjectFrom(source);
-                to.Add(target);
-            }
-            return to;
         }
     }
 }

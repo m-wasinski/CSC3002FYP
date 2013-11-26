@@ -4,3 +4,15 @@ C:\CSC3002FYP - Copy\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\R
 C:\CSC3002FYP - Copy\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Release\Newtonsoft.Json.xml
 C:\CSC3002FYP - Copy\Initial Prototype\ServerSide\FindNDrive\DomainObjects\obj\Release\DomainObjects.dll
 C:\CSC3002FYP - Copy\Initial Prototype\ServerSide\FindNDrive\DomainObjects\obj\Release\DomainObjects.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Release\DomainObjects.dll.config
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Release\DomainObjects.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Release\DomainObjects.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Release\EntityFramework.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Release\EntityFramework.SqlServer.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Release\Newtonsoft.Json.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Release\EntityFramework.xml
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Release\EntityFramework.SqlServer.xml
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Release\Newtonsoft.Json.xml
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\obj\Release\FindNDriveDomainObjects.csprojResolveAssemblyReference.cache
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\obj\Release\DomainObjects.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\obj\Release\DomainObjects.pdb

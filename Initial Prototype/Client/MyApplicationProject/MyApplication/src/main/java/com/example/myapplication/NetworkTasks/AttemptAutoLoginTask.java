@@ -65,11 +65,9 @@ public class AttemptAutoLoginTask extends AsyncTask<TextView, String, Boolean> {
 
             postRequest.setEntity(se);
 
-            postRequest.addHeader("DeviceID", DeviceID.getID());
-            postRequest.addHeader("UserId", "2");
-            postRequest.addHeader("Token", fileManager.GetTokenValue());
-            Log.e("Token:", fileManager.GetTokenValue());
-            Log.e("DeviceID:",  DeviceID.getID());
+            postRequest.addHeader(Constants.DeviceId, DeviceID.getID());
+            postRequest.addHeader(Constants.SessionID, fileManager.GetTokenValue());
+
             HttpResponse httpResponse = httpClient.execute(postRequest);
             String serviceResponseString = EntityUtils.toString(httpResponse.getEntity());
 

@@ -1,4 +1,13 @@
-﻿namespace FindNDriveInfrastructureCore.Util
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Factory.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   A concrete implementation of a factory which relies on a function expression to create a new instance.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace FindNDriveInfrastructureCore.Util
 {
     using System;
 

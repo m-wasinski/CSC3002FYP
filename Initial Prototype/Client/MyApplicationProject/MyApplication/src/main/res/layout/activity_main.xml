@@ -7,6 +7,13 @@
     tools:ignore="MergeRootFrame">
 
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="REPLACE BY APPLICATION LOGO"
+        android:id="@+id/AppLogo"
+        android:layout_gravity="center" />
 </FrameLayout>
 
 

@@ -75,6 +75,7 @@ public class RegistrationActivity extends Activity implements OnRegistrationComp
         {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
+            finish();
         }
         else
         {

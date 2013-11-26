@@ -5,6 +5,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -29,10 +32,6 @@ public class LoginActivity extends Activity implements OnLoginCompleted {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-
-
         setContentView(R.layout.login_activity);
         SetupUIEvents();
     }
@@ -71,6 +70,30 @@ public class LoginActivity extends Activity implements OnLoginCompleted {
     }
 
     @Override
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater inflater = getMenuInflater();
+
+        inflater.inflate(R.menu.login, menu);
+
+        return true;
+
+    }
+
+    @Override
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.RegisterMenuOption:
+                Intent intent = new Intent(this, RegistrationActivity.class);
+                startActivity(intent);
+                finish();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    @Override
     public void onTaskCompleted(ServiceResponse<User> serviceResponse) {
 
         pd.dismiss();
@@ -81,7 +104,7 @@ public class LoginActivity extends Activity implements OnLoginCompleted {
             Intent intent = new Intent(this, HomeActivity.class);
             intent.putExtra("CurrentUser", gson.toJson(serviceResponse.Result));
             startActivity(intent);
-            this.finish();
+            finish();
         }
         else
         {

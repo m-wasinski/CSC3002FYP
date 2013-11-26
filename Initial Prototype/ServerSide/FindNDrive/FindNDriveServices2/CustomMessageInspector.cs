@@ -1,40 +1,87 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.ServiceModel;
-using System.ServiceModel.Channels;
-using System.ServiceModel.Dispatcher;
-using System.Web;
-
-namespace FindNDriveServices2
+﻿namespace FindNDriveServices2
 {
-    public class CustomMessageInspector : IClientMessageInspector
+    using System;
+    using System.ServiceModel;
+    using System.ServiceModel.Channels;
+    using System.ServiceModel.Dispatcher;
+
+    /// <summary>
+    /// The custom message inspector.
+    /// </summary>
+    public class CustomMessageInspector : IClientMessageInspector, IDispatchMessageInspector
     {
+        /// <summary>
+        /// The before send request.
+        /// </summary>
+        /// <param name="request">
+        /// The request.
+        /// </param>
+        /// <param name="channel">
+        /// The channel.
+        /// </param>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
-            HttpRequestMessageProperty prop;
-            if (request.Properties.ContainsKey(HttpRequestMessageProperty.Name))
-            {
-                prop = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
-            }
-            else
-            {
-                prop = new HttpRequestMessageProperty();
-                request.Properties.Add(HttpRequestMessageProperty.Name, prop);
-            }
-
-            prop.Headers["Content-Type"] = "text/xml; charset=UTF-8";
-            prop.Headers["PropertyOne"] = "One";
-            prop.Headers["PropertyTwo"] = "Two";
-            prop.Headers["PropertyTwo"] = "Three";
-            prop.Headers["PropertyTwo"] = "Four";
-
-            return prop;
+            throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// The after receive reply.
+        /// </summary>
+        /// <param name="reply">
+        /// The reply.
+        /// </param>
+        /// <param name="correlationState">
+        /// The correlation state.
+        /// </param>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
         public void AfterReceiveReply(ref Message reply, object correlationState)
         {
             throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// The after receive request.
+        /// </summary>
+        /// <param name="request">
+        /// The request.
+        /// </param>
+        /// <param name="channel">
+        /// The channel.
+        /// </param>
+        /// <param name="instanceContext">
+        /// The instance context.
+        /// </param>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        public object AfterReceiveRequest(ref Message request, IClientChannel channel, InstanceContext instanceContext)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// The before send reply.
+        /// </summary>
+        /// <param name="reply">
+        /// The reply.
+        /// </param>
+        /// <param name="correlationState">
+        /// The correlation state.
+        /// </param>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        public void BeforeSendReply(ref Message reply, object correlationState)
+        {
+            throw new NotImplementedException();
+        }
     }
+
 }

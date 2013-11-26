@@ -11,5 +11,7 @@
     <string name="FirstNameHint">First Name</string>
     <string name="LastNameHint">Last Name</string>
     <string name="ConfirmPasswordHint">Confirm Password</string>
+    <string name="RegisterMenuTitle">Register</string>
+    <string name="LogoutMenuTitle">Logout</string>
 
 </resources>

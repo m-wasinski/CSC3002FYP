@@ -1,12 +1,31 @@
-﻿using System.Runtime.Serialization;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SessionTypes.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   Defines the SessionTypes type.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace DomainObjects.Constants
 {
+    using System.Runtime.Serialization;
+
+    /// <summary>
+    /// The session types.
+    /// </summary>
     public enum SessionTypes
-    {   
+    {
+        /// <summary>
+        /// The temporary.
+        /// </summary>
         [DataMember]
-        Temporary,
+        Temporary = 0,
+
+        /// <summary>
+        /// The permanent.
+        /// </summary>
         [DataMember]
-        Permanent
+        Permanent = 1
     }
 }

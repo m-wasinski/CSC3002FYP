@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants\Constants.cs" />
     <Compile Include="Constants\SessionTypes.cs" />
     <Compile Include="Domains\CarShare.cs" />
     <Compile Include="Constants\Gender.cs" />

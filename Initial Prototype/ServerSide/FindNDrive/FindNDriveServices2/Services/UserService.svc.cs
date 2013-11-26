@@ -1,32 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Security.Policy;
-using System.ServiceModel;
-using System.ServiceModel.Activation;
-using System.ServiceModel.Channels;
-using System.ServiceModel.Configuration;
-using System.ServiceModel.Web;
-using System.Text;
-using System.Threading;
-using System.Web;
-using System.Web.Security;
-using DomainObjects.Constants;
-using DomainObjects.DOmains;
-using DomainObjects.Domains;
-using FindNDriveDataAccessLayer;
-using FindNDriveInfrastructureCore;
-using FindNDriveInfrastructureDataAccessLayer;
-using FindNDriveServices2.Contracts;
-using FindNDriveServices2.DTOs;
-using FindNDriveServices2.ServiceResponses;
-using WebMatrix.WebData;
-using Roles = DomainObjects.Constants.Roles;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="UserService.svc.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The user service.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace FindNDriveServices2.Services
 {
+    using System.Collections.Generic;
+    using System.ServiceModel;
+    using System.ServiceModel.Activation;
+
+    using DomainObjects.DOmains;
+
+    using FindNDriveDataAccessLayer;
+
+    using FindNDriveInfrastructureCore;
+
+    using FindNDriveServices2.Contracts;
+    using FindNDriveServices2.DTOs;
+    using FindNDriveServices2.ServiceResponses;
+
+    using WebMatrix.WebData;
+
+    using Roles = DomainObjects.Constants.Roles;
+
+    /// <summary>
+    /// The user service.
+    /// </summary>
     [ServiceBehavior(
            InstanceContextMode = InstanceContextMode.PerCall,
            ConcurrencyMode = ConcurrencyMode.Multiple)]
@@ -40,92 +43,48 @@ namespace FindNDriveServices2.Services
         /// </summary>
         private readonly FindNDriveUnitOfWork _findNDriveUnitOfWork;
 
-        public UserService(FindNDriveUnitOfWork findNDriveUnitOf)
+        /// <summary>
+        /// The _session manager.
+        /// </summary>
+        private readonly SessionManager _sessionManager;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserService"/> class.
+        /// </summary>
+        /// <param name="findNDriveUnitOfWork">
+        /// The find n drive unit of work.
+        /// </param>
+        /// <param name="sessionManager">
+        /// The session manager.
+        /// </param>
+        public UserService(FindNDriveUnitOfWork findNDriveUnitOfWork ,SessionManager sessionManager)
         {
-            _findNDriveUnitOfWork = findNDriveUnitOf;
+            this._findNDriveUnitOfWork = findNDriveUnitOfWork;
+            this._sessionManager = sessionManager;
         }
 
-        public UserService()
-        {
-           
-        }
         /// <summary>
         /// Logs a user in.
         /// </summary>
         /// <param name="login"></param>
         /// <returns></returns>
-
         public ServiceResponse<User> ManualUserLogin(LoginDTO login)
         {
-
-            if (!WebSecurity.Initialized)
-            {
-                WebSecurity.InitializeDatabaseConnection("FindNDriveConnectionString", "User", "Id", "UserName", true);
-            }
-
             User loggedInUser = null;
 
             var validatedUser = ValidationHelper.Validate(login);
        
             // Need to change validated user isValid method as extra validation in this class....
-            if (login.UserName == null || login.Password == null || !WebSecurity.Login(login.UserName, login.Password))
+            if (!validatedUser.IsValid || !WebSecurity.Login(login.UserName, login.Password))
             {
                 validatedUser.ErrorMessages.Add("Invalid Username or Password.");
                 validatedUser.IsValid = false;
             }
             else
             {   
-                var proxy = _findNDriveUnitOfWork.UserRepository.Find(WebSecurity.GetUserId(login.UserName));
-                //Retrieve headers from the incoming request.
-                var rememberMe = WebOperationContext.Current.IncomingRequest.Headers["RememberMe"];
-                var currentId = WebOperationContext.Current.IncomingRequest.Headers["DeviceID"];
-
-                //generate a new random hash.
-                var hashedSessionId = SessionHelper.GenerateNewSessionId();
-                var hashedDeviceId = SessionHelper.EncryptValue(currentId);
-                //set expiration date for the above token, initialy to 30 minutes.
-                var validUntil = DateTime.Now.AddMinutes(30);
-                if (WebOperationContext.Current != null)
-                {
-                    var rememberUser = WebOperationContext.Current.IncomingRequest.Headers["RememberMe"];
-
-                    if (rememberMe != null)
-                    {
-                        if (rememberUser.Equals("true"))
-                        {
-                            //make the token expire in two weeks.
-                            validUntil = DateTime.Now.AddDays(14);
-                        }
-
-                        var currentSession = _findNDriveUnitOfWork.SessionRepository.Find(proxy.Id);
-                        
-                        
-
-                        var newSession = new Session()
-                        {
-                            LastKnownId = currentId, 
-                            SessionExpirationDate = validUntil, 
-                            SessionType = SessionTypes.Permanent,
-                            Token = hashedSessionId, 
-                            UserId = proxy.Id
-                        };
-
-                        if (currentSession != null)
-                        {
-                            currentSession.Token = hashedSessionId;
-                            currentSession.LastKnownId = hashedDeviceId;
-                            currentSession.SessionExpirationDate = validUntil;
-                            _findNDriveUnitOfWork.SessionRepository.Update(currentSession);
-                        }
-                        else
-                            _findNDriveUnitOfWork.SessionRepository.Add(newSession);
-
-                        _findNDriveUnitOfWork.Commit();
-                        WebOperationContext.Current.OutgoingResponse.Headers.Add("SessionId", hashedSessionId);
-                    }
-
-                }
-
+                var proxy = this._findNDriveUnitOfWork.UserRepository.Find(WebSecurity.GetUserId(login.UserName));
+                this._sessionManager.GenerateNewSession(proxy.UserId);
+              
                 loggedInUser = new User()
                 {
                     FirstName = proxy.FirstName,
@@ -135,11 +94,10 @@ namespace FindNDriveServices2.Services
                     Gender = proxy.Gender,
                     Role = Roles.User,
                     UserName = proxy.UserName,
-                    Id = proxy.Id
+                    UserId = proxy.UserId
                 };
             }
 
-            
             return new ServiceResponse<User>
             {
                 Result = loggedInUser,
@@ -148,38 +106,30 @@ namespace FindNDriveServices2.Services
             };
         }
 
+        /// <summary>
+        /// The auto user login.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         public ServiceResponse<User> AutoUserLogin()
         {
-            var token = WebOperationContext.Current.IncomingRequest.Headers["Token"];
-            var currentId = WebOperationContext.Current.IncomingRequest.Headers["DeviceID"];
-            var userId = WebOperationContext.Current.IncomingRequest.Headers["UserId"];
-
-            var currentSession = _findNDriveUnitOfWork.SessionRepository.Find(int.Parse(userId));
-            var credentialsValid = SessionHelper.ValidateSession(token, currentId, currentSession);
-
             User loggedInUser = null;
 
-            if (credentialsValid)
+            if (this._sessionManager.ValidateSession())
             {
-                var proxy = _findNDriveUnitOfWork.UserRepository.Find(int.Parse(userId));
-                loggedInUser = new User()
+                var userId = this._sessionManager.GetUserId();
+
+                if (userId != -1)
                 {
-                    FirstName = proxy.FirstName,
-                    LastName = proxy.LastName,
-                    DateOfBirth = proxy.DateOfBirth,
-                    EmailAddress = proxy.EmailAddress,
-                    Gender = proxy.Gender,
-                    Role = Roles.User,
-                    UserName = proxy.UserName,
-                    Id = proxy.Id
-                };
+                    loggedInUser = this._findNDriveUnitOfWork.UserRepository.Find(userId);  
+                }
             }
 
             return new ServiceResponse<User>
             {
                 Result = loggedInUser,
                 ServiceResponseCode = (loggedInUser == null) ? ServiceResponseCode.Failure : ServiceResponseCode.Success,
-                ErrorMessages = new List<string>() { SessionHelper.EncryptValue(currentId) }
             };
         }
 
@@ -191,17 +141,13 @@ namespace FindNDriveServices2.Services
         public ServiceResponse<User> RegisterUser(RegisterDTO register)
         {
             User newUser = null;
-            if (!WebSecurity.Initialized)
-            {
-                WebSecurity.InitializeDatabaseConnection("FindNDriveConnectionString", "User", "Id", "UserName", true);
-            }
 
             var validatedRegisterDTO = ValidationHelper.Validate(register);
 
             if (validatedRegisterDTO.IsValid)
             {
                 WebSecurity.CreateUserAndAccount(register.User.UserName, register.Password);
-                register.User.Id = WebSecurity.GetUserId(register.User.UserName);
+                register.User.UserId = WebSecurity.GetUserId(register.User.UserName);
 
                 newUser = new User()
                 {
@@ -212,38 +158,41 @@ namespace FindNDriveServices2.Services
                     Gender = register.User.Gender,
                     Role = Roles.User,
                     UserName = register.User.UserName,
-                    Id = register.User.Id
+                    UserId = register.User.UserId
                 };
 
-                _findNDriveUnitOfWork.UserRepository.Add(newUser);
+                this._findNDriveUnitOfWork.UserRepository.Add(newUser);
 
-                _findNDriveUnitOfWork.Commit();
+                this._findNDriveUnitOfWork.Commit();
             }
 
             return new ServiceResponse<User>
             {
                 Result = newUser,
-                ServiceResponseCode = validatedRegisterDTO.IsValid? ServiceResponseCode.Success: ServiceResponseCode.Failure,
+                ServiceResponseCode =
+                    validatedRegisterDTO.IsValid ? ServiceResponseCode.Success : ServiceResponseCode.Failure,
                 ErrorMessages = validatedRegisterDTO.ErrorMessages
             };
         }
 
-        public ServiceResponse<User> GetUsers()
+        /// <summary>
+        /// The logout user.
+        /// </summary>
+        /// <param name="forceInvalidate">
+        /// The force invalidate.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<bool> LogoutUser(bool forceInvalidate)
         {
-            throw new NotImplementedException();
-        }
-
-        public ServiceResponse<User> TestAuthentication(UserDTO userDTO)
-        {
-            if (WebOperationContext.Current != null)
+            var success = this._sessionManager.InvalidateSession(forceInvalidate);
+ 
+            return new ServiceResponse<bool>
             {
-                var securityToken = WebOperationContext.Current.IncomingRequest.Headers["SessionId"];
-            }
-
-            return new ServiceResponse<User>()
-            {
-                Result = null,
-                ServiceResponseCode = WebSecurity.IsAuthenticated? ServiceResponseCode.Success : ServiceResponseCode.Failure
+                Result = success,
+                ServiceResponseCode = success ? ServiceResponseCode.Success : ServiceResponseCode.Failure,
+                ErrorMessages = null
             };
         }
     }

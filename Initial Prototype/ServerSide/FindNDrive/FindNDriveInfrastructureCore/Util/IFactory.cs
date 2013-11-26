@@ -1,4 +1,13 @@
-﻿namespace FindNDriveInfrastructureCore.Util
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="IFactory.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   Represents a generic Factory class.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace FindNDriveInfrastructureCore.Util
 {
     /// <summary>
     /// Represents a generic Factory class.

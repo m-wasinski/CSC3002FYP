@@ -26,9 +26,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activities.WelcomeActivity"
-            android:label="Registration Screen" />
-        <activity
             android:name=".Activities.LoginActivity"
             android:label="Login Activity" />
         <activity

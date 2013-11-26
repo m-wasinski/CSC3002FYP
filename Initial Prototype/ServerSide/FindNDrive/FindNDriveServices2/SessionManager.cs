@@ -1,0 +1,208 @@
+﻿using System;
+using System.Security.Cryptography;
+using System.ServiceModel.Web;
+using System.Text;
+using DomainObjects.Constants;
+using DomainObjects.Domains;
+using DomainObjects.DOmains;
+using FindNDriveDataAccessLayer;
+
+namespace FindNDriveServices2
+{
+    public class SessionManager
+    {   
+        private readonly FindNDriveUnitOfWork _findNDriveUnitOfWork;
+
+        public SessionManager(FindNDriveUnitOfWork findNDriveUnitOfWork)
+        {
+            _findNDriveUnitOfWork = findNDriveUnitOfWork;
+        }
+
+        //Generates a new session id for the user.
+        public static string GenerateNewSessionId(int userId)
+        {
+            return userId + ":" + Guid.NewGuid().ToString().Replace("-", string.Empty).Replace(":", string.Empty).Substring(0, 8);
+        }
+
+        //Encrypts a given string value and returns a hash.
+        private string EncryptValue(string value)
+        {
+            var encoding = new UTF8Encoding();
+            var bytes = encoding.GetBytes(value);
+
+            var sha = new SHA1CryptoServiceProvider();
+            var hash = sha.ComputeHash(bytes);
+            return Convert.ToBase64String(hash);
+        }
+
+        public bool ValidateSession()
+        {
+            if (WebOperationContext.Current != null)
+            {
+                var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[Constants.SessionId];
+                var incomingDeviceId = WebOperationContext.Current.IncomingRequest.Headers[Constants.DeviceId];
+
+                int userId = GetUserId(incomingSessionId);
+
+                if (userId == -1)
+                    return false;
+
+                var savedSession = _findNDriveUnitOfWork.SessionRepository.Find(GetUserId(incomingSessionId));
+
+                if (savedSession != null)
+                {
+                    if (!incomingSessionId.Equals(savedSession.SessionId))
+                        return false;
+
+                    var encryptedId = EncryptValue(incomingDeviceId);
+
+                    if (!savedSession.LastKnownId.Equals(encryptedId))
+                        return false;
+
+                    var result = DateTime.Compare(DateTime.Now, savedSession.ExpiresOn);
+
+                    if (result > 0)
+                        return false;
+
+                    RefreshSession(savedSession);
+                }
+                else
+                    return false;
+            }
+            else
+                return false;
+
+            return true;
+        }
+
+        public int GetUserId()
+        {
+            if (WebOperationContext.Current != null)
+            {
+                var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[Constants.SessionId];
+
+                if(incomingSessionId != null)
+                    return GetUserId(incomingSessionId);
+            }
+
+            return -1;
+        }
+
+        public int GetUserId(string session)
+        {
+            string stringId;
+            int id;
+
+            try{
+                stringId = session.Substring(0, session.IndexOf(":", StringComparison.Ordinal));
+            }
+            catch (ArgumentOutOfRangeException){
+                return -1;
+            }
+            
+            // ToInt32 can throw FormatException or OverflowException. 
+            try{
+                id = Convert.ToInt32(stringId);
+            }
+            catch (FormatException){
+                return -1;
+            }
+            catch (OverflowException){
+                return -1;
+            }
+
+            return id;
+        }
+
+        public void RefreshSession(Session session)
+        {
+            session.ExpiresOn = DateTime.Now.AddMinutes(30);
+            _findNDriveUnitOfWork.SessionRepository.Update(session);
+            _findNDriveUnitOfWork.Commit();
+        }
+
+        public void GenerateNewSession(int userId)
+        {
+            if (WebOperationContext.Current != null)
+            {
+                var rememberUser = WebOperationContext.Current.IncomingRequest.Headers[Constants.RememberMe];
+                var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[Constants.SessionId];
+                var incomingDeviceId = WebOperationContext.Current.IncomingRequest.Headers[Constants.DeviceId];
+                //set expiration date for the above token, initialy to 30 minutes.
+
+                var validUntil = DateTime.Now.AddMinutes(30);
+                var sessionType = SessionTypes.Temporary;
+                var sessionId = GenerateNewSessionId(userId);
+                var hashedDeviceId = EncryptValue(incomingDeviceId);
+                
+                if (rememberUser != null)
+                {
+                    if (rememberUser.Equals("true"))
+                    {
+                        //make the token expire in two weeks.
+                        validUntil = DateTime.Now.AddDays(14);
+                        sessionType = SessionTypes.Permanent;
+                    }
+
+                    var savedSession = _findNDriveUnitOfWork.SessionRepository.Find(userId);
+
+                    if (savedSession != null)
+                    {
+                        savedSession.SessionId = sessionId;
+                        savedSession.LastKnownId = hashedDeviceId;
+                        savedSession.ExpiresOn = validUntil;
+                        savedSession.SessionType = sessionType;
+                        _findNDriveUnitOfWork.SessionRepository.Update(savedSession);
+                    }
+                    else
+                    {
+                        var newSession = new Session
+                        {
+                            LastKnownId = hashedDeviceId,
+                            ExpiresOn = validUntil,
+                            SessionType = sessionType,
+                            SessionId = sessionId,
+                            UserId = userId
+                        };
+
+                        _findNDriveUnitOfWork.SessionRepository.Add(newSession);
+                    }
+                        
+                    _findNDriveUnitOfWork.Commit();
+
+                    WebOperationContext.Current.OutgoingResponse.Headers.Add(Constants.SessionId, sessionId);
+                }
+            }
+        }
+
+        public bool InvalidateSession(bool forceInvalidate)
+        {
+            var success = false;
+
+            if (WebOperationContext.Current != null)
+            {
+                var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[Constants.SessionId];
+
+                int userId = GetUserId(incomingSessionId);
+
+                if (userId == -1)
+                    return false;
+
+                var savedSession = _findNDriveUnitOfWork.SessionRepository.Find(userId);
+
+                if (userId != -1)
+                {
+                    if (forceInvalidate || savedSession.SessionType == SessionTypes.Temporary)
+                    {
+                        savedSession.ExpiresOn = DateTime.Now.AddDays(-1);
+                        success = true;
+                        _findNDriveUnitOfWork.SessionRepository.Update(savedSession);
+                        _findNDriveUnitOfWork.Commit();
+                    }
+                }
+            }
+
+            return success;
+        }
+    }
+}

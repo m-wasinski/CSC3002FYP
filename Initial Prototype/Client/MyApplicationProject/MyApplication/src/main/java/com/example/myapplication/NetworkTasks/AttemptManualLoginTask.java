@@ -69,19 +69,19 @@ public class AttemptManualLoginTask extends AsyncTask<TextView, String, Boolean>
 
             postRequest.setEntity(se);
 
-            postRequest.addHeader("RememberMe", ""+RememberMe);
-            postRequest.addHeader("DeviceID", DeviceID.getID());
+            postRequest.addHeader(Constants.RememberMe, ""+RememberMe);
+            postRequest.addHeader(Constants.DeviceId, DeviceID.getID());
             HttpResponse httpResponse = httpClient.execute(postRequest);
             String serviceResponseString = EntityUtils.toString(httpResponse.getEntity());
 
 
             Type userType = new TypeToken<ServiceResponse<User>>() {}.getType();
-            Log.e("Service Response:", serviceResponseString);
+            Log.e("Login Service Response:", serviceResponseString);
             serviceResponse = gson.fromJson(serviceResponseString, userType);
 
             if(serviceResponse.ServiceResponseCode == Constants.ServiceResponseSuccess)
             {
-                String token = httpResponse.getFirstHeader("SessionId").getValue();
+                String token = httpResponse.getFirstHeader(Constants.SessionID).getValue();
                 ApplicationFileManager fileManager = new ApplicationFileManager();
                 fileManager.CreateSessionCookie(token);
             }

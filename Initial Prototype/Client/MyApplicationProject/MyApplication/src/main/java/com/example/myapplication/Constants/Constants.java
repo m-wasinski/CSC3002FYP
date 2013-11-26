@@ -10,4 +10,7 @@ public class Constants {
     public static final int Female = 2;
     public static final String AppFolderName = "FindNDrive";
     public static final String SessionIdFileName = "session_id";
+    public static final String SessionID = "SiD";
+    public static final String DeviceId = "DiD";
+    public static final String RememberMe = "RememberMe";
 }

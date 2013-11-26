@@ -1,15 +1,27 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Gender.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   Defines the Gender type.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace DomainObjects.Constants
-{   
+{
+    using System;
+    using System.Runtime.Serialization;
+
+    /// <summary>
+    /// The gender.
+    /// </summary>
     [DataContract]
     [Serializable]
     public enum Gender
-    { /// <summary>
+    { 
+        /// <summary>
         /// Represents a male person.
         /// </summary>
-        /// 
         [EnumMember(Value = "Male")]
         Male = 1,
 

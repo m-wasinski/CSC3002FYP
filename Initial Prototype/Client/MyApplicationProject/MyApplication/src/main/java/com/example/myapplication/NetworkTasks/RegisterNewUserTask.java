@@ -1,6 +1,7 @@
 package com.example.myapplication.NetworkTasks;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.example.myapplication.DTOs.RegisterDTO;
@@ -64,7 +65,7 @@ public class RegisterNewUserTask extends AsyncTask<TextView, String, Boolean> {
 
             HttpResponse httpResponse = httpClient.execute(postRequest);
             String serviceResponseString = EntityUtils.toString(httpResponse.getEntity());
-
+            Log.e("Login Service Response:", serviceResponseString);
             Type userType = new TypeToken<ServiceResponse<User>>() {}.getType();
 
             serviceResponse = gson.fromJson(serviceResponseString, userType);

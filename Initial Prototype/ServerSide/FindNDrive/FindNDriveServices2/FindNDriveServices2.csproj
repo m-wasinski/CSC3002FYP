@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Services\CarShareService.svc" />
+    <Content Include="Services\SearchService.svc" />
     <Content Include="Services\UserService.svc" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -100,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contracts\ICarShareService.cs" />
+    <Compile Include="Contracts\ISearchService.cs" />
     <Compile Include="Contracts\IUserService.cs" />
     <Compile Include="CustomEndpointBehaviour.cs" />
     <Compile Include="CustomMessageInspector.cs" />
@@ -114,6 +116,9 @@
     <Compile Include="ServiceResponses\ServiceResponseCode.cs" />
     <Compile Include="Services\CarShareService.svc.cs">
       <DependentUpon>CarShareService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\SearchService.svc.cs">
+      <DependentUpon>SearchService.svc</DependentUpon>
     </Compile>
     <Compile Include="Services\UserService.svc.cs">
       <DependentUpon>UserService.svc</DependentUpon>

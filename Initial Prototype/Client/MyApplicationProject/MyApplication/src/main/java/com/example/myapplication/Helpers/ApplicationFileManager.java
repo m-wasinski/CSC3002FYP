@@ -83,25 +83,27 @@ public  class ApplicationFileManager {
 
     public boolean CreateSessionCookie(String value)
     {
-        if (cookieExists)
-        {
-            try {
+
+        try {
+            if (cookieExists)
+            {
                 sessionId.delete();
                 sessionId.createNewFile();
-                //FileOutputStream fileOutputStream = new FileOutputStream(sessionId, false);
-
-                Writer out = new BufferedWriter(new OutputStreamWriter(
-                        new FileOutputStream(sessionId), "UTF8"));
-                out.append(value);
-                //OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, value);
-                //outputStreamWriter.write(value);
-                //outputStreamWriter.close();
-                out.flush();
-                out.close();
-            } catch (IOException e) {
-                Log.e("Error while creating file", e.toString());
             }
+            //FileOutputStream fileOutputStream = new FileOutputStream(sessionId, false);
+
+            Writer out = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(sessionId), "UTF8"));
+            out.append(value);
+            //OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, value);
+            //outputStreamWriter.write(value);
+            //outputStreamWriter.close();
+            out.flush();
+            out.close();
+        } catch (IOException e) {
+            Log.e("Error while creating file", e.toString());
         }
+
 
         return true;
     }

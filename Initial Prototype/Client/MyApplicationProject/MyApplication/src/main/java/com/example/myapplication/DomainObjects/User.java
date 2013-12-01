@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class User {
 
-    public int GetId() {return Id;}
+    public int GetId() {return UserId;}
 
     public String GetUserName() {return UserName;}
 
@@ -21,7 +21,7 @@ public class User {
 
     public String GetDateOfBirth() {return DateOfBirth;}
 
-    private int Id;
+    private int UserId;
 
     private String UserName;
 

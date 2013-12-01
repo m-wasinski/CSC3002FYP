@@ -39,14 +39,9 @@ namespace FindNDriveServices2
         public MyServiceHost(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager, Type serviceType, params Uri[] baseAddresses)
             : base(serviceType, baseAddresses)
         {
-            if (findNDriveUnitOfWork == null)
-            {
-                throw new ArgumentNullException("findNDriveUnitOfWork");
-            }
-
             foreach (var cd in this.ImplementedContracts.Values)
             {
-                cd.Behaviors.Add(new MyInstanceProvider(findNDriveUnitOfWork, sessionManager));
+                cd.Behaviors.Add(new MyInstanceProvider(findNDriveUnitOfWork, sessionManager, serviceType));
             }
         }
     }

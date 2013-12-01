@@ -4,13 +4,12 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.example.myapplication.Constants.Constants;
-import com.example.myapplication.DTOs.LoginDTO;
+import com.example.myapplication.DomainObjects.CarShare;
 import com.example.myapplication.DomainObjects.ServiceResponse;
 import com.example.myapplication.DomainObjects.User;
 import com.example.myapplication.Experimental.MySSLSocketFactory;
 import com.example.myapplication.Helpers.ApplicationFileManager;
-import com.example.myapplication.Helpers.DeviceID;
+import com.example.myapplication.Interfaces.OnCarSharesRetrieved;
 import com.example.myapplication.Interfaces.OnLoginCompleted;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,56 +26,57 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 /**
- * Created by Michal on 17/11/13.
+ * Created by Michal on 28/11/13.
  */
-public class AttemptAutoLoginTask extends AsyncTask<TextView, String, Boolean> {
+public class MyCarSharesRetriever extends AsyncTask<TextView, String, Boolean> {
 
-    private OnLoginCompleted listener;
-    private ServiceResponse<User> serviceResponse;
+    private OnCarSharesRetrieved listener;
+    private ServiceResponse<ArrayList<CarShare>> serviceResponse;
+    private int userId;
 
-    public AttemptAutoLoginTask(OnLoginCompleted lis)
+    public MyCarSharesRetriever(int id, OnCarSharesRetrieved lis)
     {
+        userId = id;
         listener = lis;
     }
 
     @Override
     protected void onPostExecute(Boolean aBoolean) {
         super.onPostExecute(aBoolean);
-        listener.onTaskCompleted(serviceResponse);
+        listener.onCarSharesRetrieved(serviceResponse);
     }
 
     @Override
     protected Boolean doInBackground(TextView... textViews) {
-
         ApplicationFileManager fileManager = new ApplicationFileManager();
 
         try {
 
             HttpClient httpClient = MySSLSocketFactory.getNewHttpClient();
-            URI uri = new URI("https://asus/Services/UserService.svc/autologin");
+            URI uri = new URI("https://asus/Services/CarShareService.svc/getall");
             HttpPost postRequest = new HttpPost(uri);
 
             Gson gson = new Gson();
-            String jsonLoginDTO = gson.toJson("");
-            StringEntity se = new StringEntity(jsonLoginDTO,"UTF-8");
+            String stringId = gson.toJson(userId);
+            StringEntity se = new StringEntity(stringId,"UTF-8");
             se.setContentType("application/json;charset=UTF-8");
 
             postRequest.setEntity(se);
 
-            postRequest.addHeader(Constants.DeviceId, DeviceID.getID());
-            postRequest.addHeader(Constants.SessionID, fileManager.GetTokenValue());
+            //postRequest.addHeader(Constants.DeviceId, DeviceID.getID());
+            //postRequest.addHeader(Constants.SessionID, fileManager.GetTokenValue());
 
             HttpResponse httpResponse = httpClient.execute(postRequest);
             String serviceResponseString = EntityUtils.toString(httpResponse.getEntity());
 
 
-            Type userType = new TypeToken<ServiceResponse<User>>() {}.getType();
-            Log.e("Service Response:", serviceResponseString);
-            serviceResponse = gson.fromJson(serviceResponseString, userType);
+            Type carSharesType = new TypeToken<ServiceResponse<ArrayList<CarShare>>>() {}.getType();
 
-//            Log.e("Header", serviceResponse.ErrorMessages.get(0).toString());
+            Log.e("Car shares:", serviceResponseString);
+            serviceResponse = gson.fromJson(serviceResponseString, carSharesType);
 
         } catch (URISyntaxException e) {
             e.printStackTrace();

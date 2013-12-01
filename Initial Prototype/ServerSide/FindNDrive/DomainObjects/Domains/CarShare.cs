@@ -29,7 +29,7 @@ namespace DomainObjects.Domains
 
         /// <summary>
         /// Gets or sets the user id.
-        /// </summary>
+        /// </summary>F
         [Required]
         [DataMember]
         public int UserId { get; set; }

@@ -35,13 +35,46 @@ namespace FindNDriveServices2.Contracts
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        [PrincipalPermission(SecurityAction.Demand, Authenticated = true)]
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/get")]
-        ServiceResponse<List<CarShare>> GetCarShareListingsByUser(int id);
+            UriTemplate = "/getallasdriver")]
+        ServiceResponse<List<CarShare>> GetCarShareListingsAsDriver(int id);
+
+        /// <summary>
+        /// The get car share listings as participant.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/getallasparticipant")]
+        ServiceResponse<List<CarShare>> GetCarShareListingsAsParticipant(int id);
+
+        /// <summary>
+        /// The get all car share listings for user.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/getall")]
+        ServiceResponse<List<CarShare>> GetAllCarShareListingsForUser(int id);
 
         /// <summary>
         /// The create new car share listing.
@@ -59,5 +92,6 @@ namespace FindNDriveServices2.Contracts
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/create")]
         ServiceResponse<CarShare> CreateNewCarShareListing(CarShareDTO carShareDTO);
+
     }
 }

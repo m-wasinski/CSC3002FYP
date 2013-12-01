@@ -141,6 +141,7 @@ namespace FindNDriveDataAccessLayer.Migrations
             context.User.AddOrUpdate(_ => _.UserId, driver);
             WebSecurity.CreateUserAndAccount(driver.UserName, "password");
             context.SaveChanges();
+
             var carShare = new CarShare
             {
                 AvailableSeats = 4,
@@ -156,6 +157,23 @@ namespace FindNDriveDataAccessLayer.Migrations
             };
 
             context.CarShares.AddOrUpdate(carShare);
+            context.SaveChanges();
+
+            var carShare2 = new CarShare
+            {
+                AvailableSeats = 4,
+                DateOfDeparture = DateTime.Now,
+                DepartureCity = "Lurgan",
+                DestinationCity = "Belfast",
+                Description = "Lift to Belfast",
+                Fee = 0.00,
+                WomenOnly = false,
+                Participants = new Collection<User> { participant1, participant2 },
+                Driver = participant1,
+                SmokersAllowed = false
+            };
+
+            context.CarShares.AddOrUpdate(carShare2);
             context.SaveChanges();
         }
     }

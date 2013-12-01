@@ -6,18 +6,12 @@
 //   Defines the IUserService type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-
-
-
 namespace FindNDriveServices2.Contracts
 {
     using System.Security.Permissions;
     using System.ServiceModel;
     using System.ServiceModel.Web;
-    using System.Web.Security;
-
     using DomainObjects.DOmains;
-
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
 

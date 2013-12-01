@@ -14,6 +14,7 @@ namespace FindNDriveServices2.Services
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
+    using System.Text.RegularExpressions;
     using System.Threading;
     using System.Web;
     using DomainObjects.Domains;
@@ -21,6 +22,8 @@ namespace FindNDriveServices2.Services
     using FindNDriveServices2.Contracts;
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
+
+    using Microsoft.Practices.ObjectBuilder2;
 
     /// <summary>
     /// The car share service.
@@ -36,7 +39,7 @@ namespace FindNDriveServices2.Services
         /// </summary>
         public CarShareService()
         {
-            Thread.CurrentPrincipal = HttpContext.Current.User;
+       
         }
 
         /// <summary>
@@ -57,11 +60,7 @@ namespace FindNDriveServices2.Services
         /// </param>
         public CarShareService(FindNDriveUnitOfWork findNDriveUnitOf, SessionManager sessionManager)
         {
-            if (findNDriveUnitOf != null)
-            {
-                this._findNDriveUnitOfWork = findNDriveUnitOf;
-            }
-
+            this._findNDriveUnitOfWork = findNDriveUnitOf;
             this._sessionManager = sessionManager;
         }
 
@@ -69,17 +68,56 @@ namespace FindNDriveServices2.Services
         /// The get car share listings by user.
         /// </summary>
         /// <param name="id">
-        /// The id.
+        ///     The id.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         /// <exception cref="NotImplementedException">
         /// </exception>
-        public ServiceResponse<List<CarShare>> GetCarShareListingsByUser(int id)
+        public ServiceResponse<List<CarShare>> GetCarShareListingsAsDriver(int id)
         {
             var carShares =
-                _findNDriveUnitOfWork.CarShareRepository.AsQueryable().IncludeAll().Where(_ => _.UserId == id).ToList();
+                this._findNDriveUnitOfWork.CarShareRepository.AsQueryable().IncludeAll().Where(_ => _.UserId == id).ToList();
+
+            return new ServiceResponse<List<CarShare>>
+            {
+                Result = carShares,
+                ServiceResponseCode = ServiceResponseCode.Success
+            };
+        }
+
+        /// <summary>
+        /// The get car share listings as participant.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<List<CarShare>> GetCarShareListingsAsParticipant(int id)
+        {
+            var carShares =
+                this._findNDriveUnitOfWork.CarShareRepository.AsQueryable()
+                    .IncludeAll()
+                    .Where(_ => _.Participants.Count > 0 && _.Participants.Any(x => x.UserId == id))
+                    .ToList(); 
+
+            return new ServiceResponse<List<CarShare>>
+            {
+                Result = carShares,
+                ServiceResponseCode = ServiceResponseCode.Success
+            };
+        }
+
+        public ServiceResponse<List<CarShare>> GetAllCarShareListingsForUser(int id)
+        {
+            var carShares =
+                this._findNDriveUnitOfWork.CarShareRepository.AsQueryable()
+                    .IncludeAll()
+                    .Where(_ => _.UserId == id || _.Participants.Any(x => x.UserId == id))
+                    .ToList();
 
             return new ServiceResponse<List<CarShare>>
             {

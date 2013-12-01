@@ -15,7 +15,6 @@ import com.example.myapplication.Interfaces.OnLoginCompleted;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -32,14 +31,14 @@ import java.net.URISyntaxException;
 /**
  * Created by Michal on 17/11/13.
  */
-public class AttemptManualLoginTask extends AsyncTask<TextView, String, Boolean> {
+public class ManualLoginTask extends AsyncTask<TextView, String, Boolean> {
 
     private LoginDTO loginDTO;
     private OnLoginCompleted listener;
     private ServiceResponse<User> serviceResponse;
     private boolean RememberMe;
 
-    public AttemptManualLoginTask(String userName, String password, OnLoginCompleted lis, boolean rememberMe)
+    public ManualLoginTask(String userName, String password, OnLoginCompleted lis, boolean rememberMe)
     {
         loginDTO = new LoginDTO(userName, password);
         listener = lis;
@@ -49,7 +48,7 @@ public class AttemptManualLoginTask extends AsyncTask<TextView, String, Boolean>
     @Override
     protected void onPostExecute(Boolean aBoolean) {
         super.onPostExecute(aBoolean);
-        listener.onTaskCompleted(serviceResponse);
+        listener.OnLoginCompleted(serviceResponse);
     }
 
     @Override
@@ -81,9 +80,10 @@ public class AttemptManualLoginTask extends AsyncTask<TextView, String, Boolean>
 
             if(serviceResponse.ServiceResponseCode == Constants.ServiceResponseSuccess)
             {
-                String token = httpResponse.getFirstHeader(Constants.SessionID).getValue();
+                String session = httpResponse.getFirstHeader(Constants.SessionID).getValue();
                 ApplicationFileManager fileManager = new ApplicationFileManager();
-                fileManager.CreateSessionCookie(token);
+                Log.e("Session", session);
+                fileManager.CreateSessionCookie(session);
             }
 
 

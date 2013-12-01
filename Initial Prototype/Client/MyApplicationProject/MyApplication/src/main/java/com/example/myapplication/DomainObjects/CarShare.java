@@ -7,19 +7,20 @@ import java.util.List;
  */
 public class CarShare {
 
-    private int Id;
-    private User Driver;
-    private String DepartureCity;
-    private String DestinationCity;
-    private String Description;
-    private String DateOfDeparture;
-    private String TimeOfDeparture;
-    private double Fee;
-    private int AvailableSeats;
-    private List<User> Participants;
-    private boolean SmokersAllowed;
-    private boolean WomenOnly;
-    private int VehicleType;
+    public int CarShareId;
+    public int UserId;
+    public User Driver;
+    public String DepartureCity;
+    public String DestinationCity;
+    public String Description;
+    public String DateOfDeparture;
+    public String TimeOfDeparture;
+    public double Fee;
+    public int AvailableSeats;
+    public List<User> Participants;
+    public boolean SmokersAllowed;
+    public boolean WomenOnly;
+    public int VehicleType;
 
     public CarShare()
     {

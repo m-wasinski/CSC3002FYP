@@ -10,6 +10,7 @@
 namespace FindNDriveServices2
 {
     using System;
+    using System.Diagnostics;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
     using System.ServiceModel.Channels;
@@ -87,6 +88,26 @@ namespace FindNDriveServices2
         private readonly SessionManager _sessionManager;
 
         /// <summary>
+        /// The _service type.
+        /// </summary>
+        private readonly Type _serviceType;
+
+        /// <summary>
+        /// The _user service.
+        /// </summary>
+        private readonly UserService _userService;
+
+        /// <summary>
+        /// The _car share service.
+        /// </summary>
+        private readonly CarShareService _carShareService;
+
+        /// <summary>
+        /// The _search service.
+        /// </summary>
+        private readonly SearchService _searchService;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MyInstanceProvider"/> class.
         /// </summary>
         /// <param name="findNDriveUnitOfWork">
@@ -97,15 +118,14 @@ namespace FindNDriveServices2
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// </exception>
-        public MyInstanceProvider(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager)
+        public MyInstanceProvider(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager, Type serviceType)
         {
-            if (findNDriveUnitOfWork == null)
-            {
-                throw new ArgumentNullException("findNDriveUnitOfWork");
-            }
-            
             this._findNDriveUnitOfWork = findNDriveUnitOfWork;
             this._sessionManager = sessionManager;
+            this._serviceType = serviceType;
+            this._userService = new UserService(_findNDriveUnitOfWork, sessionManager);
+            this._carShareService = new CarShareService(_findNDriveUnitOfWork, sessionManager);
+            this._searchService = new SearchService(_findNDriveUnitOfWork, sessionManager);
         }
 
         #region IInstanceProvider Members
@@ -137,8 +157,17 @@ namespace FindNDriveServices2
         /// The <see cref="object"/>.
         /// </returns>
         public object GetInstance(InstanceContext instanceContext)
-        {
-            return new UserService(this._findNDriveUnitOfWork, this._sessionManager);
+        {   
+            if(_serviceType == _userService.GetType())
+                return new UserService(this._findNDriveUnitOfWork, this._sessionManager);
+
+            if (_serviceType == _carShareService.GetType())
+                return new CarShareService(this._findNDriveUnitOfWork, this._sessionManager);
+
+            if (_serviceType == _searchService.GetType())
+                return new SearchService(this._findNDriveUnitOfWork, this._sessionManager);
+
+            return null;
         }
 
         /// <summary>

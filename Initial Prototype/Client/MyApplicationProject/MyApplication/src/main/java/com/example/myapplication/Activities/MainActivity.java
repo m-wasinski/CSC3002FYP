@@ -70,8 +70,14 @@ public class MainActivity extends ActionBarActivity implements OnLoginCompleted 
 
         if (fileManager.CookieExists())
         {
-            UserHelper userHelper = new UserHelper();
-            userHelper.AttemptAutoLogin(this);
+            UserHelper.AttemptAutoLogin(this);
+        }
+        else
+        {
+            try{ Thread.sleep(2000); }catch(InterruptedException e){ }
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         }
 
         if (savedInstanceState == null) {
@@ -117,7 +123,7 @@ public class MainActivity extends ActionBarActivity implements OnLoginCompleted 
     }
 
     @Override
-    public void onTaskCompleted(ServiceResponse<User> serviceResponse) {
+    public void OnLoginCompleted(ServiceResponse<User> serviceResponse) {
         if (serviceResponse.ServiceResponseCode == Constants.ServiceResponseSuccess)
         {
             Gson gson = new Gson();
@@ -130,8 +136,6 @@ public class MainActivity extends ActionBarActivity implements OnLoginCompleted 
         {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
-            Toast toast = Toast.makeText(this, "Your session has expired, please re-login.", Toast.LENGTH_LONG);
-            toast.show();
         }
 
         finish();

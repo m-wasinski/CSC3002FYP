@@ -12,7 +12,9 @@ using FindNDriveServices2.Services;
 using WebMatrix.WebData;
 
 namespace FindNDriveConsoleHost
-{   
+{
+    using FindNDriveServices2.Contracts;
+
     /// <summary>
     /// Used temporarily to create and host my web services.
     /// Endpoints for these services are stored in App.config in FindNDriveConsoleHost project.
@@ -21,16 +23,16 @@ namespace FindNDriveConsoleHost
     {
         static void Main(string[] args)
         {
-            ////Create dbcontext, user entity framework repository, car share entity framework repository and a unit of work.
-            //var testDbContext = new ApplicationContext();
-            //var userEntityFrameworkRepository = new EntityFrameworkRepository<User>(testDbContext);
-            //var carShareEntityFrameworkRepository = new EntityFrameworkRepository<CarShare>(testDbContext);
-            //var sessionEntityFrameworkRepository = new EntityFrameworkRepository<Session>(testDbContext);
-            //var testUnitOfWork = new FindNDriveUnitOfWork(testDbContext, userEntityFrameworkRepository, carShareEntityFrameworkRepository, sessionEntityFrameworkRepository);
-
+            //Create dbcontext, user entity framework repository, car share entity framework repository and a unit of work.
+            var testDbContext = new ApplicationContext();
+            var userEntityFrameworkRepository = new EntityFrameworkRepository<User>(testDbContext);
+            var carShareEntityFrameworkRepository = new EntityFrameworkRepository<CarShare>(testDbContext);
+            var sessionEntityFrameworkRepository = new EntityFrameworkRepository<Session>(testDbContext);
+            var testUnitOfWork = new FindNDriveUnitOfWork(testDbContext, userEntityFrameworkRepository, carShareEntityFrameworkRepository, sessionEntityFrameworkRepository);
+            var sessionManager = new SessionManager(testUnitOfWork);
             //WebSecurity.InitializeDatabaseConnection("FindNDriveConnectionString", "User", "Id", "UserName", true);
-            
-            ////Spawn these two services in two separate threads to ensure they both run concurrently.
+            var carShareService = new CarShareService();
+            //Spawn these two services in two separate threads to ensure they both run concurrently.
             //var userServiceThread = new Thread(
             //    () =>
             //    {
@@ -39,27 +41,14 @@ namespace FindNDriveConsoleHost
             //        //var serviceHost = factory.Foo(typeof(UserService), baseAddress);
 
             //        //serviceHost.AddServiceEndpoint(typeof(IUserService), new WebHttpBinding(), baseAddress);
-                
+                    
+
             //        var userService = new UserService(testUnitOfWork);
             //        var host = new ServiceHost(userService);
-                
+
             //        try
             //        {
             //            host.Open();
-            //            var serviceResponse = userService.RegisterUser(new RegisterDTO()
-            //            {
-            //                Password = "test",
-            //                ConfirmedPassword = "Test",
-            //                User = new User()
-            //                {   
-            //                    UserName = "Alesia92",
-            //                    FirstName = "Aleksandra",
-            //                    LastName = "Szczypior",
-            //                    EmailAddress = "wasinskimichal@gmail.com",
-            //                    Gender = Gender.Female,
-            //                    DateOfBirth = new DateTime(1992, 11, 15)
-            //                }
-            //            });
 
             //            PrintServiceInfo(host);
             //        }
@@ -67,34 +56,11 @@ namespace FindNDriveConsoleHost
             //        {
             //            Console.WriteLine(e);
             //            host.Abort();
-                        
+
             //        }
             //    });
             //userServiceThread.Start();
 
-            //var carShareServiceThread = new Thread(
-            //    () =>
-            //    {   
-            //        var carShareService = new CarShareService(testUnitOfWork);
-            //        var host = new ServiceHost(carShareService);
-
-            //        try
-            //        {
-            //            host.Open();
-            //            PrintServiceInfo(host);
-            //        }
-            //        catch (Exception e)
-            //        {
-            //            Console.WriteLine(e);
-            //            host.Abort();
-
-            //        }
-            //    });
-            //carShareServiceThread.Start();
-            
-            
-
-            //Console.ReadLine();
         }
 
         /// <summary>

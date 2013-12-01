@@ -54,8 +54,7 @@ public class RegistrationActivity extends Activity implements OnRegistrationComp
         pd.setMessage("Please wait.");
         pd.show();
 
-        UserHelper userHelper = new UserHelper();
-        userHelper.RegisterNewUser(userName.getText().toString(),
+        UserHelper.RegisterNewUser(userName.getText().toString(),
                                    emailAddress.getText().toString(),
                                    password.getText().toString(),
                                    confirmedPassword.getText().toString(), this);

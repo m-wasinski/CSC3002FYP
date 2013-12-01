@@ -1,11 +1,5 @@
 package com.example.myapplication.DomainObjects;
 
-import android.app.Service;
-import android.support.v7.appcompat.*;
-import android.support.v7.appcompat.R;
-
-import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
 /**

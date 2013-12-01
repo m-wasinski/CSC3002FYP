@@ -64,9 +64,7 @@ public class LoginActivity extends Activity implements OnLoginCompleted {
         pd.setMessage("Please wait.");
         pd.show();
 
-        UserHelper userHelper = new UserHelper();
-        userHelper.LoginUser(userName.getText().toString(), password.getText().toString(), this, rememberMe.isChecked());
-
+        UserHelper.LoginUser(userName.getText().toString(), password.getText().toString(), this, rememberMe.isChecked());
     }
 
     @Override
@@ -94,7 +92,7 @@ public class LoginActivity extends Activity implements OnLoginCompleted {
         }
     }
     @Override
-    public void onTaskCompleted(ServiceResponse<User> serviceResponse) {
+    public void OnLoginCompleted(ServiceResponse<User> serviceResponse) {
 
         pd.dismiss();
 

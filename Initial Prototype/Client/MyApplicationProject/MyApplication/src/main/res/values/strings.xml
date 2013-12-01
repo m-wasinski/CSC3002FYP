@@ -13,5 +13,17 @@
     <string name="ConfirmPasswordHint">Confirm Password</string>
     <string name="RegisterMenuTitle">Register</string>
     <string name="LogoutMenuTitle">Logout</string>
-
+    <string name="DepartureCityHint">Departure City</string>
+    <string name="DestinationCityHint">Destination City</string>
+    <string name="Smokers">Smokers</string>
+    <string name="WomenOnly">Women only</string>
+    <string name="Free">Free</string>
+    <string name="SelectDate">Select date</string>
+    <string-array name="app_menu_options">
+        <item>Home</item>
+        <item>My Car Shares</item>
+        <item>Profile</item>
+        <item>Friends</item>
+        <item>Messenger</item>
+    </string-array>
 </resources>

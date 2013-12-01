@@ -1,15 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Home Screen"
-        android:id="@+id/textView"
-        android:layout_marginTop="42dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
-</RelativeLayout>
+    <Spinner
+        android:id="@+id/app_menu_spinner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_weight="1">
+        <fragment
+            android:id="@+id/FragmentMyCarShares"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            class="com.example.myapplication.Fragments.FragmentMyCarShares"
+            tools:layout="@layout/fragment_my_car_shares">
+         </fragment>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_weight="1">
+        <fragment
+            android:id="@+id/FragmentQuickSearch"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            class="com.example.myapplication.Fragments.FragmentQuickSearch"
+            tools:layout="@layout/quick_search_fragment">
+        </fragment>
+    </LinearLayout>
+
+</LinearLayout>

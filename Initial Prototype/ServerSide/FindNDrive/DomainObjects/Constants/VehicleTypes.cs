@@ -35,24 +35,24 @@ namespace DomainObjects.Constants
         /// The van.
         /// </summary>
         [EnumMember(Value = "Van")]
-        Van = 3,
+        Van = 2,
 
         /// <summary>
         /// The lorry.
         /// </summary>
         [EnumMember(Value = "Lorry")]
-        Lorry = 4,
+        Lorry = 3,
 
         /// <summary>
         /// The motorbike.
         /// </summary>
         [EnumMember(Value = "Motorbike")]
-        Motorbike = 5,
+        Motorbike = 4,
 
         /// <summary>
         /// The other.
         /// </summary>
         [EnumMember(Value = "Other")]
-        Other = 6
+        Other = 5
     }
 }

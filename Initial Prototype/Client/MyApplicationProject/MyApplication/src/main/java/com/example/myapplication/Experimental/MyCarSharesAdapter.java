@@ -49,6 +49,8 @@ public class MyCarSharesAdapter extends ArrayAdapter<CarShare> {
             holder.imgIcon = (ImageView) row.findViewById(R.id.imgIcon);
             holder.FromTo = (TextView) row.findViewById(R.id.CarShareFromToTextView);
             holder.DepartureDate = (TextView)row.findViewById(R.id.CarShareDepartureDateTextView);
+            holder.DepartureTime = (TextView) row.findViewById(R.id.CarShareDepartureTimeTextView);
+            holder.AvailableSeats = (TextView)row.findViewById(R.id.CarShareAvailableSeatsTextView);
             row.setTag(holder);
         }
         else
@@ -60,14 +62,12 @@ public class MyCarSharesAdapter extends ArrayAdapter<CarShare> {
 
 
         holder.FromTo.setText(carShare.DepartureCity + " -> " + carShare.DestinationCity);
-        Date date = WCFDateTimeParser.parseWCFDateTimeString(carShare.DateOfDeparture);
-        Calendar calendar = new GregorianCalendar();
-        calendar.setTime(WCFDateTimeParser.parseWCFDateTimeString(carShare.DateOfDeparture));
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        String formatted = format.format(calendar.getTime());
-        holder.DepartureDate.setText(formatted);
+        holder.DepartureDate.setText(carShare.DateOfDepartureAsString());
+        holder.DepartureTime.setText(carShare.TimeOfDepartureAsString());
+        holder.AvailableSeats.setText("Available seats: "+carShare.AvailableSeats);
         holder.imgIcon.setImageResource(R.drawable.taxi);
-        if(carShare.UserId == userId)
+
+        if(carShare.DriverId == userId)
         {
             holder.imgIcon.setImageResource(R.drawable.steering_wheel);
         }
@@ -80,5 +80,7 @@ public class MyCarSharesAdapter extends ArrayAdapter<CarShare> {
         ImageView imgIcon;
         TextView FromTo;
         TextView DepartureDate;
+        TextView DepartureTime;
+        TextView AvailableSeats;
     }
 }

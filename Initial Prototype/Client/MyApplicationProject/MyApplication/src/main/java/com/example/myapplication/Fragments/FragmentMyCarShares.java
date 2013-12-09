@@ -3,6 +3,7 @@ package com.example.myapplication.Fragments;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.myapplication.Activities.CarShareDetailsActivity;
 import com.example.myapplication.Activities.HomeActivity;
 import com.example.myapplication.Constants.Constants;
 import com.example.myapplication.DomainObjects.CarShare;
@@ -21,6 +23,7 @@ import com.example.myapplication.Experimental.MyCarSharesAdapter;
 import com.example.myapplication.Helpers.UserHelper;
 import com.example.myapplication.Interfaces.OnCarSharesRetrieved;
 import com.example.myapplication.R;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -60,21 +63,35 @@ public class FragmentMyCarShares extends Fragment implements OnCarSharesRetrieve
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        UserHelper.RetrieveMyCarShares(currentUserId, this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        UserHelper.RetrieveMyCarShares(currentUserId, this);
+    }
+
+    @Override
     public void onCarSharesRetrieved(ServiceResponse<ArrayList<CarShare>> serviceResponse) {
         ListView listView = (ListView) getView().findViewById(R.id.MyCarSharesListView);
 
         if(serviceResponse.ServiceResponseCode == Constants.ServiceResponseSuccess)
         {
             Log.e("Current UserId", "" +currentUserId);
-            CarShare carShares[] = serviceResponse.Result.toArray(new CarShare[serviceResponse.Result.size()]);
+            final CarShare carShares[] = serviceResponse.Result.toArray(new CarShare[serviceResponse.Result.size()]);
             MyCarSharesAdapter adapter = new MyCarSharesAdapter(currentUserId, this.getActivity(), R.layout.my_car_shares_custom_listview_row, carShares);
             listView.setAdapter(adapter);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    Toast toast = Toast.makeText(getActivity(), "Item clicked!", Toast.LENGTH_LONG);
-                    toast.show();
+                    Intent intent = new Intent(view.getContext(), CarShareDetailsActivity.class);
+                    Gson gson = new Gson();
+                    intent.putExtra("CurrentCarShare", gson.toJson(carShares[i]));
+                    startActivity(intent);
                 }
             });
 

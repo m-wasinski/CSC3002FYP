@@ -56,7 +56,7 @@ public class MyCarSharesRetriever extends AsyncTask<TextView, String, Boolean> {
         try {
 
             HttpClient httpClient = MySSLSocketFactory.getNewHttpClient();
-            URI uri = new URI("https://asus/Services/CarShareService.svc/getall");
+            URI uri = new URI("https://findndrive.no-ip.co.uk/Services/CarShareService.svc/getall");
             HttpPost postRequest = new HttpPost(uri);
 
             Gson gson = new Gson();

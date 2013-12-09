@@ -17,13 +17,23 @@
     <string name="DestinationCityHint">Destination City</string>
     <string name="Smokers">Smokers</string>
     <string name="WomenOnly">Women only</string>
-    <string name="Free">Free</string>
+    <string name="FreeOnly">Free Only</string>
     <string name="SelectDate">Select date</string>
+    <string name="SearchButtonText">Search</string>
+    <string name="CarShareDetailsContactDriverLabel">Contact Driver</string>
+    <string name="CarShareDetailsDescriptionLabel">Description</string>
     <string-array name="app_menu_options">
         <item>Home</item>
         <item>My Car Shares</item>
         <item>Profile</item>
         <item>Friends</item>
-        <item>Messenger</item>
+    </string-array>
+    <string-array name="vehicle_types">
+        <item>Private Car</item>
+        <item>Minivan</item>
+        <item>Van</item>
+        <item>Lorry</item>
+        <item>Motorbike</item>
+        <item>Other</item>
     </string-array>
 </resources>

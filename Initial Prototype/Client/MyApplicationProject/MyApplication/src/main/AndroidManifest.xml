@@ -32,9 +32,18 @@
             android:name=".Activities.RegistrationActivity"
             android:label="Registration Activity" />
         <activity
+            android:alwaysRetainTaskState="true"
             android:name=".Activities.HomeActivity"
             android:label="home_activity" />
-
+        <activity
+            android:name=".Activities.SearchResultsActivity"
+            android:label="Search Results" />
+        <activity
+            android:name=".Activities.CarShareDetailsActivity"
+            android:label="Car Share Details" />
+        <activity
+            android:name=".Activities.PostNewCarShareActivity"
+            android:label="New Car Share" />
     </application>
 
 </manifest>

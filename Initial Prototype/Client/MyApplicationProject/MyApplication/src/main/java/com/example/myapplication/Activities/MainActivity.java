@@ -52,7 +52,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyStore;
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class MainActivity extends ActionBarActivity implements OnLoginCompleted {
 
@@ -62,6 +64,8 @@ public class MainActivity extends ActionBarActivity implements OnLoginCompleted 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
 
+        Constants.RandomID = UUID.randomUUID().toString();
+        Log.e("Random String", Constants.RandomID);
         setContentView(R.layout.activity_main);
 
         PerformStartupFileCheck();

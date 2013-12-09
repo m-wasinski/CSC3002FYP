@@ -41,6 +41,7 @@ namespace FindNDriveServices2
             {
                 var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[Constants.SessionId];
                 var incomingDeviceId = WebOperationContext.Current.IncomingRequest.Headers[Constants.DeviceId];
+                var randomId = WebOperationContext.Current.IncomingRequest.Headers[Constants.RandomId];
 
                 int userId = GetUserId(incomingSessionId);
 
@@ -51,6 +52,14 @@ namespace FindNDriveServices2
 
                 if (savedSession != null)
                 {
+                    if (savedSession.SessionType == SessionTypes.Temporary)
+                    {
+                        if (randomId != savedSession.LastRandomId)
+                        {
+                            return false;
+                        }
+                    }
+
                     if (!incomingSessionId.Equals(savedSession.SessionId))
                         return false;
 
@@ -123,28 +132,35 @@ namespace FindNDriveServices2
 
         public void GenerateNewSession(int userId)
         {
+            var sessionType = SessionTypes.Temporary;
             if (WebOperationContext.Current != null)
             {
                 var rememberUser = WebOperationContext.Current.IncomingRequest.Headers[Constants.RememberMe];
-                var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[Constants.SessionId];
                 var incomingDeviceId = WebOperationContext.Current.IncomingRequest.Headers[Constants.DeviceId];
-                //set expiration date for the above token, initialy to 30 minutes.
+                var randomId = WebOperationContext.Current.IncomingRequest.Headers[Constants.RandomId];
 
+                //set expiration date for the above token, initialy to 30 minutes.
                 var validUntil = DateTime.Now.AddMinutes(30);
-                var sessionType = SessionTypes.Temporary;
                 var sessionId = GenerateNewSessionId(userId);
                 var hashedDeviceId = EncryptValue(incomingDeviceId);
                 
                 if (rememberUser != null)
                 {
+                    var savedSession = _findNDriveUnitOfWork.SessionRepository.Find(userId);
+
                     if (rememberUser.Equals("true"))
                     {
                         //make the token expire in two weeks.
                         validUntil = DateTime.Now.AddDays(14);
                         sessionType = SessionTypes.Permanent;
                     }
+                    else
+                    {
+                        if (savedSession != null)
+                            savedSession.LastRandomId = randomId;
+                    }
 
-                    var savedSession = _findNDriveUnitOfWork.SessionRepository.Find(userId);
+                   
 
                     if (savedSession != null)
                     {
@@ -158,6 +174,7 @@ namespace FindNDriveServices2
                     {
                         var newSession = new Session
                         {
+                            LastRandomId = randomId,
                             LastKnownId = hashedDeviceId,
                             ExpiresOn = validUntil,
                             SessionType = sessionType,
@@ -190,10 +207,10 @@ namespace FindNDriveServices2
 
                 var savedSession = _findNDriveUnitOfWork.SessionRepository.Find(userId);
 
-                if (userId != -1)
+                if (userId != -1 && savedSession != null)
                 {
                     if (forceInvalidate || savedSession.SessionType == SessionTypes.Temporary)
-                    {
+                    {   
                         savedSession.ExpiresOn = DateTime.Now.AddDays(-1);
                         success = true;
                         _findNDriveUnitOfWork.SessionRepository.Update(savedSession);

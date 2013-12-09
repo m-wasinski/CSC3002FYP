@@ -10,7 +10,8 @@
         android:layout_marginTop="100dp"
         android:hint="@string/UserNameHint"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:singleLine="true"/>
 
     <EditText
         android:layout_width="500px"
@@ -19,7 +20,8 @@
         android:layout_marginTop="20dp"
         android:hint="@string/EmailHint"
         android:layout_below="@+id/UserNameTextField"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:singleLine="true"/>
 
     <EditText
         android:layout_width="500px"
@@ -31,7 +33,8 @@
         android:layout_centerVertical="true"
         android:layout_marginTop="20dp"
         android:layout_below="@+id/EmailTextField"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:singleLine="true"/>
 
     <EditText
         android:layout_width="500px"
@@ -42,7 +45,8 @@
         android:hint="@string/ConfirmPasswordHint"
         android:layout_below="@+id/RegistrationPasswordTextField"
         android:layout_marginTop="20dp"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:singleLine="true"/>
 
     <Button
         android:layout_width="500px"

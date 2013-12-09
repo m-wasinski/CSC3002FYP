@@ -52,7 +52,7 @@ public class RegisterNewUserTask extends AsyncTask<TextView, String, Boolean> {
 
         try {
             HttpClient httpClient = MySSLSocketFactory.getNewHttpClient();
-            URI uri = new URI("https://asus/Services/UserService.svc/register");
+            URI uri = new URI("https://findndrive.no-ip.co.uk/Services/UserService.svc/register");
             HttpPost postRequest = new HttpPost(uri);
 
             Gson gson = new Gson();

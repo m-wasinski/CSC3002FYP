@@ -6,11 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Spinner
-        android:id="@+id/app_menu_spinner"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
-
     <LinearLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent"

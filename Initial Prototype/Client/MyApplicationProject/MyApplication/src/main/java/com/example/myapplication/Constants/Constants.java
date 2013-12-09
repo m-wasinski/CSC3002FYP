@@ -12,5 +12,7 @@ public class Constants {
     public static final String SessionIdFileName = "session_id";
     public static final String SessionID = "SiD";
     public static final String DeviceId = "DiD";
+    public static final String RandomId = "RiD";
     public static final String RememberMe = "RememberMe";
+    public static String RandomID;
 }

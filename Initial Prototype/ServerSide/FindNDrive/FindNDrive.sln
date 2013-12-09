@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindNDriveServices2", "Find
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindNDriveDataAccessLayer", "FindNDriveDataAccessLayer\FindNDriveDataAccessLayer.csproj", "{6FEF620A-4B02-48D3-B1ED-A7AEBCC47DEA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiTest", "WebApiTest\WebApiTest.csproj", "{B9E548C2-A3D3-48DC-89CB-57E867D957C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{6FEF620A-4B02-48D3-B1ED-A7AEBCC47DEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FEF620A-4B02-48D3-B1ED-A7AEBCC47DEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FEF620A-4B02-48D3-B1ED-A7AEBCC47DEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9E548C2-A3D3-48DC-89CB-57E867D957C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9E548C2-A3D3-48DC-89CB-57E867D957C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9E548C2-A3D3-48DC-89CB-57E867D957C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9E548C2-A3D3-48DC-89CB-57E867D957C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

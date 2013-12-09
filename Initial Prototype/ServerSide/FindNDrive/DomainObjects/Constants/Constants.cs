@@ -17,7 +17,13 @@ namespace DomainObjects.Constants
         /// <summary>
         /// The session id.
         /// </summary>
-        public static string SessionId = "SiD";
+        public static string SessionId
+        {
+            get
+            {
+                return "SiD";
+            }
+        }
 
         /// <summary>
         /// The device id.
@@ -28,5 +34,10 @@ namespace DomainObjects.Constants
         /// The remember me.
         /// </summary>
         public static string RememberMe = "RememberMe";
+
+        /// <summary>
+        /// The random id.
+        /// </summary>
+        public static string RandomId = "RiD";
     }
 }

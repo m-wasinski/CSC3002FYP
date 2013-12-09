@@ -23,12 +23,12 @@ namespace DomainObjects.Constants
         /// Represents a male person.
         /// </summary>
         [EnumMember(Value = "Male")]
-        Male = 1,
+        Male = 0,
 
         /// <summary>
         /// Represents a female person.
         /// </summary>
         [EnumMember(Value = "Female")]
-        Female = 2
+        Female = 1
     }
 }

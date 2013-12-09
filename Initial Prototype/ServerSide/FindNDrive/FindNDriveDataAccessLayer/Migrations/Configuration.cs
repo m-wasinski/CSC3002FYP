@@ -12,6 +12,7 @@ namespace FindNDriveDataAccessLayer.Migrations
     using System;
     using System.Collections.ObjectModel;
     using System.Data.Entity.Migrations;
+    using System.Globalization;
 
     using DomainObjects.Constants;
     using DomainObjects.DOmains;
@@ -105,10 +106,12 @@ namespace FindNDriveDataAccessLayer.Migrations
                 FirstName = "John",
                 LastName = "Doe",
                 Gender = Gender.Male,
-                UserName = "CrazyJohn",
+                UserName = "JohnDoe",
                 Role = Roles.User
             };
 
+            Calendar cal = new GregorianCalendar();
+            
             context.User.AddOrUpdate(_ => _.UserId, participant1);
             WebSecurity.CreateUserAndAccount(participant1.UserName, "password");
             context.SaveChanges();
@@ -145,7 +148,7 @@ namespace FindNDriveDataAccessLayer.Migrations
             var carShare = new CarShare
             {
                 AvailableSeats = 4,
-                DateOfDeparture = DateTime.Now,
+                DateAndTimeOfDeparture = new DateTime(2014, 2, 1, 20, 15, 0, cal),
                 DepartureCity = "Belfast",
                 DestinationCity = "Dublin",
                 Description = "Free ride to Dublin!",
@@ -161,10 +164,10 @@ namespace FindNDriveDataAccessLayer.Migrations
 
             var carShare2 = new CarShare
             {
-                AvailableSeats = 4,
-                DateOfDeparture = DateTime.Now,
-                DepartureCity = "Lurgan",
-                DestinationCity = "Belfast",
+                AvailableSeats = 2,
+                DateAndTimeOfDeparture = new DateTime(2013, 11, 15, 15, 10, 0, cal),
+                DepartureCity = "Belfast",
+                DestinationCity = "Coleraine",
                 Description = "Lift to Belfast",
                 Fee = 0.00,
                 WomenOnly = false,
@@ -174,6 +177,74 @@ namespace FindNDriveDataAccessLayer.Migrations
             };
 
             context.CarShares.AddOrUpdate(carShare2);
+            context.SaveChanges();
+
+            var carShare3 = new CarShare
+            {
+                AvailableSeats = 1,
+                DateAndTimeOfDeparture = new DateTime(2014, 1, 1, 20, 20, 0, cal),
+                DepartureCity = "Belfast",
+                DestinationCity = "Newcastle",
+                Description = "Lift to Belfast",
+                Fee = 0.00,
+                WomenOnly = false,
+                Participants = new Collection<User> { participant1, participant2 },
+                Driver = participant1,
+                SmokersAllowed = false
+            };
+
+            context.CarShares.AddOrUpdate(carShare3);
+            context.SaveChanges();
+
+            var carShare4 = new CarShare
+            {
+                AvailableSeats = 3,
+                DateAndTimeOfDeparture = new DateTime(2013, 12, 1, 17, 30, 0, cal),
+                DepartureCity = "Belfast",
+                DestinationCity = "Portrush",
+                Description = "Lift to Belfast",
+                Fee = 0.00,
+                WomenOnly = false,
+                Participants = new Collection<User> { participant1, participant2 },
+                Driver = participant1,
+                SmokersAllowed = false
+            };
+
+            context.CarShares.AddOrUpdate(carShare4);
+            context.SaveChanges();
+
+            var carShare5 = new CarShare
+            {
+                AvailableSeats = 6,
+                DateAndTimeOfDeparture = new DateTime(2013, 12, 5, 12, 30, 0, cal),
+                DepartureCity = "Belfast",
+                DestinationCity = "Dublin",
+                Description = "Lift to Belfast",
+                Fee = 0.00,
+                WomenOnly = false,
+                Participants = new Collection<User> { participant1, participant2 },
+                Driver = participant1,
+                SmokersAllowed = false
+            };
+
+            context.CarShares.AddOrUpdate(carShare5);
+            context.SaveChanges();
+
+            var carShare6 = new CarShare
+            {
+                AvailableSeats = 8,
+                DateAndTimeOfDeparture = new DateTime(2013, 12, 1, 17, 30, 0, cal),
+                DepartureCity = "Belfast",
+                DestinationCity = "Dublin",
+                Description = "Lift to Belfast",
+                Fee = 0.00,
+                WomenOnly = false,
+                Participants = new Collection<User> { participant1, participant2 },
+                Driver = participant1,
+                SmokersAllowed = false
+            };
+
+            context.CarShares.AddOrUpdate(carShare6);
             context.SaveChanges();
         }
     }

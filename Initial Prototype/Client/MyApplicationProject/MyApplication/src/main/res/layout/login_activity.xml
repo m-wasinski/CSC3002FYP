@@ -10,7 +10,8 @@
         android:layout_marginTop="151dp"
         android:hint="@string/UserNameHint"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:singleLine="true"/>
 
     <EditText
         android:layout_width="500px"
@@ -21,7 +22,8 @@
         android:hint="@string/PasswordHint"
         android:layout_below="@+id/UserLoginUserNameEditText"
         android:layout_alignLeft="@+id/UserLoginUserNameEditText"
-        android:layout_marginTop="31dp"/>
+        android:layout_marginTop="31dp"
+        android:singleLine="true"/>
 
     <Button
         android:layout_width="500px"

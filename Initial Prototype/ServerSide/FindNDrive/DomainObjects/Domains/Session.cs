@@ -27,21 +27,27 @@ namespace DomainObjects.Domains
         [DataMember]
         [Required]
         [Key]
-        public virtual int UserId { get; set; }
+        public int UserId { get; set; }
 
         /// <summary>
         /// Gets or sets the last known id.
         /// </summary>
         [DataMember]
         [Required]
-        public virtual string LastKnownId { get; set; }
+        public string LastKnownId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the last random id.
+        /// </summary>
+        [DataMember]
+        public string LastRandomId { get; set; }
 
         /// <summary>
         /// Gets or sets the session id.
         /// </summary>
         [DataMember]
         [Required]
-        public virtual string SessionId { get; set; }
+        public string SessionId { get; set; }
 
         /// <summary>
         /// Gets or sets the expires on.
@@ -56,6 +62,6 @@ namespace DomainObjects.Domains
         /// </summary>
         [DataMember]
         [Required]
-        public virtual SessionTypes SessionType { get; set; }
+        public SessionTypes SessionType { get; set; }
     }
 }

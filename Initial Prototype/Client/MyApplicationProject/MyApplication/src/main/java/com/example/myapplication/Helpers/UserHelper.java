@@ -1,6 +1,8 @@
 package com.example.myapplication.Helpers;
 
+import com.example.myapplication.DomainObjects.CarShare;
 import com.example.myapplication.Fragments.FragmentMyCarShares;
+import com.example.myapplication.Interfaces.OnCarSharePosted;
 import com.example.myapplication.Interfaces.OnLoginCompleted;
 import com.example.myapplication.Interfaces.UserHomeActivity;
 import com.example.myapplication.Interfaces.OnRegistrationCompleted;
@@ -8,6 +10,7 @@ import com.example.myapplication.NetworkTasks.AutoLoginTask;
 import com.example.myapplication.NetworkTasks.ManualLoginTask;
 import com.example.myapplication.NetworkTasks.LogoutUserTask;
 import com.example.myapplication.NetworkTasks.MyCarSharesRetriever;
+import com.example.myapplication.NetworkTasks.PostNewCarShareTask;
 import com.example.myapplication.NetworkTasks.RegisterNewUserTask;
 
 /**
@@ -43,6 +46,12 @@ public class UserHelper{
     {
         MyCarSharesRetriever retriever = new MyCarSharesRetriever(id, fragmentMyCarShares);
         retriever.execute();
+    }
+
+    public static void PostNewCarShare(OnCarSharePosted onCarSharePosted, CarShare carShare)
+    {
+        PostNewCarShareTask post = new PostNewCarShareTask(onCarSharePosted, carShare);
+        post.execute();
     }
 }
 

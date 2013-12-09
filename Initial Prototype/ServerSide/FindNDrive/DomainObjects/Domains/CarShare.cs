@@ -25,6 +25,7 @@ namespace DomainObjects.Domains
         /// <summary>
         /// Gets or sets the car share id.
         /// </summary>
+        [DataMember] 
         public int CarShareId { get; set; }
 
         /// <summary>
@@ -32,46 +33,37 @@ namespace DomainObjects.Domains
         /// </summary>F
         [Required]
         [DataMember]
-        public int UserId { get; set; }
+        public int DriverId { get; set; }
 
         /// <summary>
         /// Gets or sets the driver.
         /// </summary>
-        [Required]
         [DataMember]
-        [ForeignKey("UserId")]
-        public virtual User Driver { get; set; }
+        [ForeignKey("DriverId")]
+        public User Driver { get; set; }
 
         /// <summary>
         /// Gets or sets the departure city.
         /// </summary>
-        [Required(ErrorMessage = "Date of departure cannot be empty.")]
-        public virtual string DepartureCity { get; set; }
+        [DataMember] 
+        [Required(ErrorMessage = "Departure city cannot be empty.")]
+        public string DepartureCity { get; set; }
 
         /// <summary>
         /// Gets or sets the destination city.
         /// </summary>
-        [DataMember]
+        [DataMember] 
         [Required]
-        public virtual string DestinationCity { get; set; }
-
-        /// <summary>
-        /// Gets or sets the date of departure.
-        /// </summary>
-        [Required(ErrorMessage = "You must specify the departure date.")]
-        [DataMember]
-        [DataType(DataType.Date)]
-        [Column(TypeName = "DateTime2")]
-        public virtual DateTime DateOfDeparture { get; set; }
+        public string DestinationCity { get; set; }
 
         /// <summary>
         /// Gets or sets the time of departure.
         /// </summary>
-        [Required(ErrorMessage = "You must specify the departure time.")]
+        [Required(ErrorMessage = "You must specify the departure date and time.")]
         [DataMember]
-        [DataType(DataType.Time)]
+        [DataType(DataType.Date)]
         [Column(TypeName = "DateTime2")]
-        public virtual DateTime TimeOfDeparture { get; set; }
+        public DateTime DateAndTimeOfDeparture { get; set; }
 
         /// <summary>
         /// Gets or sets the description.
@@ -85,41 +77,55 @@ namespace DomainObjects.Domains
         /// </summary>
         [Required]
         [DataMember]
-        public virtual double Fee { get; set; }
+        public double Fee { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether pets allowed.
+        /// </summary>
+        [Required]
+        [DataMember]
+        public bool PetsAllowed { get; set; }
 
         /// <summary>
         /// Gets or sets the available seats.
         /// </summary>
         [Required]
         [DataMember]
-        public virtual int AvailableSeats { get; set; }
+        public int AvailableSeats { get; set; }
 
         /// <summary>
         /// Gets or sets the participants.
         /// </summary>
         [DataMember]
-        public virtual ICollection<User> Participants { get; set; }
+        public ICollection<User> Participants { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether smokers allowed.
         /// </summary>
         [Required]
         [DataMember]
-        public virtual bool SmokersAllowed { get; set; }
+        public bool SmokersAllowed { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether private.
+        /// </summary>
+        [Required]
+        [DataMember]
+        public bool Private { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether women only.
         /// </summary>
         [Required]
         [DataMember]
-        public virtual bool WomenOnly { get; set; }
+        public bool WomenOnly { get; set; }
 
         /// <summary>
         /// Gets or sets the vehicle type.
         /// </summary>
         [Required]
         [DataMember]
-        public virtual VehicleTypes VehicleType { get; set; }
+        public VehicleTypes VehicleType { get; set; }
 
     }
 }

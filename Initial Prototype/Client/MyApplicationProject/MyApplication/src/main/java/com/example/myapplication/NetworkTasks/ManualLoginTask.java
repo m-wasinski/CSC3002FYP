@@ -57,7 +57,7 @@ public class ManualLoginTask extends AsyncTask<TextView, String, Boolean> {
         try {
 
             HttpClient httpClient = MySSLSocketFactory.getNewHttpClient();
-            URI uri = new URI("https://asus:443/Services/UserService.svc/manuallogin");
+            URI uri = new URI("https://findndrive.no-ip.co.uk/Services/UserService.svc/manuallogin");
             HttpPost postRequest = new HttpPost(uri);
 
             Gson gson = new Gson();
@@ -70,6 +70,10 @@ public class ManualLoginTask extends AsyncTask<TextView, String, Boolean> {
 
             postRequest.addHeader(Constants.RememberMe, ""+RememberMe);
             postRequest.addHeader(Constants.DeviceId, DeviceID.getID());
+            postRequest.addHeader(Constants.RandomId, Constants.RandomID);
+
+
+
             HttpResponse httpResponse = httpClient.execute(postRequest);
             String serviceResponseString = EntityUtils.toString(httpResponse.getEntity());
 

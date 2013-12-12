@@ -179,7 +179,7 @@ namespace FindNDriveServices2.Services
                        {
                            Result = newCarShare,
                            ErrorMessages = validatedCarShare.ErrorMessages,
-                           ServiceResponseCode = (newCarShare == null) ? ServiceResponseCode.Success : ServiceResponseCode.Failure
+                           ServiceResponseCode = (newCarShare != null) ? ServiceResponseCode.Success : ServiceResponseCode.Failure
                        };
         }
     }

@@ -10,6 +10,7 @@
 namespace FindNDriveServices2.Services
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
 
@@ -144,8 +145,22 @@ namespace FindNDriveServices2.Services
 
             var validatedRegisterDTO = ValidationHelper.Validate(register);
 
+            //Check if an account with the same username already exists.
+            if (this._findNDriveUnitOfWork.UserRepository.AsQueryable().Any(_ => _.UserName.Equals(register.User.UserName)))
+            {
+                return ResponseBuilder.Failure<User>("Account with this username already exists.");
+            }
+
+            //Check if an account with the same username already exists.
+            if (this._findNDriveUnitOfWork.UserRepository.AsQueryable().Any(_ => _.EmailAddress.Equals(register.User.EmailAddress)))
+            {
+                return ResponseBuilder.Failure<User>("Account with this email address already exists.");
+            }
+
             if (validatedRegisterDTO.IsValid)
             {
+                
+
                 WebSecurity.CreateUserAndAccount(register.User.UserName, register.Password);
                 register.User.UserId = WebSecurity.GetUserId(register.User.UserName);
 

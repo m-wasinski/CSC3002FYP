@@ -35,6 +35,12 @@ namespace FindNDriveServices2
             return Convert.ToBase64String(hash);
         }
 
+        /// <summary>
+        /// The validate session.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool ValidateSession()
         {
             if (WebOperationContext.Current != null)
@@ -73,7 +79,8 @@ namespace FindNDriveServices2
                     if (result > 0)
                         return false;
 
-                    RefreshSession(savedSession);
+                    if(savedSession.SessionType == SessionTypes.Temporary)
+                        RefreshSession(savedSession);
                 }
                 else
                     return false;
@@ -160,14 +167,13 @@ namespace FindNDriveServices2
                             savedSession.LastRandomId = randomId;
                     }
 
-                   
-
                     if (savedSession != null)
                     {
                         savedSession.SessionId = sessionId;
                         savedSession.LastKnownId = hashedDeviceId;
                         savedSession.ExpiresOn = validUntil;
                         savedSession.SessionType = sessionType;
+                        savedSession.UserId = userId;
                         _findNDriveUnitOfWork.SessionRepository.Update(savedSession);
                     }
                     else

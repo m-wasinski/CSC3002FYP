@@ -3,6 +3,7 @@ package com.example.myapplication.Activities;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -18,12 +19,14 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
+import com.example.myapplication.Constants.Constants;
 import com.example.myapplication.DomainObjects.CarShare;
 import com.example.myapplication.DomainObjects.ServiceResponse;
 import com.example.myapplication.DomainObjects.User;
 import com.example.myapplication.Experimental.WCFDateTimeHelper;
-import com.example.myapplication.Helpers.UserHelper;
+import com.example.myapplication.Helpers.ServiceHelper;
 import com.example.myapplication.Interfaces.OnCarSharePosted;
 import com.example.myapplication.R;
 import com.google.gson.Gson;
@@ -34,7 +37,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  * Created by Michal on 07/12/13.
@@ -52,7 +54,7 @@ public class PostNewCarShareActivity extends Activity implements OnCarSharePoste
     private CheckBox smokers, womenOnly, pets, privateShare;
     private EditText fee;
     private EditText description;
-
+    private ProgressDialog pd;
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -144,13 +146,20 @@ public class PostNewCarShareActivity extends Activity implements OnCarSharePoste
           carShare.AvailableSeats = Integer.parseInt(availableSeats.getText().toString());
           carShare.DateAndTimeOfDeparture = WCFDateTimeHelper.ConvertToWCFDateTime(myCalendar.getTime());
           carShare.Private = privateShare.isChecked();
+          carShare.PetsAllowed = pets.isChecked();
+
           //Log.e("DateTime", carShare.DateAndTimeOfDeparture);
           //Log.e("DateTime Converted", WCFDateTimeHelper.parseWCFDateTimeString(carShare.DateAndTimeOfDeparture.toString()).toString());
-          UserHelper.PostNewCarShare(this, carShare);
+          pd = new ProgressDialog(this);
+          pd.setTitle("Contacting server...");
+          pd.setMessage("Please wait.");
+          pd.show();
+          ServiceHelper.PostNewCarShare(this, carShare);
     }
 
     private void InitialiseUIElements()
     {
+        description = (EditText) findViewById(R.id.PostNewCarShareDescriptionTextView);
         departureCity = (EditText) findViewById(R.id.PostNewCarShareDepartureCityTextView);
         destinationCity = (EditText) findViewById(R.id.PostNewCarShareDestinationCityTextView);
         smokers = (CheckBox) findViewById(R.id.PostNewCarShareSmokers);
@@ -159,7 +168,6 @@ public class PostNewCarShareActivity extends Activity implements OnCarSharePoste
         pets = (CheckBox) findViewById(R.id.PostNewCarSharePets);
         dateTextView = (EditText) findViewById(R.id.PostNewCarShareDateTextView);
         timeTextView = (EditText) findViewById(R.id.PostNewCarShareTimeTextView);
-        description = (EditText) findViewById(R.id.PostNewCarShareDescriptionTextView);
         fee = (EditText) findViewById(R.id.PostNewCarShareFeeTextView);
         fee.setRawInputType(Configuration.KEYBOARD_12KEY);
         availableSeats = (EditText) findViewById(R.id.PostNewCarShareAvailableSeatsTextView);
@@ -175,7 +183,14 @@ public class PostNewCarShareActivity extends Activity implements OnCarSharePoste
     }
 
     @Override
-    public void onCarSharePosted(ServiceResponse<CarShare> carShare) {
-
+    public void onCarSharePosted(ServiceResponse<CarShare> serviceResponse) {
+        Log.e("Added new car share", ""+serviceResponse.ServiceResponseCode);
+        if(serviceResponse.ServiceResponseCode == Constants.ServiceResponseSuccess)
+        {
+            Toast toast = Toast.makeText(this, "Car share posted successfully.", Toast.LENGTH_LONG);
+            toast.show();
+            pd.dismiss();
+            finish();
+        }
     }
 }

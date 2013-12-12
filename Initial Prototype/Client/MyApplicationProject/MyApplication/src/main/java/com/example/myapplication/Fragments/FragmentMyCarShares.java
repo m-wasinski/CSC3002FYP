@@ -20,7 +20,7 @@ import com.example.myapplication.Constants.Constants;
 import com.example.myapplication.DomainObjects.CarShare;
 import com.example.myapplication.DomainObjects.ServiceResponse;
 import com.example.myapplication.Experimental.MyCarSharesAdapter;
-import com.example.myapplication.Helpers.UserHelper;
+import com.example.myapplication.Helpers.ServiceHelper;
 import com.example.myapplication.Interfaces.OnCarSharesRetrieved;
 import com.example.myapplication.R;
 import com.google.gson.Gson;
@@ -34,6 +34,7 @@ import java.util.ArrayList;
 public class FragmentMyCarShares extends Fragment implements OnCarSharesRetrieved{
 
     public int currentUserId;
+    private ListView mainListView;
 
     @Override
     public void onAttach(Activity activity) {
@@ -56,36 +57,29 @@ public class FragmentMyCarShares extends Fragment implements OnCarSharesRetrieve
         }
         Toast toast = Toast.makeText(getActivity(), ""+currentUserId, Toast.LENGTH_LONG);
         toast.show();
-        UserHelper.RetrieveMyCarShares(currentUserId, this);
+        ServiceHelper.RetrieveMyCarShares(currentUserId, this);
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_car_shares, container, false);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        UserHelper.RetrieveMyCarShares(currentUserId, this);
+        return inflater.inflate(R.layout.my_car_shares_fragment, container, false);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        UserHelper.RetrieveMyCarShares(currentUserId, this);
+        ServiceHelper.RetrieveMyCarShares(currentUserId, this);
     }
 
     @Override
     public void onCarSharesRetrieved(ServiceResponse<ArrayList<CarShare>> serviceResponse) {
-        ListView listView = (ListView) getView().findViewById(R.id.MyCarSharesListView);
-
+        mainListView = (ListView) getView().findViewById(R.id.MyCarSharesListView);
         if(serviceResponse.ServiceResponseCode == Constants.ServiceResponseSuccess)
         {
             Log.e("Current UserId", "" +currentUserId);
             final CarShare carShares[] = serviceResponse.Result.toArray(new CarShare[serviceResponse.Result.size()]);
-            MyCarSharesAdapter adapter = new MyCarSharesAdapter(currentUserId, this.getActivity(), R.layout.my_car_shares_custom_listview_row, carShares);
-            listView.setAdapter(adapter);
+            MyCarSharesAdapter adapter = new MyCarSharesAdapter(currentUserId, this.getActivity(), R.layout.my_car_shares_fragment_custom_listview_row_layout, carShares);
+            mainListView.setAdapter(adapter);
 
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     Intent intent = new Intent(view.getContext(), CarShareDetailsActivity.class);

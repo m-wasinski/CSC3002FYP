@@ -34,9 +34,9 @@ public class RegisterNewUserTask extends AsyncTask<TextView, String, Boolean> {
     private OnRegistrationCompleted listener;
     private ServiceResponse<User> serviceResponse;
 
-    public RegisterNewUserTask(String userName, String email, String pass, String confirmedPass, OnRegistrationCompleted lis)
+    public RegisterNewUserTask(String userName, String email, String pass, String confirmedPass, int gender, OnRegistrationCompleted lis)
     {
-        User user = new User(userName, email, "", "", 0, 2);
+        User user = new User(userName, email, "", "", 0, gender);
         registerDTO = new RegisterDTO(user, pass, confirmedPass);
         listener = lis;
     }

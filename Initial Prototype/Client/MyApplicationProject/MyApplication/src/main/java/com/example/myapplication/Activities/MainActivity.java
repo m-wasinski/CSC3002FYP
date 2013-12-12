@@ -2,8 +2,6 @@ package com.example.myapplication.Activities;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.os.NetworkOnMainThreadException;
-import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -15,45 +13,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
 import android.view.Window;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.myapplication.Constants.Constants;
 import com.example.myapplication.DomainObjects.ServiceResponse;
 import com.example.myapplication.DomainObjects.User;
-import com.example.myapplication.Experimental.MySSLSocketFactory;
 import com.example.myapplication.Helpers.ApplicationFileManager;
-import com.example.myapplication.Helpers.DeviceID;
-import com.example.myapplication.Helpers.UserHelper;
+import com.example.myapplication.Helpers.ServiceHelper;
 import com.example.myapplication.Interfaces.OnLoginCompleted;
 import com.example.myapplication.R;
 import com.google.gson.Gson;
 
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
-import org.apache.http.protocol.HTTP;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.security.KeyStore;
-import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.UUID;
 
 public class MainActivity extends ActionBarActivity implements OnLoginCompleted {
@@ -74,7 +43,7 @@ public class MainActivity extends ActionBarActivity implements OnLoginCompleted 
 
         if (fileManager.CookieExists())
         {
-            UserHelper.AttemptAutoLogin(this);
+            ServiceHelper.AttemptAutoLogin(this);
         }
         else
         {

@@ -44,7 +44,7 @@ public class PostNewCarShareTask extends AsyncTask<TextView, String, Boolean> {
     @Override
     protected void onPostExecute(Boolean aBoolean) {
         super.onPostExecute(aBoolean);
-
+        listener.onCarSharePosted(serviceResponse);
     }
 
     @Override

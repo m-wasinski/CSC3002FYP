@@ -18,10 +18,14 @@
     <string name="Smokers">Smokers</string>
     <string name="WomenOnly">Women only</string>
     <string name="FreeOnly">Free Only</string>
-    <string name="SelectDate">Select date</string>
+    <string name="Date">Date</string>
     <string name="SearchButtonText">Search</string>
     <string name="CarShareDetailsContactDriverLabel">Contact Driver</string>
-    <string name="CarShareDetailsDescriptionLabel">Description</string>
+    <string name="CarShareDetailsDescriptionLabel">Description:</string>
+    <string name="RememberMe">Remember me</string>
+    <string name="RegisterString">Register</string>
+    <string name="Time">Time</string>
+    <string name="Pets">Pets</string>
     <string-array name="app_menu_options">
         <item>Home</item>
         <item>My Car Shares</item>
@@ -35,5 +39,9 @@
         <item>Lorry</item>
         <item>Motorbike</item>
         <item>Other</item>
+    </string-array>
+    <string-array name="gender">
+        <item>Male</item>
+        <item>Female</item>
     </string-array>
 </resources>

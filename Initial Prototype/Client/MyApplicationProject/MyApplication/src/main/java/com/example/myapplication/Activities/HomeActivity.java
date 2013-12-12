@@ -3,7 +3,6 @@ package com.example.myapplication.Activities;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,19 +10,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.example.myapplication.DomainObjects.ServiceResponse;
 import com.example.myapplication.DomainObjects.User;
 import com.example.myapplication.Experimental.SpinnerNavigationItem;
 import com.example.myapplication.Experimental.TitleNavigationAdapter;
 import com.example.myapplication.Fragments.FragmentMyCarShares;
-import com.example.myapplication.Helpers.UserHelper;
+import com.example.myapplication.Helpers.ServiceHelper;
 import com.example.myapplication.Interfaces.UserHomeActivity;
 import com.example.myapplication.R;
 import com.google.gson.Gson;
@@ -128,7 +122,7 @@ public class HomeActivity extends Activity implements UserHomeActivity{
 
     private void ExitApp(boolean forceLogout)
     {
-        UserHelper.LogoutUser(this, forceLogout);
+        ServiceHelper.LogoutUser(this, forceLogout);
         finish();
 
         if(forceLogout)

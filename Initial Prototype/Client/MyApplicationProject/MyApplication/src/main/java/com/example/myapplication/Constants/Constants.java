@@ -5,7 +5,7 @@ package com.example.myapplication.Constants;
  */
 public class Constants {
     public static final int ServiceResponseSuccess = 0;
-    public static final int ServiceResponseFailrue = 0;
+    public static final int ServiceResponseFailrue = 1;
     public static final int Male = 1;
     public static final int Female = 2;
     public static final String AppFolderName = "FindNDrive";

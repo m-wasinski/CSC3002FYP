@@ -13,6 +13,7 @@ namespace FindNDriveServices2.DTOs
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using System.Dynamic;
     using System.Runtime.Serialization;
 
     using DomainObjects.Constants;
@@ -27,7 +28,7 @@ namespace FindNDriveServices2.DTOs
         /// <summary>
         /// Gets or sets the car share id.
         /// </summary>
-        [DataMember] 
+        [DataMember]
         public int CarShareId { get; set; }
 
         /// <summary>
@@ -48,7 +49,7 @@ namespace FindNDriveServices2.DTOs
         /// Gets or sets the departure city.
         /// </summary>
         [Required(ErrorMessage = "Departure city cannot be empty.")]
-        [DataMember] 
+        [DataMember]
         public string DepartureCity { get; set; }
 
         /// <summary>
@@ -128,5 +129,23 @@ namespace FindNDriveServices2.DTOs
         [Required]
         [DataMember]
         public VehicleTypes VehicleType { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether search by date.
+        /// </summary>
+        [DataMember]
+        public bool SearchByDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether search by time.
+        /// </summary>
+        [DataMember]
+        public bool SearchByTime { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether free.
+        /// </summary>
+        [DataMember]
+        public bool Free { get; set; }
     }
 }

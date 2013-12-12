@@ -85,6 +85,43 @@ namespace FindNDriveServices2.Services
                             _.DestinationCity == carShare.DestinationCity)
                     .ToList();
 
+            if (carShare.SearchByDate)
+            {
+                carShares =
+                    carShares.Where(
+                        _ =>
+                        Math.Abs(_.DateAndTimeOfDeparture.Date.Subtract(carShare.DateAndTimeOfDeparture.Date).TotalDays) <= 5).ToList();
+            }
+
+            if (carShare.SearchByTime)
+            {   
+                carShares =
+                    carShares.Where(
+                        _ =>
+                        Math.Abs(_.DateAndTimeOfDeparture.TimeOfDay.Subtract(carShare.DateAndTimeOfDeparture.TimeOfDay).TotalHours) <= 1).ToList();
+            }
+
+            if (carShare.SmokersAllowed)
+            {
+                carShares = carShares.Where(_ => _.SmokersAllowed).ToList();
+            }
+
+            if (carShare.WomenOnly)
+            {
+                carShares = carShares.Where(_ => _.WomenOnly).ToList();
+            }
+
+            if (carShare.PetsAllowed)
+            {
+                carShares = carShares.Where(_ => _.PetsAllowed).ToList();
+            }
+
+
+            if (carShare.Free)
+            {
+                carShares = carShares.Where(_ => _.Fee == 0.00).ToList();
+            }
+
             return new ServiceResponse<List<CarShare>>
             {
                 Result = carShares,

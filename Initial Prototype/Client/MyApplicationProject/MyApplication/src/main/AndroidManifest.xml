@@ -30,6 +30,7 @@
             android:label="Login Activity" />
         <activity
             android:name=".Activities.RegistrationActivity"
+            android:windowSoftInputMode="adjustResize"
             android:label="Registration Activity" />
         <activity
             android:alwaysRetainTaskState="true"

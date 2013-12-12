@@ -54,7 +54,7 @@ public class SearchResultsActivity extends Activity {
         expandableListView.setAdapter(searchResultsAdapter);*/
         ListView listView = (ListView) findViewById(R.id.MyCarSharesListView);
         CarShare cs[] = carShares.toArray(new CarShare[carShares.size()]);
-        MyCarSharesAdapter adapter = new MyCarSharesAdapter(0, this, R.layout.my_car_shares_custom_listview_row, cs);
+        MyCarSharesAdapter adapter = new MyCarSharesAdapter(0, this, R.layout.my_car_shares_fragment_custom_listview_row_layout, cs);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

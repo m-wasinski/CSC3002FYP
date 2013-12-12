@@ -5,4 +5,13 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="FontStyle">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="Header">
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <color name="ValueCorrect">#AAFFAA</color>
 </resources>

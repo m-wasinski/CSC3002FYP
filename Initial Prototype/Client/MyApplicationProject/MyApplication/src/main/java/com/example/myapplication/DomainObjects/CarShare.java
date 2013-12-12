@@ -30,6 +30,9 @@ public class CarShare {
     public boolean PetsAllowed;
     public int VehicleType;
     public boolean Private;
+    public boolean SearchByDate;
+    public boolean SearchByTime;
+    public boolean Free;
 
     public String DateOfDepartureAsString()
     {

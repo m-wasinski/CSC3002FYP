@@ -4,12 +4,10 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -17,14 +15,11 @@ import android.widget.Toast;
 
 import com.example.myapplication.Constants.Constants;
 import com.example.myapplication.DomainObjects.User;
-import com.example.myapplication.Helpers.ApplicationFileManager;
+import com.example.myapplication.Helpers.ServiceHelper;
 import com.example.myapplication.Interfaces.OnLoginCompleted;
 import com.example.myapplication.R;
 import com.example.myapplication.DomainObjects.ServiceResponse;
-import com.example.myapplication.Helpers.UserHelper;
 import com.google.gson.Gson;
-
-import java.net.CookieManager;
 
 public class LoginActivity extends Activity implements OnLoginCompleted {
 
@@ -32,7 +27,7 @@ public class LoginActivity extends Activity implements OnLoginCompleted {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_activity);
+        setContentView(R.layout.login_activity_layout);
         SetupUIEvents();
     }
 
@@ -51,12 +46,20 @@ public class LoginActivity extends Activity implements OnLoginCompleted {
                 AttemptLogin();
             }
         });
+
+        Button registerButton = (Button) findViewById(R.id.LoginActivityRegisterButton);
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openRegistrationActivity();
+            }
+        });
     }
 
     private void AttemptLogin()
     {
         EditText userName = (EditText) findViewById(R.id.UserLoginUserNameEditText);
-        EditText password = (EditText) findViewById(R.id.UserLoginPasswordEditText);
+        EditText password = (EditText) findViewById(R.id.UserLoginPasswordTextField);
         CheckBox rememberMe  = (CheckBox) findViewById(R.id.RememberMeCheckBox);
 
         pd = new ProgressDialog(this);
@@ -64,11 +67,18 @@ public class LoginActivity extends Activity implements OnLoginCompleted {
         pd.setMessage("Please wait.");
         pd.show();
 
-        UserHelper.LoginUser(userName.getText().toString(), password.getText().toString(), this, rememberMe.isChecked());
+        ServiceHelper.LoginUser(userName.getText().toString(), password.getText().toString(), this, rememberMe.isChecked());
     }
 
-    @Override
+    private void openRegistrationActivity()
+    {
+        Intent intent = new Intent(this, RegistrationActivity.class);
+        startActivity(intent);
+        finish();
+    }
 
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         MenuInflater inflater = getMenuInflater();
@@ -80,13 +90,10 @@ public class LoginActivity extends Activity implements OnLoginCompleted {
     }
 
     @Override
-
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.RegisterMenuOption:
-                Intent intent = new Intent(this, RegistrationActivity.class);
-                startActivity(intent);
-                finish();
+                openRegistrationActivity();
             default:
                 return super.onOptionsItemSelected(item);
         }

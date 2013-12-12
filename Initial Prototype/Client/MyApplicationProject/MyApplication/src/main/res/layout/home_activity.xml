@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             class="com.example.myapplication.Fragments.FragmentMyCarShares"
-            tools:layout="@layout/fragment_my_car_shares">
+            tools:layout="@layout/my_car_shares_fragment">
          </fragment>
 
     </LinearLayout>
@@ -25,11 +25,12 @@
         android:layout_width="match_parent"
         android:layout_weight="1">
         <fragment
+            android:layout_marginTop="20sp"
             android:id="@+id/FragmentQuickSearch"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            class="com.example.myapplication.Fragments.FragmentQuickSearch"
-            tools:layout="@layout/quick_search_fragment">
+            class="com.example.myapplication.Fragments.FragmentSearch"
+            tools:layout="@layout/search_car_shares_fragment">
         </fragment>
     </LinearLayout>
 

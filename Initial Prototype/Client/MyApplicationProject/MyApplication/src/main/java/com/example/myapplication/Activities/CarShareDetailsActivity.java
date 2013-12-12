@@ -41,10 +41,10 @@ public class CarShareDetailsActivity extends Activity {
         destinationCity.setText(carShare.DestinationCity);
 
         TextView date = (TextView) findViewById(R.id.CarShareDetailsDepartureDate);
-        date.setText(carShare.DateOfDeparture);
+        date.setText(carShare.DateOfDepartureAsString());
 
         TextView time = (TextView) findViewById(R.id.CarShareDetailsDepartureTime);
-        time.setText(carShare.DateOfDepartureAsString());
+        time.setText(carShare.TimeOfDepartureAsString());
 
         TextView smokers = (TextView) findViewById(R.id.CarShareDetailsSmokers);
         smokers.setText(Helpers.TranslateBoolean(carShare.SmokersAllowed));
@@ -57,5 +57,11 @@ public class CarShareDetailsActivity extends Activity {
 
         TextView description = (TextView) findViewById(R.id.CarShareDetailsDescription);
         description.setText(carShare.Description);
+
+        TextView fee = (TextView) findViewById(R.id.CarShareDetailsFee);
+        fee.setText("£"+carShare.Fee);
+
+        TextView pets = (TextView) findViewById(R.id.CarShareDetailsPets);
+        pets.setText(Helpers.TranslateBoolean(carShare.PetsAllowed));
     }
 }

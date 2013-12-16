@@ -3,9 +3,12 @@ package com.example.myapplication.Activities;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +18,7 @@ import android.widget.ArrayAdapter;
 import com.example.myapplication.DomainObjects.ServiceResponse;
 import com.example.myapplication.DomainObjects.User;
 import com.example.myapplication.Experimental.SpinnerNavigationItem;
+import com.example.myapplication.Experimental.TabsPagerAdapter;
 import com.example.myapplication.Experimental.TitleNavigationAdapter;
 import com.example.myapplication.Fragments.FragmentMyCarShares;
 import com.example.myapplication.Helpers.ServiceHelper;
@@ -30,7 +34,7 @@ import java.util.ArrayList;
  * Created by Michal on 13/11/13.
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class HomeActivity extends Activity implements UserHomeActivity{
+public class HomeActivity extends FragmentActivity implements UserHomeActivity{
 
 
     // action bar
@@ -54,7 +58,7 @@ public class HomeActivity extends Activity implements UserHomeActivity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
-
+        setContentView(R.layout.home_activity);
 
 
         Gson gson = new Gson();
@@ -71,36 +75,50 @@ public class HomeActivity extends Activity implements UserHomeActivity{
 
         actionBar = getActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        // Spinner title navigation data
-        navSpinner = new ArrayList<SpinnerNavigationItem>();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        navSpinner.add(new SpinnerNavigationItem("Home", R.drawable.steering_wheel));
-        navSpinner.add(new SpinnerNavigationItem("Post New Car Share", R.drawable.steering_wheel));
-        navSpinner.add(new SpinnerNavigationItem("Profile", R.drawable.steering_wheel));
-        navSpinner.add(new SpinnerNavigationItem("Friends", R.drawable.steering_wheel));
-        actionBar.setSelectedNavigationItem(0);
-        // title drop down adapter
-        adapter = new TitleNavigationAdapter(getApplicationContext(), navSpinner);
+        // Initilization
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.Pager);
+        TabsPagerAdapter mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
 
-        // assigning the spinner navigation
-        actionBar.setListNavigationCallbacks(adapter, new ActionBar.OnNavigationListener() {
+        viewPager.setAdapter(mAdapter);
+        actionBar.setHomeButtonEnabled(false);
+
+        actionBar.addTab(actionBar.newTab().setText("My Journeys").setTabListener(new ActionBar.TabListener() {
             @Override
-            public boolean onNavigationItemSelected(int i, long l) {
-                Log.e("Selected", ""+i);
-                switch(i){
-                    case 1:
-                        Intent intent = new Intent(getBaseContext(), PostNewCarShareActivity.class);
-                        Gson g = new Gson();
-                        intent.putExtra("CurrentUser", g.toJson(CurrentUser));
-                        startActivity(intent);
-                }
-
-                return false;
+            public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+                viewPager.setCurrentItem(tab.getPosition());
             }
-        });
 
-        setContentView(R.layout.home_activity);
+            @Override
+            public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+
+            }
+
+            @Override
+            public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+
+            }
+        }));
+
+        actionBar.addTab(actionBar.newTab().setText("Search").setTabListener(new ActionBar.TabListener() {
+            @Override
+            public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+
+            }
+
+            @Override
+            public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+
+            }
+        }));
+
+
 
 // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,

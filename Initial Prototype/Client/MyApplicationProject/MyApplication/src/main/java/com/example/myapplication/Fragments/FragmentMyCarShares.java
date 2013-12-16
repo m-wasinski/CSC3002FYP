@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
  * Created by Michal on 27/11/13.
  */
 
-public class FragmentMyCarShares extends Fragment implements OnCarSharesRetrieved{
+public class FragmentMyCarShares extends android.support.v4.app.Fragment implements OnCarSharesRetrieved{
 
     public int currentUserId;
     private ListView mainListView;
@@ -45,7 +46,8 @@ public class FragmentMyCarShares extends Fragment implements OnCarSharesRetrieve
         //
         //
         // }
-        currentUserId = ((HomeActivity) this.getActivity()).lol();
+        //currentUserId = ((HomeActivity) getActivity()).lol();
+        currentUserId = 2;
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)

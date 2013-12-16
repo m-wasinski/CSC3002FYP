@@ -38,7 +38,7 @@ import java.util.Locale;
  * Created by Michal on 30/11/13.
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class FragmentSearch extends Fragment implements SearchCompleted{
+public class FragmentSearch extends android.support.v4.app.Fragment implements SearchCompleted{
 
     private Calendar myCalendar;
     private TextView dateTextView;

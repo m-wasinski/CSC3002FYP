@@ -1,37 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <LinearLayout
-        android:layout_height="match_parent"
+    <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/Pager"
         android:layout_width="match_parent"
-        android:layout_weight="1">
-        <fragment
-            android:id="@+id/FragmentMyCarShares"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            class="com.example.myapplication.Fragments.FragmentMyCarShares"
-            tools:layout="@layout/my_car_shares_fragment">
-         </fragment>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:layout_weight="1">
-        <fragment
-            android:layout_marginTop="20sp"
-            android:id="@+id/FragmentQuickSearch"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            class="com.example.myapplication.Fragments.FragmentSearch"
-            tools:layout="@layout/search_car_shares_fragment">
-        </fragment>
-    </LinearLayout>
+        android:layout_height="match_parent">
+    </android.support.v4.view.ViewPager>
 
 </LinearLayout>

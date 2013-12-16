@@ -11,7 +11,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1">
+            <ListView
+                android:layout_margin="5sp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/MyCarSharesListView"/>
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1">
         <LinearLayout
             android:focusable="true"
             android:focusableInTouchMode="true"
@@ -116,4 +132,5 @@
                     android:id="@+id/SearchButton" />
         </LinearLayout>
     </LinearLayout>
+</LinearLayout>
 </LinearLayout>

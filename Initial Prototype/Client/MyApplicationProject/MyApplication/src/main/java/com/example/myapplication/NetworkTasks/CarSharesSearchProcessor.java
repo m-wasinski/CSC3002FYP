@@ -6,7 +6,6 @@ import android.widget.TextView;
 
 import com.example.myapplication.DomainObjects.CarShare;
 import com.example.myapplication.DomainObjects.ServiceResponse;
-import com.example.myapplication.DomainObjects.User;
 import com.example.myapplication.Experimental.MySSLSocketFactory;
 import com.example.myapplication.Interfaces.SearchCompleted;
 import com.google.gson.Gson;
@@ -44,7 +43,7 @@ public class CarSharesSearchProcessor extends AsyncTask<TextView, String, Boolea
     @Override
     protected void onPostExecute(Boolean aBoolean) {
         super.onPostExecute(aBoolean);
-        searchCompleted.OnSearchCompleted(serviceResponse);
+        searchCompleted.onSearchCompleted(serviceResponse);
     }
 
     @Override

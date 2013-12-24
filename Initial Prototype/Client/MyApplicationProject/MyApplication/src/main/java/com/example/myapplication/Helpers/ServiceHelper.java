@@ -1,7 +1,7 @@
 package com.example.myapplication.Helpers;
 
 import com.example.myapplication.DomainObjects.CarShare;
-import com.example.myapplication.Fragments.FragmentMyCarShares;
+import com.example.myapplication.Fragments.MyCarSharesFragment;
 import com.example.myapplication.Interfaces.OnCarSharePosted;
 import com.example.myapplication.Interfaces.OnLoginCompleted;
 import com.example.myapplication.Interfaces.UserHomeActivity;
@@ -42,7 +42,7 @@ public class ServiceHelper {
         logoutUser.execute();
     }
 
-    public static void RetrieveMyCarShares(int id, FragmentMyCarShares fragmentMyCarShares)
+    public static void RetrieveMyCarShares(int id, MyCarSharesFragment fragmentMyCarShares)
     {
         MyCarSharesRetriever retriever = new MyCarSharesRetriever(id, fragmentMyCarShares);
         retriever.execute();

@@ -15,4 +15,5 @@ public class Constants {
     public static final String RandomId = "RiD";
     public static final String RememberMe = "RememberMe";
     public static String RandomID;
+    public static final int MediumAnimation = 500;
 }

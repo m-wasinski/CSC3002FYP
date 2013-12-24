@@ -93,7 +93,6 @@ public class PostNewCarShareActivity extends Activity implements OnCarSharePoste
         });
 
         final TimePickerDialog timeDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            boolean fired = false;
             @Override
             public void onTimeSet(TimePicker timePicker, int i, int i2) {
                 myCalendar.set(Calendar.HOUR_OF_DAY, timePicker.getCurrentHour());
@@ -136,7 +135,7 @@ public class PostNewCarShareActivity extends Activity implements OnCarSharePoste
           CarShare carShare = new CarShare();
           carShare.DestinationCity = destinationCity.getText().toString();
           carShare.DepartureCity = departureCity.getText().toString();
-          carShare.DriverId = currentUser.GetId();
+          carShare.DriverId = currentUser.UserId;
           carShare.Description = description.getText().toString();
           carShare.Fee = Double.parseDouble(fee.getText().toString());
           carShare.WomenOnly = womenOnly.isChecked();

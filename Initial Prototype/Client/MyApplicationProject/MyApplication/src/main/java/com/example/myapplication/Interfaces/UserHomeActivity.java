@@ -5,6 +5,6 @@ import com.example.myapplication.DomainObjects.ServiceResponse;
 /**
  * Created by Michal on 23/11/13.
  */
-public interface UserHomeActivity {
+public interface UserHomeActivity<T> {
     void OnLogoutCompleted(ServiceResponse<Boolean> serviceResponse);
 }

@@ -1,30 +1,61 @@
-﻿using System;
-using System.Security.Cryptography;
-using System.ServiceModel.Web;
-using System.Text;
-using DomainObjects.Constants;
-using DomainObjects.Domains;
-using DomainObjects.DOmains;
-using FindNDriveDataAccessLayer;
-
-namespace FindNDriveServices2
+﻿namespace FindNDriveServices2
 {
+    using System;
+    using System.Security.Cryptography;
+    using System.ServiceModel.Web;
+    using System.Text;
+
+    using DomainObjects.Constants;
+    using DomainObjects.Domains;
+
+    using FindNDriveDataAccessLayer;
+
+    /// <summary>
+    /// The session manager.
+    /// </summary>
     public class SessionManager
-    {   
+    {
+        /// <summary>
+        /// The _find n drive unit of work.
+        /// </summary>
         private readonly FindNDriveUnitOfWork _findNDriveUnitOfWork;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SessionManager"/> class.
+        /// </summary>
+        /// <param name="findNDriveUnitOfWork">
+        /// The find n drive unit of work.
+        /// </param>
         public SessionManager(FindNDriveUnitOfWork findNDriveUnitOfWork)
         {
-            _findNDriveUnitOfWork = findNDriveUnitOfWork;
+            this._findNDriveUnitOfWork = findNDriveUnitOfWork;
         }
 
         //Generates a new session id for the user.
+        /// <summary>
+        /// The generate new session id.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public static string GenerateNewSessionId(int userId)
         {
             return userId + ":" + Guid.NewGuid().ToString().Replace("-", string.Empty).Replace(":", string.Empty).Substring(0, 8);
         }
 
         //Encrypts a given string value and returns a hash.
+        /// <summary>
+        /// The encrypt value.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string EncryptValue(string value)
         {
             var encoding = new UTF8Encoding();
@@ -91,6 +122,12 @@ namespace FindNDriveServices2
             return true;
         }
 
+        /// <summary>
+        /// The get user id.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public int GetUserId()
         {
             if (WebOperationContext.Current != null)
@@ -104,6 +141,15 @@ namespace FindNDriveServices2
             return -1;
         }
 
+        /// <summary>
+        /// The get user id.
+        /// </summary>
+        /// <param name="session">
+        /// The session.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public int GetUserId(string session)
         {
             string stringId;
@@ -130,6 +176,12 @@ namespace FindNDriveServices2
             return id;
         }
 
+        /// <summary>
+        /// The refresh session.
+        /// </summary>
+        /// <param name="session">
+        /// The session.
+        /// </param>
         public void RefreshSession(Session session)
         {
             session.ExpiresOn = DateTime.Now.AddMinutes(30);
@@ -137,6 +189,12 @@ namespace FindNDriveServices2
             _findNDriveUnitOfWork.Commit();
         }
 
+        /// <summary>
+        /// The generate new session.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
         public void GenerateNewSession(int userId)
         {
             var sessionType = SessionTypes.Temporary;
@@ -198,6 +256,15 @@ namespace FindNDriveServices2
             }
         }
 
+        /// <summary>
+        /// The invalidate session.
+        /// </summary>
+        /// <param name="forceInvalidate">
+        /// The force invalidate.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool InvalidateSession(bool forceInvalidate)
         {
             var success = false;

@@ -6,10 +6,8 @@ import android.widget.TextView;
 
 import com.example.myapplication.DomainObjects.CarShare;
 import com.example.myapplication.DomainObjects.ServiceResponse;
-import com.example.myapplication.DomainObjects.User;
-import com.example.myapplication.Experimental.MySSLSocketFactory;
+import com.example.myapplication.Experimental.SSLSocketFactory;
 import com.example.myapplication.Interfaces.OnCarSharePosted;
-import com.example.myapplication.Interfaces.OnCarSharesRetrieved;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -50,7 +48,7 @@ public class PostNewCarShareTask extends AsyncTask<TextView, String, Boolean> {
     @Override
     protected Boolean doInBackground(TextView... textViews) {
         try {
-            HttpClient httpClient = MySSLSocketFactory.getNewHttpClient();
+            HttpClient httpClient = SSLSocketFactory.getNewHttpClient();
             URI uri = new URI("https://findndrive.no-ip.co.uk/Services/CarShareService.svc/create");
             HttpPost postRequest = new HttpPost(uri);
 

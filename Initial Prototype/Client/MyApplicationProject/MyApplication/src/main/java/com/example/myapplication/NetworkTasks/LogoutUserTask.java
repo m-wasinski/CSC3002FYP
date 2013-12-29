@@ -1,14 +1,12 @@
 package com.example.myapplication.NetworkTasks;
 
 import android.os.AsyncTask;
-import android.support.v7.appcompat.R;
 import android.util.Log;
 import android.widget.TextView;
 
 import com.example.myapplication.Constants.Constants;
 import com.example.myapplication.DomainObjects.ServiceResponse;
-import com.example.myapplication.DomainObjects.User;
-import com.example.myapplication.Experimental.MySSLSocketFactory;
+import com.example.myapplication.Experimental.SSLSocketFactory;
 import com.example.myapplication.Helpers.ApplicationFileManager;
 import com.example.myapplication.Helpers.DeviceID;
 import com.example.myapplication.Interfaces.UserHomeActivity;
@@ -55,7 +53,7 @@ public class LogoutUserTask extends AsyncTask<TextView, String, Boolean> {
     protected Boolean doInBackground(TextView... textViews) {
         try {
 
-            HttpClient httpClient = MySSLSocketFactory.getNewHttpClient();
+            HttpClient httpClient = SSLSocketFactory.getNewHttpClient();
             URI uri = new URI("https://findndrive.no-ip.co.uk/Services/UserService.svc/logout");
             HttpPost postRequest = new HttpPost(uri);
 

@@ -1,16 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ISearchService.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The i search service.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace FindNDriveServices2.Contracts
 {
-    using System.Security.Permissions;
+    using System.Collections.Generic;
     using System.ServiceModel;
     using System.ServiceModel.Web;
-    using DomainObjects.DOmains;
     using DomainObjects.Domains;
-
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
 
@@ -23,8 +25,8 @@ namespace FindNDriveServices2.Contracts
         /// <summary>
         /// The search car shares.
         /// </summary>
-        /// <param name="login">
-        /// The login.
+        /// <param name="carShare">
+        /// The car share.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.

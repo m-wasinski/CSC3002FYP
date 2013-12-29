@@ -75,7 +75,6 @@ namespace FindNDriveServices2.Services
 
             var validatedUser = ValidationHelper.Validate(login);
        
-            // Need to change validated user isValid method as extra validation in this class....
             if (!validatedUser.IsValid || !WebSecurity.Login(login.UserName, login.Password))
             {
                 validatedUser.ErrorMessages.Add("Invalid Username or Password.");

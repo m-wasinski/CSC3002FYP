@@ -1,4 +1,13 @@
-﻿using System.Runtime.Serialization;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="LoginDTO.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The login DTO (Data Transfer Object) used to interact with the user service.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+using System.Runtime.Serialization;
 
 namespace FindNDriveServices2.DTOs
 {

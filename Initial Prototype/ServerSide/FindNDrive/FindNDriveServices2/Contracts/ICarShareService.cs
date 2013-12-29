@@ -10,7 +10,6 @@
 namespace FindNDriveServices2.Contracts
 {
     using System.Collections.Generic;
-    using System.Security.Permissions;
     using System.ServiceModel;
     using System.ServiceModel.Web;
 

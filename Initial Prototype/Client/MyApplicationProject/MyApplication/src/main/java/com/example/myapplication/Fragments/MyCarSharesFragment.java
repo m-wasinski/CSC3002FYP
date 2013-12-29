@@ -38,7 +38,6 @@ public class MyCarSharesFragment extends android.support.v4.app.Fragment impleme
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.e("CALL", "CALL");
         currentUser = ((HomeActivity) getActivity()).GetCurrentUser();
         ServiceHelper.RetrieveMyCarShares(currentUser.UserId, this);
 

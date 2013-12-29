@@ -8,7 +8,7 @@ import com.example.myapplication.Constants.Constants;
 import com.example.myapplication.DTOs.LoginDTO;
 import com.example.myapplication.DomainObjects.ServiceResponse;
 import com.example.myapplication.DomainObjects.User;
-import com.example.myapplication.Experimental.MySSLSocketFactory;
+import com.example.myapplication.Experimental.SSLSocketFactory;
 import com.example.myapplication.Helpers.ApplicationFileManager;
 import com.example.myapplication.Helpers.DeviceID;
 import com.example.myapplication.Interfaces.OnLoginCompleted;
@@ -56,7 +56,7 @@ public class ManualLoginTask extends AsyncTask<TextView, String, Boolean> {
 
         try {
 
-            HttpClient httpClient = MySSLSocketFactory.getNewHttpClient();
+            HttpClient httpClient = SSLSocketFactory.getNewHttpClient();
             URI uri = new URI("https://findndrive.no-ip.co.uk/Services/UserService.svc/manuallogin");
             HttpPost postRequest = new HttpPost(uri);
 

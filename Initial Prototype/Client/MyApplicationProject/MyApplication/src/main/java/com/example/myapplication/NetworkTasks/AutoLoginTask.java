@@ -7,7 +7,7 @@ import android.widget.TextView;
 import com.example.myapplication.Constants.Constants;
 import com.example.myapplication.DomainObjects.ServiceResponse;
 import com.example.myapplication.DomainObjects.User;
-import com.example.myapplication.Experimental.MySSLSocketFactory;
+import com.example.myapplication.Experimental.SSLSocketFactory;
 import com.example.myapplication.Helpers.ApplicationFileManager;
 import com.example.myapplication.Helpers.DeviceID;
 import com.example.myapplication.Interfaces.OnLoginCompleted;
@@ -53,7 +53,7 @@ import java.net.URISyntaxException;
 
         try {
 
-            HttpClient httpClient = MySSLSocketFactory.getNewHttpClient();
+            HttpClient httpClient = SSLSocketFactory.getNewHttpClient();
             URI uri = new URI("https://findndrive.no-ip.co.uk/Services/UserService.svc/autologin");
             HttpPost postRequest = new HttpPost(uri);
 

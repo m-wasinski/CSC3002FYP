@@ -48,7 +48,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
     private View view;
     private ListView searchResultsListView;
     private TextView searchLabelTextView;
-    private ActivityMode activityMode;
+    private Mode activityMode;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,12 +58,12 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
         dateTextView = (TextView) view.findViewById(R.id.SearchDateTextView);
         timeTextView = (TextView) view.findViewById(R.id.SearchTimeTextView);
         searchLabelTextView = (TextView) view.findViewById(R.id.SearchLabel);
-        activityMode = ActivityMode.SearchPanelExpanded;
+        activityMode = Mode.SearchPanelExpanded;
 
         searchLabelTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(activityMode == ActivityMode.SearchPanelExpanded)
+                if(activityMode == Mode.SearchPanelExpanded)
                 {
                     expandSearchResults();
                 }
@@ -201,7 +201,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
                 parentPane.requestLayout();
             }
         });
-        activityMode = ActivityMode.SearchResultsExpanded;
+        activityMode = Mode.SearchResultsExpanded;
         shrink.start();
     }
 
@@ -219,12 +219,12 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
             }
         });
         searchLabelTextView.setText("Minimize");
-        activityMode = ActivityMode.SearchPanelExpanded;
+        activityMode = Mode.SearchPanelExpanded;
         shrink.start();
     }
 }
 
-enum ActivityMode{
+enum Mode {
     SearchPanelExpanded,
     SearchResultsExpanded
 }

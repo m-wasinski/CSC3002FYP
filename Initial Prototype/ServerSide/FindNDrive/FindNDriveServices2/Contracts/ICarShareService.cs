@@ -91,6 +91,5 @@ namespace FindNDriveServices2.Contracts
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/create")]
         ServiceResponse<CarShare> CreateNewCarShareListing(CarShareDTO carShareDTO);
-
     }
 }

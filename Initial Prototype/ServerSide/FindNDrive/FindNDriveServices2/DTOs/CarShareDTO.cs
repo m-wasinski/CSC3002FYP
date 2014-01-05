@@ -18,6 +18,7 @@ namespace FindNDriveServices2.DTOs
 
     using DomainObjects.Constants;
     using DomainObjects.DOmains;
+    using DomainObjects.Domains;
 
     /// <summary>
     /// The car share dto.
@@ -147,5 +148,11 @@ namespace FindNDriveServices2.DTOs
         /// </summary>
         [DataMember]
         public bool Free { get; set; }
+
+        /// <summary>
+        /// Gets or sets the requests.
+        /// </summary>
+        [DataMember]
+        public ICollection<CarShareRequest> Requests { get; set; } 
     }
 }

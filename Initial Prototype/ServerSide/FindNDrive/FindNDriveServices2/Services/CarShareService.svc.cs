@@ -125,9 +125,7 @@ namespace FindNDriveServices2.Services
         public ServiceResponse<List<CarShare>> GetAllCarShareListingsForUser(int id)
         {
             var carShares =
-                this._findNDriveUnitOfWork.CarShareRepository.AsQueryable()
-                    .IncludeAll()
-                    .Where(_ => _.DriverId == id || _.Participants.Any(x => x.UserId == id))
+                this._findNDriveUnitOfWork.CarShareRepository.AsQueryable().IncludeAll().Where(_ => _.DriverId == id || _.Participants.Any(x => x.UserId == id))
                     .ToList();
 
             return new ServiceResponse<List<CarShare>>

@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Services\CarShareService.svc" />
+    <Content Include="Services\RequestService.svc" />
     <Content Include="Services\SearchService.svc" />
     <Content Include="Services\UserService.svc" />
     <Content Include="Web.config">
@@ -101,13 +102,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contracts\ICarShareService.cs" />
+    <Compile Include="Contracts\IMessengerService.cs" />
+    <Compile Include="Contracts\IRequestService.cs" />
     <Compile Include="Contracts\ISearchService.cs" />
     <Compile Include="Contracts\IUserService.cs" />
     <Compile Include="CustomEndpointBehaviour.cs" />
     <Compile Include="CustomMessageInspector.cs" />
     <Compile Include="DTOs\CarShareDTO.cs" />
+    <Compile Include="DTOs\CarShareRequestDTO.cs" />
     <Compile Include="DTOs\LoginDTO.cs" />
     <Compile Include="DTOs\RegisterDTO.cs" />
+    <Compile Include="DTOs\TravelBuddyDTO.cs" />
     <Compile Include="DTOs\UserDTO.cs" />
     <Compile Include="MyServiceHost.cs" />
     <Compile Include="MyServiceHostFactory.cs" />
@@ -116,6 +121,9 @@
     <Compile Include="ServiceResponses\ServiceResponseCode.cs" />
     <Compile Include="Services\CarShareService.svc.cs">
       <DependentUpon>CarShareService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\RequestService.svc.cs">
+      <DependentUpon>RequestService.svc</DependentUpon>
     </Compile>
     <Compile Include="Services\ResponseBuilder.cs" />
     <Compile Include="Services\SearchService.svc.cs">

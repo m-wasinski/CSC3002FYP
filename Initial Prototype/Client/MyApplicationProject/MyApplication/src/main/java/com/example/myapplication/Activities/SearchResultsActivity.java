@@ -9,7 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
-import com.example.myapplication.Adapters.CarSharesListViewAdapter;
+import com.example.myapplication.Adapters.CarShareAdapter;
 import com.example.myapplication.DomainObjects.CarShare;
 import com.example.myapplication.Adapters.SearchResultsAdapter;
 import com.example.myapplication.R;
@@ -44,7 +44,7 @@ public class SearchResultsActivity extends Activity {
         carShares = gson.fromJson(getIntent().getExtras().getString("CarShares"), type);
 
         ListView listView = (ListView) findViewById(R.id.MyCarSharesListView);
-        CarSharesListViewAdapter adapter = new CarSharesListViewAdapter(0, this, R.layout.my_car_shares_fragment_custom_listview_row_layout, carShares);
+        CarShareAdapter adapter = new CarShareAdapter(0, this, R.layout.my_car_shares_fragment_custom_listview_row_layout, carShares);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

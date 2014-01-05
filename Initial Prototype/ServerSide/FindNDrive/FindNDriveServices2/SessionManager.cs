@@ -76,9 +76,9 @@
         {
             if (WebOperationContext.Current != null)
             {
-                var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[Constants.SessionId];
-                var incomingDeviceId = WebOperationContext.Current.IncomingRequest.Headers[Constants.DeviceId];
-                var randomId = WebOperationContext.Current.IncomingRequest.Headers[Constants.RandomId];
+                var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[Constants.SESSION_ID];
+                var incomingDeviceId = WebOperationContext.Current.IncomingRequest.Headers[Constants.DEVICE_ID];
+                var randomId = WebOperationContext.Current.IncomingRequest.Headers[Constants.UUID];
 
                 int userId = GetUserId(incomingSessionId);
 
@@ -91,7 +91,7 @@
                 {
                     if (savedSession.SessionType == SessionTypes.Temporary)
                     {
-                        if (randomId != savedSession.LastRandomId)
+                        if (randomId != savedSession.Uuid)
                         {
                             return false;
                         }
@@ -102,10 +102,10 @@
 
                     var encryptedId = EncryptValue(incomingDeviceId);
 
-                    if (!savedSession.LastKnownId.Equals(encryptedId))
+                    if (!savedSession.DeviceId.Equals(encryptedId))
                         return false;
 
-                    var result = DateTime.Compare(DateTime.Now, savedSession.ExpiresOn);
+                    var result = DateTime.Compare(DateTime.Now, savedSession.ExpiryDate);
 
                     if (result > 0)
                         return false;
@@ -132,7 +132,7 @@
         {
             if (WebOperationContext.Current != null)
             {
-                var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[Constants.SessionId];
+                var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[Constants.SESSION_ID];
 
                 if(incomingSessionId != null)
                     return GetUserId(incomingSessionId);
@@ -184,9 +184,9 @@
         /// </param>
         public void RefreshSession(Session session)
         {
-            session.ExpiresOn = DateTime.Now.AddMinutes(30);
-            _findNDriveUnitOfWork.SessionRepository.Update(session);
-            _findNDriveUnitOfWork.Commit();
+            session.ExpiryDate = DateTime.Now.AddMinutes(30);
+            //this._findNDriveUnitOfWork.SessionRepository.Update(session);
+            this._findNDriveUnitOfWork.Commit();
         }
 
         /// <summary>
@@ -200,9 +200,9 @@
             var sessionType = SessionTypes.Temporary;
             if (WebOperationContext.Current != null)
             {
-                var rememberUser = WebOperationContext.Current.IncomingRequest.Headers[Constants.RememberMe];
-                var incomingDeviceId = WebOperationContext.Current.IncomingRequest.Headers[Constants.DeviceId];
-                var randomId = WebOperationContext.Current.IncomingRequest.Headers[Constants.RandomId];
+                var rememberUser = WebOperationContext.Current.IncomingRequest.Headers[Constants.REMEMBER_ME];
+                var incomingDeviceId = WebOperationContext.Current.IncomingRequest.Headers[Constants.DEVICE_ID];
+                var randomId = WebOperationContext.Current.IncomingRequest.Headers[Constants.UUID];
 
                 //set expiration date for the above token, initialy to 30 minutes.
                 var validUntil = DateTime.Now.AddMinutes(30);
@@ -222,25 +222,26 @@
                     else
                     {
                         if (savedSession != null)
-                            savedSession.LastRandomId = randomId;
+                            savedSession.Uuid = randomId;
                     }
 
                     if (savedSession != null)
                     {
                         savedSession.SessionId = sessionId;
-                        savedSession.LastKnownId = hashedDeviceId;
-                        savedSession.ExpiresOn = validUntil;
+                        savedSession.DeviceId = hashedDeviceId;
+                        savedSession.ExpiryDate = validUntil;
                         savedSession.SessionType = sessionType;
                         savedSession.UserId = userId;
-                        _findNDriveUnitOfWork.SessionRepository.Update(savedSession);
+                        //_findNDriveUnitOfWork.SessionRepository.Update(savedSession);
+                        this._findNDriveUnitOfWork.Commit();
                     }
                     else
                     {
                         var newSession = new Session
                         {
-                            LastRandomId = randomId,
-                            LastKnownId = hashedDeviceId,
-                            ExpiresOn = validUntil,
+                            Uuid = randomId,
+                            DeviceId = hashedDeviceId,
+                            ExpiryDate = validUntil,
                             SessionType = sessionType,
                             SessionId = sessionId,
                             UserId = userId
@@ -251,7 +252,7 @@
                         
                     _findNDriveUnitOfWork.Commit();
 
-                    WebOperationContext.Current.OutgoingResponse.Headers.Add(Constants.SessionId, sessionId);
+                    WebOperationContext.Current.OutgoingResponse.Headers.Add(Constants.SESSION_ID, sessionId);
                 }
             }
         }
@@ -271,7 +272,7 @@
 
             if (WebOperationContext.Current != null)
             {
-                var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[Constants.SessionId];
+                var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[Constants.SESSION_ID];
 
                 int userId = GetUserId(incomingSessionId);
 
@@ -284,10 +285,10 @@
                 {
                     if (forceInvalidate || savedSession.SessionType == SessionTypes.Temporary)
                     {   
-                        savedSession.ExpiresOn = DateTime.Now.AddDays(-1);
+                        savedSession.ExpiryDate = DateTime.Now.AddDays(-1);
                         success = true;
-                        _findNDriveUnitOfWork.SessionRepository.Update(savedSession);
-                        _findNDriveUnitOfWork.Commit();
+                        //this._findNDriveUnitOfWork.SessionRepository.Update(savedSession);
+                        this._findNDriveUnitOfWork.Commit();
                     }
                 }
             }

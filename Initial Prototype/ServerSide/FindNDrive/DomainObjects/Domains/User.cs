@@ -10,6 +10,8 @@
 namespace DomainObjects.DOmains
 {
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Runtime.Serialization;
@@ -18,6 +20,7 @@ namespace DomainObjects.DOmains
     /// <summary>
     /// Represents User entity.
     /// </summary>
+    [DataContract]
     public class User
     {
         /// <summary>
@@ -72,5 +75,16 @@ namespace DomainObjects.DOmains
         /// </summary>
         [DataMember]
         public virtual Roles Role { get; set; }
+
+        /// <summary>
+        /// Gets or sets the gcm registration id.
+        /// </summary>
+        [DataMember]
+        public string GCMRegistrationID { get; set; }
+
+        /// <summary>
+        /// Gets or sets the travel buddies.
+        /// </summary>
+        public virtual ICollection<User> TravelBuddies { get; set; }
     }
 }

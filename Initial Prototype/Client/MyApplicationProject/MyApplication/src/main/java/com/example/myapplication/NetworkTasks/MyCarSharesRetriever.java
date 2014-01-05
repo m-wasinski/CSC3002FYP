@@ -64,8 +64,8 @@ public class MyCarSharesRetriever extends AsyncTask<TextView, String, Boolean> {
 
             postRequest.setEntity(se);
 
-            //postRequest.addHeader(Constants.DeviceId, DeviceID.getID());
-            //postRequest.addHeader(Constants.SessionID, fileManager.GetTokenValue());
+            //postRequest.addHeader(Constants.DEVICE_ID, DeviceID.getID());
+            //postRequest.addHeader(Constants.SESSION_ID, fileManager.GetTokenValue());
 
             HttpResponse httpResponse = httpClient.execute(postRequest);
             String serviceResponseString = EntityUtils.toString(httpResponse.getEntity());

@@ -22,14 +22,14 @@ import java.util.GregorianCalendar;
 /**
  * Created by Michal on 29/11/13.
  */
-public class CarSharesListViewAdapter extends ArrayAdapter<CarShare> {
+public class CarShareAdapter extends ArrayAdapter<CarShare> {
 
     private Context context;
     private int layoutResourceId;
     private int userId;
     private ArrayList<CarShare> CarShares= null;
 
-    public CarSharesListViewAdapter(int user, Context context, int resource, ArrayList<CarShare> carShares) {
+    public CarShareAdapter(int user, Context context, int resource, ArrayList<CarShare> carShares) {
         super(context, resource, carShares);
         this.layoutResourceId = resource;
         this.context = context;

@@ -10,7 +10,7 @@ import com.example.myapplication.DomainObjects.User;
 import com.example.myapplication.Experimental.SSLSocketFactory;
 import com.example.myapplication.Helpers.ApplicationFileManager;
 import com.example.myapplication.Helpers.DeviceID;
-import com.example.myapplication.Interfaces.OnLoginCompleted;
+import com.example.myapplication.Interfaces.mainActivityInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -32,10 +32,12 @@ import java.net.URISyntaxException;
  */
  public class AutoLoginTask extends AsyncTask<TextView, String, Boolean> {
 
-    private OnLoginCompleted listener;
+    private mainActivityInterface listener;
     private ServiceResponse<User> serviceResponse;
 
-    public AutoLoginTask(OnLoginCompleted lis)
+    private final String TAG = "AutoLoginTask";
+
+    public AutoLoginTask(mainActivityInterface lis)
     {
         listener = lis;
     }
@@ -43,7 +45,7 @@ import java.net.URISyntaxException;
     @Override
     protected void onPostExecute(Boolean aBoolean) {
         super.onPostExecute(aBoolean);
-        listener.OnLoginCompleted(serviceResponse);
+        listener.autoLoginCompleted(serviceResponse);
     }
 
     @Override
@@ -64,8 +66,8 @@ import java.net.URISyntaxException;
 
             postRequest.setEntity(se);
 
-            postRequest.addHeader(Constants.DeviceId, DeviceID.getID());
-            postRequest.addHeader(Constants.SessionID, fileManager.GetTokenValue());
+            postRequest.addHeader(Constants.DEVICE_ID, DeviceID.getID());
+            postRequest.addHeader(Constants.SESSION_ID, fileManager.GetTokenValue());
 
             HttpResponse httpResponse = httpClient.execute(postRequest);
             String serviceResponseString = EntityUtils.toString(httpResponse.getEntity());
@@ -73,10 +75,8 @@ import java.net.URISyntaxException;
 
             Type userType = new TypeToken<ServiceResponse<User>>() {}.getType();
 
-            Log.e("Service Response:", serviceResponseString);
+            Log.i(TAG, "Received the following service response: " + serviceResponseString);
             serviceResponse = gson.fromJson(serviceResponseString, userType);
-
-//            Log.e("Header", serviceResponse.ErrorMessages.get(0).toString());
 
         } catch (URISyntaxException e) {
             e.printStackTrace();

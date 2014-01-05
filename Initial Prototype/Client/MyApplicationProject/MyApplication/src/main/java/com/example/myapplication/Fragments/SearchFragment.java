@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -21,14 +23,20 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.example.myapplication.Adapters.CarSharesListViewAdapter;
+import com.example.myapplication.Activities.CarShareDetailsActivity;
+import com.example.myapplication.Activities.ContactDriverActivity;
+import com.example.myapplication.Adapters.CarShareAdapter;
 import com.example.myapplication.Constants.Constants;
 import com.example.myapplication.DomainObjects.CarShare;
+import com.example.myapplication.DomainObjects.CarShareRequest;
 import com.example.myapplication.DomainObjects.ServiceResponse;
 import com.example.myapplication.Experimental.WCFDateTimeHelper;
-import com.example.myapplication.Helpers.SearchHelper;
+import com.example.myapplication.Helpers.ServiceHelpers;
+import com.example.myapplication.Interfaces.CarShareRequestRetrieverInterface;
 import com.example.myapplication.Interfaces.SearchCompleted;
+import com.example.myapplication.NetworkTasks.CarShareRequestsRetriever;
 import com.example.myapplication.R;
+import com.google.gson.Gson;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,22 +56,22 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
     private View view;
     private ListView searchResultsListView;
     private TextView searchLabelTextView;
-    private Mode activityMode;
+    private Mode mode;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         myCalendar = Calendar.getInstance();
-        view = inflater.inflate(R.layout.search_car_shares_fragment_layout, container, false);
+        view = inflater.inflate(R.layout.search_car_shares_fragment, container, false);
         dateTextView = (TextView) view.findViewById(R.id.SearchDateTextView);
         timeTextView = (TextView) view.findViewById(R.id.SearchTimeTextView);
         searchLabelTextView = (TextView) view.findViewById(R.id.SearchLabel);
-        activityMode = Mode.SearchPanelExpanded;
+        mode = Mode.SearchPanelExpanded;
 
         searchLabelTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(activityMode == Mode.SearchPanelExpanded)
+                if(mode == Mode.SearchPanelExpanded)
                 {
                     expandSearchResults();
                 }
@@ -81,7 +89,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
                 myCalendar.set(Calendar.MONTH, monthOfYear);
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 String myFormat = "MM/dd/yy"; //In which you need put here
-                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.UK);
 
                 dateTextView.setText(sdf.format(myCalendar.getTime()));
             }
@@ -177,13 +185,36 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
         carShare.SearchByDate = dateTextView.getText().toString().length() != 0;
         carShare.SearchByTime = timeTextView.getText().toString().length() != 0;
 
-        SearchHelper.SearchCarShares(carShare, this);
+        ServiceHelpers.SearchCarShares(carShare, this);
     }
 
     @Override
-    public void onSearchCompleted(ServiceResponse<ArrayList<CarShare>> serviceResponse) {
-        CarSharesListViewAdapter adapter = new CarSharesListViewAdapter(0, getActivity(), R.layout.my_car_shares_fragment_custom_listview_row_layout, serviceResponse.Result);
+    public void onSearchCompleted(final ServiceResponse<ArrayList<CarShare>> serviceResponse) {
+        CarShareAdapter adapter = new CarShareAdapter(0, getActivity(), R.layout.my_car_shares_fragment_custom_listview_row_layout, serviceResponse.Result);
         searchResultsListView.setAdapter(adapter);
+
+        searchResultsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
+
+                CarShareRequestsRetriever carShareRequestsRetriever = new CarShareRequestsRetriever(serviceResponse.Result.get(i).CarShareId, new CarShareRequestRetrieverInterface() {
+                    @Override
+                    public void carShareRequestsRetrieved(ServiceResponse<ArrayList<CarShareRequest>> carShareRequests) {
+                        Gson gson = new Gson();
+                        Intent intent = new Intent(getActivity(), ContactDriverActivity.class);
+                        intent.putExtra("CurrentCarShare", gson.toJson(serviceResponse.Result.get(i)));
+                        intent.putExtra("CurrentRequests", gson.toJson(carShareRequests.Result));
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void requestMarkedAsRead(ServiceResponse<CarShareRequest> carShareRequest) {
+
+                    }
+                });
+                carShareRequestsRetriever.execute();
+            }
+        });
         expandSearchResults();
     }
 
@@ -194,14 +225,14 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
         float ws = parentPane.getWeightSum();
         searchLabelTextView.setText("Search");
         ObjectAnimator shrink  = ObjectAnimator.ofFloat(parentPane, "weightSum", ws, view.getHeight() /searchLabelTextView.getHeight());
-        shrink.setDuration(Constants.MediumAnimation);
+        shrink.setDuration(Constants.MEDIUM_ANIMATION_SPEED);
         shrink.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 parentPane.requestLayout();
             }
         });
-        activityMode = Mode.SearchResultsExpanded;
+        mode = Mode.SearchResultsExpanded;
         shrink.start();
     }
 
@@ -211,7 +242,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
         float ws = parentPane.getWeightSum();
 
         ObjectAnimator shrink  = ObjectAnimator.ofFloat(parentPane, "weightSum", ws, 2.0f);
-        shrink.setDuration(Constants.MediumAnimation);
+        shrink.setDuration(Constants.MEDIUM_ANIMATION_SPEED);
         shrink.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
@@ -219,7 +250,7 @@ public class SearchFragment extends android.support.v4.app.Fragment implements S
             }
         });
         searchLabelTextView.setText("Minimize");
-        activityMode = Mode.SearchPanelExpanded;
+        mode = Mode.SearchPanelExpanded;
         shrink.start();
     }
 }

@@ -1,8 +1,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+
+    <item android:id="@+id/TravelBuddiesMenuOption"
+        android:title="Travel buddies"
         android:orderInCategory="100"
         app:showAsAction="never" />
+    <item android:id="@+id/ProfileMenuOption"
+        android:title="Profile"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+    <item android:id="@+id/LogoutMenuOption"
+        android:title="@string/LogoutMenuTitle"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/action_add_new_car_share"
+        android:icon="@drawable/plus"
+        android:title="@string/AddNewCarShare"
+        android:showAsAction="always"/>
 </menu>

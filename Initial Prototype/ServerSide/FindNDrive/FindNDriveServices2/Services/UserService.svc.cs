@@ -9,10 +9,14 @@
 
 namespace FindNDriveServices2.Services
 {
+    using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using System.Net;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
+    using System.Text;
 
     using DomainObjects.DOmains;
 
@@ -64,6 +68,11 @@ namespace FindNDriveServices2.Services
             this._sessionManager = sessionManager;
         }
 
+        public UserService()
+        {
+           
+        }
+
         /// <summary>
         /// Logs a user in.
         /// </summary>
@@ -81,21 +90,12 @@ namespace FindNDriveServices2.Services
                 validatedUser.IsValid = false;
             }
             else
-            {   
-                var proxy = this._findNDriveUnitOfWork.UserRepository.Find(WebSecurity.GetUserId(login.UserName));
-                this._sessionManager.GenerateNewSession(proxy.UserId);
-              
-                loggedInUser = new User()
-                {
-                    FirstName = proxy.FirstName,
-                    LastName = proxy.LastName,
-                    DateOfBirth = proxy.DateOfBirth,
-                    EmailAddress = proxy.EmailAddress,
-                    Gender = proxy.Gender,
-                    Role = Roles.User,
-                    UserName = proxy.UserName,
-                    UserId = proxy.UserId
-                };
+            {
+                loggedInUser = this._findNDriveUnitOfWork.UserRepository.Find(WebSecurity.GetUserId(login.UserName));
+                this._sessionManager.GenerateNewSession(loggedInUser.UserId);
+                loggedInUser.GCMRegistrationID = login.GCMRegistrationID;
+
+                this._findNDriveUnitOfWork.Commit();
             }
 
             return new ServiceResponse<User>
@@ -119,17 +119,17 @@ namespace FindNDriveServices2.Services
             if (this._sessionManager.ValidateSession())
             {
                 var userId = this._sessionManager.GetUserId();
-
+                
                 if (userId != -1)
                 {
-                    loggedInUser = this._findNDriveUnitOfWork.UserRepository.Find(userId);  
+                    loggedInUser = this._findNDriveUnitOfWork.UserRepository.Find(userId);
                 }
             }
 
             return new ServiceResponse<User>
             {
                 Result = loggedInUser,
-                ServiceResponseCode = (loggedInUser == null) ? ServiceResponseCode.Failure : ServiceResponseCode.Success,
+                ServiceResponseCode = (loggedInUser == null) ? ServiceResponseCode.Failure : ServiceResponseCode.Success
             };
         }
 
@@ -208,6 +208,53 @@ namespace FindNDriveServices2.Services
                 ServiceResponseCode = success ? ServiceResponseCode.Success : ServiceResponseCode.Failure,
                 ErrorMessages = null
             };
+        }
+
+        /// <summary>
+        /// The add travel buddy.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<User> AddTravelBuddy(TravelBuddyDTO user)
+        {
+            //TODO: Check if buddy is already in the list. Return error if yes.
+            var targetUser =
+                this._findNDriveUnitOfWork.UserRepository.AsQueryable()
+                    .IncludeAll()
+                    .FirstOrDefault(_ => _.UserId == user.TargetUserId);
+
+            var newBuddy = this._findNDriveUnitOfWork.UserRepository.AsQueryable()
+                    .IncludeAll()
+                    .FirstOrDefault(_ => _.UserId == user.TravelBuddyUserId);
+
+            targetUser.TravelBuddies.Add(newBuddy);
+
+            this._findNDriveUnitOfWork.Commit();
+
+            return new ServiceResponse<User>()
+                       {
+                           Result = targetUser,
+                           ServiceResponseCode = ServiceResponseCode.Success
+                       };
+        }
+
+        public ServiceResponse<List<User>> GetTravelBuddies(int userId)
+        {
+            var user =
+                this._findNDriveUnitOfWork.UserRepository.AsQueryable()
+                    .IncludeAll()
+                    .FirstOrDefault(_ => _.UserId == userId)
+                    .TravelBuddies.ToList();
+
+            return new ServiceResponse<List<User>>()
+                       {
+                           Result = user,
+                           ServiceResponseCode = ServiceResponseCode.Success
+                       };
         }
     }
     

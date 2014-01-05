@@ -34,13 +34,13 @@ namespace DomainObjects.Domains
         /// </summary>
         [DataMember]
         [Required]
-        public string LastKnownId { get; set; }
+        public string DeviceId { get; set; }
 
         /// <summary>
         /// Gets or sets the last random id.
         /// </summary>
         [DataMember]
-        public string LastRandomId { get; set; }
+        public string Uuid { get; set; }
 
         /// <summary>
         /// Gets or sets the session id.
@@ -55,7 +55,7 @@ namespace DomainObjects.Domains
         [DataType(DataType.Date)]
         [Column(TypeName = "DateTime2")]
         [Required]
-        public virtual DateTime ExpiresOn { get; set; }
+        public virtual DateTime ExpiryDate { get; set; }
 
         /// <summary>
         /// Gets or sets the session type.

@@ -34,5 +34,8 @@ namespace FindNDriveServices2.DTOs
         /// </summary>
         [DataMember]
         public bool RememberMe { get; set; }
+
+        [DataMember]
+        public string GCMRegistrationID { get; set; }
     }
 }

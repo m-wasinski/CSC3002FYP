@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Show details"
+        android:id="@+id/ManageAsPassengerShowDetailsButton"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Show on map"
+        android:id="@+id/ManageAsPassengerShowOnMapButton"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Show passengers"
+        android:id="@+id/ManageAsPassengerShowPassengersButton"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Withdraw from this journey"
+        android:id="@+id/ManageAsPassengerWithdrawButton"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rate driver"
+        android:id="@+id/ManageAsPassengerRateDriverButton"
+        android:layout_gravity="center_horizontal" />
+
+</LinearLayout>

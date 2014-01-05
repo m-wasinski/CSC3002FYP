@@ -33,12 +33,13 @@ public class CarShare {
     public boolean SearchByDate;
     public boolean SearchByTime;
     public boolean Free;
+    public ArrayList<CarShareRequest> Requests;
 
     public String DateOfDepartureAsString()
     {
         Calendar _calendar = new GregorianCalendar();
         _calendar.setTime(WCFDateTimeHelper.parseWCFDateTimeString(DateAndTimeOfDeparture));
-        SimpleDateFormat _dateFormat  = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat _dateFormat  = new SimpleDateFormat("dd-MMMM-yyyy");
         return _dateFormat.format(_calendar.getTime());
     }
 

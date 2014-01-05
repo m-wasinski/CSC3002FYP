@@ -96,7 +96,7 @@ namespace FindNDriveInfrastructureDataAccessLayer
         /// The <see cref="IQueryable"/>.
         /// </returns>
         public IQueryable<T> AsQueryable()
-        {
+        {   
             return _dbSet;
         }
     }

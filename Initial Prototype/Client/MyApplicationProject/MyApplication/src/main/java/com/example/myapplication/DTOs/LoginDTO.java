@@ -6,10 +6,12 @@ package com.example.myapplication.DTOs;
 public class LoginDTO {
     private String UserName;
     private String Password;
+    private String GCMRegistrationID;
 
-    public LoginDTO(String userName, String password)
+    public LoginDTO(String userName, String password, String registrationId)
     {
         UserName = userName;
         Password = password;
+        GCMRegistrationID = registrationId;
     }
 }

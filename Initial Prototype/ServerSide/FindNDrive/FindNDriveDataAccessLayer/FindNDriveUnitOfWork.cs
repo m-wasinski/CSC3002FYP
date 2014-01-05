@@ -46,6 +46,11 @@ namespace FindNDriveDataAccessLayer
         public IRepository<Session> SessionRepository { get; set; }
 
         /// <summary>
+        /// Gets or sets the car share request repository.
+        /// </summary>
+        public IRepository<CarShareRequest> CarShareRequestRepository { get; set; } 
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FindNDriveUnitOfWork"/> class.
         /// </summary>
         /// <param name="dbContext">
@@ -60,12 +65,16 @@ namespace FindNDriveDataAccessLayer
         /// <param name="sessionRepository">
         /// The session repository.
         /// </param>
-        public FindNDriveUnitOfWork(DbContext dbContext, IRepository<User> userRepository, IRepository<CarShare> carShareRepository, IRepository<Session> sessionRepository)
+        /// <param name="carShareRequestRepository">
+        /// The car Share Request Repository.
+        /// </param>
+        public FindNDriveUnitOfWork(DbContext dbContext, IRepository<User> userRepository, IRepository<CarShare> carShareRepository, IRepository<Session> sessionRepository, IRepository<CarShareRequest> carShareRequestRepository)
         {
             this._dbContext = dbContext;
             this.UserRepository = userRepository;
             this.CarShareRepository = carShareRepository;
             this.SessionRepository = sessionRepository;
+            this.CarShareRequestRepository = carShareRequestRepository;
         }
 
         /// <summary>

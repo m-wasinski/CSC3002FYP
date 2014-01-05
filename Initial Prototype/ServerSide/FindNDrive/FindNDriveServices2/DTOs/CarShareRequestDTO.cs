@@ -1,0 +1,82 @@
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="CarShareRequestDTO.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The car share request dto.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace FindNDriveServices2.DTOs
+{
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Runtime.Serialization;
+
+    using DomainObjects.Constants;
+    using DomainObjects.Domains;
+    using DomainObjects.DOmains;
+
+    /// <summary>
+    /// The car share request dto.
+    /// </summary>
+    [DataContract]
+    public class CarShareRequestDTO
+    {
+        /// <summary>
+        /// Gets or sets the car share request id.
+        /// </summary>
+        [DataMember]
+        public int CarShareRequestId { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether add to travel buddies.
+        /// </summary>
+        [DataMember]
+        public bool AddToTravelBuddies { get; set; }
+
+        /// <summary>
+        /// Gets or sets the car share id.
+        /// </summary>
+        [DataMember]
+        public int CarShareId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the car share.
+        /// </summary>
+        [DataMember]
+        [ForeignKey("CarShareId")]
+        public virtual CarShare CarShare { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user id.
+        /// </summary>
+        [DataMember]
+        public int UserId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user.
+        /// </summary>
+        [DataMember]
+        [ForeignKey("UserId")]
+        public virtual User User { get; set; }
+
+        /// <summary>
+        /// Gets or sets the message.
+        /// </summary>
+        [DataMember]
+        public string Message { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether read.
+        /// </summary>
+        [DataMember]
+        public bool Read { get; set; }
+
+        /// <summary>
+        /// Gets or sets the decision.
+        /// </summary>
+        [DataMember]
+        public CarShareRequestDecision Decision { get; set; }
+    }
+}

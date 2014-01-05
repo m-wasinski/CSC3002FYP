@@ -25,6 +25,8 @@ public class User {
 
     public Date DoB;
 
+    public ArrayList<User> TravelBuddies;
+
     public User(){}
 
     public User(String userName, String email, String first, String last, long dob, int s)

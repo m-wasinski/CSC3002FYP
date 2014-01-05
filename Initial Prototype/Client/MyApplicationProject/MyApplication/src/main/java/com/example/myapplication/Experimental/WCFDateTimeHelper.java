@@ -1,10 +1,14 @@
 package com.example.myapplication.Experimental;
 
+import android.app.DatePickerDialog;
 import android.util.Log;
+import android.widget.DatePicker;
 
 import java.sql.Time;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -34,7 +38,7 @@ public class WCFDateTimeHelper {
         // Strip the '/Date(' and ')/' bits off:
         wcfDate = wcfDate.replace("/Date(", "");
         wcfDate = wcfDate.replace(")/", "");
-        wcfDate = wcfDate.replace("+0000", "");
+        wcfDate = wcfDate.replace(wcfDate.substring(wcfDate.indexOf("+")-1, wcfDate.length()-1), "");
         return new Date(Long.parseLong(wcfDate));
     }
 
@@ -46,5 +50,16 @@ public class WCFDateTimeHelper {
         long epoch = date.getTime();
 
         return "/Date("+epoch+")/";
+    }
+
+    public static String GetSimpleDate(String WcfDate)
+    {
+         Calendar  myCalendar = Calendar.getInstance();
+         String myFormat = "dd/MMMM/yyyy";
+         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.UK);
+        sdf.setTimeZone( TimeZone.getTimeZone("GMT") );
+         Date date = parseWCFDateTimeString(WcfDate);
+         myCalendar.setTime(date);
+         return sdf.format(myCalendar.getTime());
     }
 }

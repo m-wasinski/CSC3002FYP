@@ -8,23 +8,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.example.myapplication.Adapters.TabsPagerAdapter;
+import com.example.myapplication.Constants.Constants;
 import com.example.myapplication.DomainObjects.ServiceResponse;
 import com.example.myapplication.DomainObjects.User;
-import com.example.myapplication.Adapters.TabsPagerAdapter;
-import com.example.myapplication.Experimental.TitleNavigationAdapter;
-import com.example.myapplication.Fragments.MyCarSharesFragment;
-import com.example.myapplication.Helpers.ServiceHelper;
+import com.example.myapplication.Experimental.AppData;
+import com.example.myapplication.Helpers.ServiceHelpers;
 import com.example.myapplication.Interfaces.UserHomeActivity;
 import com.example.myapplication.R;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
 
 /**
  * Created by Michal on 13/11/13.
@@ -34,13 +29,9 @@ public class HomeActivity extends FragmentActivity implements UserHomeActivity<U
 
     // action bar
     private ActionBar actionBar;
-    private Gson gson;
-    private Type userType;
-    private User currentUser;
-    public User GetCurrentUser()
-    {
-        return currentUser;
-    }
+    private User user;
+    private AppData appData;
+
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public void onCreate(Bundle savedInstanceState) {
@@ -48,18 +39,12 @@ public class HomeActivity extends FragmentActivity implements UserHomeActivity<U
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.home_activity);
 
-
-
-        gson = new Gson();
-        userType = new TypeToken<User>() {}.getType();
-
-        currentUser = gson.fromJson(getIntent().getExtras().getString("CurrentUser"), userType);
+        appData = ((AppData)getApplication());
+        user = appData.getUser();
 
         actionBar = getActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-
 
         // Initilization
         final ViewPager viewPager = (ViewPager) findViewById(R.id.Pager);
@@ -68,7 +53,7 @@ public class HomeActivity extends FragmentActivity implements UserHomeActivity<U
         viewPager.setAdapter(mAdapter);
         actionBar.setHomeButtonEnabled(false);
 
-        actionBar.addTab(actionBar.newTab().setText("My Journeys").setTabListener(new ActionBar.TabListener() {
+        actionBar.addTab(actionBar.newTab().setText(Constants.JOURNEYS_TAB).setTabListener(new ActionBar.TabListener() {
             @Override
             public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
                 viewPager.setCurrentItem(tab.getPosition());
@@ -85,7 +70,7 @@ public class HomeActivity extends FragmentActivity implements UserHomeActivity<U
             }
         }));
 
-        actionBar.addTab(actionBar.newTab().setText("Search").setTabListener(new ActionBar.TabListener() {
+        actionBar.addTab(actionBar.newTab().setText(Constants.SEARCH).setTabListener(new ActionBar.TabListener() {
             @Override
             public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
                 viewPager.setCurrentItem(tab.getPosition());
@@ -133,7 +118,7 @@ public class HomeActivity extends FragmentActivity implements UserHomeActivity<U
 
     private void ExitApp(boolean forceLogout)
     {
-        ServiceHelper.LogoutUser(this, forceLogout);
+        ServiceHelpers.LogoutUser(this, forceLogout);
         finish();
 
         if(forceLogout)
@@ -141,10 +126,6 @@ public class HomeActivity extends FragmentActivity implements UserHomeActivity<U
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         }
-
-    }
-
-    public void OnLogoutCompleted(ServiceResponse<Boolean> serviceResponse) {
 
     }
 
@@ -160,7 +141,7 @@ public class HomeActivity extends FragmentActivity implements UserHomeActivity<U
 
         MenuInflater inflater = getMenuInflater();
 
-        inflater.inflate(R.menu.home, menu);
+        inflater.inflate(R.menu.main, menu);
 
         return true;
 
@@ -168,11 +149,28 @@ public class HomeActivity extends FragmentActivity implements UserHomeActivity<U
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.LogoutMenuOption:
                 ExitApp(true);
+                break;
+            case R.id.action_add_new_car_share:
+                 intent = new Intent(this, PostNewCarShareActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.TravelBuddiesMenuOption:
+                intent = new Intent(this, TravelBuddyListActivity.class);
+                startActivity(intent);
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void OnLogoutCompleted(ServiceResponse<Boolean> serviceResponse) {
+
     }
 }

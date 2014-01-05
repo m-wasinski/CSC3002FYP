@@ -29,11 +29,6 @@ namespace FindNDriveServices2
     public class MyServiceHostFactory : ServiceHostFactory
     {
         /// <summary>
-        /// The _find n drive unit of work.
-        /// </summary>
-        private readonly FindNDriveUnitOfWork _findNDriveUnitOfWork;
-
-        /// <summary>
         /// The _session manager.
         /// </summary>
         private readonly SessionManager _sessionManager;
@@ -45,13 +40,6 @@ namespace FindNDriveServices2
         {
             if (!WebSecurity.Initialized)
                 WebSecurity.InitializeDatabaseConnection("FindNDriveConnectionString", "User", "Id", "UserName", true);
-
-            var testDbContext = new ApplicationContext();
-            var userEntityFrameworkRepository = new EntityFrameworkRepository<User>(testDbContext);
-            var carShareEntityFrameworkRepository = new EntityFrameworkRepository<CarShare>(testDbContext);
-            var sessionEntityFrameworkRepository = new EntityFrameworkRepository<Session>(testDbContext);
-            _findNDriveUnitOfWork = new FindNDriveUnitOfWork(testDbContext, userEntityFrameworkRepository, carShareEntityFrameworkRepository, sessionEntityFrameworkRepository);
-            _sessionManager = new SessionManager(_findNDriveUnitOfWork);
         }
 
         /// <summary>
@@ -68,7 +56,7 @@ namespace FindNDriveServices2
         /// </returns>
         protected override ServiceHost CreateServiceHost(Type serviceType, Uri[] baseAddresses)
         {
-            return new MyServiceHost(_findNDriveUnitOfWork, _sessionManager, serviceType, baseAddresses);
+            return new MyServiceHost(serviceType, baseAddresses);
         }
     }
 
@@ -103,6 +91,11 @@ namespace FindNDriveServices2
         private readonly CarShareService _carShareService;
 
         /// <summary>
+        /// The _request service.
+        /// </summary>
+        private readonly RequestService _requestService;
+
+        /// <summary>
         /// The _search service.
         /// </summary>
         private readonly SearchService _searchService;
@@ -118,14 +111,13 @@ namespace FindNDriveServices2
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// </exception>
-        public MyInstanceProvider(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager, Type serviceType)
+        public MyInstanceProvider(Type serviceType)
         {
-            this._findNDriveUnitOfWork = findNDriveUnitOfWork;
-            this._sessionManager = sessionManager;
             this._serviceType = serviceType;
-            this._userService = new UserService(_findNDriveUnitOfWork, sessionManager);
-            this._carShareService = new CarShareService(_findNDriveUnitOfWork, sessionManager);
-            this._searchService = new SearchService(_findNDriveUnitOfWork, sessionManager);
+            this._userService = new UserService();
+            this._carShareService = new CarShareService();
+            this._searchService = new SearchService();
+            this._requestService = new RequestService();
         }
 
         #region IInstanceProvider Members
@@ -157,15 +149,40 @@ namespace FindNDriveServices2
         /// The <see cref="object"/>.
         /// </returns>
         public object GetInstance(InstanceContext instanceContext)
-        {   
-            if(_serviceType == _userService.GetType())
-                return new UserService(this._findNDriveUnitOfWork, this._sessionManager);
+        {
+            var testDbContext = new ApplicationContext();
+            var userEntityFrameworkRepository = new EntityFrameworkRepository<User>(testDbContext);
+            var carShareEntityFrameworkRepository = new EntityFrameworkRepository<CarShare>(testDbContext);
+            var sessionEntityFrameworkRepository = new EntityFrameworkRepository<Session>(testDbContext);
+            var carShareRequestEntityFrameWorkRepository = new EntityFrameworkRepository<CarShareRequest>(testDbContext);
+
+            var findNDriveUnitOfWork = new FindNDriveUnitOfWork(
+                testDbContext,
+                userEntityFrameworkRepository,
+                carShareEntityFrameworkRepository,
+                sessionEntityFrameworkRepository,
+                carShareRequestEntityFrameWorkRepository);
+            var sessionManager = new SessionManager(findNDriveUnitOfWork);
+
+            if (_serviceType == _userService.GetType())
+            {
+                return new UserService(findNDriveUnitOfWork, sessionManager);
+            }
 
             if (_serviceType == _carShareService.GetType())
-                return new CarShareService(this._findNDriveUnitOfWork, this._sessionManager);
+            {
+                return new CarShareService(findNDriveUnitOfWork, sessionManager);
+            }
 
             if (_serviceType == _searchService.GetType())
-                return new SearchService(this._findNDriveUnitOfWork, this._sessionManager);
+            {
+                return new SearchService(findNDriveUnitOfWork, sessionManager);
+            }
+
+            if (_serviceType == _requestService.GetType())
+            {
+                return new RequestService(findNDriveUnitOfWork, sessionManager);
+            }
 
             return null;
         }
@@ -187,20 +204,65 @@ namespace FindNDriveServices2
 
         #region IContractBehavior Members
 
+        /// <summary>
+        /// The add binding parameters.
+        /// </summary>
+        /// <param name="contractDescription">
+        /// The contract description.
+        /// </param>
+        /// <param name="endpoint">
+        /// The endpoint.
+        /// </param>
+        /// <param name="bindingParameters">
+        /// The binding parameters.
+        /// </param>
         public void AddBindingParameters(ContractDescription contractDescription, ServiceEndpoint endpoint, BindingParameterCollection bindingParameters)
         {
         }
 
+        /// <summary>
+        /// The apply client behavior.
+        /// </summary>
+        /// <param name="contractDescription">
+        /// The contract description.
+        /// </param>
+        /// <param name="endpoint">
+        /// The endpoint.
+        /// </param>
+        /// <param name="clientRuntime">
+        /// The client runtime.
+        /// </param>
         public void ApplyClientBehavior(ContractDescription contractDescription, ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
             clientRuntime.ClientMessageInspectors.Add(new CustomMessageInspector());
         }
 
+        /// <summary>
+        /// The apply dispatch behavior.
+        /// </summary>
+        /// <param name="contractDescription">
+        /// The contract description.
+        /// </param>
+        /// <param name="endpoint">
+        /// The endpoint.
+        /// </param>
+        /// <param name="dispatchRuntime">
+        /// The dispatch runtime.
+        /// </param>
         public void ApplyDispatchBehavior(ContractDescription contractDescription, ServiceEndpoint endpoint, DispatchRuntime dispatchRuntime)
         {
             dispatchRuntime.InstanceProvider = this;
         }
 
+        /// <summary>
+        /// The validate.
+        /// </summary>
+        /// <param name="contractDescription">
+        /// The contract description.
+        /// </param>
+        /// <param name="endpoint">
+        /// The endpoint.
+        /// </param>
         public void Validate(ContractDescription contractDescription, ServiceEndpoint endpoint)
         {
         }

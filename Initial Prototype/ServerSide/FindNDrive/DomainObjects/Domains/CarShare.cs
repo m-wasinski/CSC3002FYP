@@ -20,6 +20,7 @@ namespace DomainObjects.Domains
     /// <summary>
     /// The car share.
     /// </summary>
+    [DataContract]
     public class CarShare
     {
         /// <summary>
@@ -40,7 +41,7 @@ namespace DomainObjects.Domains
         /// </summary>
         [DataMember]
         [ForeignKey("DriverId")]
-        public User Driver { get; set; }
+        public virtual User Driver { get; set; }
 
         /// <summary>
         /// Gets or sets the departure city.
@@ -70,7 +71,7 @@ namespace DomainObjects.Domains
         /// </summary>
         [Required]
         [DataMember]
-        public virtual string Description { get; set; }
+        public string Description { get; set; }
 
         /// <summary>
         /// Gets or sets the fee.
@@ -97,7 +98,7 @@ namespace DomainObjects.Domains
         /// Gets or sets the participants.
         /// </summary>
         [DataMember]
-        public ICollection<User> Participants { get; set; }
+        public virtual ICollection<User> Participants { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether smokers allowed.
@@ -126,6 +127,11 @@ namespace DomainObjects.Domains
         [Required]
         [DataMember]
         public VehicleTypes VehicleType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the requests.
+        /// </summary>
+        public virtual ICollection<CarShareRequest> Requests { get; set; } 
 
     }
 }

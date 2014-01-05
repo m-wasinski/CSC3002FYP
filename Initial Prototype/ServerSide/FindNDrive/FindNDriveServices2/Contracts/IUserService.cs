@@ -8,6 +8,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace FindNDriveServices2.Contracts
 {
+    using System.Collections.Generic;
     using System.Security.Permissions;
     using System.ServiceModel;
     using System.ServiceModel.Web;
@@ -86,5 +87,37 @@ namespace FindNDriveServices2.Contracts
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/logout")]
         ServiceResponse<bool> LogoutUser(bool forceDelete);
+
+        /// <summary>
+        /// The add travel buddy.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/addtravelbuddy")]
+        ServiceResponse<User> AddTravelBuddy(TravelBuddyDTO user);
+
+        /// <summary>
+        /// The get travel buddies.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/gettravelbuddies")]
+        ServiceResponse<List<User>> GetTravelBuddies(int userId);
     }
 }

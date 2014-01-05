@@ -28,8 +28,8 @@ namespace FindNDriveConsoleHost
             var userEntityFrameworkRepository = new EntityFrameworkRepository<User>(testDbContext);
             var carShareEntityFrameworkRepository = new EntityFrameworkRepository<CarShare>(testDbContext);
             var sessionEntityFrameworkRepository = new EntityFrameworkRepository<Session>(testDbContext);
-            var testUnitOfWork = new FindNDriveUnitOfWork(testDbContext, userEntityFrameworkRepository, carShareEntityFrameworkRepository, sessionEntityFrameworkRepository);
-            var sessionManager = new SessionManager(testUnitOfWork);
+            //var testUnitOfWork = new FindNDriveUnitOfWork(testDbContext, userEntityFrameworkRepository, carShareEntityFrameworkRepository, sessionEntityFrameworkRepository);
+            //var sessionManager = new SessionManager(testUnitOfWork);
             //WebSecurity.InitializeDatabaseConnection("FindNDriveConnectionString", "User", "Id", "UserName", true);
             var carShareService = new CarShareService();
             //Spawn these two services in two separate threads to ensure they both run concurrently.

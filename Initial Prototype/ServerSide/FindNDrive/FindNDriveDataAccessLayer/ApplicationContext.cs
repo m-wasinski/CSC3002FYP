@@ -13,6 +13,7 @@ namespace FindNDriveDataAccessLayer
 {
     using System.Data.Entity;
     using System.Data.Entity.ModelConfiguration.Conventions;
+    using System.Dynamic;
 
     using DomainObjects.Domains;
     using DomainObjects.DOmains;
@@ -37,6 +38,11 @@ namespace FindNDriveDataAccessLayer
         public DbSet<CarShare> CarShares { get; set; }
 
         /// <summary>
+        /// Gets or sets the car share requests.
+        /// </summary>
+        public DbSet<CarShareRequest> CarShareRequests { get; set; }
+
+        /// <summary>
         /// Gets or sets the sessions.
         /// </summary>
         public DbSet<Session> Sessions { get; set; }
@@ -48,6 +54,7 @@ namespace FindNDriveDataAccessLayer
             : this("FindNDriveConnectionString")
         {
             Configuration.ProxyCreationEnabled = false;
+            Configuration.LazyLoadingEnabled = false;
         }
 
         /// <summary>
@@ -60,6 +67,7 @@ namespace FindNDriveDataAccessLayer
             : base(connectionString)
         {
             Configuration.ProxyCreationEnabled = false;
+            Configuration.LazyLoadingEnabled = false;
         }
 
         // Define the model relationships, if C# isn't able to infer them itself
@@ -79,6 +87,23 @@ namespace FindNDriveDataAccessLayer
                     map.MapLeftKey("CarShareId");
                     map.MapRightKey("UserId");
                     map.ToTable("CarShare_User");
+                });
+
+            modelBuilder.Entity<CarShare>()
+                .HasMany(_ => _.Requests)
+                .WithMany()
+                .Map(map =>
+                {
+                    map.MapLeftKey("CarShareId");
+                    map.MapRightKey("CarShareRequestId");
+                    map.ToTable("CarShare_Request");
+                });
+
+            modelBuilder.Entity<User>()
+               .HasMany(_ => _.TravelBuddies).WithMany().Map(map =>
+                {
+                    map.MapLeftKey("UserId");
+                    map.ToTable("Travel_Buddies");
                 });
 
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();   

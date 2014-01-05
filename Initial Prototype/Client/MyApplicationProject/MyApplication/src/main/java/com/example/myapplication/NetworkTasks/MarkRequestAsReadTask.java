@@ -1,12 +1,13 @@
-package com.example.myapplication.Helpers;
+package com.example.myapplication.NetworkTasks;
 
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.example.myapplication.DomainObjects.CarShareRequest;
 import com.example.myapplication.DomainObjects.ServiceResponse;
-import com.example.myapplication.DomainObjects.User;
 import com.example.myapplication.Experimental.SSLSocketFactory;
+import com.example.myapplication.Interfaces.CarShareRequestRetrieverInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -22,37 +23,42 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 /**
- * Created by Michal on 13/11/13.
+ * Created by Michal on 02/01/14.
  */
-public class TestAuthentication extends AsyncTask<TextView, String, Boolean> {
+public class MarkRequestAsReadTask extends AsyncTask<TextView, String, Boolean> {
 
-    private User CurrentUser;
-    private ServiceResponse<User> serviceResponse;
+    private int carShareRequestId;
+    private ServiceResponse serviceResponse;
+    private CarShareRequestRetrieverInterface listener;
+    private final String TAG = this.getClass().getSimpleName()+": ";
 
-    public TestAuthentication(User user)
+    public MarkRequestAsReadTask(int id, CarShareRequestRetrieverInterface listener)
     {
-        CurrentUser = user;
+        carShareRequestId = id;
+        this.listener = listener;
     }
 
     @Override
     protected void onPostExecute(Boolean aBoolean) {
         super.onPostExecute(aBoolean);
+        listener.requestMarkedAsRead(serviceResponse);
     }
 
     @Override
     protected Boolean doInBackground(TextView... textViews) {
-
         try {
+
             HttpClient httpClient = SSLSocketFactory.getNewHttpClient();
-            URI uri = new URI("https://asus:443/Services/UserService.svc/test");
+            URI uri = new URI("https://findndrive.no-ip.co.uk/Services/RequestService.svc/markasread");
             HttpPost postRequest = new HttpPost(uri);
 
             Gson gson = new Gson();
-            String jsonUserDTO = gson.toJson(CurrentUser);
+            String stringId = gson.toJson(carShareRequestId);
 
-            StringEntity se = new StringEntity(jsonUserDTO,"UTF-8");
+            StringEntity se = new StringEntity(stringId,"UTF-8");
             se.setContentType("application/json;charset=UTF-8");
 
             postRequest.setEntity(se);
@@ -60,16 +66,10 @@ public class TestAuthentication extends AsyncTask<TextView, String, Boolean> {
             HttpResponse httpResponse = httpClient.execute(postRequest);
             String serviceResponseString = EntityUtils.toString(httpResponse.getEntity());
 
-            Type userType = new TypeToken<ServiceResponse<User>>() {}.getType();
+            Type carSharerequestType = new TypeToken<ServiceResponse<CarShareRequest>>() {}.getType();
 
-            serviceResponse = gson.fromJson(serviceResponseString, userType);
-
-            Log.e("AUTHENTICATION",serviceResponseString);
-
-            if (serviceResponse.Result == null)
-            {
-                serviceResponse.Result = new User();
-            }
+            Log.i(TAG, serviceResponseString);
+            serviceResponse = gson.fromJson(serviceResponseString, carSharerequestType);
 
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -84,4 +84,3 @@ public class TestAuthentication extends AsyncTask<TextView, String, Boolean> {
         return null;
     }
 }
-

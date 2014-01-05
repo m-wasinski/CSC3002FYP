@@ -82,7 +82,7 @@ namespace FindNDriveServices2.Services
                 this._findNDriveUnitOfWork.CarShareRepository.AsQueryable()
                     .IncludeAll()
                     .Where(_ => _.DepartureCity == carShare.DepartureCity &&
-                            _.DestinationCity == carShare.DestinationCity)
+                            _.DestinationCity == carShare.DestinationCity && _.AvailableSeats > 0)
                     .ToList();
 
             if (carShare.SearchByDate)

@@ -81,8 +81,8 @@ namespace FindNDriveDataAccessLayer.Migrations
                 UserId = administrator.UserId,
                 SessionType = SessionTypes.Permanent,
                 SessionId = SessionManager.GenerateNewSessionId(administrator.UserId),
-                LastKnownId = "Test",
-                ExpiresOn = DateTime.Now.AddDays(14),
+                DeviceId = "Test",
+                ExpiryDate = DateTime.Now.AddDays(14),
             };
 
             context.Sessions.AddOrUpdate(_ => _.UserId, session);
@@ -120,8 +120,8 @@ namespace FindNDriveDataAccessLayer.Migrations
                 UserId = participant1.UserId,
                 SessionType = SessionTypes.Permanent,
                 SessionId = SessionManager.GenerateNewSessionId(participant1.UserId),
-                LastKnownId = "Test",
-                ExpiresOn = DateTime.Now.AddDays(14),
+                DeviceId = "Test",
+                ExpiryDate = DateTime.Now.AddDays(14),
             };
 
             context.Sessions.AddOrUpdate(_ => _.UserId, session1);
@@ -147,8 +147,8 @@ namespace FindNDriveDataAccessLayer.Migrations
                 UserId = participant2.UserId,
                 SessionType = SessionTypes.Permanent,
                 SessionId = SessionManager.GenerateNewSessionId(participant2.UserId),
-                LastKnownId = "Test",
-                ExpiresOn = DateTime.Now.AddDays(14),
+                DeviceId = "Test",
+                ExpiryDate = DateTime.Now.AddDays(14),
             };
 
             context.Sessions.AddOrUpdate(_ => _.UserId, session2);
@@ -174,8 +174,8 @@ namespace FindNDriveDataAccessLayer.Migrations
                 UserId = driver.UserId,
                 SessionType = SessionTypes.Permanent,
                 SessionId = SessionManager.GenerateNewSessionId(driver.UserId),
-                LastKnownId = "Test",
-                ExpiresOn = DateTime.Now.AddDays(14),
+                DeviceId = "Test",
+                ExpiryDate = DateTime.Now.AddDays(14),
             };
 
             context.Sessions.AddOrUpdate(_ => _.UserId, session3);
@@ -191,7 +191,6 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Description = "Free ride to Dublin!",
                 Fee = 0.00,
                 WomenOnly = false,
-                Participants = new Collection<User>{ participant1, participant2 },
                 Driver = driver,
                 SmokersAllowed = false
             };
@@ -208,7 +207,6 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Description = "Lift to Coleraine",
                 Fee = 0.00,
                 WomenOnly = false,
-                Participants = new Collection<User> { participant1, participant2 },
                 Driver = participant1,
                 SmokersAllowed = false
             };
@@ -225,7 +223,6 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Description = "Lift to Newcastle",
                 Fee = 0.00,
                 WomenOnly = false,
-                Participants = new Collection<User> { participant1, participant2 },
                 Driver = participant1,
                 SmokersAllowed = false
             };
@@ -242,7 +239,6 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Description = "Free lift to Portrush",
                 Fee = 0.00,
                 WomenOnly = false,
-                Participants = new Collection<User> { participant1, participant2 },
                 Driver = participant1,
                 SmokersAllowed = false
             };
@@ -259,7 +255,6 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Description = "Free lift to Dublin",
                 Fee = 0.00,
                 WomenOnly = false,
-                Participants = new Collection<User> { participant1, participant2 },
                 Driver = participant1,
                 SmokersAllowed = false
             };
@@ -276,7 +271,6 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Description = "Free lift to Dublin",
                 Fee = 0.00,
                 WomenOnly = false,
-                Participants = new Collection<User> { participant1, participant2 },
                 Driver = participant1,
                 SmokersAllowed = false
             };
@@ -293,7 +287,6 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Description = "Free lift to Dublin, women only.",
                 Fee = 0.00,
                 WomenOnly = true,
-                Participants = new Collection<User> { participant1, participant2 },
                 Driver = participant1,
                 SmokersAllowed = false
             };
@@ -310,7 +303,6 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Description = "Free lift to Dublin, smokers allowed.",
                 Fee = 0.00,
                 WomenOnly = true,
-                Participants = new Collection<User> { participant1, participant2 },
                 Driver = participant1,
                 SmokersAllowed = true
             };
@@ -327,7 +319,6 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Description = "Lift to Dublin, fee applies.",
                 Fee = 25.40,
                 WomenOnly = false,
-                Participants = new Collection<User> { participant1, participant2 },
                 Driver = participant1,
                 SmokersAllowed = false
             };
@@ -344,7 +335,6 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Description = "Lift to Bangor, fee applies.",
                 Fee = 10.50,
                 WomenOnly = false,
-                Participants = new Collection<User> { participant1, participant2 },
                 Driver = participant1,
                 SmokersAllowed = true
             };

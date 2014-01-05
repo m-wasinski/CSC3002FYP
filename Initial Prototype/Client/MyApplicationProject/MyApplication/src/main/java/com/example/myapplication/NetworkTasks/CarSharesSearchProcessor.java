@@ -63,9 +63,6 @@ public class CarSharesSearchProcessor extends AsyncTask<TextView, String, Boolea
 
             postRequest.setEntity(se);
 
-            //postRequest.addHeader(Constants.DeviceId, DeviceID.getID());
-            //postRequest.addHeader(Constants.SessionID, fileManager.GetTokenValue());
-
             HttpResponse httpResponse = httpClient.execute(postRequest);
             String serviceResponseString = EntityUtils.toString(httpResponse.getEntity());
 

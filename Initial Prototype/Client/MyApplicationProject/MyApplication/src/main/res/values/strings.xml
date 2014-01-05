@@ -27,6 +27,7 @@
     <string name="Time">Time</string>
     <string name="Pets">Pets</string>
     <string name="Minimize">Minimize</string>
+    <string name="AddNewCarShare">Create new car share</string>
     <string-array name="app_menu_options">
         <item>Home</item>
         <item>My Car Shares</item>

@@ -1,10 +1,15 @@
 package com.example.myapplication.Activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.myapplication.DomainObjects.CarShare;
+import com.example.myapplication.Experimental.AppData;
 import com.example.myapplication.Helpers.Helpers;
 import com.example.myapplication.R;
 import com.google.gson.Gson;
@@ -18,21 +23,33 @@ import java.lang.reflect.Type;
 public class CarShareDetailsActivity extends Activity {
 
     private CarShare carShare;
+    private Button contactDriverButton;
+    private AppData appData;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         Gson gson = new Gson();
-
-        Type userType = new TypeToken<CarShare>() {}.getType();
-        carShare = gson.fromJson(getIntent().getExtras().getString("CurrentCarShare"), userType);
+        Type carShareType = new TypeToken<CarShare>() {}.getType();
+        carShare = gson.fromJson(getIntent().getExtras().getString("CurrentCarShare"), carShareType);
         setContentView(R.layout.car_share_details);
 
-        FillDetails();
+        fillDetails();
+
+        contactDriverButton = (Button) findViewById(R.id.CarShareDetailsContactDriverButton);
+        contactDriverButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Gson gson = new Gson();
+                Intent intent = new Intent(getBaseContext(), ContactDriverActivity.class);
+                intent.putExtra("CurrentCarShare", gson.toJson(carShare));
+                startActivity(intent);
+            }
+        });
     }
 
-    private void FillDetails()
+    private void fillDetails()
     {
         TextView departureCity = (TextView) findViewById(R.id.CarShareDetailsDepartureCity);
         departureCity.setText(carShare.DepartureCity);

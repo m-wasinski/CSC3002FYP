@@ -22,12 +22,6 @@ namespace FindNDriveServices2
         /// <summary>
         /// Initializes a new instance of the <see cref="MyServiceHost"/> class.
         /// </summary>
-        /// <param name="findNDriveUnitOfWork">
-        /// The find n drive unit of work.
-        /// </param>
-        /// <param name="sessionManager">
-        /// The session manager.
-        /// </param>
         /// <param name="serviceType">
         /// The service type.
         /// </param>
@@ -36,12 +30,12 @@ namespace FindNDriveServices2
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// </exception>
-        public MyServiceHost(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager, Type serviceType, params Uri[] baseAddresses)
+        public MyServiceHost(Type serviceType, params Uri[] baseAddresses)
             : base(serviceType, baseAddresses)
         {
             foreach (var cd in this.ImplementedContracts.Values)
             {
-                cd.Behaviors.Add(new MyInstanceProvider(findNDriveUnitOfWork, sessionManager, serviceType));
+                cd.Behaviors.Add(new MyInstanceProvider(serviceType));
             }
         }
     }

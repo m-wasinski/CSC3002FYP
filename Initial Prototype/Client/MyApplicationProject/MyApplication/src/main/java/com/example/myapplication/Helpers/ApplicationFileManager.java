@@ -1,9 +1,6 @@
 package com.example.myapplication.Helpers;
 
-import android.content.Context;
-import android.graphics.Path;
 import android.os.Environment;
-import android.support.v7.appcompat.R;
 import android.util.Log;
 
 import com.example.myapplication.Constants.Constants;
@@ -11,13 +8,9 @@ import com.example.myapplication.Constants.Constants;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
@@ -46,8 +39,8 @@ public  class ApplicationFileManager {
     public ApplicationFileManager()
     {
         externalStorage = Environment.getExternalStorageDirectory();
-        applicationFolder = new File(externalStorage.getAbsolutePath() + "/"+ Constants.AppFolderName);
-        sessionId = new File(applicationFolder.getAbsolutePath()+"/"+Constants.SessionIdFileName);
+        applicationFolder = new File(externalStorage.getAbsolutePath() + "/"+ Constants.APP_FOLDER_NAME);
+        sessionId = new File(applicationFolder.getAbsolutePath()+"/"+Constants.SESSION_ID_FILE_NAME);
         String state = Environment.getExternalStorageState();
 
         folderExists = applicationFolder.exists();

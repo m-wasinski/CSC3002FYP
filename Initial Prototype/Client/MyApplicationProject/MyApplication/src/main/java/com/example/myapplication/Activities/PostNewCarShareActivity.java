@@ -25,8 +25,9 @@ import com.example.myapplication.Constants.Constants;
 import com.example.myapplication.DomainObjects.CarShare;
 import com.example.myapplication.DomainObjects.ServiceResponse;
 import com.example.myapplication.DomainObjects.User;
+import com.example.myapplication.Experimental.AppData;
 import com.example.myapplication.Experimental.WCFDateTimeHelper;
-import com.example.myapplication.Helpers.ServiceHelper;
+import com.example.myapplication.Helpers.ServiceHelpers;
 import com.example.myapplication.Interfaces.OnCarSharePosted;
 import com.example.myapplication.R;
 import com.google.gson.Gson;
@@ -43,7 +44,7 @@ import java.util.Locale;
  */
 public class PostNewCarShareActivity extends Activity implements OnCarSharePosted {
 
-    private User currentUser;
+    private User user;
     private Calendar myCalendar;
     private EditText dateTextView;
     private EditText timeTextView;
@@ -55,16 +56,17 @@ public class PostNewCarShareActivity extends Activity implements OnCarSharePoste
     private EditText fee;
     private EditText description;
     private ProgressDialog pd;
+    private AppData appData;
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.post_new_car_share);
-        InitialiseUIElements();
-        Gson gson = new Gson();
 
-        Type userType = new TypeToken<User>() {}.getType();
-        currentUser = gson.fromJson(getIntent().getExtras().getString("CurrentUser"), userType);
+        appData = ((AppData)getApplication());
+        user = appData.getUser();
+
+        InitialiseUIElements();
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.vehicle_types, R.layout.vehicle_types_custom_layout);
@@ -135,7 +137,7 @@ public class PostNewCarShareActivity extends Activity implements OnCarSharePoste
           CarShare carShare = new CarShare();
           carShare.DestinationCity = destinationCity.getText().toString();
           carShare.DepartureCity = departureCity.getText().toString();
-          carShare.DriverId = currentUser.UserId;
+          carShare.DriverId = user.UserId;
           carShare.Description = description.getText().toString();
           carShare.Fee = Double.parseDouble(fee.getText().toString());
           carShare.WomenOnly = womenOnly.isChecked();
@@ -153,7 +155,7 @@ public class PostNewCarShareActivity extends Activity implements OnCarSharePoste
           pd.setTitle("Contacting server...");
           pd.setMessage("Please wait.");
           pd.show();
-          ServiceHelper.PostNewCarShare(this, carShare);
+          ServiceHelpers.PostNewCarShare(this, carShare);
     }
 
     private void InitialiseUIElements()
@@ -184,7 +186,7 @@ public class PostNewCarShareActivity extends Activity implements OnCarSharePoste
     @Override
     public void onCarSharePosted(ServiceResponse<CarShare> serviceResponse) {
         Log.e("Added new car share", ""+serviceResponse.ServiceResponseCode);
-        if(serviceResponse.ServiceResponseCode == Constants.ServiceResponseSuccess)
+        if(serviceResponse.ServiceResponseCode == Constants.SERVICE_RESPONSE_SUCCESS)
         {
             Toast toast = Toast.makeText(this, "Car share posted successfully.", Toast.LENGTH_LONG);
             toast.show();

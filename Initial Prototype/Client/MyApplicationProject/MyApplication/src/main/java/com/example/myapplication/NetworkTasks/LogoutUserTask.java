@@ -65,8 +65,8 @@ public class LogoutUserTask extends AsyncTask<TextView, String, Boolean> {
 
             postRequest.setEntity(se);
 
-            postRequest.addHeader(Constants.SessionID, fileManager.GetTokenValue());
-            postRequest.addHeader(Constants.DeviceId, DeviceID.getID());
+            postRequest.addHeader(Constants.SESSION_ID, fileManager.GetTokenValue());
+            postRequest.addHeader(Constants.DEVICE_ID, DeviceID.getID());
             HttpResponse httpResponse = httpClient.execute(postRequest);
             String serviceResponseString = EntityUtils.toString(httpResponse.getEntity());
             Log.e("Service Response:", serviceResponseString);

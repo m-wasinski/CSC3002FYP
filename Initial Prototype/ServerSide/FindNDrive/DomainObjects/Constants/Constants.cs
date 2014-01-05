@@ -17,27 +17,45 @@ namespace DomainObjects.Constants
         /// <summary>
         /// The session id.
         /// </summary>
-        public static string SessionId
+        public static string SESSION_ID
         {
             get
             {
-                return "SiD";
+                return "SESSION_ID";
             }
         }
 
         /// <summary>
         /// The device id.
         /// </summary>
-        public static string DeviceId = "DiD";
+        public static string DEVICE_ID
+        {
+             get
+             {
+                 return "DEVICE_ID";
+             }
+        }
 
         /// <summary>
         /// The remember me.
         /// </summary>
-        public static string RememberMe = "RememberMe";
+        public static string REMEMBER_ME
+        {
+            get
+            {
+                return "REMEMBER_ME";
+            }
+        }
 
         /// <summary>
         /// The random id.
         /// </summary>
-        public static string RandomId = "RiD";
+        public static string UUID
+        {
+            get
+            {
+                return "UUID";
+            }
+        }
     }
 }

@@ -2,8 +2,13 @@ package com.example.myapplication.Activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.ArrayAdapter;
@@ -16,10 +21,12 @@ import android.widget.Toast;
 import com.example.myapplication.Constants.Constants;
 import com.example.myapplication.DomainObjects.ServiceResponse;
 import com.example.myapplication.DomainObjects.User;
-import com.example.myapplication.Helpers.ServiceHelper;
+import com.example.myapplication.Helpers.ServiceHelpers;
 import com.example.myapplication.Interfaces.OnRegistrationCompleted;
 import com.example.myapplication.R;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +44,30 @@ public class RegistrationActivity extends Activity implements OnRegistrationComp
     private TextView errorMessagesEditText;
     private Spinner genderSpinner;
     private int gender;
+
+    public static final String EXTRA_MESSAGE = "message";
+    public static final String PROPERTY_REG_ID = "registration_id";
+    private static final String PROPERTY_APP_VERSION = "appVersion";
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+
+    /**
+     * Substitute you own sender ID here. This is the project number you got
+     * from the API Console, as described in "Getting Started."
+     */
+    String SENDER_ID = "505647745249";
+
+    /**
+     * Tag used on log messages.
+     */
+    static final String TAG = "GCMDemo";
+
+    TextView mDisplay;
+    GoogleCloudMessaging gcm;
+    AtomicInteger msgId = new AtomicInteger();
+    SharedPreferences prefs;
+    Context context;
+
+    String regid;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +112,7 @@ public class RegistrationActivity extends Activity implements OnRegistrationComp
         genderSpinner.setAdapter(adapter);
 
         SetupUIEvents();
+
     }
 
     void SetupUIEvents()
@@ -108,7 +140,7 @@ public class RegistrationActivity extends Activity implements OnRegistrationComp
             pd.setTitle("Registering...");
             pd.setMessage("Please wait.");
             pd.show();
-            ServiceHelper.RegisterNewUser(userNameEditText.getText().toString(),
+            ServiceHelpers.RegisterNewUser(userNameEditText.getText().toString(),
                     emailAddressEditText.getText().toString(),
                     passwordEditText.getText().toString(),
                     confirmedPasswordEditText.getText().toString(), gender, this);
@@ -187,7 +219,7 @@ public class RegistrationActivity extends Activity implements OnRegistrationComp
         pd.dismiss();
         Toast toast;
 
-        if (serviceResponse.ServiceResponseCode == Constants.ServiceResponseSuccess)
+        if (serviceResponse.ServiceResponseCode == Constants.SERVICE_RESPONSE_SUCCESS)
         {
             toast = Toast.makeText(this, "Registered successfully, please login.", Toast.LENGTH_LONG);
             toast.show();
@@ -201,6 +233,58 @@ public class RegistrationActivity extends Activity implements OnRegistrationComp
             {
                 errorMessagesEditText.append(error+"\n");
             }
+        }
+    }
+
+
+    /**
+     * Gets the current registration ID for application on GCM service.
+     * <p>
+     * If result is empty, the app needs to register.
+     *
+     * @return registration ID, or empty string if there is no existing
+     *         registration ID.
+     */
+    private String getRegistrationId(Context context) {
+        final SharedPreferences prefs = getGCMPreferences(context);
+        String registrationId = prefs.getString(PROPERTY_REG_ID, "");
+        if (registrationId.isEmpty()) {
+            Log.i(TAG, "Registration not found.");
+            return "";
+        }
+        // Check if app was updated; if so, it must clear the registration ID
+        // since the existing regID is not guaranteed to work with the new
+        // app version.
+        int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
+        int currentVersion = getAppVersion(context);
+        if (registeredVersion != currentVersion) {
+            Log.i(TAG, "App version changed.");
+            return "";
+        }
+        return registrationId;
+    }
+
+    /*
+     * @return Application's {@code SharedPreferences}.
+     */
+    private SharedPreferences getGCMPreferences(Context context) {
+    // This sample app persists the registration ID in shared preferences, but
+    // how you store the regID in your app is up to you.
+    return getSharedPreferences(RegistrationActivity.class.getSimpleName(),
+    Context.MODE_PRIVATE);
+    }
+
+    /**
+     * @return Application's version code from the {@code PackageManager}.
+     */
+    private static int getAppVersion(Context context) {
+        try {
+            PackageInfo packageInfo = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0);
+            return packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            // should never happen
+            throw new RuntimeException("Could not get package name: " + e);
         }
     }
 }

@@ -15,35 +15,37 @@ import android.widget.Toast;
 
 import com.example.myapplication.Constants.Constants;
 import com.example.myapplication.DomainObjects.User;
-import com.example.myapplication.Helpers.ServiceHelper;
-import com.example.myapplication.Interfaces.OnLoginCompleted;
+import com.example.myapplication.Experimental.AppData;
+import com.example.myapplication.Interfaces.loginActivityInterface;
+import com.example.myapplication.NetworkTasks.ManualLoginTask;
 import com.example.myapplication.R;
 import com.example.myapplication.DomainObjects.ServiceResponse;
-import com.google.gson.Gson;
 
-public class LoginActivity extends Activity implements OnLoginCompleted {
+public class LoginActivity extends Activity implements loginActivityInterface {
 
     private ProgressDialog pd;
+    private AppData appData;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        appData = ((AppData)getApplication());
         setContentView(R.layout.login_activity_layout);
-        SetupUIEvents();
+        setupUIEvents();
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        this.finish(); // or do something else
+        this.finish();
     }
 
-    private void SetupUIEvents()
+    private void setupUIEvents()
     {
         Button loginButton = (Button) findViewById(R.id.LoginUserButton);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AttemptLogin();
+                attemptLogin();
             }
         });
 
@@ -56,7 +58,7 @@ public class LoginActivity extends Activity implements OnLoginCompleted {
         });
     }
 
-    private void AttemptLogin()
+    private void attemptLogin()
     {
         EditText userName = (EditText) findViewById(R.id.UserLoginUserNameEditText);
         EditText password = (EditText) findViewById(R.id.UserLoginPasswordTextField);
@@ -67,7 +69,8 @@ public class LoginActivity extends Activity implements OnLoginCompleted {
         pd.setMessage("Please wait.");
         pd.show();
 
-        ServiceHelper.LoginUser(userName.getText().toString(), password.getText().toString(), this, rememberMe.isChecked());
+        ManualLoginTask userLoginTask = new ManualLoginTask(userName.getText().toString(), password.getText().toString(), rememberMe.isChecked(), this, appData);
+        userLoginTask.execute();
     }
 
     private void openRegistrationActivity()
@@ -98,16 +101,15 @@ public class LoginActivity extends Activity implements OnLoginCompleted {
                 return super.onOptionsItemSelected(item);
         }
     }
-    @Override
-    public void OnLoginCompleted(ServiceResponse<User> serviceResponse) {
 
+    @Override
+    public void manualLoginCompleted(ServiceResponse<User> serviceResponse) {
         pd.dismiss();
 
-        if (serviceResponse.ServiceResponseCode == Constants.ServiceResponseSuccess)
+        if (serviceResponse.ServiceResponseCode == Constants.SERVICE_RESPONSE_SUCCESS)
         {
-            Gson gson = new Gson();
+            appData.setUser(serviceResponse.Result);
             Intent intent = new Intent(this, HomeActivity.class);
-            intent.putExtra("CurrentUser", gson.toJson(serviceResponse.Result));
             startActivity(intent);
             finish();
         }
@@ -116,7 +118,5 @@ public class LoginActivity extends Activity implements OnLoginCompleted {
             Toast toast = Toast.makeText(this, "Incorrect username or password.", Toast.LENGTH_LONG);
             toast.show();
         }
-
-
     }
 }

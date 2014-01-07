@@ -8,8 +8,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.example.myapplication.Fragments.MyCarSharesFragment;
-import com.example.myapplication.Fragments.SearchFragment;
+import com.example.myapplication.Activities.Fragments.MyCarSharesFragment;
+import com.example.myapplication.Activities.Fragments.MyRequestsFragment;
+import com.example.myapplication.Activities.Fragments.SearchFragment;
 
 public class TabsPagerAdapter extends FragmentPagerAdapter {
 
@@ -25,6 +26,8 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
                 return new MyCarSharesFragment();
             case 1:
                 return new SearchFragment();
+            case 2:
+                return new MyRequestsFragment();
         }
 
         return null;
@@ -33,7 +36,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         // get item count - equal to number of tabs
-        return 2;
+        return 3;
     }
 
 }

@@ -28,6 +28,7 @@
     <string name="Pets">Pets</string>
     <string name="Minimize">Minimize</string>
     <string name="AddNewCarShare">Create new car share</string>
+    <string name="SelectGender">Select gender</string>
     <string-array name="app_menu_options">
         <item>Home</item>
         <item>My Car Shares</item>
@@ -43,6 +44,7 @@
         <item>Other</item>
     </string-array>
     <string-array name="gender">
+        <item>Select Gender</item>
         <item>Male</item>
         <item>Female</item>
     </string-array>

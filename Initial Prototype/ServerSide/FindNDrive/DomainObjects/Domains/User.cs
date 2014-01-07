@@ -14,8 +14,11 @@ namespace DomainObjects.DOmains
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using System.Dynamic;
     using System.Runtime.Serialization;
     using DomainObjects.Constants;
+
+    using FindNDriveServices2.DTOs;
 
     /// <summary>
     /// Represents User entity.

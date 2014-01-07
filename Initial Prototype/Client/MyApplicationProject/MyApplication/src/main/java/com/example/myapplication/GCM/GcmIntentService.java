@@ -10,8 +10,7 @@ import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.example.myapplication.Activities.HomeActivity;
-import com.example.myapplication.Activities.TravelBuddyListActivity;
+import com.example.myapplication.Activities.Activities.TravelBuddyListActivity;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 /**

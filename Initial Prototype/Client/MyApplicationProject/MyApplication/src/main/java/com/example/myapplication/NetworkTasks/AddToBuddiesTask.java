@@ -4,12 +4,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.example.myapplication.Constants.Constants;
 import com.example.myapplication.DomainObjects.ServiceResponse;
 import com.example.myapplication.DomainObjects.TravelBuddyDTO;
 import com.example.myapplication.DomainObjects.User;
 import com.example.myapplication.Experimental.SSLSocketFactory;
-import com.example.myapplication.Helpers.DeviceID;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

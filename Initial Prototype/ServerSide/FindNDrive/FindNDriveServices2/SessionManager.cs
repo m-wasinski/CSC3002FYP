@@ -247,10 +247,10 @@
                             UserId = userId
                         };
 
-                        _findNDriveUnitOfWork.SessionRepository.Add(newSession);
+                        this._findNDriveUnitOfWork.SessionRepository.Add(newSession);
                     }
                         
-                    _findNDriveUnitOfWork.Commit();
+                    this._findNDriveUnitOfWork.Commit();
 
                     WebOperationContext.Current.OutgoingResponse.Headers.Add(Constants.SESSION_ID, sessionId);
                 }

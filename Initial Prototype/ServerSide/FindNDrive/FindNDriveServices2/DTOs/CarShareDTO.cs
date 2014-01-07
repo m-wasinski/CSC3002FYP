@@ -150,9 +150,24 @@ namespace FindNDriveServices2.DTOs
         public bool Free { get; set; }
 
         /// <summary>
+        /// Gets or sets the unread requests count.
+        /// </summary>
+        [DataMember]
+        public int UnreadRequestsCount { get; set; }
+
+        /// <summary>
+        /// Gets or sets the car share status.
+        /// </summary>
+        [DataMember]
+        public CarShareStatus CarShareStatus { get; set; }
+
+        /// <summary>
         /// Gets or sets the requests.
         /// </summary>
         [DataMember]
         public ICollection<CarShareRequest> Requests { get; set; } 
+
+        [DataMember]
+        public virtual ICollection<CarShareMessage> Messages { get; set; } 
     }
 }

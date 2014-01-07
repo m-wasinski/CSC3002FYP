@@ -16,3 +16,11 @@ C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Release\
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\obj\Release\FindNDriveDomainObjects.csprojResolveAssemblyReference.cache
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\obj\Release\DomainObjects.dll
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\obj\Release\DomainObjects.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Release\FindNDriveServices2.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Release\FindNDriveDataAccessLayer.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Release\FindNDriveInfrastructureCore.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Release\FindNDriveInfrastructureDataAccessLayer.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Release\FindNDriveServices2.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Release\FindNDriveDataAccessLayer.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Release\FindNDriveInfrastructureCore.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\DomainObjects\bin\Release\FindNDriveInfrastructureDataAccessLayer.pdb

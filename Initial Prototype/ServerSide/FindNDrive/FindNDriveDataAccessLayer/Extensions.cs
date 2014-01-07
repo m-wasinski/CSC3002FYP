@@ -31,7 +31,7 @@ namespace FindNDriveDataAccessLayer
         /// </returns>
         public static IQueryable<CarShare> IncludeAll(this IQueryable<CarShare> queryable)
         {
-            return queryable.Include("Driver").Include("Participants").Include("Requests");
+            return queryable.Include("Driver").Include("Participants").Include("Requests").Include("Messages");
         }
 
         /// <summary>

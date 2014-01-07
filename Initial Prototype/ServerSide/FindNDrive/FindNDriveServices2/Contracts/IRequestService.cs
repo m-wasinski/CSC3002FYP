@@ -91,5 +91,22 @@ namespace FindNDriveServices2.Contracts
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/getrequests")]
         ServiceResponse<List<CarShareRequest>> GetAllRequestsForCarShare(int id);
+
+        /// <summary>
+        /// The get all requests for user.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/getrequestsforuser")]
+        ServiceResponse<List<CarShareRequest>> GetAllRequestsForUser(int id);
     }
 }

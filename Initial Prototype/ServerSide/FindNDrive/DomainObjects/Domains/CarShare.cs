@@ -13,6 +13,7 @@ namespace DomainObjects.Domains
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using System.Dynamic;
     using System.Runtime.Serialization;
     using DomainObjects.Constants;
     using DomainObjects.DOmains;
@@ -129,9 +130,26 @@ namespace DomainObjects.Domains
         public VehicleTypes VehicleType { get; set; }
 
         /// <summary>
+        /// Gets or sets the unread requests count.
+        /// </summary>
+        [DataMember]
+        public int UnreadRequestsCount { get; set; }
+
+        /// <summary>
+        /// Gets or sets the car share status.
+        /// </summary>
+        [DataMember]
+        public CarShareStatus CarShareStatus { get; set; }
+
+        /// <summary>
         /// Gets or sets the requests.
         /// </summary>
-        public virtual ICollection<CarShareRequest> Requests { get; set; } 
+        public virtual ICollection<CarShareRequest> Requests { get; set; }
 
+        /// <summary>
+        /// Gets or sets the messages.
+        /// </summary>
+        [DataMember]
+        public virtual ICollection<CarShareMessage> Messages { get; set; } 
     }
 }

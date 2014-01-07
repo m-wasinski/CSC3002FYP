@@ -21,5 +21,11 @@ namespace FindNDriveServices2.ServiceResponses
         /// </summary>
         [EnumMember(Value = "Failure")]
         Failure = 1,
+
+        /// <summary>
+        /// Response code in the scenario of success. For instance no issues occurred with validation, or data retrieval.
+        /// </summary>
+        [EnumMember(Value = "Unauthorized")]
+        Unauthorized = 2
     }
 }

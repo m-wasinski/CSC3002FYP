@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@drawable/background6">
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="horizontal"
-        android:layout_weight="4">
+        android:layout_weight="4"
+        android:background="#D9222930">
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="horizontal"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:background="#D9222930">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:layout_weight="3">
+                android:layout_weight="3.5">
             </LinearLayout>
 
             <LinearLayout
@@ -38,7 +41,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/UserLoginUserNameEditText"
                 android:hint="@string/UserNameHint"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                style="@style/LoginFields"/>
 
             <EditText
                 android:layout_width="match_parent"
@@ -47,29 +51,33 @@
                 android:hint="@string/PasswordHint"
                 android:singleLine="true"
                 android:layout_marginTop="15sp"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                style="@style/LoginFields"/>
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/LoginLabel"
                 android:id="@+id/LoginUserButton"
-                android:layout_marginTop="15sp" />
+                android:layout_marginTop="15sp"
+                style="@style/ButtonStyle"/>
 
             <CheckBox
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/RememberMe"
+                android:text="  Keep me logged in"
                 android:id="@+id/RememberMeCheckBox"
-                android:layout_marginTop="10sp"
-                style="@style/FontStyle"/>
+                android:layout_marginTop="15sp"
+                style="@style/LoginFields"
+                android:button="@android:drawable/btn_radio"/>
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/RegisterString"
                 android:layout_marginTop="30sp"
-                android:id="@+id/LoginActivityRegisterButton" />
+                android:id="@+id/LoginActivityRegisterButton"
+                style="@style/ButtonStyle"/>
             </LinearLayout>
 
             <LinearLayout
@@ -86,6 +94,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="horizontal"
-        android:layout_weight="4">
+        android:layout_weight="4"
+        android:background="#D9222930">
     </LinearLayout>
 </LinearLayout>

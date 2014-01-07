@@ -9,7 +9,9 @@
 
 namespace FindNDriveServices2.DTOs
 {
+    using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Runtime.Serialization;
 
@@ -78,5 +80,21 @@ namespace FindNDriveServices2.DTOs
         /// </summary>
         [DataMember]
         public CarShareRequestDecision Decision { get; set; }
+
+        /// <summary>
+        /// Gets or sets the sent on date.
+        /// </summary>
+        [DataMember]
+        [DataType(DataType.Date)]
+        [Column(TypeName = "DateTime2")]
+        public DateTime SentOnDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the decided on date.
+        /// </summary>
+        [DataMember]
+        [DataType(DataType.Date)]
+        [Column(TypeName = "DateTime2")]
+        public DateTime DecidedOnDate { get; set; }
     }
 }

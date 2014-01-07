@@ -4,8 +4,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
-import com.example.myapplication.Activities.MainActivity;
+
 import com.example.myapplication.Constants.Constants;
+import com.example.myapplication.Interfaces.GCMRegistrationCallback;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import java.io.IOException;
@@ -18,14 +19,14 @@ public class GCMRegistrationTask extends AsyncTask<TextView, String, Boolean> {
 
     private GoogleCloudMessaging gcm;
     private Context context;
-    private MainActivity listener;
+    private GCMRegistrationCallback listener;
     private Random random;
     private String registrationId;
 
-    public GCMRegistrationTask(MainActivity l)
+    public GCMRegistrationTask(GCMRegistrationCallback l, Context context)
     {
         listener = l;
-        context = l.getBaseContext();
+        context = context;
         random = new Random();
     }
 
@@ -75,7 +76,7 @@ public class GCMRegistrationTask extends AsyncTask<TextView, String, Boolean> {
     @Override
     protected void onPostExecute(Boolean aBoolean) {
         super.onPostExecute(aBoolean);
-        listener.gcmRegistrationCompleted(registrationId);
+        listener.onGCMRegistrationCompleted(registrationId);
     }
 
 }

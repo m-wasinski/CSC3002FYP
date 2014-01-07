@@ -85,7 +85,7 @@ namespace FindNDriveServices2.Services
             var validatedUser = ValidationHelper.Validate(login);
        
             if (!validatedUser.IsValid || !WebSecurity.Login(login.UserName, login.Password))
-            {
+            {   
                 validatedUser.ErrorMessages.Add("Invalid Username or Password.");
                 validatedUser.IsValid = false;
             }
@@ -101,7 +101,7 @@ namespace FindNDriveServices2.Services
             return new ServiceResponse<User>
             {
                 Result = loggedInUser,
-                ServiceResponseCode = (loggedInUser == null) ? ServiceResponseCode.Failure : ServiceResponseCode.Success,
+                ServiceResponseCode = (validatedUser.IsValid) ? ServiceResponseCode.Success : ServiceResponseCode.Unauthorized,
                 ErrorMessages = validatedUser.ErrorMessages
             };
         }
@@ -109,6 +109,9 @@ namespace FindNDriveServices2.Services
         /// <summary>
         /// The auto user login.
         /// </summary>
+        /// <param name="sessionDTO">
+        /// The session DTO.
+        /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
@@ -158,8 +161,6 @@ namespace FindNDriveServices2.Services
 
             if (validatedRegisterDTO.IsValid)
             {
-                
-
                 WebSecurity.CreateUserAndAccount(register.User.UserName, register.Password);
                 register.User.UserId = WebSecurity.GetUserId(register.User.UserName);
 
@@ -175,8 +176,8 @@ namespace FindNDriveServices2.Services
                     UserId = register.User.UserId
                 };
 
+                this._sessionManager.GenerateNewSession(newUser.UserId);
                 this._findNDriveUnitOfWork.UserRepository.Add(newUser);
-
                 this._findNDriveUnitOfWork.Commit();
             }
 
@@ -205,8 +206,7 @@ namespace FindNDriveServices2.Services
             return new ServiceResponse<bool>
             {
                 Result = success,
-                ServiceResponseCode = success ? ServiceResponseCode.Success : ServiceResponseCode.Failure,
-                ErrorMessages = null
+                ServiceResponseCode = success ? ServiceResponseCode.Success : ServiceResponseCode.Failure
             };
         }
 

@@ -86,7 +86,7 @@ namespace FindNDriveDataAccessLayer.Migrations
             };
 
             context.Sessions.AddOrUpdate(_ => _.UserId, session);
-            WebSecurity.CreateUserAndAccount("Administrator", "AdminPassword1234");
+            WebSecurity.CreateUserAndAccount("Admin", "password");
 
             context.SaveChanges();
         }
@@ -108,7 +108,7 @@ namespace FindNDriveDataAccessLayer.Migrations
                 FirstName = "John",
                 LastName = "Doe",
                 Gender = Gender.Male,
-                UserName = "JohnDoe",
+                UserName = "john",
                 Role = Roles.User
             };
 
@@ -121,7 +121,7 @@ namespace FindNDriveDataAccessLayer.Migrations
                 SessionType = SessionTypes.Permanent,
                 SessionId = SessionManager.GenerateNewSessionId(participant1.UserId),
                 DeviceId = "Test",
-                ExpiryDate = DateTime.Now.AddDays(14),
+                ExpiryDate = DateTime.Now.AddDays(14)
             };
 
             context.Sessions.AddOrUpdate(_ => _.UserId, session1);
@@ -135,7 +135,7 @@ namespace FindNDriveDataAccessLayer.Migrations
                 FirstName = "Laura",
                 LastName = "McDonald",
                 Gender = Gender.Female,
-                UserName = "Laura",
+                UserName = "laura",
                 Role = Roles.User,
             };
 
@@ -161,7 +161,7 @@ namespace FindNDriveDataAccessLayer.Migrations
                 FirstName = "Jessica",
                 LastName = "Patterson",
                 Gender = Gender.Female,
-                UserName = "TheDriver",
+                UserName = "jessica",
                 Role = Roles.User,
             };
 
@@ -186,13 +186,14 @@ namespace FindNDriveDataAccessLayer.Migrations
             {
                 AvailableSeats = 4,
                 DateAndTimeOfDeparture = new DateTime(2014, 2, 1, 20, 15, 0, cal),
-                DepartureCity = "Belfast",
+                DepartureCity = "Lurgan",
                 DestinationCity = "Dublin",
                 Description = "Free ride to Dublin!",
                 Fee = 0.00,
                 WomenOnly = false,
                 Driver = driver,
-                SmokersAllowed = false
+                SmokersAllowed = false,
+                CarShareStatus = CarShareStatus.Upcoming
             };
 
             context.CarShares.AddOrUpdate(carShare);
@@ -208,7 +209,9 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Fee = 0.00,
                 WomenOnly = false,
                 Driver = participant1,
-                SmokersAllowed = false
+                Participants = new Collection<User>() {participant2},
+                SmokersAllowed = false,
+                CarShareStatus = CarShareStatus.Upcoming
             };
 
             context.CarShares.AddOrUpdate(carShare2);
@@ -224,7 +227,9 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Fee = 0.00,
                 WomenOnly = false,
                 Driver = participant1,
-                SmokersAllowed = false
+                SmokersAllowed = false,
+                Participants = new Collection<User>() { participant2 },
+                CarShareStatus = CarShareStatus.Upcoming
             };
 
             context.CarShares.AddOrUpdate(carShare3);
@@ -233,14 +238,15 @@ namespace FindNDriveDataAccessLayer.Migrations
             var carShare4 = new CarShare
             {
                 AvailableSeats = 3,
-                DateAndTimeOfDeparture = new DateTime(2013, 12, 1, 17, 30, 0, cal),
+                DateAndTimeOfDeparture = new DateTime(2014, 12, 1, 17, 30, 0, cal),
                 DepartureCity = "Belfast",
                 DestinationCity = "Portrush",
                 Description = "Free lift to Portrush",
                 Fee = 0.00,
                 WomenOnly = false,
                 Driver = participant1,
-                SmokersAllowed = false
+                SmokersAllowed = false,
+                CarShareStatus = CarShareStatus.Upcoming
             };
 
             context.CarShares.AddOrUpdate(carShare4);
@@ -249,14 +255,15 @@ namespace FindNDriveDataAccessLayer.Migrations
             var carShare5 = new CarShare
             {
                 AvailableSeats = 6,
-                DateAndTimeOfDeparture = new DateTime(2013, 12, 5, 12, 30, 0, cal),
+                DateAndTimeOfDeparture = new DateTime(2014, 12, 5, 12, 30, 0, cal),
                 DepartureCity = "Belfast",
                 DestinationCity = "Dublin",
                 Description = "Free lift to Dublin",
                 Fee = 0.00,
                 WomenOnly = false,
                 Driver = participant1,
-                SmokersAllowed = false
+                SmokersAllowed = false,
+                CarShareStatus = CarShareStatus.Upcoming
             };
 
             context.CarShares.AddOrUpdate(carShare5);
@@ -272,7 +279,8 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Fee = 0.00,
                 WomenOnly = false,
                 Driver = participant1,
-                SmokersAllowed = false
+                SmokersAllowed = false,
+                CarShareStatus = CarShareStatus.Upcoming
             };
 
             context.CarShares.AddOrUpdate(carShare6);
@@ -281,14 +289,15 @@ namespace FindNDriveDataAccessLayer.Migrations
             var carShare7 = new CarShare
             {
                 AvailableSeats = 8,
-                DateAndTimeOfDeparture = new DateTime(2014, 1, 1, 17, 30, 0, cal),
+                DateAndTimeOfDeparture = new DateTime(2013, 1, 1, 17, 30, 0, cal),
                 DepartureCity = "Belfast",
                 DestinationCity = "Dublin",
                 Description = "Free lift to Dublin, women only.",
                 Fee = 0.00,
                 WomenOnly = true,
                 Driver = participant1,
-                SmokersAllowed = false
+                SmokersAllowed = false,
+                CarShareStatus = CarShareStatus.Upcoming
             };
 
             context.CarShares.AddOrUpdate(carShare7);
@@ -298,13 +307,14 @@ namespace FindNDriveDataAccessLayer.Migrations
             {
                 AvailableSeats = 8,
                 DateAndTimeOfDeparture = new DateTime(2014, 1, 1, 17, 30, 0, cal),
-                DepartureCity = "Belfast",
-                DestinationCity = "Dublin",
+                DepartureCity = "London",
+                DestinationCity = "Manchester",
                 Description = "Free lift to Dublin, smokers allowed.",
                 Fee = 0.00,
                 WomenOnly = true,
                 Driver = participant1,
-                SmokersAllowed = true
+                SmokersAllowed = true,
+                CarShareStatus = CarShareStatus.Upcoming
             };
 
             context.CarShares.AddOrUpdate(carShare8);
@@ -313,14 +323,15 @@ namespace FindNDriveDataAccessLayer.Migrations
             var carShare9 = new CarShare
             {
                 AvailableSeats = 8,
-                DateAndTimeOfDeparture = new DateTime(2014, 1, 1, 17, 30, 0, cal),
+                DateAndTimeOfDeparture = new DateTime(2015, 1, 1, 17, 30, 0, cal),
                 DepartureCity = "Belfast",
                 DestinationCity = "Dublin",
                 Description = "Lift to Dublin, fee applies.",
                 Fee = 25.40,
                 WomenOnly = false,
                 Driver = participant1,
-                SmokersAllowed = false
+                SmokersAllowed = false,
+                CarShareStatus = CarShareStatus.Upcoming
             };
 
             context.CarShares.AddOrUpdate(carShare9);
@@ -329,14 +340,15 @@ namespace FindNDriveDataAccessLayer.Migrations
             var carShare10 = new CarShare
             {
                 AvailableSeats = 8,
-                DateAndTimeOfDeparture = new DateTime(2014, 1, 1, 17, 30, 0, cal),
+                DateAndTimeOfDeparture = new DateTime(2015, 1, 1, 17, 30, 0, cal),
                 DepartureCity = "Newcastle",
                 DestinationCity = "Bangor",
                 Description = "Lift to Bangor, fee applies.",
                 Fee = 10.50,
                 WomenOnly = false,
                 Driver = participant1,
-                SmokersAllowed = true
+                SmokersAllowed = true,
+                CarShareStatus = CarShareStatus.Upcoming
             };
 
             context.CarShares.AddOrUpdate(carShare10);

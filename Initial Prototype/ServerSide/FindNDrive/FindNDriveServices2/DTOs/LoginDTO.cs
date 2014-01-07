@@ -20,13 +20,13 @@ namespace FindNDriveServices2.DTOs
         /// <summary>
         /// Gets or sets the user name.
         /// </summary>
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public string UserName { get; set; }
 
         /// <summary>
         /// Gets or sets the password.
         /// </summary>
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public string Password { get; set; }
 
         /// <summary>
@@ -35,6 +35,9 @@ namespace FindNDriveServices2.DTOs
         [DataMember]
         public bool RememberMe { get; set; }
 
+        /// <summary>
+        /// Gets or sets the gcm registration id.
+        /// </summary>
         [DataMember]
         public string GCMRegistrationID { get; set; }
     }

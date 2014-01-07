@@ -1,125 +1,113 @@
 package com.example.myapplication.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.example.myapplication.Activities.Activities.CarShareRequestsActivity;
+import com.example.myapplication.Constants.CarShareStatus;
+import com.example.myapplication.DomainObjects.CarShare;
+import com.example.myapplication.Experimental.DateTimeHelper;
 import com.example.myapplication.R;
+import com.google.gson.Gson;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+
 /**
- * Created by Michal on 01/12/13.
+ * Created by Michal on 06/01/14.
  */
-public class SearchResultsAdapter extends BaseExpandableListAdapter {
+public class SearchResultsAdapter extends ArrayAdapter<CarShare> {
 
-    private Context _context;
-    private ArrayList<Object> _listDataHeaders; // header titles
-    // child data in format of header title, child title
-    private HashMap<Object, List<Object>> _listDataChild;
+    private Context context;
+    private int layoutResourceId;
+    private ArrayList<CarShare> CarShares;
+    private DecimalFormat decimalFormat;
 
-
-    public SearchResultsAdapter(Context context,ArrayList listDataHeaders,HashMap<Object, List<Object>> listChildData) {
-        this._context = context;
-        this._listDataHeaders = listDataHeaders;
-        this._listDataChild = listChildData;
+    public SearchResultsAdapter(Context context, int resource, ArrayList<CarShare> carShares) {
+        super(context, resource, carShares);
+        this.layoutResourceId = resource;
+        this.context = context;
+        this.CarShares = carShares;
+        this.decimalFormat = new DecimalFormat("0.00");
     }
 
     @Override
-    public Object getChild(int groupPosition, int childPosititon) {
-        return this._listDataChild.get(this._listDataHeaders.get(groupPosition))
-                .get(childPosititon);
-    }
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View row = convertView;
+        CarShareHolder holder;
 
-    @Override
-    public long getChildId(int groupPosition, int childPosition) {
-        return childPosition;
-    }
-
-    @Override
-    public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-
-        final String childText = (String) getChild(groupPosition, childPosition);
-
-        if (convertView == null) {
-            LayoutInflater infalInflater = (LayoutInflater) this._context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(com.example.myapplication.R.layout.search_results_listview_details, null);
+        if(row == null)
+        {
+            LayoutInflater inflater = ((Activity)context).getLayoutInflater();
+            row = inflater.inflate(layoutResourceId, parent, false);
+            holder = new CarShareHolder();
+            holder.fromToTextView = (TextView) row.findViewById(R.id.FragmentSearchFromToTextView);
+            holder.journeyIdTextView = (TextView) row.findViewById(R.id.FragmentSearchJourneyIdTextView);
+            holder.driverNameTextView = (TextView)row.findViewById(R.id.FragmentSearchDriverNameTextView);
+            holder.dateTextView = (TextView) row.findViewById(R.id.FragmentSearchDateTextView);
+            holder.timeTextView = (TextView)row.findViewById(R.id.FragmentSearchTimeTextView);
+            holder.seatsLeftTextView = (TextView) row.findViewById(R.id.FragmentSearchSeatsLeftTextView);
+            holder.feeTextView = (TextView) row.findViewById(R.id.FragmentSearchFeeTextView);
+            holder.qualityIcon = (ImageView) row.findViewById(R.id.FragmentSearchResultsQualityIcon);
+            row.setTag(holder);
+        }
+        else
+        {
+            holder = (CarShareHolder)row.getTag();
         }
 
-        TextView txtListChild = (TextView) convertView
-                .findViewById(com.example.myapplication.R.id.TestTextView);
+        CarShare carShare = CarShares.get(position);
 
-        txtListChild.setText(childText);
-        return convertView;
-    }
+        holder.fromToTextView.setText(carShare.DepartureCity + " -> " + carShare.DestinationCity);
+        holder.journeyIdTextView.setText("Journey id: " + carShare.CarShareId);
+        holder.driverNameTextView.setText("Driver: " + carShare.Driver.FirstName + " " + carShare.Driver.LastName);
+        holder.dateTextView.setText("Date: " + DateTimeHelper.getSimpleDate(carShare.DateAndTimeOfDeparture));
+        holder.timeTextView.setText("Time: " + DateTimeHelper.getSimpleTime(carShare.DateAndTimeOfDeparture));
+        holder.seatsLeftTextView.setText("Seats left: " + carShare.AvailableSeats);
+        holder.feeTextView.setText(decimalFormat.format(carShare.Fee));
 
-    @Override
-    public int getChildrenCount(int groupPosition) {
-        return this._listDataChild.get(this._listDataHeaders.get(groupPosition))
-                .size();
-    }
-
-    @Override
-    public Object getGroup(int groupPosition) {
-        return this._listDataHeaders.get(groupPosition);
-    }
-
-    @Override
-    public int getGroupCount() {
-        return this._listDataHeaders.size();
-    }
-
-    @Override
-    public long getGroupId(int groupPosition) {
-        return groupPosition;
-    }
-
-    @Override
-    public View getGroupView(int groupPosition, boolean isExpanded,
-                             View convertView, ViewGroup parent) {
-
-        String carShareHeader[] = ((String) getGroup(groupPosition)).split(",[ ]*");
-
-        if (convertView == null) {
-            LayoutInflater infalInflater = (LayoutInflater) this._context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(com.example.myapplication.R.layout.search_results_listview_header, null);
+        if(carShare.AvailableSeats >= 2)
+        {
+            holder.qualityIcon.setImageResource(R.drawable.green_light);
+        }
+        else
+        {
+            holder.qualityIcon.setImageResource(R.drawable.yellow_light);
         }
 
-        TextView citites = (TextView) convertView.findViewById(R.id.SearchResultsCitiesTextView);
-
-        TextView date = (TextView) convertView.findViewById(R.id.SearchResultsDateTextView);
-
-        TextView availableSeats = (TextView) convertView.findViewById(R.id.SearchResultsAvailableSeatsTextView);
-
-        TextView time = (TextView) convertView.findViewById(R.id.SearchResultsTimeTextView);
-
-        citites.setText(carShareHeader[0]);
-
-        date.setText(carShareHeader[1]);
-
-        availableSeats.setText(carShareHeader[2]);
-
-        time.setText(carShareHeader[3]);
-
-        return convertView;
+        return row;
     }
 
-    @Override
-    public boolean hasStableIds() {
-        return false;
-    }
-
-    @Override
-    public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return true;
+    class CarShareHolder
+    {
+        ImageView qualityIcon;
+        ImageView star1;
+        ImageView star2;
+        ImageView star3;
+        ImageView star4;
+        ImageView star5;
+        TextView fromToTextView;
+        TextView journeyIdTextView;
+        TextView driverNameTextView;
+        TextView dateTextView;
+        TextView timeTextView;
+        TextView seatsLeftTextView;
+        TextView feeTextView;
     }
 }
+

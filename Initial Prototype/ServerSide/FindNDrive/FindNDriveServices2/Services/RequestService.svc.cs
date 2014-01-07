@@ -76,7 +76,8 @@ namespace FindNDriveServices2.Services
         public ServiceResponse<CarShareRequest> SendRequest(CarShareRequestDTO carShareRequestDTO)
         {
             var targetCarShare = this._findNDriveUnitOfWork.CarShareRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.CarShareId == carShareRequestDTO.CarShareId);
-                       
+            targetCarShare.UnreadRequestsCount += 1;
+           
             var targetUser = this._findNDriveUnitOfWork.UserRepository.Find(targetCarShare.DriverId);
             
             var request = new CarShareRequest()
@@ -86,7 +87,8 @@ namespace FindNDriveServices2.Services
                                               UserId = carShareRequestDTO.UserId,
                                               Decision = carShareRequestDTO.Decision,
                                               Read = carShareRequestDTO.Read,
-                                              Message = carShareRequestDTO.Message
+                                              Message = carShareRequestDTO.Message,
+                                              SentOnDate = carShareRequestDTO.SentOnDate,
                                           };
 
             targetCarShare.Requests.Add(request);
@@ -178,6 +180,7 @@ namespace FindNDriveServices2.Services
                 carShareRequestDTO.CarShareRequestId);
 
             request.Decision = carShareRequestDTO.Decision;
+            request.DecidedOnDate = carShareRequestDTO.DecidedOnDate;
 
             this._findNDriveUnitOfWork.Commit();
 
@@ -192,8 +195,8 @@ namespace FindNDriveServices2.Services
         /// <summary>
         /// The mark as read.
         /// </summary>
-        /// <param name="carShareRequestDTO">
-        /// The car share request dto.
+        /// <param name="id">
+        /// The id.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
@@ -208,6 +211,13 @@ namespace FindNDriveServices2.Services
 
             if (request != null)
             {
+                var carShare = this._findNDriveUnitOfWork.CarShareRepository.Find(request.CarShareId);
+
+                if (carShare.UnreadRequestsCount > 0)
+                {
+                    carShare.UnreadRequestsCount -= 1;
+                }    
+
                 request.Read = true;
 
                 this._findNDriveUnitOfWork.Commit();
@@ -234,6 +244,21 @@ namespace FindNDriveServices2.Services
                            ServiceResponseCode =
                                ServiceResponseCode.Success
                        };
+        }
+
+        public ServiceResponse<List<CarShareRequest>> GetAllRequestsForUser(int id)
+        {
+            var requests =
+               this._findNDriveUnitOfWork.CarShareRequestRepository.AsQueryable()
+                   .IncludeAll()
+                   .Where(_ => _.UserId == id).ToList();
+
+            return new ServiceResponse<List<CarShareRequest>>()
+            {
+                Result = requests,
+                ServiceResponseCode =
+                    ServiceResponseCode.Success
+            };
         }
     }
 }

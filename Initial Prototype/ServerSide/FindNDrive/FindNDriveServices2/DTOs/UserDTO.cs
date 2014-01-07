@@ -21,6 +21,7 @@ namespace FindNDriveServices2.DTOs
     /// <summary>
     /// The user dto.
     /// </summary>
+    [DataContract]
     public class UserDTO
     {
         /// <summary>

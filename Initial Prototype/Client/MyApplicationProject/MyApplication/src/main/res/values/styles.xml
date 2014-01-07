@@ -5,6 +5,11 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="ContentBody">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#B7D8E8</item>
+    </style>
+
     <style name="FontStyle">
         <item name="android:textSize">18sp</item>
     </style>
@@ -13,5 +18,22 @@
         <item name="android:textSize">24sp</item>
     </style>
 
+    <style name="MyCarSharesHeader">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#0086C9</item>
+    </style>
+
+    <style name="ButtonStyle">
+        <item name="android:textColor">#0086C9</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:background">#222930</item>
+    </style>
+
+    <style name="LoginFields">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">#0086C9</item>
+        <item name="android:textCursorDrawable">@null</item>
+    </style>
     <color name="ValueCorrect">#AAFFAA</color>
 </resources>

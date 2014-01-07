@@ -13,7 +13,10 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.androidexample.gcm.permission.C2D_MESSAGE" />
-
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <!-- Required to show current location -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- This app has permission to register and receive data message. -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
@@ -33,7 +36,7 @@
         <meta-data android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <activity
-            android:name=".Activities.MainActivity"
+            android:name=".Activities.Activities.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,49 +45,51 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activities.LoginActivity"
-            android:label="Login Activity" />
+            android:name=".Activities.Activities.LoginActivity"
+            android:label="FindNDrive Log in/Register" />
         <activity
-            android:name=".Activities.RegistrationActivity"
+            android:name=".Activities.Activities.RegistrationActivity"
             android:windowSoftInputMode="adjustResize"
             android:label="Registration Activity" />
         <activity
             android:alwaysRetainTaskState="true"
-            android:name=".Activities.HomeActivity"
+            android:name=".Activities.Activities.HomeActivity"
             android:label="home_activity" />
         <activity
-            android:name=".Activities.SearchResultsActivity"
-            android:label="Search Results" />
-        <activity
-            android:name=".Activities.CarShareDetailsActivity"
-            android:label="Car Share Details" />
-        <activity
-            android:name=".Activities.PostNewCarShareActivity"
+            android:name=".Activities.Activities.PostNewCarShareActivity"
             android:label="New Car Share" />
 
         <activity
-            android:name=".Activities.ManageAsDriverActivity"
+            android:name=".Activities.Activities.ManageAsDriverActivity"
             android:label="Manage Car Share" />
 
         <activity
-            android:name=".Activities.ManageAsPassengerActivity"
+            android:name=".Activities.Activities.ManageAsPassengerActivity"
             android:label="Manage Car Share" />
 
         <activity
-            android:name=".Activities.ContactDriverActivity"
+            android:name=".Activities.Activities.ContactDriverActivity"
             android:label="Manage Car Share" />
 
         <activity
-            android:name=".Activities.CarShareRequestsActivity"
+            android:name=".Activities.Activities.CarShareRequestsActivity"
             android:label="Manage Car Share" />
 
         <activity
-            android:name=".Activities.CarShareRequestDetailsActivity"
+            android:name=".Activities.Activities.CarShareRequestDetailsActivity"
             android:label="Manage Car Share" />
 
         <activity
-            android:name=".Activities.TravelBuddyListActivity"
+            android:name=".Activities.Activities.TravelBuddyListActivity"
             android:label="Manage Car Share" />
+
+        <activity
+            android:name=".Activities.Activities.CarShareChatActivity"
+            android:label="Chat" />
+
+        <activity
+            android:name=".Activities.Activities.MapActivity"
+            android:label="Chat" />
 
         <receiver
             android:name=".GCM.GcmBroadcastReceiver"
@@ -95,7 +100,10 @@
             </intent-filter>
         </receiver>
         <service android:name=".GCM.GcmIntentService" />
-
+        <!-- Goolge API Key -->
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyAQYhCFfCMQuiqNQdDUof1QA1zXKTM4qKw" />
     </application>
 
 </manifest>

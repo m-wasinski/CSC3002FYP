@@ -9,6 +9,7 @@
 
 namespace FindNDriveServices2.Contracts
 {
+    using System;
     using System.Collections.Generic;
     using System.ServiceModel;
     using System.ServiceModel.Web;
@@ -91,5 +92,56 @@ namespace FindNDriveServices2.Contracts
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/create")]
         ServiceResponse<CarShare> CreateNewCarShareListing(CarShareDTO carShareDTO);
+
+        /// <summary>
+        /// The get car share by id.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/get")]
+        ServiceResponse<CarShare> GetCarShareById(int id);
+
+        /// <summary>
+        /// The get car shares by id.
+        /// </summary>
+        /// <param name="ids">
+        /// The ids.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/getmultiple")]
+        ServiceResponse<List<CarShare>> GetCarSharesById(List<int> ids);
+
+        /// <summary>
+        /// The modify car share.
+        /// </summary>
+        /// <param name="carShareDTO">
+        /// The car share dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/edit")]
+        ServiceResponse<CarShare> ModifyCarShare(CarShareDTO carShareDTO); 
     }
 }

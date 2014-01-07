@@ -90,6 +90,16 @@ namespace FindNDriveDataAccessLayer
                 });
 
             modelBuilder.Entity<CarShare>()
+                .HasMany(_ => _.Messages)
+                .WithMany()
+                .Map(map =>
+                {
+                    map.MapLeftKey("CarShareId");
+                    map.MapRightKey("CarShareMessageId");
+                    map.ToTable("CarShare_Message");
+                });
+
+            modelBuilder.Entity<CarShare>()
                 .HasMany(_ => _.Requests)
                 .WithMany()
                 .Map(map =>

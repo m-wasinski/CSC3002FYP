@@ -15,6 +15,7 @@ namespace FindNDriveServices2.Services
     using System.ServiceModel;
     using System.ServiceModel.Activation;
 
+    using DomainObjects.Constants;
     using DomainObjects.Domains;
 
     using FindNDriveDataAccessLayer;
@@ -82,7 +83,7 @@ namespace FindNDriveServices2.Services
                 this._findNDriveUnitOfWork.CarShareRepository.AsQueryable()
                     .IncludeAll()
                     .Where(_ => _.DepartureCity == carShare.DepartureCity &&
-                            _.DestinationCity == carShare.DestinationCity && _.AvailableSeats > 0)
+                            _.DestinationCity == carShare.DestinationCity && _.AvailableSeats > 0 && _.CarShareStatus == CarShareStatus.Upcoming)
                     .ToList();
 
             if (carShare.SearchByDate)

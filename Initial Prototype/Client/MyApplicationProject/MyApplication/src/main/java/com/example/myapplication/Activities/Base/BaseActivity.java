@@ -42,7 +42,7 @@ public class BaseActivity extends Activity {
         }
     }
 
-    public void checkIfAuthorised(int serviceResponseCode) {
+    protected void checkIfAuthorised(int serviceResponseCode) {
 
         if(serviceResponseCode == ServiceResponseCode.UNAUTHORISED)
         {

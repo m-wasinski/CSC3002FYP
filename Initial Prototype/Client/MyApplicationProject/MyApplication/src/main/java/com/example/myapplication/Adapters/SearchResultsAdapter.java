@@ -57,13 +57,9 @@ public class SearchResultsAdapter extends ArrayAdapter<CarShare> {
             row = inflater.inflate(layoutResourceId, parent, false);
             holder = new CarShareHolder();
             holder.fromToTextView = (TextView) row.findViewById(R.id.FragmentSearchFromToTextView);
-            holder.journeyIdTextView = (TextView) row.findViewById(R.id.FragmentSearchJourneyIdTextView);
-            holder.driverNameTextView = (TextView)row.findViewById(R.id.FragmentSearchDriverNameTextView);
             holder.dateTextView = (TextView) row.findViewById(R.id.FragmentSearchDateTextView);
             holder.timeTextView = (TextView)row.findViewById(R.id.FragmentSearchTimeTextView);
             holder.seatsLeftTextView = (TextView) row.findViewById(R.id.FragmentSearchSeatsLeftTextView);
-            holder.feeTextView = (TextView) row.findViewById(R.id.FragmentSearchFeeTextView);
-            holder.qualityIcon = (ImageView) row.findViewById(R.id.FragmentSearchResultsQualityIcon);
             row.setTag(holder);
         }
         else
@@ -73,22 +69,22 @@ public class SearchResultsAdapter extends ArrayAdapter<CarShare> {
 
         CarShare carShare = CarShares.get(position);
 
-        holder.fromToTextView.setText(carShare.DepartureCity + " -> " + carShare.DestinationCity);
-        holder.journeyIdTextView.setText("Journey id: " + carShare.CarShareId);
-        holder.driverNameTextView.setText("Driver: " + carShare.Driver.FirstName + " " + carShare.Driver.LastName);
+        holder.fromToTextView.setText(carShare.DepartureAddress.AddressLine + " -> " + carShare.DestinationAddress.AddressLine);
+//        holder.journeyIdTextView.setText("Journey id: " + carShare.CarShareId);
+//        holder.driverNameTextView.setText("Driver: " + carShare.Driver.FirstName + " " + carShare.Driver.LastName);
         holder.dateTextView.setText("Date: " + DateTimeHelper.getSimpleDate(carShare.DateAndTimeOfDeparture));
         holder.timeTextView.setText("Time: " + DateTimeHelper.getSimpleTime(carShare.DateAndTimeOfDeparture));
         holder.seatsLeftTextView.setText("Seats left: " + carShare.AvailableSeats);
-        holder.feeTextView.setText(decimalFormat.format(carShare.Fee));
+  //      holder.feeTextView.setText(decimalFormat.format(carShare.Fee));
 
-        if(carShare.AvailableSeats >= 2)
+        /*if(carShare.AvailableSeats >= 2)
         {
             holder.qualityIcon.setImageResource(R.drawable.green_light);
         }
         else
         {
             holder.qualityIcon.setImageResource(R.drawable.yellow_light);
-        }
+        }*/
 
         return row;
     }

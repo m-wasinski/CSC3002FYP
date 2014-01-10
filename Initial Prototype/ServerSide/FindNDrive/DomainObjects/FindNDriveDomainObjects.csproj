@@ -63,6 +63,7 @@
     <Compile Include="Constants\VehicleTypes.cs" />
     <Compile Include="Domains\CarShareMessage.cs" />
     <Compile Include="Domains\CarShareRequest.cs" />
+    <Compile Include="Domains\GeoAddress.cs" />
     <Compile Include="Domains\Session.cs" />
     <Compile Include="Domains\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

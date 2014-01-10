@@ -79,12 +79,16 @@ namespace FindNDriveServices2.Services
         /// </exception>
         public ServiceResponse<List<CarShare>> SearchCarShares(CarShareDTO carShare)
         {
-            var carShares =
+            /*var carShares =
                 this._findNDriveUnitOfWork.CarShareRepository.AsQueryable()
                     .IncludeAll()
-                    .Where(_ => _.DepartureCity == carShare.DepartureCity &&
-                            _.DestinationCity == carShare.DestinationCity && _.AvailableSeats > 0 && _.CarShareStatus == CarShareStatus.Upcoming)
-                    .ToList();
+                    .Where(_ => _.DepartureAddress.AddressLine == carShare.DepartureAddress.AddressLine &&
+                            _.DestinationAddress.AddressLine == carShare.DestinationAddress.AddressLine && _.AvailableSeats > 0 && _.CarShareStatus == CarShareStatus.Upcoming)
+                    .ToList();*/
+
+            var carShares =
+                this._findNDriveUnitOfWork.CarShareRepository.AsQueryable()
+                    .IncludeAll().ToList();
 
             if (carShare.SearchByDate)
             {

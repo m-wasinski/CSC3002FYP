@@ -31,7 +31,7 @@ public class BaseFragment extends android.support.v4.app.Fragment {
         super.onResume();
     }
 
-    public void checkIfAuthorised(int serviceResponseCode) {
+    protected void checkIfAuthorised(int serviceResponseCode) {
 
         if(serviceResponseCode == ServiceResponseCode.UNAUTHORISED)
         {

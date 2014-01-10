@@ -26,7 +26,7 @@ public class BaseFragmentActivity extends FragmentActivity {
         actionBar = getActionBar();
     }
 
-    public void checkIfAuthorised(int serviceResponseCode) {
+    protected void checkIfAuthorised(int serviceResponseCode) {
 
         if(serviceResponseCode == ServiceResponseCode.UNAUTHORISED)
         {

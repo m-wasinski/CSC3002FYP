@@ -102,8 +102,8 @@ public class MyCarSharesAdapter extends ArrayAdapter<CarShare> {
         }
 
         holder.journeyId.setText("Journey id: " + carShare.CarShareId);
-        holder.fromTo.setText(carShare.DepartureCity + " -> " + carShare.DestinationCity);
-        holder.departureDate.setText("Date: " + DateTimeHelper.getSimpleDate(carShare.DateAndTimeOfDeparture));
+        //holder.fromTo.setText(carShare.DepartureCity + " -> " + carShare.DestinationCity);
+        //holder.departureDate.setText("Date: " + DateTimeHelper.getSimpleDate(carShare.DateAndTimeOfDeparture));
         holder.departureTime.setText("Time: " + DateTimeHelper.getSimpleTime(carShare.DateAndTimeOfDeparture));
         holder.availableSeats.setText("Available seats: " + carShare.AvailableSeats);
         holder.modeIcon.setImageResource(R.drawable.taxi);

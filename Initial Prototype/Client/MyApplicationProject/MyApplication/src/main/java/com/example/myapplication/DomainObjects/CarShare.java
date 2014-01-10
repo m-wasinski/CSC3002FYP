@@ -10,8 +10,8 @@ public class CarShare {
     public int CarShareId;
     public int DriverId;
     public User Driver;
-    public String DepartureCity;
-    public String DestinationCity;
+    public GeoAddress DepartureAddress;
+    public GeoAddress DestinationAddress;
     public String Description;
     public String DateOfDeparture;
     public String DateAndTimeOfDeparture;

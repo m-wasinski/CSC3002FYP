@@ -88,8 +88,8 @@
             android:label="Chat" />
 
         <activity
-            android:name=".Activities.Activities.MapActivity"
-            android:label="Chat" />
+            android:name=".Activities.Activities.SearchMapActivity"
+            android:label="Search" />
 
         <receiver
             android:name=".GCM.GcmBroadcastReceiver"

@@ -68,8 +68,8 @@ public class MyRequestsAdapter extends ArrayAdapter<CarShareRequest> implements 
 
         holder.carShareId.setText("Journey id: " + carShareRequest.CarShareId);
         holder.driverUserName.setText("Driver: " + carShareRequest.CarShare.Driver.FirstName + " " + carShareRequest.CarShare.Driver.LastName);
-        holder.fromTo.setText("From: " + carShareRequest.CarShare.DepartureCity + " to " + carShareRequest.CarShare.DestinationCity);
-        holder.sentOn.setText("Request sent on: " + DateTimeHelper.getSimpleDate(carShareRequest.SentOnDate) + " " +DateTimeHelper.getSimpleTime(carShareRequest.SentOnDate));
+        //holder.fromTo.setText("From: " + carShareRequest.CarShare.DepartureCity + " to " + carShareRequest.CarShare.DestinationCity);
+        //holder.sentOn.setText("Request sent on: " + DateTimeHelper.getSimpleDate(carShareRequest.SentOnDate) + " " +DateTimeHelper.getSimpleTime(carShareRequest.SentOnDate));
 
         String repliedOn = "Reply received on: ";
         String decision = "";

@@ -23,10 +23,15 @@
             android:layout_weight="1.5"
             android:background="#D9222930">
             <ListView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="1px"
+                android:layout_height="1px"
                 android:id="@+id/SearchCarSharesListView"/>
 
+            <fragment
+                android:id="@+id/MapFragment2"
+                android:name="com.google.android.gms.maps.MapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
         </LinearLayout>
 
         <LinearLayout
@@ -38,11 +43,12 @@
             android:background="#F2222930">
 
             <TextView android:id="@+id/SearchLabel"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="@string/Minimize"
-                style="@style/FontStyle"/>
+                style="@style/LoginFields"
+                android:padding="10sp"/>
 
             <LinearLayout
                 android:focusable="true"
@@ -67,76 +73,22 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
-                        android:text="From"
+                        android:text="Departue &amp; Destination"
                         style="@style/LoginFields"/>
 
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5sp"
-                        android:hint="City"
-                        android:id="@+id/SearchDepartureCityTextView"
+                        android:hint="Select departure &amp; destination points"
+                        android:id="@+id/FragmentSearchDepartureAndDestinationTextView"
                         android:singleLine="true"
-                        android:layout_weight="1"/>
-
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5sp"
-                        android:hint="Street (optional)"
-                        android:id="@+id/SearchDepartureStreetTextView"
-                        android:singleLine="true"
-                        android:layout_weight="1"/>
-
-                    <Spinner
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/SearchFragmentRegionFromSpinner"
-                        android:spinnerMode="dialog"/>
+                        android:editable="false"
+                        android:lines="2"/>
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_weight="1">
 
-                    <TextView android:id="@+id/ToLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:text="To"
-                        style="@style/LoginFields"/>
-
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5sp"
-                        android:hint="City"
-                        android:id="@+id/SearchDestinationCityTextView"
-                        android:singleLine="true"
-                        android:layout_weight="1"/>
-
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5sp"
-                        android:hint="Street (optional)"
-                        android:id="@+id/SearchDestinationStreetTextView"
-                        android:singleLine="true"
-                        android:layout_weight="1"/>
-
-                    <Spinner
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/SearchFragmentRegionToSpinner"
-                        style="@style/FontStyle"
-                        android:spinnerMode="dialog"/>
-
-                </LinearLayout>
             </LinearLayout>
 
                 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

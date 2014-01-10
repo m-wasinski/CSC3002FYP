@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.example.myapplication.Activities.Activities.SearchMapActivity;
 import com.example.myapplication.Activities.Fragments.MyCarSharesFragment;
 import com.example.myapplication.Activities.Fragments.MyRequestsFragment;
 import com.example.myapplication.Activities.Fragments.SearchFragment;
@@ -25,7 +26,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return new MyCarSharesFragment();
             case 1:
-                return new SearchFragment();
+                return new SearchMapActivity();
             case 2:
                 return new MyRequestsFragment();
         }

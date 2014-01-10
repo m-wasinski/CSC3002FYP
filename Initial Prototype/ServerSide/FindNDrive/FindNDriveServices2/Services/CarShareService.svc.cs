@@ -218,8 +218,8 @@ namespace FindNDriveServices2.Services
                                   {
                                       AvailableSeats = carShareDTO.AvailableSeats,
                                       DateAndTimeOfDeparture = carShareDTO.DateAndTimeOfDeparture,
-                                      DepartureCity = carShareDTO.DepartureCity,
-                                      DestinationCity = carShareDTO.DestinationCity,
+                                      DepartureAddress = carShareDTO.DepartureAddress,
+                                      DestinationAddress = carShareDTO.DestinationAddress,
                                       Description = carShareDTO.Description,
                                       DriverId = carShareDTO.DriverId,
                                       Fee = carShareDTO.Fee,
@@ -315,8 +315,8 @@ namespace FindNDriveServices2.Services
             {
                 carShare.AvailableSeats = carShareDTO.AvailableSeats;
                 carShare.DateAndTimeOfDeparture = carShareDTO.DateAndTimeOfDeparture;
-                carShare.DepartureCity = carShareDTO.DepartureCity;
-                carShare.DestinationCity = carShareDTO.DestinationCity;
+                carShare.DepartureAddress = carShareDTO.DepartureAddress;
+                carShare.DestinationAddress = carShareDTO.DestinationAddress;
                 carShare.Description = carShareDTO.Description;
                 carShare.DriverId = carShareDTO.DriverId;
                 carShare.Fee = carShareDTO.Fee;

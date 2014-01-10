@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Window;
+import android.widget.LinearLayout;
 
 import com.example.myapplication.Activities.Base.BaseFragmentActivity;
 import com.example.myapplication.Adapters.TabsPagerAdapter;
@@ -46,7 +47,7 @@ public class HomeActivity extends BaseFragmentActivity implements WCFServiceCall
         viewPager.setBackgroundResource(R.drawable.background6);
         TypedValue tv = new TypedValue();
         getApplicationContext().getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
-        int actionBarHeight = getResources().getDimensionPixelSize(tv.resourceId);
+        final int actionBarHeight = getResources().getDimensionPixelSize(tv.resourceId);
         viewPager.setPadding(0, actionBarHeight*2+2, 0, 0);
         TabsPagerAdapter mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
 
@@ -57,6 +58,8 @@ public class HomeActivity extends BaseFragmentActivity implements WCFServiceCall
             @Override
             public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
                 viewPager.setCurrentItem(tab.getPosition());
+                actionBar.show();
+                viewPager.setPadding(0, actionBarHeight*2+2, 0, 0);
             }
 
             @Override
@@ -74,11 +77,12 @@ public class HomeActivity extends BaseFragmentActivity implements WCFServiceCall
             @Override
             public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
                 viewPager.setCurrentItem(tab.getPosition());
+                actionBar.hide();
+                viewPager.setPadding(0, 0, 0, 0);
             }
 
             @Override
             public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-
             }
 
             @Override
@@ -91,6 +95,8 @@ public class HomeActivity extends BaseFragmentActivity implements WCFServiceCall
             @Override
             public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
                 viewPager.setCurrentItem(tab.getPosition());
+                actionBar.show();
+                viewPager.setPadding(0, actionBarHeight*2+2, 0, 0);
             }
 
             @Override
@@ -138,7 +144,7 @@ public class HomeActivity extends BaseFragmentActivity implements WCFServiceCall
     {
         forceLogout = b;
         new WCFServiceTask<Boolean, Boolean>("https://findndrive.no-ip.co.uk/Services/UserService.svc/logout",
-                forceLogout, new TypeToken<Boolean>(){}.getType(), appData.getAuthorisationHeaders(), null, this).execute();
+                forceLogout, new TypeToken<ServiceResponse<Boolean>>(){}.getType(), appData.getAuthorisationHeaders(), null, this).execute();
     }
 
     @Override
@@ -179,7 +185,7 @@ public class HomeActivity extends BaseFragmentActivity implements WCFServiceCall
 
     @Override
     public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, String parameter) {
-        //super.checkIfAuthorised(serviceResponse.ServiceResponseCode);
+        super.checkIfAuthorised(serviceResponse.ServiceResponseCode);
         finish();
 
         if(forceLogout)

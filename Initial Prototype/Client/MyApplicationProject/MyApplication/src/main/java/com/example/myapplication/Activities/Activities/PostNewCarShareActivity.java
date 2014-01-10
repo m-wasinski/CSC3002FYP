@@ -125,8 +125,8 @@ public class PostNewCarShareActivity extends BaseActivity implements WCFServiceC
 
     private void postNewCarShare() throws ParseException {
           CarShare carShare = new CarShare();
-          carShare.DestinationCity = destinationCity.getText().toString();
-          carShare.DepartureCity = departureCity.getText().toString();
+          //carShare.DestinationCity = destinationCity.getText().toString();
+          //carShare.DepartureCity = departureCity.getText().toString();
           carShare.DriverId = appData.getUser().UserId;
           carShare.Description = description.getText().toString();
           carShare.Fee = Double.parseDouble(fee.getText().toString());

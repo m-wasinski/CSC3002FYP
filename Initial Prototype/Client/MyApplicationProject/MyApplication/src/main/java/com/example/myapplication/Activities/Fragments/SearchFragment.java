@@ -3,6 +3,7 @@ package com.example.myapplication.Activities.Fragments;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
@@ -15,19 +16,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.example.myapplication.Activities.Activities.MapActivity;
+import com.example.myapplication.Activities.Activities.SearchMapActivity;
 import com.example.myapplication.Activities.Base.BaseFragment;
 import com.example.myapplication.Activities.Activities.ContactDriverActivity;
-import com.example.myapplication.Adapters.MyCarSharesAdapter;
 import com.example.myapplication.Adapters.SearchResultsAdapter;
 import com.example.myapplication.Constants.Constants;
+import com.example.myapplication.Constants.SearchConstants;
 import com.example.myapplication.DomainObjects.CarShare;
 import com.example.myapplication.DomainObjects.CarShareRequest;
 import com.example.myapplication.DomainObjects.ServiceResponse;
@@ -56,8 +57,9 @@ public class SearchFragment extends BaseFragment implements WCFServiceCallback<A
     private View view;
     private ListView searchResultsListView;
     private TextView searchLabelTextView;
+    private EditText departureAndDestinationEditText;
     private Mode mode;
-
+    private static final int GET_ADDRESS_REQUEST = 1;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -66,6 +68,7 @@ public class SearchFragment extends BaseFragment implements WCFServiceCallback<A
         dateTextView = (TextView) view.findViewById(R.id.SearchDateTextView);
         timeTextView = (TextView) view.findViewById(R.id.SearchTimeTextView);
         searchLabelTextView = (TextView) view.findViewById(R.id.SearchLabel);
+        departureAndDestinationEditText = (EditText) view.findViewById(R.id.FragmentSearchDepartureAndDestinationTextView);
         mode = Mode.SearchPanelExpanded;
 
         searchLabelTextView.setOnClickListener(new View.OnClickListener() {
@@ -141,17 +144,30 @@ public class SearchFragment extends BaseFragment implements WCFServiceCallback<A
             }
         });
 
-        TextView departureCityTextView = (TextView)  view.findViewById(R.id.SearchDepartureCityTextView);
+        TextView departureCityTextView = (TextView)  view.findViewById(R.id.FragmentSearchDepartureAndDestinationTextView);
         departureCityTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), MapActivity.class);
-                startActivity(intent);
+                Intent intent = new Intent(getActivity(), SearchMapActivity.class);
+                startActivityForResult(intent, GET_ADDRESS_REQUEST);
             }
         });
 
         setupUIEvents();
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Check which request it is that we're responding to
+        if (requestCode == GET_ADDRESS_REQUEST) {
+            // Make sure the request was successful
+            if (resultCode == Activity.RESULT_OK) {
+                this.departureAndDestinationEditText.setText("From: " + data.getExtras().getString(SearchConstants.DEPARTURE_ADDRESS)+"\n"
+                        +"To: " + data.getExtras().getString(SearchConstants.DESTINATION_ADDRESS));
+            }
+        }
     }
 
     private void setupUIEvents()
@@ -170,8 +186,8 @@ public class SearchFragment extends BaseFragment implements WCFServiceCallback<A
     }
 
     private void search() throws ParseException {
-        TextView departureCityTextView = (TextView)  view.findViewById(R.id.SearchDepartureCityTextView);
-        TextView destinationCityTextView = (TextView) view.findViewById(R.id.SearchDestinationCityTextView);
+        TextView departureCityTextView = (TextView)  view.findViewById(R.id.FragmentSearchDepartureAndDestinationTextView);
+        //TextView destinationCityTextView = (TextView) view.findViewById(R.id.SearchDestinationCityTextView);
 
         /*CheckBox smokers = (CheckBox)  view.findViewById(R.id.SmokersCheckbox);
         CheckBox womenOnly = (CheckBox)  view.findViewById(R.id.SearchWomenOnlyCheckbox);
@@ -180,8 +196,8 @@ public class SearchFragment extends BaseFragment implements WCFServiceCallback<A
 
         CarShare carShare = new CarShare();
 
-        carShare.DestinationCity = destinationCityTextView.getText().toString();
-        carShare.DepartureCity = departureCityTextView.getText().toString();
+        //carShare.DestinationCity = destinationCityTextView.getText().toString();
+        //carShare.DepartureCity = departureCityTextView.getText().toString();
         //carShare.SmokersAllowed = smokers.isChecked();
         //carShare.WomenOnly = womenOnly.isChecked();
         //carShare.PetsAllowed = petsAllowed.isChecked();

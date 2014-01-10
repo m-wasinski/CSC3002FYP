@@ -186,8 +186,18 @@ namespace FindNDriveDataAccessLayer.Migrations
             {
                 AvailableSeats = 4,
                 DateAndTimeOfDeparture = new DateTime(2014, 2, 1, 20, 15, 0, cal),
-                DepartureCity = "Lurgan",
-                DestinationCity = "Dublin",
+                DepartureAddress = new GeoAddress()
+                                                {
+                                                    AddressLine = "Belfast",
+                                                    Latitude = 54.5970,
+                                                    Longitude = -5.9300
+                                                },
+                DestinationAddress = new GeoAddress()
+                                               {
+                                                   AddressLine = "Dublin",
+                                                   Latitude = 53.3478, 
+                                                   Longitude = -6.2597
+                                               },
                 Description = "Free ride to Dublin!",
                 Fee = 0.00,
                 WomenOnly = false,
@@ -200,6 +210,33 @@ namespace FindNDriveDataAccessLayer.Migrations
             context.SaveChanges();
 
             var carShare2 = new CarShare
+            {
+                AvailableSeats = 1,
+                DateAndTimeOfDeparture = new DateTime(2014, 6, 6, 15, 30, 0, cal),
+                DepartureAddress = new GeoAddress()
+                {
+                    AddressLine = "London",
+                    Latitude = 51.5072,
+                    Longitude = -0.1275
+                },
+                DestinationAddress = new GeoAddress()
+                {
+                    AddressLine = "Manchester",
+                    Latitude = 53.4667,
+                    Longitude = -2.2333
+                },
+                Description = "Free ride to Dublin!",
+                Fee = 0.00,
+                WomenOnly = false,
+                Driver = driver,
+                SmokersAllowed = false,
+                CarShareStatus = CarShareStatus.Upcoming
+            };
+
+            context.CarShares.AddOrUpdate(carShare2);
+            context.SaveChanges();
+
+            /*var carShare2 = new CarShare
             {
                 AvailableSeats = 2,
                 DateAndTimeOfDeparture = new DateTime(2013, 11, 15, 15, 10, 0, cal),
@@ -352,7 +389,7 @@ namespace FindNDriveDataAccessLayer.Migrations
             };
 
             context.CarShares.AddOrUpdate(carShare10);
-            context.SaveChanges();
+            context.SaveChanges();*/
         }
     }
 }

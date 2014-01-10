@@ -26,13 +26,15 @@
                 android:id="@+id/MyCarSharesListView"/>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                style="@style/LargeTextField"
                 android:text="No journeys to display."
+                android:gravity="center"
                 android:id="@+id/MyCarSharesNoJourneysTextView"
                 android:layout_gravity="center_horizontal"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:background="#D9222930"/>
 
         </LinearLayout>
     </LinearLayout>

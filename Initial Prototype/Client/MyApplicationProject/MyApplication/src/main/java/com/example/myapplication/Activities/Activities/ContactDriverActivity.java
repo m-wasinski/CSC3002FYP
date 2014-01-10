@@ -150,9 +150,9 @@ public class ContactDriverActivity extends BaseActivity implements WCFServiceCal
         driverDateOfBirthTextView.setText(DateTimeHelper.getSimpleDate(carShare.Driver.DateOfBirth));
         driverRatingTextView.setText("TODO");
 
-        carShareCitiesTextView.setText(carShare.DepartureCity +" to " + carShare.DestinationCity);
-        carShareDateAndTimeTextView.setText("Leaving on: " + DateTimeHelper.getSimpleDate(carShare.DateAndTimeOfDeparture)
-                + " at: " + DateTimeHelper.getSimpleTime(carShare.DateAndTimeOfDeparture));
+        //carShareCitiesTextView.setText(carShare.DepartureCity +" to " + carShare.DestinationCity);
+        //carShareDateAndTimeTextView.setText("Leaving on: " + DateTimeHelper.getSimpleDate(carShare.DateAndTimeOfDeparture)
+        //        + " at: " + DateTimeHelper.getSimpleTime(carShare.DateAndTimeOfDeparture));
         carShareSmokersTextView.setText(carShareSmokersTextView.getText() + Helpers.TranslateBoolean(carShare.SmokersAllowed));
         carSharePetsTextView.setText(carSharePetsTextView.getText() + Helpers.TranslateBoolean(carShare.PetsAllowed));
         carShareGenderTextView.setText(carShareGenderTextView.getText() + "TODO");

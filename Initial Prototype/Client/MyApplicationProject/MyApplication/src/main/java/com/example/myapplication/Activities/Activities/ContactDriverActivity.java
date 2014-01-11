@@ -61,7 +61,7 @@ public class ContactDriverActivity extends BaseActivity implements WCFServiceCal
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        setContentView(com.example.myapplication.R.layout.contact_driver);
+        setContentView(com.example.myapplication.R.layout.activity_contact_driver);
 
         decimalFormat = new DecimalFormat("0.00");
         Type carShareType = new TypeToken<CarShare>() {}.getType();

@@ -27,8 +27,14 @@
     <string name="Time">Time</string>
     <string name="Pets">Pets</string>
     <string name="Minimize">Minimize</string>
-    <string name="AddNewCarShare">Create new car share</string>
+    <string name="CreateNewJourney">New offer</string>
     <string name="SelectGender">Select gender</string>
+    <string name="Refresh">Refresh</string>
+    <string name="MyProfile">My profile</string>
+    <string name="TravelBuddies">Travel buddies</string>
+    <string name="About">About</string>
+    <string name="action_search">Search</string>
+    <string name="SearchResultsHeader">Show search results (0)</string>
     <string-array name="app_menu_options">
         <item>Home</item>
         <item>My Car Shares</item>

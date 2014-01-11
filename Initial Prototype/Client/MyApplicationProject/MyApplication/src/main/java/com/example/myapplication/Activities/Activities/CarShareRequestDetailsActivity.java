@@ -44,7 +44,7 @@ public class CarShareRequestDetailsActivity extends BaseActivity implements WCFS
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.car_share_request_details);
+        setContentView(R.layout.activity_car_share_request_details);
 
         userNameTextView = (TextView) findViewById(R.id.CarShareRequestDetailsUserNameTextView);
         firstNameTextView = (TextView) findViewById(R.id.CarShareRequestDetailsFirstNameTextView);

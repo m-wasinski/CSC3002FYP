@@ -34,6 +34,7 @@ public class BaseActivity extends Activity {
         super.onCreate(savedInstanceState);
         appData = ((AppData)getApplication());
         gson = new Gson();
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         actionBar = getActionBar();
         if(actionBar != null)
         {

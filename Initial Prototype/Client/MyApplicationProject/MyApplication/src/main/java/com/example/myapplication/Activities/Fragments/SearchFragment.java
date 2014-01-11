@@ -23,7 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.example.myapplication.Activities.Activities.SearchMapActivity;
+import com.example.myapplication.Activities.Activities.ActivitySearch;
 import com.example.myapplication.Activities.Base.BaseFragment;
 import com.example.myapplication.Activities.Activities.ContactDriverActivity;
 import com.example.myapplication.Adapters.SearchResultsAdapter;
@@ -148,7 +148,7 @@ public class SearchFragment extends BaseFragment implements WCFServiceCallback<A
         departureCityTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), SearchMapActivity.class);
+                Intent intent = new Intent(getActivity(), ActivitySearch.class);
                 startActivityForResult(intent, GET_ADDRESS_REQUEST);
             }
         });

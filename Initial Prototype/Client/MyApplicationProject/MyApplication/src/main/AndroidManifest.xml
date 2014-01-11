@@ -52,20 +52,8 @@
             android:windowSoftInputMode="adjustResize"
             android:label="Registration Activity" />
         <activity
-            android:alwaysRetainTaskState="true"
-            android:name=".Activities.Activities.HomeActivity"
-            android:label="home_activity" />
-        <activity
             android:name=".Activities.Activities.PostNewCarShareActivity"
             android:label="New Car Share" />
-
-        <activity
-            android:name=".Activities.Activities.ManageAsDriverActivity"
-            android:label="Manage Car Share" />
-
-        <activity
-            android:name=".Activities.Activities.ManageAsPassengerActivity"
-            android:label="Manage Car Share" />
 
         <activity
             android:name=".Activities.Activities.ContactDriverActivity"
@@ -88,7 +76,11 @@
             android:label="Chat" />
 
         <activity
-            android:name=".Activities.Activities.SearchMapActivity"
+            android:name=".Activities.Activities.ActivityHome"
+            android:label="Home" />
+
+        <activity
+            android:name=".Activities.Activities.ActivitySearch"
             android:label="Search" />
 
         <receiver

@@ -1,5 +1,6 @@
 package com.example.myapplication.Activities.Activities;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -121,7 +122,7 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.RegisterMenuOption:
+            case R.id.register_menu_option:
                 openRegistrationActivity();
             default:
                 return super.onOptionsItemSelected(item);
@@ -136,7 +137,7 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
         {
             storeSessionId(session);
             appData.setUser(serviceResponse.Result);
-            Intent intent = new Intent(this, HomeActivity.class);
+            Intent intent = new Intent(this, ActivityHome.class);
             startActivity(intent);
             finish();
         }

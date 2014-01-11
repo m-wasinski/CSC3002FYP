@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.example.myapplication.Activities.Activities.CarShareRequestDetailsActivity;
 import com.example.myapplication.Adapters.CarShareRequestAdapter;
 import com.example.myapplication.Activities.Base.BaseActivity;
 import com.example.myapplication.DomainObjects.CarShare;
@@ -33,7 +32,7 @@ public class CarShareRequestsActivity extends BaseActivity implements WCFService
 
         Type carShareType = new TypeToken<CarShare>() {}.getType();
         carShare = gson.fromJson(getIntent().getExtras().getString("CurrentCarShare"), carShareType);
-        setContentView(R.layout.car_share_requests);
+        setContentView(R.layout.activity_car_share_requests);
         requestsListView = (ListView) findViewById(R.id.CarShareRequestsListView);
     }
 

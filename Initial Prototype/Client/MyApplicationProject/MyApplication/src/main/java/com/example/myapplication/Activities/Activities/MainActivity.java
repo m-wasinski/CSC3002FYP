@@ -144,7 +144,7 @@ public class MainActivity extends BaseActionBarActivity implements WCFServiceCal
         if (serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             appData.setUser(serviceResponse.Result);
-            Intent intent = new Intent(this, HomeActivity.class);
+            Intent intent = new Intent(this, ActivityHome.class);
             startActivity(intent);
 
         }

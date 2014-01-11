@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 /**
  * Created by Michal on 02/01/14.
  */
-public class CarShareRequestAdapter extends ArrayAdapter<CarShareRequest> {
+public class CarShareRequestAdapter extends ArrayAdapter<CarShareRequest> implements Filterable {
 
     private ArrayList<CarShareRequest> carShareRequests;
     private Context context;

@@ -100,7 +100,6 @@ public class JourneyDetailsFragment extends BaseFragment {
 
     private void dismiss()
     {
-        getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
         listener.onFragmentClosed();
     }
 

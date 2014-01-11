@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -36,16 +38,23 @@ public class MyCarSharesAdapter extends ArrayAdapter<CarShare> {
     private Context context;
     private int layoutResourceId;
     private int userId;
-    private ArrayList<CarShare> CarShares= null;
+    private ArrayList<CarShare> originalCarShares;
+    private ArrayList<CarShare> displayedCarShares;
     private Mode mode;
     private final List<String> menuAsDriver = asList("Show requests", "Show details", "Show on map", "Show chat","Show passengers", "Make change", "Cancel Journey");
     private final List<String> menuAsPassenger = asList("Show details", "Show on map", "Show chat", "Show passengers", "Withdraw from journey", "Rate Driver");
+
+    @Override
+    public int getCount() {
+        return displayedCarShares.size();
+    }
 
     public MyCarSharesAdapter(int user, Context context, int resource, ArrayList<CarShare> carShares) {
         super(context, resource, carShares);
         this.layoutResourceId = resource;
         this.context = context;
-        this.CarShares = carShares;
+        this.originalCarShares = carShares;
+        this.displayedCarShares = this.originalCarShares;
         userId = user;
         mode = mode.Passenger;
     }
@@ -81,7 +90,7 @@ public class MyCarSharesAdapter extends ArrayAdapter<CarShare> {
             holder = (CarShareHolder)row.getTag();
         }
 
-        final CarShare carShare = CarShares.get(position);
+        final CarShare carShare = displayedCarShares.get(position);
         int statusIconResource = 0;
         String statusText = "";
 
@@ -102,8 +111,8 @@ public class MyCarSharesAdapter extends ArrayAdapter<CarShare> {
         }
 
         holder.journeyId.setText("Journey id: " + carShare.CarShareId);
-        //holder.fromTo.setText(carShare.DepartureCity + " -> " + carShare.DestinationCity);
-        //holder.departureDate.setText("Date: " + DateTimeHelper.getSimpleDate(carShare.DateAndTimeOfDeparture));
+        holder.fromTo.setText(carShare.DepartureAddress.AddressLine + " -> " + carShare.DestinationAddress.AddressLine);
+        holder.departureDate.setText("Date: " + DateTimeHelper.getSimpleDate(carShare.DateAndTimeOfDeparture));
         holder.departureTime.setText("Time: " + DateTimeHelper.getSimpleTime(carShare.DateAndTimeOfDeparture));
         holder.availableSeats.setText("Available seats: " + carShare.AvailableSeats);
         holder.modeIcon.setImageResource(R.drawable.taxi);
@@ -186,6 +195,56 @@ public class MyCarSharesAdapter extends ArrayAdapter<CarShare> {
             }
         });
         return row;
+    }
+
+    @Override
+    public Filter getFilter() {
+        Filter filter = new Filter() {
+
+            @SuppressWarnings("unchecked")
+            @Override
+            protected void publishResults(CharSequence constraint,FilterResults results) {
+
+                displayedCarShares = (ArrayList<CarShare>) results.values; // has the filtered values
+                notifyDataSetChanged();  // notifies the data with new filtered values
+            }
+
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                FilterResults results = new FilterResults();        // Holds the results of a filtering operation in values
+                ArrayList<CarShare> filteredValues = new ArrayList<CarShare>();
+
+                if (originalCarShares == null) {
+                    originalCarShares = displayedCarShares; // saves the original data in mOriginalValues
+                }
+
+                /********
+                 *
+                 *  If constraint(CharSequence that is received) is null returns the mOriginalValues(Original) values
+                 *  else does the Filtering and returns FilteredArrList(Filtered)
+                 *
+                 ********/
+                if (constraint == null || constraint.length() == 0) {
+
+                    // set the Original result to return
+                    results.count = originalCarShares.size();
+                    results.values = originalCarShares;
+                } else {
+                    constraint = constraint.toString().toLowerCase();
+                    for (int i = 0; i < originalCarShares.size(); i++) {
+                        String data = (originalCarShares.get(i).DepartureAddress.AddressLine + " " + originalCarShares.get(i).DestinationAddress.AddressLine).replace("->", "");
+                        if (data.toLowerCase().contains(constraint.toString())) {
+                            filteredValues.add(originalCarShares.get(i));
+                        }
+                    }
+                    // set the Filtered result to return
+                    results.count = filteredValues.size();
+                    results.values = filteredValues;
+                }
+                return results;
+            }
+        };
+        return filter;
     }
 
     private void startRequestsActivity(CarShare carShare)

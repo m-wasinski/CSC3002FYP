@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/background6"
+    android:paddingTop="?android:attr/actionBarSize">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:hint="Type here to filter"
+            android:paddingLeft="10sp"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="#D9222930"
+            style="@style/LoginFields"
+            android:id="@+id/ActivityHomeFilterEditText"
+            android:enabled="false"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            style="@style/LargeTextField"
+            android:text="My journeys"
+            android:gravity="left|bottom"
+            android:padding="5sp"
+            android:id="@+id/MyCarSharesMyJourneysTextView"
+            android:background="#D9222930"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="0"
+            android:gravity="center">
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/MyCarSharesListView"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                style="@style/LargeTextField"
+                android:text="No journeys to display."
+                android:gravity="center"
+                android:id="@+id/MyCarSharesNoJourneysTextView"
+                android:layout_gravity="center_horizontal"
+                android:visibility="gone"
+                android:background="#D9222930"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

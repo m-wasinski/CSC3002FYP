@@ -25,11 +25,6 @@ namespace FindNDriveInfrastructureDataAccessLayer
         private readonly DbSet<T> _dbSet;
 
         /// <summary>
-        /// The _db context.
-        /// </summary>
-        private readonly DbContext _dbContext;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="EntityFrameworkRepository{T}"/> class.
         /// </summary>
         /// <param name="dbContext">
@@ -38,7 +33,6 @@ namespace FindNDriveInfrastructureDataAccessLayer
         public EntityFrameworkRepository(DbContext dbContext)
         {
             _dbSet = dbContext.Set<T>();
-            _dbContext = dbContext;
         }
 
         /// <summary>
@@ -61,18 +55,6 @@ namespace FindNDriveInfrastructureDataAccessLayer
         public void Remove(T entity)
         {
             _dbSet.Remove(entity);
-        }
-
-        /// <summary>
-        /// The update.
-        /// </summary>
-        /// <param name="entity">
-        /// The entity.
-        /// </param>
-        public void Update(T entity)
-        {
-            _dbContext.SaveChanges();
-
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-package com.example.myapplication.Experimental;
+package com.example.myapplication.experimental;
 
 /**
  * Created by Michal on 08/12/13.

@@ -1,27 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/travel_buddies_menu_option"
-        android:title="@string/TravelBuddies"
-        app:showAsAction="never" />
-
-    <item android:id="@+id/ProfileMenuOption"
-        android:title="@string/MyProfile"
-        app:showAsAction="never" />
-
-    <item android:id="@+id/LogoutMenuOption"
+    <item android:id="@+id/logout_menu_option"
         android:title="@string/LogoutMenuTitle"
         app:showAsAction="never" />
-
-    <item android:id="@+id/action_search"
-        android:icon="@drawable/search"
-        android:title="@string/action_search"
-        android:showAsAction="always" />
-
-    <item android:id="@+id/action_add_new_car_share"
-        android:icon="@drawable/plus"
-        android:title="@string/CreateNewJourney"
-        android:showAsAction="always"/>
 
     <item android:id="@+id/action_refresh"
         android:icon="@drawable/refresh"

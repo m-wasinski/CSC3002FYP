@@ -13,10 +13,8 @@ namespace FindNDriveDataAccessLayer
 {
     using System.Data.Entity;
     using System.Data.Entity.ModelConfiguration.Conventions;
-    using System.Dynamic;
 
     using DomainObjects.Domains;
-    using DomainObjects.DOmains;
 
     /// <summary>
     /// The application context.
@@ -35,17 +33,27 @@ namespace FindNDriveDataAccessLayer
         /// <summary>
         /// Gets or sets the car shares.
         /// </summary>
-        public DbSet<CarShare> CarShares { get; set; }
+        public DbSet<Journey> Journeys { get; set; }
 
         /// <summary>
         /// Gets or sets the car share requests.
         /// </summary>
-        public DbSet<CarShareRequest> CarShareRequests { get; set; }
+        public DbSet<JourneyRequest> JourneyRequests { get; set; }
 
         /// <summary>
         /// Gets or sets the sessions.
         /// </summary>
         public DbSet<Session> Sessions { get; set; }
+
+        /// <summary>
+        /// Gets or sets the chat messages.
+        /// </summary>
+        public DbSet<ChatMessage> ChatMessages { get; set; }
+
+        /// <summary>
+        /// Gets or sets the chat messages.
+        /// </summary>
+        public DbSet<Notification> Notifications { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ApplicationContext"/> class.
@@ -79,41 +87,41 @@ namespace FindNDriveDataAccessLayer
         /// </param>
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<CarShare>()
+            modelBuilder.Entity<Journey>()
                 .HasMany(_ => _.Participants)
                 .WithMany()
                 .Map(map =>
                 {
-                    map.MapLeftKey("CarShareId");
+                    map.MapLeftKey("JourneyId");
                     map.MapRightKey("UserId");
-                    map.ToTable("CarShare_User");
+                    map.ToTable("Journey_User");
                 });
 
-            modelBuilder.Entity<CarShare>()
+            modelBuilder.Entity<Journey>()
                 .HasMany(_ => _.Messages)
                 .WithMany()
                 .Map(map =>
                 {
-                    map.MapLeftKey("CarShareId");
-                    map.MapRightKey("CarShareMessageId");
-                    map.ToTable("CarShare_Message");
+                    map.MapLeftKey("JourneyId");
+                    map.MapRightKey("JourneyMessageId");
+                    map.ToTable("Journey_Message");
                 });
 
-            modelBuilder.Entity<CarShare>()
+            modelBuilder.Entity<Journey>()
                 .HasMany(_ => _.Requests)
                 .WithMany()
                 .Map(map =>
                 {
-                    map.MapLeftKey("CarShareId");
-                    map.MapRightKey("CarShareRequestId");
-                    map.ToTable("CarShare_Request");
+                    map.MapLeftKey("JourneyId");
+                    map.MapRightKey("JourneyRequestId");
+                    map.ToTable("Journey_Request");
                 });
 
             modelBuilder.Entity<User>()
-               .HasMany(_ => _.TravelBuddies).WithMany().Map(map =>
+               .HasMany(_ => _.Friends).WithMany().Map(map =>
                 {
                     map.MapLeftKey("UserId");
-                    map.ToTable("Travel_Buddies");
+                    map.ToTable("Friend_Mappings");
                 });
 
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();   

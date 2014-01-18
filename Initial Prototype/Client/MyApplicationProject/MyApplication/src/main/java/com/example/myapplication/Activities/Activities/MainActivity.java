@@ -1,7 +1,9 @@
-package com.example.myapplication.Activities.Activities;
+package com.example.myapplication.activities.activities;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -9,16 +11,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 
-import com.example.myapplication.Activities.Base.BaseActionBarActivity;
-import com.example.myapplication.Constants.Constants;
-import com.example.myapplication.Constants.ServiceResponseCode;
-import com.example.myapplication.DomainObjects.ServiceResponse;
-import com.example.myapplication.DomainObjects.User;
-import com.example.myapplication.Helpers.ApplicationFileManager;
-import com.example.myapplication.Interfaces.GCMRegistrationCallback;
-import com.example.myapplication.Interfaces.WCFServiceCallback;
-import com.example.myapplication.NetworkTasks.GCMRegistrationTask;
-import com.example.myapplication.NetworkTasks.WCFServiceTask;
+import com.example.myapplication.activities.base.BaseActionBarActivity;
+import com.example.myapplication.constants.ServiceResponseCode;
+import com.example.myapplication.constants.SharedPreferencesConstants;
+import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.domain_objects.User;
+import com.example.myapplication.interfaces.GCMRegistrationCallback;
+import com.example.myapplication.interfaces.WCFServiceCallback;
+import com.example.myapplication.network_tasks.GCMRegistrationTask;
+import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.example.myapplication.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -68,13 +69,11 @@ public class MainActivity extends BaseActionBarActivity implements WCFServiceCal
 
         setContentView(R.layout.activity_main);
 
-        performStartupFileCheck();
-
         //If session exists, attempt auto-login.
         if (!appData.getSessionId().isEmpty())
         {
-            new WCFServiceTask<String, User>("https://findndrive.no-ip.co.uk/Services/UserService.svc/autologin", "", new TypeToken<ServiceResponse<User>>() {}.getType(),
-                    appData.getAuthorisationHeaders(), null, this).execute();
+            new WCFServiceTask<String>(getResources().getString(R.string.UserAutoLoginURL), "", new TypeToken<ServiceResponse<User>>() {}.getType(),
+                    appData.getAuthorisationHeaders(), this).execute();
         }
         else
         {
@@ -86,19 +85,8 @@ public class MainActivity extends BaseActionBarActivity implements WCFServiceCal
         }
     }
 
-    private void performStartupFileCheck()
-    {
-        ApplicationFileManager fileManager = new ApplicationFileManager();
-
-        if (!fileManager.FolderExists())
-        {
-            fileManager.MakeApplicationDirectory();
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
@@ -111,11 +99,11 @@ public class MainActivity extends BaseActionBarActivity implements WCFServiceCal
      * @param registrationId registration ID
      */
     private void storeRegistrationId(String registrationId) {
-        SharedPreferences sharedPreferences = getSharedPreferences(Constants.GLOBAL_APP_DATA, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(SharedPreferencesConstants.GLOBAL_APP_DATA, Context.MODE_PRIVATE);
         int appVersion = appData.getAppVersion();
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(Constants.PROPERTY_REG_ID, registrationId);
-        editor.putInt(Constants.PROPERTY_APP_VERSION, appVersion);
+        editor.putString(SharedPreferencesConstants.PROPERTY_REG_ID, registrationId);
+        editor.putInt(SharedPreferencesConstants.PROPERTY_APP_VERSION, appVersion);
         editor.commit();
     }
 
@@ -141,12 +129,27 @@ public class MainActivity extends BaseActionBarActivity implements WCFServiceCal
 
     @Override
     public void onServiceCallCompleted(ServiceResponse<User> serviceResponse, String param) {
+        if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SERVER_ERROR)
+        {
+            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+            alertDialog.setCancelable(false);
+            alertDialog.setMessage("Server error,, please try again later.");
+            alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                    dialog.dismiss();
+                }
+            });
+            alertDialog.show();
+            return;
+        }
+
         if (serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             appData.setUser(serviceResponse.Result);
-            Intent intent = new Intent(this, ActivityHome.class);
+            Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
-
         }
         else
         {

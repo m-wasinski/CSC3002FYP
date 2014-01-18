@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:orientation="vertical"
+    android:paddingTop="?android:attr/actionBarSize"
+    android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_margin="10sp"
+            android:padding="15sp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:background="@drawable/home_navigation_selector"
+            android:id="@+id/ActivityHomeMyJourneysLayout">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/car"
+                android:layout_gravity="center"
+                style="@style/TransparentButtonStyle"
+                android:focusable="false"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="My Journeys"
+                style="@style/LoginFields"
+                android:focusable="false"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/ActivityHomeSearchLayout"
+            android:orientation="vertical"
+            android:layout_margin="10sp"
+            android:gravity="center"
+            android:padding="15sp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:background="@drawable/home_navigation_selector">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/search"
+                android:layout_gravity="center"
+                style="@style/TransparentButtonStyle"
+                android:focusable="false"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Search"
+                android:gravity="bottom"
+                android:layout_gravity="center"
+                style="@style/LoginFields"
+                android:focusable="false"/>
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@drawable/home_navigation_selector"
+            android:layout_margin="10sp"
+            android:id="@+id/ActivityHomeMyOfferJourneyLayout"
+            android:padding="15sp"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/plus"
+                android:layout_gravity="center"
+                style="@style/TransparentButtonStyle"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New Journey"
+                style="@style/LoginFields"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ActivityHomeNotificationsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_margin="10sp"
+            android:padding="15sp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:background="@drawable/home_navigation_selector">
+
+            <TextView
+                android:id="@+id/ActivityHomeNotificationCountTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/New"
+                style="@style/RegularTextField"
+                android:focusable="false"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/notification"
+                android:layout_gravity="center"
+                style="@style/TransparentButtonStyle"
+                android:focusable="false"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notifications"
+                android:layout_gravity="center"
+                style="@style/LoginFields"
+                android:focusable="false"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/ActivityHomeFriendsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_margin="10sp"
+            android:padding="15sp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:background="@drawable/home_navigation_selector">
+
+            <TextView
+                android:id="@+id/HomeActivityUnreadMessagesCountTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/NewMessages"
+                style="@style/RegularTextField"
+                android:focusable="false"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/friends"
+                android:layout_gravity="center"
+                style="@style/TransparentButtonStyle"
+                android:focusable="false"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Friends"
+                android:layout_gravity="center"
+                style="@style/LoginFields"
+                android:focusable="false"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ActivityHomeMyProfileLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@drawable/home_navigation_selector"
+            android:layout_margin="10sp"
+            android:padding="15sp"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/profile"
+                android:layout_gravity="center"
+                style="@style/TransparentButtonStyle"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/MyProfile"
+                android:layout_gravity="center"
+                style="@style/LoginFields"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

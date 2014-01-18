@@ -1,44 +1,32 @@
-package com.example.myapplication.Adapters;
+package com.example.myapplication.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import com.example.myapplication.Activities.Activities.CarShareRequestsActivity;
-import com.example.myapplication.Constants.CarShareStatus;
-import com.example.myapplication.DomainObjects.CarShare;
-import com.example.myapplication.Experimental.DateTimeHelper;
+import com.example.myapplication.domain_objects.Journey;
+import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.R;
-import com.google.gson.Gson;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.Arrays.asList;
 
 /**
  * Created by Michal on 06/01/14.
  */
-public class SearchResultsAdapter extends ArrayAdapter<CarShare> {
+public class SearchResultsAdapter extends ArrayAdapter<Journey> {
 
     private Context context;
     private int layoutResourceId;
-    private ArrayList<CarShare> CarShares;
+    private ArrayList<Journey> CarShares;
     private DecimalFormat decimalFormat;
 
-    public SearchResultsAdapter(Context context, int resource, ArrayList<CarShare> carShares) {
+    public SearchResultsAdapter(Context context, int resource, ArrayList<Journey> carShares) {
         super(context, resource, carShares);
         this.layoutResourceId = resource;
         this.context = context;
@@ -67,10 +55,10 @@ public class SearchResultsAdapter extends ArrayAdapter<CarShare> {
             holder = (CarShareHolder)row.getTag();
         }
 
-        CarShare carShare = CarShares.get(position);
+        Journey carShare = CarShares.get(position);
 
         holder.fromToTextView.setText(carShare.DepartureAddress.AddressLine + " -> " + carShare.DestinationAddress.AddressLine);
-//        holder.journeyIdTextView.setText("Journey id: " + carShare.CarShareId);
+//        holder.journeyIdTextView.setText("Journey id: " + carShare.JourneyId);
 //        holder.driverNameTextView.setText("Driver: " + carShare.Driver.FirstName + " " + carShare.Driver.LastName);
         holder.dateTextView.setText("Date: " + DateTimeHelper.getSimpleDate(carShare.DateAndTimeOfDeparture));
         holder.timeTextView.setText("Time: " + DateTimeHelper.getSimpleTime(carShare.DateAndTimeOfDeparture));

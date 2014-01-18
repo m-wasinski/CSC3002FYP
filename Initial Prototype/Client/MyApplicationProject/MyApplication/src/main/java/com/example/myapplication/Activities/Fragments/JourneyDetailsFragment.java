@@ -1,27 +1,24 @@
-package com.example.myapplication.Activities.Fragments;
+package com.example.myapplication.activities.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.myapplication.Activities.Activities.ContactDriverActivity;
-import com.example.myapplication.Activities.Base.BaseFragment;
-import com.example.myapplication.DomainObjects.CarShare;
-import com.example.myapplication.DomainObjects.CarShareRequest;
-import com.example.myapplication.DomainObjects.ServiceResponse;
-import com.example.myapplication.Experimental.AppData;
-import com.example.myapplication.Interfaces.FragmentClosed;
-import com.example.myapplication.Interfaces.WCFServiceCallback;
-import com.example.myapplication.NetworkTasks.WCFServiceTask;
+import com.example.myapplication.activities.activities.ContactDriverActivity;
+import com.example.myapplication.activities.base.BaseFragment;
+import com.example.myapplication.domain_objects.Journey;
+import com.example.myapplication.domain_objects.JourneyRequest;
+import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.experimental.AppData;
+import com.example.myapplication.interfaces.FragmentClosed;
+import com.example.myapplication.interfaces.WCFServiceCallback;
+import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.example.myapplication.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -35,7 +32,7 @@ public class JourneyDetailsFragment extends BaseFragment {
 
     //Member variables
     private Button contactDriverButton;
-    private CarShare carShare;
+    private Journey carShare;
 
     private ImageButton minimiseButton;
     private ImageButton closeButton;
@@ -48,7 +45,7 @@ public class JourneyDetailsFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_journey_information, container, false);
-        carShare = new Gson().fromJson(getArguments().getString("CurrentCarShare"), new TypeToken<CarShare>() {
+        carShare = new Gson().fromJson(getArguments().getString("CurrentCarShare"), new TypeToken<Journey>() {
         }.getType());
         appData = ((AppData)getActivity().getApplicationContext());
         journeyHeader = (TextView) view.findViewById(R.id.FragmentJourneyInformationFromToTextView);
@@ -75,12 +72,12 @@ public class JourneyDetailsFragment extends BaseFragment {
         contactDriverButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new WCFServiceTask<Integer, CarShareRequest>("https://findndrive.no-ip.co.uk/Services/RequestService.svc/getrequests",
-                        carShare.CarShareId,
-                        new TypeToken<ServiceResponse<ArrayList<CarShareRequest>>>() {}.getType(),
-                        appData.getAuthorisationHeaders(),null, new WCFServiceCallback<ArrayList<CarShareRequest>, String>() {
+                new WCFServiceTask<Integer>(getResources().getString(R.string.GetRequestsForJourneyURL),
+                        carShare.JourneyId,
+                        new TypeToken<ServiceResponse<ArrayList<JourneyRequest>>>() {}.getType(),
+                        appData.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyRequest>, String>() {
                     @Override
-                    public void onServiceCallCompleted(ServiceResponse<ArrayList<CarShareRequest>> serviceResponse, String parameter) {
+                    public void onServiceCallCompleted(ServiceResponse<ArrayList<JourneyRequest>> serviceResponse, String parameter) {
                         Gson gson = new Gson();
                         Intent intent = new Intent(getActivity(), ContactDriverActivity.class);
                         intent.putExtra("CurrentCarShare", gson.toJson(carShare));

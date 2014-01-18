@@ -1,15 +1,15 @@
-package com.example.myapplication.Experimental;
+package com.example.myapplication.experimental;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.util.Log;
 
-import com.example.myapplication.Constants.Constants;
-import com.example.myapplication.DomainObjects.User;
-import com.example.myapplication.Helpers.Pair;
+import com.example.myapplication.constants.SessionConstants;
+import com.example.myapplication.constants.SharedPreferencesConstants;
+import com.example.myapplication.domain_objects.User;
+import com.example.myapplication.utilities.Pair;
 
 import java.util.List;
 
@@ -59,6 +59,10 @@ public class AppData extends Application {
         return sessionId;
     }
 
+    public int getItemsPerCall()
+    {
+        return 10;
+    }
     /**
      * Gets the current registration ID for application on GCM service.
      * <p>
@@ -98,10 +102,10 @@ public class AppData extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        SharedPreferences sharedPreferences = getSharedPreferences(Constants.GLOBAL_APP_DATA, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(SharedPreferencesConstants.GLOBAL_APP_DATA, Context.MODE_PRIVATE);
 
-        registrationId = sharedPreferences.getString(Constants.PROPERTY_REG_ID, "");
-        sessionId = sharedPreferences.getString(Constants.SESSION_ID, "");
+        registrationId = sharedPreferences.getString(SharedPreferencesConstants.PROPERTY_REG_ID, "");
+        sessionId = sharedPreferences.getString(SessionConstants.SESSION_ID, "");
         uniqueDeviceId = ""+ Build.BOARD.length()%10+ Build.BRAND.length()%10 +
                 Build.CPU_ABI.length()%10 + Build.DEVICE.length()%10 +
                 Build.DISPLAY.length()%10 + Build.HOST.length()%10 +
@@ -113,8 +117,8 @@ public class AppData extends Application {
 
     public List<Pair> getAuthorisationHeaders()
     {
-        return asList(new Pair(Constants.DEVICE_ID, this.uniqueDeviceId),
-                new Pair(Constants.SESSION_ID, this.sessionId),
-                new Pair(Constants.UUID, this.uuid));
+        return asList(new Pair(SessionConstants.DEVICE_ID, this.uniqueDeviceId),
+                new Pair(SessionConstants.SESSION_ID, this.sessionId),
+                new Pair(SessionConstants.UUID, this.uuid));
     }
 }

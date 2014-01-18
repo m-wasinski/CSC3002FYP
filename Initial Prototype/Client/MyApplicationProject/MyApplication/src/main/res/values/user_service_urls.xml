@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="UserAutoLoginURL">https://findndrive.no-ip.co.uk/Services/UserService.svc/autologin</string>
+    <string name="UserManualLoginURL">https://findndrive.no-ip.co.uk/Services/UserService.svc/manuallogin</string>
+    <string name="UserRegisterURL">https://findndrive.no-ip.co.uk/Services/UserService.svc/register</string>
+    <string name="UserLogoutURL">https://findndrive.no-ip.co.uk/Services/UserService.svc/logout</string>
+    <string name="RefreshUserURL">https://findndrive.no-ip.co.uk/Services/UserService.svc/refresh</string>
+</resources>

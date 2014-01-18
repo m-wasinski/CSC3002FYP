@@ -1,4 +1,4 @@
-package com.example.myapplication.DTOs;
+package com.example.myapplication.dtos;
 
 /**
  * Created by Michal on 11/11/13.

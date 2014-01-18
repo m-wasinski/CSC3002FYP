@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">My Application</string>
+    <string name="app_name">FindNDrive</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="UserNameHint">Username</string>
@@ -23,18 +23,24 @@
     <string name="CarShareDetailsContactDriverLabel">Contact Driver</string>
     <string name="CarShareDetailsDescriptionLabel">Description:</string>
     <string name="RememberMe">Remember me</string>
-    <string name="RegisterString">Register</string>
+    <string name="RegisterString">Or create a new account</string>
     <string name="Time">Time</string>
     <string name="Pets">Pets</string>
     <string name="Minimize">Minimize</string>
     <string name="CreateNewJourney">New offer</string>
-    <string name="SelectGender">Select gender</string>
     <string name="Refresh">Refresh</string>
-    <string name="MyProfile">My profile</string>
+    <string name="MyProfile">My Profile</string>
     <string name="TravelBuddies">Travel buddies</string>
     <string name="About">About</string>
     <string name="action_search">Search</string>
     <string name="SearchResultsHeader">Show search results (0)</string>
+    <string name="New">New</string>
+    <string name="Friends">Friends</string>
+    <string name="NewMessages">Messages</string>
+    <string name="ShowMore">Show more</string>
+    <string name="SelectGender">Select gender</string>
+    <string name="KeepMeLoggedIn">  Keep me logged in</string>
+    <string name="CreateAccount">Create account</string>
     <string-array name="app_menu_options">
         <item>Home</item>
         <item>My Car Shares</item>
@@ -50,7 +56,6 @@
         <item>Other</item>
     </string-array>
     <string-array name="gender">
-        <item>Select Gender</item>
         <item>Male</item>
         <item>Female</item>
     </string-array>

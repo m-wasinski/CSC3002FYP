@@ -1,4 +1,4 @@
-package com.example.myapplication.Constants;
+package com.example.myapplication.constants;
 
 /**
  * Created by Michal on 05/01/14.

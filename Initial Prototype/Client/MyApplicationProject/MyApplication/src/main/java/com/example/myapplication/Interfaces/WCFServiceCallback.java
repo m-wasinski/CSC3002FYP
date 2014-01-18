@@ -1,6 +1,6 @@
-package com.example.myapplication.Interfaces;
+package com.example.myapplication.interfaces;
 
-import com.example.myapplication.DomainObjects.ServiceResponse;
+import com.example.myapplication.domain_objects.ServiceResponse;
 
 /**
  * Created by Michal on 05/01/14.

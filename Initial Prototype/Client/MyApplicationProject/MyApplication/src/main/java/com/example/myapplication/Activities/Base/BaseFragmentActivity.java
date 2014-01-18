@@ -1,4 +1,4 @@
-package com.example.myapplication.Activities.Base;
+package com.example.myapplication.activities.base;
 
 import android.app.ActionBar;
 import android.content.Intent;
@@ -6,9 +6,9 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Window;
 import android.widget.Toast;
-import com.example.myapplication.Activities.Activities.LoginActivity;
-import com.example.myapplication.Constants.ServiceResponseCode;
-import com.example.myapplication.Experimental.AppData;
+import com.example.myapplication.activities.activities.LoginActivity;
+import com.example.myapplication.constants.ServiceResponseCode;
+import com.example.myapplication.experimental.AppData;
 
 /**
  * Created by Michal on 05/01/14.

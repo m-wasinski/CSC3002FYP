@@ -1,10 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
-using DomainObjects.DOmains;
-using FindNDriveInfrastructureCore;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="RegisterDTO.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   DataContract that will be sent as part of the IUserService.RegisterUser request
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace FindNDriveServices2.DTOs
 {
+    using System.ComponentModel.DataAnnotations;
+    using System.Runtime.Serialization;
+
+    using DomainObjects.Domains;
+
+    using FindNDriveInfrastructureCore;
+
     /// <summary>
     /// DataContract that will be sent as part of the IUserService.RegisterUser request
     /// </summary>

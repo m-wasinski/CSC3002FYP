@@ -1,7 +1,5 @@
-package com.example.myapplication.Activities.Fragments;
+package com.example.myapplication.activities.fragments;
 
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -18,23 +16,21 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.example.myapplication.Activities.Activities.ActivitySearch;
-import com.example.myapplication.Activities.Base.BaseFragment;
-import com.example.myapplication.Activities.Activities.ContactDriverActivity;
-import com.example.myapplication.Adapters.SearchResultsAdapter;
-import com.example.myapplication.Constants.Constants;
-import com.example.myapplication.Constants.SearchConstants;
-import com.example.myapplication.DomainObjects.CarShare;
-import com.example.myapplication.DomainObjects.CarShareRequest;
-import com.example.myapplication.DomainObjects.ServiceResponse;
-import com.example.myapplication.Experimental.DateTimeHelper;
-import com.example.myapplication.Interfaces.WCFServiceCallback;
-import com.example.myapplication.NetworkTasks.WCFServiceTask;
+import com.example.myapplication.activities.activities.SearchActivity;
+import com.example.myapplication.activities.base.BaseFragment;
+import com.example.myapplication.activities.activities.ContactDriverActivity;
+import com.example.myapplication.adapters.SearchResultsAdapter;
+import com.example.myapplication.constants.SearchConstants;
+import com.example.myapplication.domain_objects.Journey;
+import com.example.myapplication.domain_objects.JourneyRequest;
+import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.experimental.DateTimeHelper;
+import com.example.myapplication.interfaces.WCFServiceCallback;
+import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.example.myapplication.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -49,7 +45,7 @@ import java.util.Locale;
  * Created by Michal on 30/11/13.
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class SearchFragment extends BaseFragment implements WCFServiceCallback<ArrayList<CarShare>, String>{
+public class SearchFragment extends BaseFragment implements WCFServiceCallback<ArrayList<Journey>, String>{
 
     private Calendar myCalendar;
     private TextView dateTextView;
@@ -64,7 +60,7 @@ public class SearchFragment extends BaseFragment implements WCFServiceCallback<A
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         myCalendar = Calendar.getInstance();
-        view = inflater.inflate(R.layout.fragment_search_car_shares, container, false);
+        view = inflater.inflate(R.layout.fragment_search_journeys, container, false);
         dateTextView = (TextView) view.findViewById(R.id.SearchDateTextView);
         timeTextView = (TextView) view.findViewById(R.id.SearchTimeTextView);
         searchLabelTextView = (TextView) view.findViewById(R.id.SearchLabel);
@@ -148,7 +144,7 @@ public class SearchFragment extends BaseFragment implements WCFServiceCallback<A
         departureCityTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), ActivitySearch.class);
+                Intent intent = new Intent(getActivity(), SearchActivity.class);
                 startActivityForResult(intent, GET_ADDRESS_REQUEST);
             }
         });
@@ -194,7 +190,7 @@ public class SearchFragment extends BaseFragment implements WCFServiceCallback<A
         CheckBox free = (CheckBox) view.findViewById(R.id.SearchFreeCheckbox);
         CheckBox petsAllowed = (CheckBox) view.findViewById(R.id.SearchPetsCheckBox);*/
 
-        CarShare carShare = new CarShare();
+        Journey carShare = new Journey();
 
         //carShare.DestinationCity = destinationCityTextView.getText().toString();
         //carShare.DepartureCity = departureCityTextView.getText().toString();
@@ -206,49 +202,23 @@ public class SearchFragment extends BaseFragment implements WCFServiceCallback<A
         carShare.SearchByDate = dateTextView.getText().toString().length() != 0;
         carShare.SearchByTime = timeTextView.getText().toString().length() != 0;
 
-        new WCFServiceTask<CarShare, ArrayList<CarShare>>("https://findndrive.no-ip.co.uk/Services/SearchService.svc/searchcarshare",
-                carShare, new TypeToken<ServiceResponse<ArrayList<CarShare>>>() {}.getType(), appData.getAuthorisationHeaders(), null, this).execute();
+        new WCFServiceTask<Journey>("https://findndrive.no-ip.co.uk/Services/SearchService.svc/searchcarshare",
+                carShare, new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(), appData.getAuthorisationHeaders(), this).execute();
     }
 
 
     private void expandSearchResults()
     {
 
-        final LinearLayout parentPane   = (LinearLayout) view.findViewById(R.id.SearchParentLinearLayout);
-        float ws = parentPane.getWeightSum();
-        searchLabelTextView.setText("Search");
-        ObjectAnimator shrink  = ObjectAnimator.ofFloat(parentPane, "weightSum", ws, view.getHeight() /searchLabelTextView.getHeight());
-        shrink.setDuration(Constants.MEDIUM_ANIMATION_SPEED);
-        shrink.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                parentPane.requestLayout();
-            }
-        });
-        mode = Mode.SearchResultsExpanded;
-        shrink.start();
     }
 
     private void restoreSearchPane()
     {
-        final LinearLayout parentPane   = (LinearLayout) view.findViewById(R.id.SearchParentLinearLayout);
-        float ws = parentPane.getWeightSum();
 
-        ObjectAnimator shrink  = ObjectAnimator.ofFloat(parentPane, "weightSum", ws, 2.0f);
-        shrink.setDuration(Constants.MEDIUM_ANIMATION_SPEED);
-        shrink.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                parentPane.requestLayout();
-            }
-        });
-        searchLabelTextView.setText("Minimize");
-        mode = Mode.SearchPanelExpanded;
-        shrink.start();
     }
 
     @Override
-    public void onServiceCallCompleted(final ServiceResponse<ArrayList<CarShare>> carShareResults, String parameter) {
+    public void onServiceCallCompleted(final ServiceResponse<ArrayList<Journey>> carShareResults, String parameter) {
         SearchResultsAdapter adapter = new SearchResultsAdapter(getActivity(), R.layout.fragment_search_results_listview_row, carShareResults.Result);
         searchResultsListView.setAdapter(adapter);
 
@@ -256,12 +226,12 @@ public class SearchFragment extends BaseFragment implements WCFServiceCallback<A
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
 
-                new WCFServiceTask<Integer, CarShareRequest>("https://findndrive.no-ip.co.uk/Services/RequestService.svc/getrequests",
-                        carShareResults.Result.get(i).CarShareId,
-                        new TypeToken<ServiceResponse<ArrayList<CarShareRequest>>>() {}.getType(),
-                        appData.getAuthorisationHeaders(),null, new WCFServiceCallback<ArrayList<CarShareRequest>, String>() {
+                new WCFServiceTask<Integer>("https://findndrive.no-ip.co.uk/Services/RequestService.svc/getrequests",
+                        carShareResults.Result.get(i).JourneyId,
+                        new TypeToken<ServiceResponse<ArrayList<JourneyRequest>>>() {}.getType(),
+                        appData.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyRequest>, String>() {
                     @Override
-                    public void onServiceCallCompleted(ServiceResponse<ArrayList<CarShareRequest>> serviceResponse, String parameter) {
+                    public void onServiceCallCompleted(ServiceResponse<ArrayList<JourneyRequest>> serviceResponse, String parameter) {
                         Gson gson = new Gson();
                         Intent intent = new Intent(getActivity(), ContactDriverActivity.class);
                         intent.putExtra("CurrentCarShare", gson.toJson(carShareResults.Result.get(i)));

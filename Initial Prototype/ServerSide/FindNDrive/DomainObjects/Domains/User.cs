@@ -7,18 +7,15 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace DomainObjects.DOmains
+namespace DomainObjects.Domains
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Dynamic;
     using System.Runtime.Serialization;
     using DomainObjects.Constants;
-
-    using FindNDriveServices2.DTOs;
 
     /// <summary>
     /// Represents User entity.
@@ -88,6 +85,6 @@ namespace DomainObjects.DOmains
         /// <summary>
         /// Gets or sets the travel buddies.
         /// </summary>
-        public virtual ICollection<User> TravelBuddies { get; set; }
+        public virtual ICollection<User> Friends { get; set; }
     }
 }

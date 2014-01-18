@@ -4,19 +4,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    tools:ignore="MergeRootFrame">
+    tools:ignore="MergeRootFrame"
+    android:background="@drawable/background">
 
-
-    <TextView
+    <ImageView
+        android:id="@+id/MainActivityLogoImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Splash Screen"
-        android:id="@+id/AppLogo"
-        android:layout_gravity="center"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:src="@drawable/logo"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
 
+    <ProgressBar
+        android:layout_below="@+id/MainActivityLogoImageView"
+        android:id="@+id/MainActivityProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50sp"
+        android:indeterminateDrawable="@drawable/progress"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Contacting Server ..."
+            android:layout_below="@+id/MainActivityProgressBar"
+            android:layout_centerHorizontal="true"
+            style="@style/MyCarSharesHeader"/>
 </RelativeLayout>
 
 

@@ -1,6 +1,6 @@
-package com.example.myapplication.DTOs;
+package com.example.myapplication.dtos;
 
-import com.example.myapplication.DomainObjects.User;
+import com.example.myapplication.domain_objects.User;
 
 /**
  * Created by Michal on 05/11/13.

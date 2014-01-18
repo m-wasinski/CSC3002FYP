@@ -76,9 +76,9 @@
         {
             if (WebOperationContext.Current != null)
             {
-                var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[Constants.SESSION_ID];
-                var incomingDeviceId = WebOperationContext.Current.IncomingRequest.Headers[Constants.DEVICE_ID];
-                var randomId = WebOperationContext.Current.IncomingRequest.Headers[Constants.UUID];
+                var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[SessionConstants.SESSION_ID];
+                var incomingDeviceId = WebOperationContext.Current.IncomingRequest.Headers[SessionConstants.DEVICE_ID];
+                var randomId = WebOperationContext.Current.IncomingRequest.Headers[SessionConstants.UUID];
 
                 int userId = GetUserId(incomingSessionId);
 
@@ -132,7 +132,7 @@
         {
             if (WebOperationContext.Current != null)
             {
-                var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[Constants.SESSION_ID];
+                var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[SessionConstants.SESSION_ID];
 
                 if(incomingSessionId != null)
                     return GetUserId(incomingSessionId);
@@ -200,9 +200,9 @@
             var sessionType = SessionTypes.Temporary;
             if (WebOperationContext.Current != null)
             {
-                var rememberUser = WebOperationContext.Current.IncomingRequest.Headers[Constants.REMEMBER_ME];
-                var incomingDeviceId = WebOperationContext.Current.IncomingRequest.Headers[Constants.DEVICE_ID];
-                var randomId = WebOperationContext.Current.IncomingRequest.Headers[Constants.UUID];
+                var rememberUser = WebOperationContext.Current.IncomingRequest.Headers[SessionConstants.REMEMBER_ME];
+                var incomingDeviceId = WebOperationContext.Current.IncomingRequest.Headers[SessionConstants.DEVICE_ID];
+                var randomId = WebOperationContext.Current.IncomingRequest.Headers[SessionConstants.UUID];
 
                 //set expiration date for the above token, initialy to 30 minutes.
                 var validUntil = DateTime.Now.AddMinutes(30);
@@ -252,7 +252,7 @@
                         
                     this._findNDriveUnitOfWork.Commit();
 
-                    WebOperationContext.Current.OutgoingResponse.Headers.Add(Constants.SESSION_ID, sessionId);
+                    WebOperationContext.Current.OutgoingResponse.Headers.Add(SessionConstants.SESSION_ID, sessionId);
                 }
             }
         }
@@ -272,7 +272,7 @@
 
             if (WebOperationContext.Current != null)
             {
-                var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[Constants.SESSION_ID];
+                var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[SessionConstants.SESSION_ID];
 
                 int userId = GetUserId(incomingSessionId);
 

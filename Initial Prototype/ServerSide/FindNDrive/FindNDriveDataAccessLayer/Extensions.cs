@@ -13,7 +13,6 @@ namespace FindNDriveDataAccessLayer
     using System.Linq;
 
     using DomainObjects.Domains;
-    using DomainObjects.DOmains;
 
     /// <summary>
     /// The extensions.
@@ -29,7 +28,7 @@ namespace FindNDriveDataAccessLayer
         /// <returns>
         /// The <see cref="IQueryable"/>.
         /// </returns>
-        public static IQueryable<CarShare> IncludeAll(this IQueryable<CarShare> queryable)
+        public static IQueryable<Journey> IncludeAll(this IQueryable<Journey> queryable)
         {
             return queryable.Include("Driver").Include("Participants").Include("Requests").Include("Messages").Include("DepartureAddress").Include("DestinationAddress");
         }
@@ -45,7 +44,7 @@ namespace FindNDriveDataAccessLayer
         /// </returns>
         public static IQueryable<User> IncludeAll(this IQueryable<User> queryable)
         {
-            return queryable.Include("TravelBuddies");
+            return queryable.Include("Friends");
         }
 
         /// <summary>
@@ -57,9 +56,9 @@ namespace FindNDriveDataAccessLayer
         /// <returns>
         /// The <see cref="IQueryable"/>.
         /// </returns>
-        public static IQueryable<CarShareRequest> IncludeAll(this IQueryable<CarShareRequest> queryable)
+        public static IQueryable<JourneyRequest> IncludeAll(this IQueryable<JourneyRequest> queryable)
         {
-            return queryable.Include("User").Include("CarShare");
+            return queryable.Include("User").Include("Journey");
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.myapplication.Experimental;
+package com.example.myapplication.experimental;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -30,7 +30,11 @@ public class DateTimeHelper {
     public static Date parseWCFDate(String wcfDate) {
         wcfDate = wcfDate.replace("/Date(", "");
         wcfDate = wcfDate.replace(")/", "");
-        wcfDate = wcfDate.replace(wcfDate.substring(wcfDate.indexOf("+")-1, wcfDate.length()-1), "");
+        if(wcfDate.contains("+"))
+        {
+            wcfDate = wcfDate.replace(wcfDate.substring(wcfDate.indexOf("+")-1, wcfDate.length()-1), "");
+        }
+
         return new Date(Long.parseLong(wcfDate));
     }
 

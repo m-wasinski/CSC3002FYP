@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="GetAllNotificationsURL">https://findndrive.no-ip.co.uk/Services/NotificationService.svc/getall</string>
+    <string name="MarkNotificationAsReadURL">https://findndrive.no-ip.co.uk/Services/NotificationService.svc/markasread</string>
+    <string name="GetUnreadNotificationsCountURL">https://findndrive.no-ip.co.uk/Services/NotificationService.svc/getunreadcount</string>
+</resources>

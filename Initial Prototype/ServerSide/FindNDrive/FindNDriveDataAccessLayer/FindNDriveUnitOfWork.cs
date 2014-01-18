@@ -12,7 +12,6 @@ namespace FindNDriveDataAccessLayer
     using System.Data.Entity;
 
     using DomainObjects.Domains;
-    using DomainObjects.DOmains;
 
     using FindNDriveInfrastructureDataAccessLayer;
 
@@ -38,7 +37,7 @@ namespace FindNDriveDataAccessLayer
         /// <summary>
         /// Gets or sets the car share repository.
         /// </summary>
-        public IRepository<CarShare> CarShareRepository { get; set; }
+        public IRepository<Journey> JourneyRepository { get; set; }
 
         /// <summary>
         /// Gets or sets the session repository.
@@ -48,8 +47,17 @@ namespace FindNDriveDataAccessLayer
         /// <summary>
         /// Gets or sets the car share request repository.
         /// </summary>
-        public IRepository<CarShareRequest> CarShareRequestRepository { get; set; } 
+        public IRepository<JourneyRequest> JourneyRequestRepository { get; set; }
 
+        /// <summary>
+        /// Gets or sets the chat message repository.
+        /// </summary>
+        public IRepository<ChatMessage> ChatMessageRepository { get; set; }
+
+        /// <summary>
+        /// Gets or sets the notification repository.
+        /// </summary>
+        public IRepository<Notification> NotificationRepository { get; set; } 
         /// <summary>
         /// Initializes a new instance of the <see cref="FindNDriveUnitOfWork"/> class.
         /// </summary>
@@ -59,22 +67,29 @@ namespace FindNDriveDataAccessLayer
         /// <param name="userRepository">
         /// The user repository.
         /// </param>
-        /// <param name="carShareRepository">
+        /// <param name="journeyRepository">
         /// The car share repository.
         /// </param>
         /// <param name="sessionRepository">
         /// The session repository.
         /// </param>
-        /// <param name="carShareRequestRepository">
+        /// <param name="journeyRequestRepository">
         /// The car Share Request Repository.
         /// </param>
-        public FindNDriveUnitOfWork(DbContext dbContext, IRepository<User> userRepository, IRepository<CarShare> carShareRepository, IRepository<Session> sessionRepository, IRepository<CarShareRequest> carShareRequestRepository)
+        /// <param name="chatMessageRepository">
+        /// The chat Message Repository.
+        /// </param>
+        public FindNDriveUnitOfWork(DbContext dbContext, IRepository<User> userRepository, IRepository<Journey> journeyRepository, 
+            IRepository<Session> sessionRepository, IRepository<JourneyRequest> journeyRequestRepository, 
+            IRepository<ChatMessage> chatMessageRepository, IRepository<Notification> notificationRepository)
         {
             this._dbContext = dbContext;
             this.UserRepository = userRepository;
-            this.CarShareRepository = carShareRepository;
+            this.JourneyRepository = journeyRepository;
             this.SessionRepository = sessionRepository;
-            this.CarShareRequestRepository = carShareRequestRepository;
+            this.JourneyRequestRepository = journeyRequestRepository;
+            this.ChatMessageRepository = chatMessageRepository;
+            this.NotificationRepository = notificationRepository;
         }
 
         /// <summary>

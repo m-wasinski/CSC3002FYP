@@ -15,7 +15,6 @@ namespace FindNDriveDataAccessLayer.Migrations
     using System.Globalization;
 
     using DomainObjects.Constants;
-    using DomainObjects.DOmains;
     using DomainObjects.Domains;
 
     using FindNDriveServices2;
@@ -50,7 +49,8 @@ namespace FindNDriveDataAccessLayer.Migrations
             }
 
             AddAdministrator(context);
-            AddCarShareAndParticipants(context);
+            AddJourneysAndPassengers(context);
+            AddNotifications(context);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace FindNDriveDataAccessLayer.Migrations
         /// <param name="context">
         /// The context.
         /// </param>
-        private static void AddCarShareAndParticipants(ApplicationContext context)
+        private static void AddJourneysAndPassengers(ApplicationContext context)
         {
             Calendar cal = new GregorianCalendar();
 
@@ -113,7 +113,7 @@ namespace FindNDriveDataAccessLayer.Migrations
             };
 
             context.User.AddOrUpdate(_ => _.UserId, participant1);
-            WebSecurity.CreateUserAndAccount(participant1.UserName, "password");
+            WebSecurity.CreateUserAndAccount(participant1.UserName, "p");
 
             var session1 = new Session()
             {
@@ -140,7 +140,7 @@ namespace FindNDriveDataAccessLayer.Migrations
             };
 
             context.User.AddOrUpdate(_ => _.UserId, participant2);
-            WebSecurity.CreateUserAndAccount(participant2.UserName, "password");
+            WebSecurity.CreateUserAndAccount(participant2.UserName, "p");
 
             var session2 = new Session()
             {
@@ -157,17 +157,23 @@ namespace FindNDriveDataAccessLayer.Migrations
             var driver = new User
             {
                 DateOfBirth = new DateTime(1970, 5, 4),
-                EmailAddress = "driver@domain.com",
+                EmailAddress = "jessica@domain.com",
                 FirstName = "Jessica",
                 LastName = "Patterson",
                 Gender = Gender.Female,
-                UserName = "jessica",
+                UserName = "jess",
                 Role = Roles.User,
+                Friends = new Collection<User>{participant1, participant2}
             };
 
-
             context.User.AddOrUpdate(_ => _.UserId, driver);
-            WebSecurity.CreateUserAndAccount(driver.UserName, "password");
+            context.SaveChanges();
+
+            participant1.Friends = new Collection<User>(){driver};
+            context.User.AddOrUpdate(participant1);
+            context.SaveChanges();
+
+            WebSecurity.CreateUserAndAccount(driver.UserName, "p");
 
             var session3 = new Session()
             {
@@ -182,34 +188,35 @@ namespace FindNDriveDataAccessLayer.Migrations
 
             context.SaveChanges();
 
-            var carShare = new CarShare
+            var journey1 = new Journey
             {
                 AvailableSeats = 4,
                 DateAndTimeOfDeparture = new DateTime(2014, 2, 1, 20, 15, 0, cal),
                 DepartureAddress = new GeoAddress()
-                                                {
-                                                    AddressLine = "Belfast",
-                                                    Latitude = 54.5970,
-                                                    Longitude = -5.9300
-                                                },
+                {
+                    AddressLine = "Belfast",
+                    Latitude = 54.5970,
+                    Longitude = -5.9300
+                },
                 DestinationAddress = new GeoAddress()
-                                               {
-                                                   AddressLine = "Dublin",
-                                                   Latitude = 53.3478, 
-                                                   Longitude = -6.2597
-                                               },
+                {
+                    AddressLine = "Dublin",
+                    Latitude = 53.3478,
+                    Longitude = -6.2597
+                },
                 Description = "Free ride to Dublin!",
                 Fee = 0.00,
                 WomenOnly = false,
                 Driver = driver,
                 SmokersAllowed = false,
-                CarShareStatus = CarShareStatus.Upcoming
+                JourneyStatus = JourneyStatus.Upcoming,
+                CreationDate = new DateTime(2014, 1, 1, 20, 15, 0, cal),
             };
 
-            context.CarShares.AddOrUpdate(carShare);
+            context.Journeys.AddOrUpdate(journey1);
             context.SaveChanges();
 
-            var carShare2 = new CarShare
+            var journey2 = new Journey
             {
                 AvailableSeats = 1,
                 DateAndTimeOfDeparture = new DateTime(2014, 6, 6, 15, 30, 0, cal),
@@ -230,166 +237,540 @@ namespace FindNDriveDataAccessLayer.Migrations
                 WomenOnly = false,
                 Driver = driver,
                 SmokersAllowed = false,
-                CarShareStatus = CarShareStatus.Upcoming
+                JourneyStatus = JourneyStatus.Upcoming,
+                CreationDate = new DateTime(2014, 1, 2, 20, 15, 0, cal),
             };
 
-            context.CarShares.AddOrUpdate(carShare2);
+            context.Journeys.AddOrUpdate(journey2);
             context.SaveChanges();
 
-            /*var carShare2 = new CarShare
+            var journey3 = new Journey
             {
                 AvailableSeats = 2,
-                DateAndTimeOfDeparture = new DateTime(2013, 11, 15, 15, 10, 0, cal),
-                DepartureCity = "Belfast",
-                DestinationCity = "Coleraine",
-                Description = "Lift to Coleraine",
+                DateAndTimeOfDeparture = new DateTime(2014, 3, 1, 20, 15, 0, cal),
+                DepartureAddress = new GeoAddress()
+                {
+                    AddressLine = "Belfast",
+                    Latitude = 54.5970,
+                    Longitude = -5.9300
+                },
+                DestinationAddress = new GeoAddress()
+                {
+                    AddressLine = "Dublin",
+                    Latitude = 53.3478,
+                    Longitude = -6.2597
+                },
+                Description = "Free ride to Dublin!",
                 Fee = 0.00,
                 WomenOnly = false,
-                Driver = participant1,
-                Participants = new Collection<User>() {participant2},
+                Driver = driver,
                 SmokersAllowed = false,
-                CarShareStatus = CarShareStatus.Upcoming
+                JourneyStatus = JourneyStatus.Upcoming,
+                CreationDate = new DateTime(2014, 1, 3, 20, 15, 0, cal),
             };
 
-            context.CarShares.AddOrUpdate(carShare2);
+            context.Journeys.AddOrUpdate(journey3);
             context.SaveChanges();
 
-            var carShare3 = new CarShare
+            var journey4 = new Journey
+            {
+                AvailableSeats = 4,
+                DateAndTimeOfDeparture = new DateTime(2014, 4, 1, 20, 15, 0, cal),
+                DepartureAddress = new GeoAddress()
+                {
+                    AddressLine = "Belfast",
+                    Latitude = 54.5970,
+                    Longitude = -5.9300
+                },
+                DestinationAddress = new GeoAddress()
+                {
+                    AddressLine = "Dublin",
+                    Latitude = 53.3478,
+                    Longitude = -6.2597
+                },
+                Description = "Free ride to Dublin!",
+                Fee = 0.00,
+                WomenOnly = false,
+                Driver = driver,
+                SmokersAllowed = false,
+                JourneyStatus = JourneyStatus.Upcoming,
+                CreationDate = new DateTime(2014, 1, 4, 20, 15, 0, cal),
+            };
+
+            context.Journeys.AddOrUpdate(journey4);
+            context.SaveChanges();
+
+            var journey5 = new Journey
+            {
+                AvailableSeats = 7,
+                DateAndTimeOfDeparture = new DateTime(2014, 5, 1, 20, 15, 0, cal),
+                DepartureAddress = new GeoAddress()
+                {
+                    AddressLine = "Belfast",
+                    Latitude = 54.5970,
+                    Longitude = -5.9300
+                },
+                DestinationAddress = new GeoAddress()
+                {
+                    AddressLine = "Dublin",
+                    Latitude = 53.3478,
+                    Longitude = -6.2597
+                },
+                Description = "Free ride to Dublin!",
+                Fee = 0.00,
+                WomenOnly = false,
+                Driver = driver,
+                SmokersAllowed = false,
+                JourneyStatus = JourneyStatus.Upcoming,
+                CreationDate = new DateTime(2014, 1, 5, 20, 15, 0, cal),
+            };
+
+            context.Journeys.AddOrUpdate(journey5);
+            context.SaveChanges();
+
+            var journey6 = new Journey
             {
                 AvailableSeats = 1,
-                DateAndTimeOfDeparture = new DateTime(2014, 1, 1, 20, 20, 0, cal),
-                DepartureCity = "Belfast",
-                DestinationCity = "Newcastle",
-                Description = "Lift to Newcastle",
+                DateAndTimeOfDeparture = new DateTime(2014, 6, 1, 20, 15, 0, cal),
+                DepartureAddress = new GeoAddress()
+                {
+                    AddressLine = "Belfast",
+                    Latitude = 54.5970,
+                    Longitude = -5.9300
+                },
+                DestinationAddress = new GeoAddress()
+                {
+                    AddressLine = "Dublin",
+                    Latitude = 53.3478,
+                    Longitude = -6.2597
+                },
+                Description = "Free ride to Dublin!",
                 Fee = 0.00,
                 WomenOnly = false,
-                Driver = participant1,
+                Driver = driver,
                 SmokersAllowed = false,
-                Participants = new Collection<User>() { participant2 },
-                CarShareStatus = CarShareStatus.Upcoming
+                JourneyStatus = JourneyStatus.Upcoming,
+                CreationDate = new DateTime(2014, 1, 6, 20, 15, 0, cal),
             };
 
-            context.CarShares.AddOrUpdate(carShare3);
+            context.Journeys.AddOrUpdate(journey6);
             context.SaveChanges();
 
-            var carShare4 = new CarShare
+            var journey7 = new Journey
             {
-                AvailableSeats = 3,
-                DateAndTimeOfDeparture = new DateTime(2014, 12, 1, 17, 30, 0, cal),
-                DepartureCity = "Belfast",
-                DestinationCity = "Portrush",
-                Description = "Free lift to Portrush",
+                AvailableSeats = 4,
+                DateAndTimeOfDeparture = new DateTime(2014, 7, 1, 20, 15, 0, cal),
+                DepartureAddress = new GeoAddress()
+                {
+                    AddressLine = "Belfast",
+                    Latitude = 54.5970,
+                    Longitude = -5.9300
+                },
+                DestinationAddress = new GeoAddress()
+                {
+                    AddressLine = "Dublin",
+                    Latitude = 53.3478,
+                    Longitude = -6.2597
+                },
+                Description = "Free ride to Dublin!",
                 Fee = 0.00,
                 WomenOnly = false,
-                Driver = participant1,
+                Driver = driver,
                 SmokersAllowed = false,
-                CarShareStatus = CarShareStatus.Upcoming
+                JourneyStatus = JourneyStatus.Upcoming,
+                CreationDate = new DateTime(2014, 1, 7, 20, 15, 0, cal),
             };
 
-            context.CarShares.AddOrUpdate(carShare4);
+            context.Journeys.AddOrUpdate(journey7);
             context.SaveChanges();
 
-            var carShare5 = new CarShare
+            var journey8 = new Journey
             {
-                AvailableSeats = 6,
-                DateAndTimeOfDeparture = new DateTime(2014, 12, 5, 12, 30, 0, cal),
-                DepartureCity = "Belfast",
-                DestinationCity = "Dublin",
-                Description = "Free lift to Dublin",
+                AvailableSeats = 10,
+                DateAndTimeOfDeparture = new DateTime(2014, 8, 1, 20, 15, 0, cal),
+                DepartureAddress = new GeoAddress()
+                {
+                    AddressLine = "Belfast",
+                    Latitude = 54.5970,
+                    Longitude = -5.9300
+                },
+                DestinationAddress = new GeoAddress()
+                {
+                    AddressLine = "Dublin",
+                    Latitude = 53.3478,
+                    Longitude = -6.2597
+                },
+                Description = "Free ride to Dublin!",
                 Fee = 0.00,
                 WomenOnly = false,
-                Driver = participant1,
+                Driver = driver,
                 SmokersAllowed = false,
-                CarShareStatus = CarShareStatus.Upcoming
+                JourneyStatus = JourneyStatus.Upcoming,
+                CreationDate = new DateTime(2014, 1, 8, 20, 15, 0, cal),
             };
 
-            context.CarShares.AddOrUpdate(carShare5);
+            context.Journeys.AddOrUpdate(journey8);
             context.SaveChanges();
 
-            var carShare6 = new CarShare
+            var journey9 = new Journey
             {
-                AvailableSeats = 8,
-                DateAndTimeOfDeparture = new DateTime(2013, 12, 1, 17, 30, 0, cal),
-                DepartureCity = "Belfast",
-                DestinationCity = "Dublin",
-                Description = "Free lift to Dublin",
+                AvailableSeats = 2,
+                DateAndTimeOfDeparture = new DateTime(2014, 9, 1, 20, 15, 0, cal),
+                DepartureAddress = new GeoAddress()
+                {
+                    AddressLine = "Belfast",
+                    Latitude = 54.5970,
+                    Longitude = -5.9300
+                },
+                DestinationAddress = new GeoAddress()
+                {
+                    AddressLine = "Dublin",
+                    Latitude = 53.3478,
+                    Longitude = -6.2597
+                },
+                Description = "Free ride to Dublin!",
                 Fee = 0.00,
                 WomenOnly = false,
-                Driver = participant1,
+                Driver = driver,
                 SmokersAllowed = false,
-                CarShareStatus = CarShareStatus.Upcoming
+                JourneyStatus = JourneyStatus.Upcoming,
+                CreationDate = new DateTime(2014, 1, 9, 20, 15, 0, cal),
             };
 
-            context.CarShares.AddOrUpdate(carShare6);
+            context.Journeys.AddOrUpdate(journey9);
             context.SaveChanges();
 
-            var carShare7 = new CarShare
+            var journey10 = new Journey
             {
-                AvailableSeats = 8,
-                DateAndTimeOfDeparture = new DateTime(2013, 1, 1, 17, 30, 0, cal),
-                DepartureCity = "Belfast",
-                DestinationCity = "Dublin",
-                Description = "Free lift to Dublin, women only.",
+                AvailableSeats = 4,
+                DateAndTimeOfDeparture = new DateTime(2014, 10, 1, 20, 15, 0, cal),
+                DepartureAddress = new GeoAddress()
+                {
+                    AddressLine = "Belfast",
+                    Latitude = 54.5970,
+                    Longitude = -5.9300
+                },
+                DestinationAddress = new GeoAddress()
+                {
+                    AddressLine = "Dublin",
+                    Latitude = 53.3478,
+                    Longitude = -6.2597
+                },
+                Description = "Free ride to Dublin!",
                 Fee = 0.00,
-                WomenOnly = true,
-                Driver = participant1,
+                WomenOnly = false,
+                Driver = driver,
                 SmokersAllowed = false,
-                CarShareStatus = CarShareStatus.Upcoming
+                JourneyStatus = JourneyStatus.Upcoming,
+                CreationDate = new DateTime(2014, 1, 10, 20, 15, 0, cal),
             };
 
-            context.CarShares.AddOrUpdate(carShare7);
+            context.Journeys.AddOrUpdate(journey10);
             context.SaveChanges();
 
-            var carShare8 = new CarShare
+            var journey11 = new Journey
             {
-                AvailableSeats = 8,
-                DateAndTimeOfDeparture = new DateTime(2014, 1, 1, 17, 30, 0, cal),
-                DepartureCity = "London",
-                DestinationCity = "Manchester",
-                Description = "Free lift to Dublin, smokers allowed.",
+                AvailableSeats = 4,
+                DateAndTimeOfDeparture = new DateTime(2014, 2, 3, 20, 15, 0, cal),
+                DepartureAddress = new GeoAddress()
+                {
+                    AddressLine = "Belfast",
+                    Latitude = 54.5970,
+                    Longitude = -5.9300
+                },
+                DestinationAddress = new GeoAddress()
+                {
+                    AddressLine = "Dublin",
+                    Latitude = 53.3478,
+                    Longitude = -6.2597
+                },
+                Description = "Free ride to Dublin!",
                 Fee = 0.00,
-                WomenOnly = true,
-                Driver = participant1,
-                SmokersAllowed = true,
-                CarShareStatus = CarShareStatus.Upcoming
-            };
-
-            context.CarShares.AddOrUpdate(carShare8);
-            context.SaveChanges();
-
-            var carShare9 = new CarShare
-            {
-                AvailableSeats = 8,
-                DateAndTimeOfDeparture = new DateTime(2015, 1, 1, 17, 30, 0, cal),
-                DepartureCity = "Belfast",
-                DestinationCity = "Dublin",
-                Description = "Lift to Dublin, fee applies.",
-                Fee = 25.40,
                 WomenOnly = false,
-                Driver = participant1,
+                Driver = driver,
                 SmokersAllowed = false,
-                CarShareStatus = CarShareStatus.Upcoming
+                JourneyStatus = JourneyStatus.Upcoming,
+                CreationDate = new DateTime(2014, 1, 11, 20, 15, 0, cal),
             };
 
-            context.CarShares.AddOrUpdate(carShare9);
+            context.Journeys.AddOrUpdate(journey11);
             context.SaveChanges();
 
-            var carShare10 = new CarShare
+            var journey12 = new Journey
             {
-                AvailableSeats = 8,
-                DateAndTimeOfDeparture = new DateTime(2015, 1, 1, 17, 30, 0, cal),
-                DepartureCity = "Newcastle",
-                DestinationCity = "Bangor",
-                Description = "Lift to Bangor, fee applies.",
-                Fee = 10.50,
+                AvailableSeats = 4,
+                DateAndTimeOfDeparture = new DateTime(2014, 4, 5, 20, 15, 0, cal),
+                DepartureAddress = new GeoAddress()
+                {
+                    AddressLine = "Belfast",
+                    Latitude = 54.5970,
+                    Longitude = -5.9300
+                },
+                DestinationAddress = new GeoAddress()
+                {
+                    AddressLine = "Dublin",
+                    Latitude = 53.3478,
+                    Longitude = -6.2597
+                },
+                Description = "Free ride to Dublin!",
+                Fee = 0.00,
                 WomenOnly = false,
-                Driver = participant1,
-                SmokersAllowed = true,
-                CarShareStatus = CarShareStatus.Upcoming
+                Driver = driver,
+                SmokersAllowed = false,
+                JourneyStatus = JourneyStatus.Upcoming,
+                CreationDate = new DateTime(2014, 1, 12, 20, 15, 0, cal),
             };
 
-            context.CarShares.AddOrUpdate(carShare10);
-            context.SaveChanges();*/
+            context.Journeys.AddOrUpdate(journey12);
+            context.SaveChanges();
+
+            var journey13 = new Journey
+            {
+                AvailableSeats = 4,
+                DateAndTimeOfDeparture = new DateTime(2014, 5, 2, 20, 15, 0, cal),
+                DepartureAddress = new GeoAddress()
+                {
+                    AddressLine = "Belfast",
+                    Latitude = 54.5970,
+                    Longitude = -5.9300
+                },
+                DestinationAddress = new GeoAddress()
+                {
+                    AddressLine = "Dublin",
+                    Latitude = 53.3478,
+                    Longitude = -6.2597
+                },
+                Description = "Free ride to Dublin!",
+                Fee = 0.00,
+                WomenOnly = false,
+                Driver = driver,
+                SmokersAllowed = false,
+                JourneyStatus = JourneyStatus.Upcoming,
+                CreationDate = new DateTime(2014, 1, 13, 20, 15, 0, cal),
+            };
+
+            context.Journeys.AddOrUpdate(journey13);
+            context.SaveChanges();
+
+            var journey14 = new Journey
+            {
+                AvailableSeats = 4,
+                DateAndTimeOfDeparture = new DateTime(2014, 5, 2, 20, 15, 0, cal),
+                DepartureAddress = new GeoAddress()
+                {
+                    AddressLine = "Belfast",
+                    Latitude = 54.5970,
+                    Longitude = -5.9300
+                },
+                DestinationAddress = new GeoAddress()
+                {
+                    AddressLine = "Dublin",
+                    Latitude = 53.3478,
+                    Longitude = -6.2597
+                },
+                Description = "Free ride to Dublin!",
+                Fee = 0.00,
+                WomenOnly = false,
+                Driver = driver,
+                SmokersAllowed = false,
+                JourneyStatus = JourneyStatus.Upcoming,
+                CreationDate = new DateTime(2014, 1, 14, 20, 15, 0, cal),
+            };
+
+            context.Journeys.AddOrUpdate(journey14);
+            context.SaveChanges();
+
+            var journey15 = new Journey
+            {
+                AvailableSeats = 4,
+                DateAndTimeOfDeparture = new DateTime(2014, 2, 1, 20, 15, 0, cal),
+                DepartureAddress = new GeoAddress()
+                {
+                    AddressLine = "Belfast",
+                    Latitude = 54.5970,
+                    Longitude = -5.9300
+                },
+                DestinationAddress = new GeoAddress()
+                {
+                    AddressLine = "Dublin",
+                    Latitude = 53.3478,
+                    Longitude = -6.2597
+                },
+                Description = "Free ride to Dublin!",
+                Fee = 0.00,
+                WomenOnly = false,
+                Driver = driver,
+                SmokersAllowed = false,
+                JourneyStatus = JourneyStatus.Upcoming,
+                CreationDate = new DateTime(2014, 1, 15, 20, 15, 0, cal),
+            };
+
+            context.Journeys.AddOrUpdate(journey15);
+            context.SaveChanges();
+
+            var journey16 = new Journey
+            {
+                AvailableSeats = 4,
+                DateAndTimeOfDeparture = new DateTime(2014, 7, 7, 20, 15, 0, cal),
+                DepartureAddress = new GeoAddress()
+                {
+                    AddressLine = "Belfast",
+                    Latitude = 54.5970,
+                    Longitude = -5.9300
+                },
+                DestinationAddress = new GeoAddress()
+                {
+                    AddressLine = "Dublin",
+                    Latitude = 53.3478,
+                    Longitude = -6.2597
+                },
+                Description = "Free ride to Dublin!",
+                Fee = 0.00,
+                WomenOnly = false,
+                Driver = driver,
+                SmokersAllowed = false,
+                JourneyStatus = JourneyStatus.Upcoming,
+                CreationDate = new DateTime(2014, 1, 16, 20, 15, 0, cal),
+            };
+
+            context.Journeys.AddOrUpdate(journey16);
+            context.SaveChanges();
+
+            var journey17 = new Journey
+            {
+                AvailableSeats = 4,
+                DateAndTimeOfDeparture = new DateTime(2014, 4, 10, 20, 15, 0, cal),
+                DepartureAddress = new GeoAddress()
+                {
+                    AddressLine = "Belfast",
+                    Latitude = 54.5970,
+                    Longitude = -5.9300
+                },
+                DestinationAddress = new GeoAddress()
+                {
+                    AddressLine = "Dublin",
+                    Latitude = 53.3478,
+                    Longitude = -6.2597
+                },
+                Description = "Free ride to Dublin!",
+                Fee = 0.00,
+                WomenOnly = false,
+                Driver = driver,
+                SmokersAllowed = false,
+                JourneyStatus = JourneyStatus.Upcoming,
+                CreationDate = new DateTime(2014, 1, 17, 20, 15, 0, cal),
+            };
+
+            context.Journeys.AddOrUpdate(journey17);
+            context.SaveChanges();
+
+            var journey18 = new Journey
+            {
+                AvailableSeats = 4,
+                DateAndTimeOfDeparture = new DateTime(2014, 5, 2, 20, 15, 0, cal),
+                DepartureAddress = new GeoAddress()
+                {
+                    AddressLine = "Belfast",
+                    Latitude = 54.5970,
+                    Longitude = -5.9300
+                },
+                DestinationAddress = new GeoAddress()
+                {
+                    AddressLine = "Dublin",
+                    Latitude = 53.3478,
+                    Longitude = -6.2597
+                },
+                Description = "Free ride to Dublin!",
+                Fee = 0.00,
+                WomenOnly = false,
+                Driver = driver,
+                SmokersAllowed = false,
+                JourneyStatus = JourneyStatus.Upcoming,
+                CreationDate = new DateTime(2014, 1, 18, 20, 15, 0, cal),
+            };
+
+            context.Journeys.AddOrUpdate(journey18);
+            context.SaveChanges();
+
+            var journey19 = new Journey
+            {
+                AvailableSeats = 4,
+                DateAndTimeOfDeparture = new DateTime(2014, 11, 11, 20, 15, 0, cal),
+                DepartureAddress = new GeoAddress()
+                {
+                    AddressLine = "Belfast",
+                    Latitude = 54.5970,
+                    Longitude = -5.9300
+                },
+                DestinationAddress = new GeoAddress()
+                {
+                    AddressLine = "Dublin",
+                    Latitude = 53.3478,
+                    Longitude = -6.2597
+                },
+                Description = "Free ride to Dublin!",
+                Fee = 0.00,
+                WomenOnly = false,
+                Driver = driver,
+                SmokersAllowed = false,
+                JourneyStatus = JourneyStatus.Upcoming,
+                CreationDate = new DateTime(2014, 1, 19, 20, 15, 0, cal),
+            };
+
+            context.Journeys.AddOrUpdate(journey19);
+            context.SaveChanges();
+
+            var journey20 = new Journey
+            {
+                AvailableSeats = 4,
+                DateAndTimeOfDeparture = new DateTime(2014, 10, 10, 20, 15, 0, cal),
+                DepartureAddress = new GeoAddress()
+                {
+                    AddressLine = "Belfast",
+                    Latitude = 54.5970,
+                    Longitude = -5.9300
+                },
+                DestinationAddress = new GeoAddress()
+                {
+                    AddressLine = "Dublin",
+                    Latitude = 53.3478,
+                    Longitude = -6.2597
+                },
+                Description = "Free ride to Dublin!",
+                Fee = 0.00,
+                WomenOnly = false,
+                Driver = driver,
+                SmokersAllowed = false,
+                JourneyStatus = JourneyStatus.Upcoming,
+                CreationDate = new DateTime(2014, 1, 20, 20, 15, 0, cal),
+            };
+
+            context.Journeys.AddOrUpdate(journey20);
+            context.SaveChanges(); 
+        }
+
+        /// <summary>
+        /// The add notifications.
+        /// </summary>
+        /// <param name="context">
+        /// The context.
+        /// </param>
+        private void AddNotifications(ApplicationContext context)
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                context.Notifications.AddOrUpdate(
+                    new Notification()
+                        {
+                            UserId = 4,
+                            NotificationBody = "Test Notification no: " + i,
+                            Context = NotificationContext.Neutral,
+                            Read = false,
+                            ReceivedOnDate = DateTime.Now
+                        });
+            }
+
+            context.SaveChanges();
         }
     }
 }

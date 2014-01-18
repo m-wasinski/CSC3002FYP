@@ -1,4 +1,4 @@
-package com.example.myapplication.Activities.Activities;
+package com.example.myapplication.activities.activities;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,20 +9,19 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.myapplication.Activities.Base.BaseActivity;
-import com.example.myapplication.Constants.RequestDecision;
-import com.example.myapplication.Constants.ServiceResponseCode;
-import com.example.myapplication.DomainObjects.CarShare;
-import com.example.myapplication.DomainObjects.CarShareRequest;
-import com.example.myapplication.DomainObjects.ServiceResponse;
-import com.example.myapplication.Experimental.DateTimeHelper;
-import com.example.myapplication.Helpers.Helpers;
-import com.example.myapplication.Interfaces.WCFServiceCallback;
-import com.example.myapplication.NetworkTasks.WCFServiceTask;
+import com.example.myapplication.activities.base.BaseActivity;
+import com.example.myapplication.constants.RequestDecision;
+import com.example.myapplication.constants.ServiceResponseCode;
+import com.example.myapplication.domain_objects.Journey;
+import com.example.myapplication.domain_objects.JourneyRequest;
+import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.experimental.DateTimeHelper;
+import com.example.myapplication.utilities.Helpers;
+import com.example.myapplication.interfaces.WCFServiceCallback;
+import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.example.myapplication.R;
 import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -30,14 +29,14 @@ import java.util.Calendar;
 /**
  * Created by Michal on 02/01/14.
  */
-public class ContactDriverActivity extends BaseActivity implements WCFServiceCallback<CarShareRequest, String>{
+public class ContactDriverActivity extends BaseActivity implements WCFServiceCallback<JourneyRequest, String>{
 
     private TextView messageTextView;
     private Button sendRequestButton;
     private CheckBox addToBuddies;
-    private CarShare carShare;
-    private ArrayList<CarShareRequest> carShareRequests;
-    private CarShareRequest carShareRequest;
+    private Journey journey;
+    private ArrayList<JourneyRequest> journeyRequests;
+    private JourneyRequest journeyRequest;
     private DecimalFormat decimalFormat;
 
     private TextView driverUserNameTextView;
@@ -64,11 +63,8 @@ public class ContactDriverActivity extends BaseActivity implements WCFServiceCal
         setContentView(com.example.myapplication.R.layout.activity_contact_driver);
 
         decimalFormat = new DecimalFormat("0.00");
-        Type carShareType = new TypeToken<CarShare>() {}.getType();
-        Type carShareRequestsType = new TypeToken<ArrayList<CarShareRequest>>() {}.getType();
-
-        carShare = gson.fromJson(getIntent().getExtras().getString("CurrentCarShare"), carShareType);
-        carShareRequests = gson.fromJson(getIntent().getExtras().getString("CurrentRequests"), carShareRequestsType);
+        journey = gson.fromJson(getIntent().getExtras().getString("CurrentCarShare"),  new TypeToken<Journey>() {}.getType());
+        journeyRequests = gson.fromJson(getIntent().getExtras().getString("CurrentRequests"),  new TypeToken<ArrayList<JourneyRequest>>() {}.getType());
 
         messageTextView = (TextView) findViewById(R.id.ContactDriverMessageTextView);
         sendRequestButton = (Button) findViewById(R.id.ContactDriverSendRequestButton);
@@ -98,7 +94,7 @@ public class ContactDriverActivity extends BaseActivity implements WCFServiceCal
 
         requestStatusTextView = (TextView) findViewById(R.id.ContactDriverStatusTextView);
 
-        for(CarShareRequest request : carShareRequests)
+        for(JourneyRequest request : journeyRequests)
         {
             if(request.Decision == RequestDecision.UNDECIDED && request.UserId == appData.getUser().UserId)
             {
@@ -117,7 +113,7 @@ public class ContactDriverActivity extends BaseActivity implements WCFServiceCal
             }
         }
 
-        if(carShare.Driver.UserId == appData.getUser().UserId)
+        if(journey.Driver.UserId == appData.getUser().UserId)
         {
             requestStatusTextView.setText("You are the driver in this journey!");
             requestStatusTextView.setTextColor(Color.GREEN);
@@ -129,41 +125,41 @@ public class ContactDriverActivity extends BaseActivity implements WCFServiceCal
     }
 
     private void sendRequest(){
-        carShareRequest = new CarShareRequest();
-        carShareRequest.AddToTravelBuddies = addToBuddies.isChecked();
-        carShareRequest.UserId = appData.getUser().UserId;
-        carShareRequest.CarShareId = carShare.CarShareId;
-        carShareRequest.Message = messageTextView.getText().toString();
-        carShareRequest.Read = false;
-        carShareRequest.Decision = RequestDecision.UNDECIDED;
-        carShareRequest.SentOnDate = DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime());
-        Type type = new TypeToken<ServiceResponse<CarShareRequest>>() {}.getType();
-        new WCFServiceTask<CarShareRequest, CarShareRequest>("https://findndrive.no-ip.co.uk/Services/RequestService.svc/sendrequest",
-                this.carShareRequest, type, appData.getAuthorisationHeaders(), null, this).execute();
+        journeyRequest = new JourneyRequest();
+        journeyRequest.AddToTravelBuddies = addToBuddies.isChecked();
+        journeyRequest.UserId = appData.getUser().UserId;
+        journeyRequest.User = appData.getUser();
+        journeyRequest.JourneyId = journey.JourneyId;
+        journeyRequest.Message = messageTextView.getText().toString();
+        journeyRequest.Read = false;
+        journeyRequest.Decision = RequestDecision.UNDECIDED;
+        journeyRequest.SentOnDate = DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime());
+        new WCFServiceTask<JourneyRequest>(getResources().getString(R.string.SendRequestURL),
+                this.journeyRequest, new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(), appData.getAuthorisationHeaders(), this).execute();
     }
 
     private void populateFields()
     {
-        driverUserNameTextView.setText(carShare.Driver.UserName);
-        driverNameTextView.setText(carShare.Driver.FirstName + " " + carShare.Driver.LastName);
-        driverGenderTextView.setText(Helpers.TranslateGender(carShare.Driver.Gender));
-        driverDateOfBirthTextView.setText(DateTimeHelper.getSimpleDate(carShare.Driver.DateOfBirth));
+        driverUserNameTextView.setText(journey.Driver.UserName);
+        driverNameTextView.setText(journey.Driver.FirstName + " " + journey.Driver.LastName);
+        driverGenderTextView.setText(Helpers.TranslateGender(journey.Driver.Gender));
+        driverDateOfBirthTextView.setText(DateTimeHelper.getSimpleDate(journey.Driver.DateOfBirth));
         driverRatingTextView.setText("TODO");
 
-        //carShareCitiesTextView.setText(carShare.DepartureCity +" to " + carShare.DestinationCity);
-        //carShareDateAndTimeTextView.setText("Leaving on: " + DateTimeHelper.getSimpleDate(carShare.DateAndTimeOfDeparture)
-        //        + " at: " + DateTimeHelper.getSimpleTime(carShare.DateAndTimeOfDeparture));
-        carShareSmokersTextView.setText(carShareSmokersTextView.getText() + Helpers.TranslateBoolean(carShare.SmokersAllowed));
-        carSharePetsTextView.setText(carSharePetsTextView.getText() + Helpers.TranslateBoolean(carShare.PetsAllowed));
+        //carShareCitiesTextView.setText(journey.DepartureCity +" to " + journey.DestinationCity);
+        //carShareDateAndTimeTextView.setText("Leaving on: " + DateTimeHelper.getSimpleDate(journey.DateAndTimeOfDeparture)
+        //        + " at: " + DateTimeHelper.getSimpleTime(journey.DateAndTimeOfDeparture));
+        carShareSmokersTextView.setText(carShareSmokersTextView.getText() + Helpers.TranslateBoolean(journey.SmokersAllowed));
+        carSharePetsTextView.setText(carSharePetsTextView.getText() + Helpers.TranslateBoolean(journey.PetsAllowed));
         carShareGenderTextView.setText(carShareGenderTextView.getText() + "TODO");
-        carShareSeatsTextView.setText(carShareSeatsTextView.getText() + ""+carShare.AvailableSeats);
-        carShareFeeTextView.setText(carShareFeeTextView.getText() + "£"+decimalFormat.format(carShare.Fee));
+        carShareSeatsTextView.setText(carShareSeatsTextView.getText() + ""+ journey.AvailableSeats);
+        carShareFeeTextView.setText(carShareFeeTextView.getText() + "£"+decimalFormat.format(journey.Fee));
         carShareVehicleTextView.setText(carShareVehicleTextView.getText() + "TODO");
-        carShareDescriptionTextView.setText(carShareDescriptionTextView.getText() + carShare.Description);
+        carShareDescriptionTextView.setText(carShareDescriptionTextView.getText() + journey.Description);
     }
 
     @Override
-    public void onServiceCallCompleted(ServiceResponse<CarShareRequest> serviceResponse, String parameter) {
+    public void onServiceCallCompleted(ServiceResponse<JourneyRequest> serviceResponse, String parameter) {
         super.checkIfAuthorised(serviceResponse.ServiceResponseCode);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {

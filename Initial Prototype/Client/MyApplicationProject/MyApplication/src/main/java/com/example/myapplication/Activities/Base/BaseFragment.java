@@ -1,4 +1,4 @@
-package com.example.myapplication.Activities.Base;
+package com.example.myapplication.activities.base;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
@@ -10,9 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.myapplication.Activities.Activities.LoginActivity;
-import com.example.myapplication.Constants.ServiceResponseCode;
-import com.example.myapplication.Experimental.AppData;
+import com.example.myapplication.activities.activities.LoginActivity;
+import com.example.myapplication.constants.ServiceResponseCode;
+import com.example.myapplication.experimental.AppData;
 import com.example.myapplication.R;
 
 /**
@@ -25,7 +25,7 @@ public class BaseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         appData = ((AppData)getActivity().getApplicationContext());
-        return inflater.inflate(R.layout.activity_home, container, false);
+        return inflater.inflate(R.layout.activity_my_journeys, container, false);
     }
 
     @Override

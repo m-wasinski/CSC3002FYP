@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="SendRequestURL">https://findndrive.no-ip.co.uk/Services/JourneyRequestService.svc/send</string>
+    <string name="ProcessRequestDecisionURL">https://findndrive.no-ip.co.uk/Services/JourneyRequestService.svc/processdecision</string>
+    <string name="GetRequestsForJourneyURL">https://findndrive.no-ip.co.uk/Services/JourneyRequestService.svc/getforjourney</string>
+    <string name="GetRequestsForUserURL">https://findndrive.no-ip.co.uk/Services/JourneyRequestService.svc/getforuser</string>
+    <string name="MarkRequestAsReadURL">https://findndrive.no-ip.co.uk/Services/JourneyRequestService.svc/markasread</string>
+</resources>

@@ -1,4 +1,4 @@
-package com.example.myapplication.Interfaces;
+package com.example.myapplication.interfaces;
 
 /**
  * Created by Michal on 10/01/14.

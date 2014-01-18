@@ -5,18 +5,28 @@
     android:versionName="1.0">
 
     <uses-sdk
-        android:minSdkVersion="7"
-        android:targetSdkVersion="18" />
+        android:minSdkVersion="11"
+        android:targetSdkVersion="19" />
+
+    <!-- Permission to access the Internet -->
     <uses-permission android:name="android.permission.INTERNET"/>
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <uses-permission android:name="com.androidexample.gcm.permission.C2D_MESSAGE" />
+
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+
     <!-- Required to show current location -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <!-- This app has permission to register and receive data message. -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
@@ -28,70 +38,106 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
-        android:name=".Experimental.AppData">
+        android:name=".experimental.AppData">
 
         <meta-data android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
         <activity
-            android:name=".Activities.Activities.MainActivity"
-            android:label="@string/app_name" >
+            android:name=".activities.activities.MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
-            android:name=".Activities.Activities.LoginActivity"
-            android:label="FindNDrive Log in/Register" />
+            android:name=".activities.activities.LoginActivity"
+            android:label="Log in"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".Activities.Activities.RegistrationActivity"
+            android:name=".activities.activities.RegistrationActivity"
             android:windowSoftInputMode="adjustResize"
-            android:label="Registration Activity" />
+            android:label="Register"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".Activities.Activities.PostNewCarShareActivity"
-            android:label="New Car Share" />
+            android:name=".activities.activities.CreateNewJourneyActivity"
+            android:label="New journey"
+            android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".Activities.Activities.ContactDriverActivity"
+            android:name=".activities.activities.ContactDriverActivity"
+            android:label="Contact driver"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".activities.activities.JourneyRequestsActivity"
+            android:label="Journey requests"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".activities.activities.JourneyRequestDetailsActivity"
+            android:label="Journey request details"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".activities.activities.FriendListActivity"
             android:label="Manage Car Share" />
 
         <activity
-            android:name=".Activities.Activities.CarShareRequestsActivity"
-            android:label="Manage Car Share" />
+            android:name=".activities.activities.JourneyChatActivity"
+            android:label="Chat"
+            android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".Activities.Activities.CarShareRequestDetailsActivity"
-            android:label="Manage Car Share" />
+            android:name=".activities.activities.MyJourneysActivity"
+            android:label="My journeys"
+            android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".Activities.Activities.TravelBuddyListActivity"
-            android:label="Manage Car Share" />
+            android:name=".activities.activities.SearchActivity"
+            android:label="Search"
+            android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".Activities.Activities.CarShareChatActivity"
-            android:label="Chat" />
+            android:name=".activities.activities.HomeActivity"
+            android:label="Home"
+            android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".Activities.Activities.ActivityHome"
-            android:label="Home" />
+            android:name=".activities.activities.MyNotificationsActivity"
+            android:label="Notifications"
+            android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".Activities.Activities.ActivitySearch"
-            android:label="Search" />
+            android:name=".activities.activities.InstantMessengerActivity"
+            android:label="Chat"
+            android:screenOrientation="portrait"/>
 
         <receiver
-            android:name=".GCM.GcmBroadcastReceiver"
+            android:name=".gcm.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <category android:name="com.example.gcm" />
             </intent-filter>
         </receiver>
-        <service android:name=".GCM.GcmIntentService" />
+
+        <receiver
+            android:name=".gcm.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.example.gcm" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".gcm.GcmIntentService" />
         <!-- Goolge API Key -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"

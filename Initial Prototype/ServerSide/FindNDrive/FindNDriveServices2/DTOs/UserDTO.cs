@@ -11,12 +11,13 @@ namespace FindNDriveServices2.DTOs
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Runtime.Serialization;
 
     using DomainObjects.Constants;
-    using DomainObjects.DOmains;
+    using DomainObjects.Domains;
 
     /// <summary>
     /// The user dto.
@@ -87,6 +88,6 @@ namespace FindNDriveServices2.DTOs
         /// Gets or sets the travel buddies.
         /// </summary>
         [DataMember]
-        public virtual ICollection<User> TravelBuddies { get; set; }
+        public virtual ICollection<User> Friends { get; set; }
     }
 }

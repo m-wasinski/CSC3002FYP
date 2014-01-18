@@ -1,4 +1,4 @@
-package com.example.myapplication.Activities.Base;
+package com.example.myapplication.activities.base;
 
 import android.app.ActionBar;
 import android.content.Context;
@@ -15,20 +15,14 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Display;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.myapplication.Activities.Activities.LoginActivity;
-import com.example.myapplication.Activities.Base.BaseActivity;
-import com.example.myapplication.Activities.Base.BaseFragment;
-import com.example.myapplication.Constants.ServiceResponseCode;
-import com.example.myapplication.Experimental.AppData;
-import com.example.myapplication.Experimental.GMapV2Direction;
+import com.example.myapplication.activities.activities.LoginActivity;
+import com.example.myapplication.constants.ServiceResponseCode;
+import com.example.myapplication.experimental.AppData;
+import com.example.myapplication.experimental.GMapV2Direction;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;

@@ -8,13 +8,17 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace FindNDriveServices2.Contracts
 {
-    using System.Collections.Generic;
     using System.Security.Permissions;
     using System.ServiceModel;
     using System.ServiceModel.Web;
-    using DomainObjects.DOmains;
+    using System.Web.Providers.Entities;
+
+    using DomainObjects.Domains;
+
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
+
+    using User = DomainObjects.Domains.User;
 
     /// <summary>
     /// The UserService interface.
@@ -89,23 +93,7 @@ namespace FindNDriveServices2.Contracts
         ServiceResponse<bool> LogoutUser(bool forceDelete);
 
         /// <summary>
-        /// The add travel buddy.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        [OperationContract]
-        [WebInvoke(Method = "POST",
-            ResponseFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/addtravelbuddy")]
-        ServiceResponse<User> AddTravelBuddy(TravelBuddyDTO user);
-
-        /// <summary>
-        /// The get travel buddies.
+        /// The refresh user.
         /// </summary>
         /// <param name="userId">
         /// The user id.
@@ -117,7 +105,7 @@ namespace FindNDriveServices2.Contracts
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/gettravelbuddies")]
-        ServiceResponse<List<User>> GetTravelBuddies(int userId);
+            UriTemplate = "/refresh")]
+        ServiceResponse<User> RefreshUser(int userId);
     }
 }

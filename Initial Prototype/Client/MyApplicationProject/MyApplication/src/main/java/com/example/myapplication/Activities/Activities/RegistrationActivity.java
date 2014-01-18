@@ -1,4 +1,4 @@
-package com.example.myapplication.Activities.Activities;
+package com.example.myapplication.activities.activities;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -10,20 +10,21 @@ import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.myapplication.Activities.Base.BaseActivity;
-import com.example.myapplication.Constants.Constants;
-import com.example.myapplication.Constants.ServiceResponseCode;
-import com.example.myapplication.DTOs.RegisterDTO;
-import com.example.myapplication.DomainObjects.CarShare;
-import com.example.myapplication.DomainObjects.ServiceResponse;
-import com.example.myapplication.DomainObjects.User;
-import com.example.myapplication.Helpers.Pair;
-import com.example.myapplication.Interfaces.WCFServiceCallback;
-import com.example.myapplication.NetworkTasks.WCFServiceTask;
+import com.example.myapplication.activities.base.BaseActivity;
+import com.example.myapplication.constants.ServiceResponseCode;
+import com.example.myapplication.constants.SessionConstants;
+import com.example.myapplication.constants.SharedPreferencesConstants;
+import com.example.myapplication.dtos.RegisterDTO;
+import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.domain_objects.User;
+import com.example.myapplication.utilities.Pair;
+import com.example.myapplication.interfaces.WCFServiceCallback;
+import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.example.myapplication.R;
 import com.google.gson.reflect.TypeToken;
 
@@ -43,12 +44,12 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
     private EditText passwordEditText;
     private EditText confirmedPasswordEditText;
     private TextView errorMessagesEditText;
-    private Spinner genderSpinner;
+    private ProgressBar progressBar;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.registration_activity);
+        progressBar = (ProgressBar) findViewById(R.id.RegistrationActivityProgressBar);
         userNameEditText = (EditText) findViewById(R.id.UserNameTextField);
         userNameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
@@ -80,12 +81,6 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
 
         errorMessagesEditText = (TextView) findViewById(R.id.RegisterActivityErrorMessages);
 
-        genderSpinner = (Spinner) findViewById(R.id.RegisterActivityGender);
-
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.gender, R.layout.support_simple_spinner_dropdown_item);
-        genderSpinner.setAdapter(adapter);
-
         SetupUIEvents();
 
     }
@@ -106,17 +101,11 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
         validateUserName();
         validateEmail();
         validatePasswords();
-        validateGender();
 
         if(valuesCorrect)
         {
-            int gender = genderSpinner.getSelectedItemPosition();
             errorMessagesEditText.setText("");
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Registering...");
-            progressDialog.setMessage("Please wait.");
-            progressDialog.show();
-
+            progressBar.setVisibility(View.VISIBLE);
             RegisterDTO registerDTO = new RegisterDTO();
             registerDTO.Password = passwordEditText.getText().toString();
             registerDTO.ConfirmedPassword = confirmedPasswordEditText.getText().toString();
@@ -124,14 +113,13 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
             registerDTO.User.UserName = userNameEditText.getText().toString();
             registerDTO.User.EmailAddress = emailAddressEditText.getText().toString();
             registerDTO.User.GCMRegistrationID = appData.getRegistrationId();
-            registerDTO.User.Gender = gender;
 
-            new WCFServiceTask<RegisterDTO, User>("https://findndrive.no-ip.co.uk/Services/UserService.svc/register",
+            new WCFServiceTask<RegisterDTO>(getResources().getString(R.string.UserRegisterURL),
                     registerDTO,
                     new TypeToken<ServiceResponse<User>>() {}.getType(),
-                    asList(new Pair(Constants.REMEMBER_ME, ""+false),
-                           new Pair(Constants.DEVICE_ID, appData.getUniqueDeviceId()),
-                           new Pair(Constants.UUID, appData.getUUID())), Constants.SESSION_ID, this).execute();
+                    asList(new Pair(SessionConstants.REMEMBER_ME, ""+false),
+                           new Pair(SessionConstants.DEVICE_ID, appData.getUniqueDeviceId()),
+                           new Pair(SessionConstants.UUID, appData.getUUID())), this).execute();
 
         }
     }
@@ -197,31 +185,17 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
         valuesCorrect = true;
     }
 
-    private void validateGender()
-    {
-        if(genderSpinner.getSelectedItemPosition() == 0)
-        {
-            Toast toast = Toast.makeText(this, "Please select gender.", Toast.LENGTH_LONG);
-            toast.show();
-            valuesCorrect = false;
-            return;
-        }
-
-        valuesCorrect = true;
-    }
-
     @Override
     public void onServiceCallCompleted(ServiceResponse<User> serviceResponse, String session) {
-        progressDialog.dismiss();
         Toast toast;
-
+        progressBar.setVisibility(View.VISIBLE);
         if (serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             storeSessionId(session);
             appData.setUser(serviceResponse.Result);
             toast = Toast.makeText(this, "Registered successfully!", Toast.LENGTH_LONG);
             toast.show();
-            Intent intent = new Intent(this, ActivityHome.class);
+            Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
             finish();
         }
@@ -236,9 +210,9 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
 
     private void storeSessionId(String sessionId)
     {
-        SharedPreferences sharedPreferences = getSharedPreferences(Constants.GLOBAL_APP_DATA, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(SharedPreferencesConstants.GLOBAL_APP_DATA, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(Constants.PROPERTY_SESSION_ID, sessionId);
+        editor.putString(SharedPreferencesConstants.PROPERTY_SESSION_ID, sessionId);
         editor.commit();
         appData.setSessionId(sessionId);
     }

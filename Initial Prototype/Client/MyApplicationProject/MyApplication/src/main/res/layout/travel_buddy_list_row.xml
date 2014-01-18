@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:background="#80151515"
+    android:layout_marginTop="2sp">
 
     <ImageView
         android:layout_width="wrap_content"
@@ -13,8 +15,26 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Travel Buddy"
         android:id="@+id/TravelBuddyListRowNameTextView"
-        android:layout_gravity="center_horizontal" />
-</LinearLayout>
+        android:layout_gravity="center_horizontal"
+        android:layout_toRightOf="@+id/TravelBuddyListRowImage"
+        android:layout_centerInParent="true"
+        style="@style/LoginFields"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Messages"
+        android:id="@+id/FriendsListRowUnreadMessagesTextView"
+        android:layout_gravity="center_horizontal"
+        android:layout_toRightOf="@+id/TravelBuddyListRowNameTextView"
+        android:layout_margin="10sp"
+        android:textAppearance="@android:style/TextAppearance.Small.Inverse"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1sp"
+        android:background="#B7D8E8"
+        android:layout_below="@+id/MyCarSharesStatusIconsLayout"></LinearLayout>
+</RelativeLayout>

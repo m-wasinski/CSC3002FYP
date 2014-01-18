@@ -1,1 +1,0 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="FindNDriveServices2.Services.UserService" CodeBehind="UserService.svc.cs" Factory="FindNDriveServices2.WcfServiceFactory"%>

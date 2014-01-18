@@ -10,13 +10,13 @@
 namespace FindNDriveServices2
 {
     using System;
-    using System.Diagnostics;
+    using System.Reflection;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
     using System.ServiceModel.Channels;
     using System.ServiceModel.Description;
     using System.ServiceModel.Dispatcher;
-    using DomainObjects.DOmains;
+
     using DomainObjects.Domains;
     using FindNDriveDataAccessLayer;
     using FindNDriveInfrastructureDataAccessLayer;
@@ -28,11 +28,6 @@ namespace FindNDriveServices2
     /// </summary>
     public class MyServiceHostFactory : ServiceHostFactory
     {
-        /// <summary>
-        /// The _session manager.
-        /// </summary>
-        private readonly SessionManager _sessionManager;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="MyServiceHostFactory"/> class.
         /// </summary>
@@ -66,58 +61,51 @@ namespace FindNDriveServices2
     public class MyInstanceProvider : IInstanceProvider, IContractBehavior
     {
         /// <summary>
-        /// The _find n drive unit of work.
-        /// </summary>
-        private readonly FindNDriveUnitOfWork _findNDriveUnitOfWork;
-
-        /// <summary>
-        /// The _session manager.
-        /// </summary>
-        private readonly SessionManager _sessionManager;
-
-        /// <summary>
         /// The _service type.
         /// </summary>
-        private readonly Type _serviceType;
+        private readonly Type serviceType;
 
         /// <summary>
         /// The _user service.
         /// </summary>
-        private readonly UserService _userService;
+        private readonly UserService userService;
 
         /// <summary>
         /// The _car share service.
         /// </summary>
-        private readonly CarShareService _carShareService;
+        private readonly JourneyService journeyService;
 
         /// <summary>
         /// The _request service.
         /// </summary>
-        private readonly RequestService _requestService;
+        private readonly JourneyRequestService requestService;
 
         /// <summary>
         /// The _search service.
         /// </summary>
-        private readonly SearchService _searchService;
+        private readonly SearchService searchService;
+
+        /// <summary>
+        /// The _notification service.
+        /// </summary>
+        private readonly NotificationService notificationService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MyInstanceProvider"/> class.
         /// </summary>
-        /// <param name="findNDriveUnitOfWork">
-        /// The find n drive unit of work.
-        /// </param>
-        /// <param name="sessionManager">
-        /// The session manager.
+        /// <param name="serviceType">
+        /// The service Type.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// </exception>
         public MyInstanceProvider(Type serviceType)
         {
-            this._serviceType = serviceType;
-            this._userService = new UserService();
-            this._carShareService = new CarShareService();
-            this._searchService = new SearchService();
-            this._requestService = new RequestService();
+            this.serviceType = serviceType;
+            this.userService = new UserService();
+            this.journeyService = new JourneyService();
+            this.searchService = new SearchService();
+            this.requestService = new JourneyRequestService();
+            this.notificationService = new NotificationService();
         }
 
         #region IInstanceProvider Members
@@ -150,41 +138,26 @@ namespace FindNDriveServices2
         /// </returns>
         public object GetInstance(InstanceContext instanceContext)
         {
-            var testDbContext = new ApplicationContext();
-            var userEntityFrameworkRepository = new EntityFrameworkRepository<User>(testDbContext);
-            var carShareEntityFrameworkRepository = new EntityFrameworkRepository<CarShare>(testDbContext);
-            var sessionEntityFrameworkRepository = new EntityFrameworkRepository<Session>(testDbContext);
-            var carShareRequestEntityFrameWorkRepository = new EntityFrameworkRepository<CarShareRequest>(testDbContext);
-
+            var dbContext = new ApplicationContext();
+            var userRepository = new EntityFrameworkRepository<User>(dbContext);
+            var journeyRepository = new EntityFrameworkRepository<Journey>(dbContext);
+            var sessionEntityFrameworkRepository = new EntityFrameworkRepository<Session>(dbContext);
+            var journeyRequestRepository = new EntityFrameworkRepository<JourneyRequest>(dbContext);
+            var chatMessageRepository = new EntityFrameworkRepository<ChatMessage>(dbContext);
+            var notificationRepository = new EntityFrameworkRepository<Notification>(dbContext);
             var findNDriveUnitOfWork = new FindNDriveUnitOfWork(
-                testDbContext,
-                userEntityFrameworkRepository,
-                carShareEntityFrameworkRepository,
+                dbContext,
+                userRepository,
+                journeyRepository,
                 sessionEntityFrameworkRepository,
-                carShareRequestEntityFrameWorkRepository);
+                journeyRequestRepository,
+                chatMessageRepository,
+                notificationRepository);
+
             var sessionManager = new SessionManager(findNDriveUnitOfWork);
 
-            if (_serviceType == _userService.GetType())
-            {
-                return new UserService(findNDriveUnitOfWork, sessionManager);
-            }
-
-            if (_serviceType == _carShareService.GetType())
-            {
-                return new CarShareService(findNDriveUnitOfWork, sessionManager);
-            }
-
-            if (_serviceType == _searchService.GetType())
-            {
-                return new SearchService(findNDriveUnitOfWork, sessionManager);
-            }
-
-            if (_serviceType == _requestService.GetType())
-            {
-                return new RequestService(findNDriveUnitOfWork, sessionManager);
-            }
-
-            return null;
+            var service = this.serviceType.GetConstructor(new[] { typeof(FindNDriveUnitOfWork), typeof(SessionManager), typeof(GCMManager) });
+            return service.Invoke(new object[] { findNDriveUnitOfWork, sessionManager, new GCMManager() });
         }
 
         /// <summary>

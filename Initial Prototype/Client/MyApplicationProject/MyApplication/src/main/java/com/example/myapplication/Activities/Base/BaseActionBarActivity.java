@@ -1,11 +1,10 @@
-package com.example.myapplication.Activities.Base;
+package com.example.myapplication.activities.base;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Window;
 
-import com.example.myapplication.Experimental.AppData;
-import com.example.myapplication.Helpers.ApplicationFileManager;
+import com.example.myapplication.experimental.AppData;
 
 /**
  * Created by Michal on 05/01/14.

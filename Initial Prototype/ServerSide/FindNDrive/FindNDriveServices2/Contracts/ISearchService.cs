@@ -23,10 +23,10 @@ namespace FindNDriveServices2.Contracts
     public interface ISearchService
     {
         /// <summary>
-        /// The search car shares.
+        /// The search for journeys.
         /// </summary>
-        /// <param name="carShare">
-        /// The car share.
+        /// <param name="journey">
+        /// The journey.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
@@ -36,7 +36,7 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/searchcarshare")]
-        ServiceResponse<List<CarShare>> SearchCarShares(CarShareDTO carShare);
+            UriTemplate = "/searchforjourney")]
+        ServiceResponse<List<Journey>> SearchForJourneys(JourneyDTO journey);
     }
 }

@@ -9,16 +9,12 @@
 
 namespace FindNDriveServices2.Services
 {
-    using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
-    using System.Net;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
-    using System.Text;
 
-    using DomainObjects.DOmains;
+    using DomainObjects.Domains;
 
     using FindNDriveDataAccessLayer;
 
@@ -31,6 +27,7 @@ namespace FindNDriveServices2.Services
     using WebMatrix.WebData;
 
     using Roles = DomainObjects.Constants.Roles;
+    using User = DomainObjects.Domains.User;
 
     /// <summary>
     /// The user service.
@@ -46,12 +43,12 @@ namespace FindNDriveServices2.Services
         /// The unit of work, which provides access to the required Repositories, and exposes
         /// a commit method to complete the unit of work.
         /// </summary>
-        private readonly FindNDriveUnitOfWork _findNDriveUnitOfWork;
+        private readonly FindNDriveUnitOfWork findNDriveUnitOfWork;
 
         /// <summary>
         /// The _session manager.
         /// </summary>
-        private readonly SessionManager _sessionManager;
+        private readonly SessionManager sessionManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserService"/> class.
@@ -62,10 +59,10 @@ namespace FindNDriveServices2.Services
         /// <param name="sessionManager">
         /// The session manager.
         /// </param>
-        public UserService(FindNDriveUnitOfWork findNDriveUnitOfWork ,SessionManager sessionManager)
+        public UserService(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager, GCMManager gcmManager)
         {
-            this._findNDriveUnitOfWork = findNDriveUnitOfWork;
-            this._sessionManager = sessionManager;
+            this.findNDriveUnitOfWork = findNDriveUnitOfWork;
+            this.sessionManager = sessionManager;
         }
 
         public UserService()
@@ -91,11 +88,11 @@ namespace FindNDriveServices2.Services
             }
             else
             {
-                loggedInUser = this._findNDriveUnitOfWork.UserRepository.Find(WebSecurity.GetUserId(login.UserName));
-                this._sessionManager.GenerateNewSession(loggedInUser.UserId);
+                loggedInUser = this.findNDriveUnitOfWork.UserRepository.Find(WebSecurity.GetUserId(login.UserName));
+                this.sessionManager.GenerateNewSession(loggedInUser.UserId);
                 loggedInUser.GCMRegistrationID = login.GCMRegistrationID;
 
-                this._findNDriveUnitOfWork.Commit();
+                this.findNDriveUnitOfWork.Commit();
             }
 
             return new ServiceResponse<User>
@@ -119,13 +116,13 @@ namespace FindNDriveServices2.Services
         {
             User loggedInUser = null;
 
-            if (this._sessionManager.ValidateSession())
+            if (this.sessionManager.ValidateSession())
             {
-                var userId = this._sessionManager.GetUserId();
+                var userId = this.sessionManager.GetUserId();
                 
                 if (userId != -1)
                 {
-                    loggedInUser = this._findNDriveUnitOfWork.UserRepository.Find(userId);
+                    loggedInUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.UserId == userId);
                 }
             }
 
@@ -148,13 +145,13 @@ namespace FindNDriveServices2.Services
             var validatedRegisterDTO = ValidationHelper.Validate(register);
 
             //Check if an account with the same username already exists.
-            if (this._findNDriveUnitOfWork.UserRepository.AsQueryable().Any(_ => _.UserName.Equals(register.User.UserName)))
+            if (this.findNDriveUnitOfWork.UserRepository.AsQueryable().Any(_ => _.UserName.Equals(register.User.UserName)))
             {
                 return ResponseBuilder.Failure<User>("Account with this username already exists.");
             }
 
             //Check if an account with the same username already exists.
-            if (this._findNDriveUnitOfWork.UserRepository.AsQueryable().Any(_ => _.EmailAddress.Equals(register.User.EmailAddress)))
+            if (this.findNDriveUnitOfWork.UserRepository.AsQueryable().Any(_ => _.EmailAddress.Equals(register.User.EmailAddress)))
             {
                 return ResponseBuilder.Failure<User>("Account with this email address already exists.");
             }
@@ -176,9 +173,9 @@ namespace FindNDriveServices2.Services
                     UserId = register.User.UserId
                 };
 
-                this._sessionManager.GenerateNewSession(newUser.UserId);
-                this._findNDriveUnitOfWork.UserRepository.Add(newUser);
-                this._findNDriveUnitOfWork.Commit();
+                this.sessionManager.GenerateNewSession(newUser.UserId);
+                this.findNDriveUnitOfWork.UserRepository.Add(newUser);
+                this.findNDriveUnitOfWork.Commit();
             }
 
             return new ServiceResponse<User>
@@ -201,13 +198,41 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<bool> LogoutUser(bool forceInvalidate)
         {
-            var success = this._sessionManager.InvalidateSession(forceInvalidate);
+            var success = this.sessionManager.InvalidateSession(forceInvalidate);
  
             return new ServiceResponse<bool>
             {
                 Result = success,
                 ServiceResponseCode = success ? ServiceResponseCode.Success : ServiceResponseCode.Failure
             };
+        }
+
+        /// <summary>
+        /// The refresh user.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<User> RefreshUser(int userId)
+        {
+            if (!this.sessionManager.ValidateSession())
+            {
+                return ResponseBuilder.Unauthorised(new User());
+            }
+
+            var user = this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+                    .IncludeAll()
+                    .FirstOrDefault(_ => _.UserId == userId);
+
+            if (user != null)
+            {
+                return ResponseBuilder.Success(user);
+            }
+
+            return ResponseBuilder.Failure<User>("Invalid user Id");
         }
 
         /// <summary>
@@ -219,21 +244,21 @@ namespace FindNDriveServices2.Services
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<User> AddTravelBuddy(TravelBuddyDTO user)
+        public ServiceResponse<User> AddTravelBuddy(FriendDTO user)
         {
             //TODO: Check if buddy is already in the list. Return error if yes.
             var targetUser =
-                this._findNDriveUnitOfWork.UserRepository.AsQueryable()
+                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
                     .IncludeAll()
                     .FirstOrDefault(_ => _.UserId == user.TargetUserId);
 
-            var newBuddy = this._findNDriveUnitOfWork.UserRepository.AsQueryable()
+            var newBuddy = this.findNDriveUnitOfWork.UserRepository.AsQueryable()
                     .IncludeAll()
-                    .FirstOrDefault(_ => _.UserId == user.TravelBuddyUserId);
+                    .FirstOrDefault(_ => _.UserId == user.FriendUserId);
 
-            targetUser.TravelBuddies.Add(newBuddy);
+            targetUser.Friends.Add(newBuddy);
 
-            this._findNDriveUnitOfWork.Commit();
+            this.findNDriveUnitOfWork.Commit();
 
             return new ServiceResponse<User>()
                        {
@@ -245,10 +270,10 @@ namespace FindNDriveServices2.Services
         public ServiceResponse<List<User>> GetTravelBuddies(int userId)
         {
             var user =
-                this._findNDriveUnitOfWork.UserRepository.AsQueryable()
+                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
                     .IncludeAll()
                     .FirstOrDefault(_ => _.UserId == userId)
-                    .TravelBuddies.ToList();
+                    .Friends.ToList();
 
             return new ServiceResponse<List<User>>()
                        {

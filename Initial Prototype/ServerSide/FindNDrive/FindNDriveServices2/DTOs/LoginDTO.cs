@@ -7,10 +7,10 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Runtime.Serialization;
-
 namespace FindNDriveServices2.DTOs
 {
+    using System.Runtime.Serialization;
+
     /// <summary>
     /// The login DTO (Data Transfer Object) used to interact with the user service.
     /// </summary>

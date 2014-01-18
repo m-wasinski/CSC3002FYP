@@ -1,10 +1,11 @@
-package com.example.myapplication.Activities.Activities;
+package com.example.myapplication.activities.activities;
 
-import android.app.Activity;
+import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,32 +15,33 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
-import com.example.myapplication.Activities.Base.BaseActivity;
-import com.example.myapplication.Constants.Constants;
-import com.example.myapplication.Constants.ServiceResponseCode;
-import com.example.myapplication.DTOs.LoginDTO;
-import com.example.myapplication.DomainObjects.ServiceResponse;
-import com.example.myapplication.DomainObjects.User;
-import com.example.myapplication.Experimental.AppData;
-import com.example.myapplication.Helpers.Pair;
-import com.example.myapplication.Interfaces.WCFServiceCallback;
-import com.example.myapplication.NetworkTasks.WCFServiceTask;
+
 import com.example.myapplication.R;
+import com.example.myapplication.activities.base.BaseActivity;
+import com.example.myapplication.constants.ServiceResponseCode;
+import com.example.myapplication.constants.SessionConstants;
+import com.example.myapplication.constants.SharedPreferencesConstants;
+import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.domain_objects.User;
+import com.example.myapplication.dtos.LoginDTO;
+import com.example.myapplication.interfaces.WCFServiceCallback;
+import com.example.myapplication.network_tasks.WCFServiceTask;
+import com.example.myapplication.utilities.Pair;
 import com.google.gson.reflect.TypeToken;
 
 import static java.util.Arrays.asList;
 
 public class LoginActivity extends BaseActivity implements WCFServiceCallback<User,String> {
 
-    private ProgressDialog progressDialog;
-    private AppData appData;
-
+    private ProgressBar progressBar;
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         super.onCreate(savedInstanceState);
-        appData = ((AppData)getApplication());
-        setContentView(R.layout.login_activity_layout);
+        setContentView(R.layout.login_activity);
+        progressBar = (ProgressBar) findViewById(R.id.LoginActivityProgressBar);
         setupUIEvents();
     }
 
@@ -64,6 +66,7 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
 
     private void attemptLogin()
     {
+        progressBar.setVisibility(View.VISIBLE);
         EditText userName = (EditText) findViewById(R.id.UserLoginUserNameEditText);
         EditText password = (EditText) findViewById(R.id.UserLoginPasswordTextField);
         CheckBox rememberMe  = (CheckBox) findViewById(R.id.RememberMeCheckBox);
@@ -73,21 +76,15 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
             return;
         }
 
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Logging in...");
-        progressDialog.setMessage("Please wait.");
-        progressDialog.show();
-
-
         LoginDTO loginDTO =new LoginDTO();
         loginDTO.UserName = userName.getText().toString();
         loginDTO.Password = password.getText().toString();
         loginDTO.GCMRegistrationID = appData.getRegistrationId();
 
 
-        new WCFServiceTask<LoginDTO, User>("https://findndrive.no-ip.co.uk/Services/UserService.svc/manuallogin", loginDTO, new TypeToken<ServiceResponse<User>>() {}.getType(),
-                asList(new Pair(Constants.REMEMBER_ME, ""+rememberMe.isChecked()), new Pair(Constants.DEVICE_ID, appData.getUniqueDeviceId()), new Pair(Constants.UUID, appData.getUUID())),
-                Constants.SESSION_ID, this).execute();
+        new WCFServiceTask<LoginDTO>(getResources().getString(R.string.UserManualLoginURL), loginDTO, new TypeToken<ServiceResponse<User>>() {}.getType(),
+                asList(new Pair(SessionConstants.REMEMBER_ME, ""+rememberMe.isChecked()), new Pair(SessionConstants.DEVICE_ID, appData.getUniqueDeviceId()),
+                        new Pair(SessionConstants.UUID, appData.getUUID())), this).execute();
     }
 
     private boolean checkIfFieldsEmpty(EditText editText, String value)
@@ -131,13 +128,12 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
 
     @Override
     public void onServiceCallCompleted(ServiceResponse<User> serviceResponse, String session) {
-        progressDialog.dismiss();
-
+        progressBar.setVisibility(View.GONE);
         if (serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             storeSessionId(session);
             appData.setUser(serviceResponse.Result);
-            Intent intent = new Intent(this, ActivityHome.class);
+            Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
             finish();
         }
@@ -151,9 +147,9 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
 
     private void storeSessionId(String sessionId)
     {
-        SharedPreferences sharedPreferences = getSharedPreferences(Constants.GLOBAL_APP_DATA, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(SharedPreferencesConstants.GLOBAL_APP_DATA, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(Constants.PROPERTY_SESSION_ID, sessionId);
+        editor.putString(SharedPreferencesConstants.PROPERTY_SESSION_ID, sessionId);
         editor.commit();
         appData.setSessionId(sessionId);
     }

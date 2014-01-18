@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/background"
+    android:paddingTop="?android:attr/actionBarSize"
+    android:focusableInTouchMode="true"
+    android:focusable="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1sp"
+            android:background="#151515"
+            android:layout_below="@+id/MyCarSharesStatusIconsLayout"></LinearLayout>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:hint="Tap to filter"
+            android:paddingLeft="5sp"
+            android:layout_height="?android:attr/actionBarSize"
+            android:id="@+id/ActivityHomeFilterEditText"
+            android:enabled="false"
+            android:background="#80151515"
+            android:singleLine="true"
+            android:textCursorDrawable="@null"
+            android:textSize="22sp"
+            android:textColor="#0086C9"/>
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/MyCarSharesListView"
+            android:layout_below="@+id/ActivityHomeFilterEditText"/>
+
+        <Button
+            android:id="@+id/ActivityMyJourneysLoadMoreButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/ShowMore"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/button_selector"
+            style="@style/ButtonStyle"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/LargeTextField"
+            android:text="No journeys to display."
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:id="@+id/MyCarSharesNoJourneysTextView"
+            android:layout_gravity="center_horizontal"/>
+
+        <ProgressBar
+            android:id="@+id/ActivityMyJourneysProgressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:indeterminateDrawable="@drawable/progress" >
+        </ProgressBar>
+    </RelativeLayout>
+</RelativeLayout>

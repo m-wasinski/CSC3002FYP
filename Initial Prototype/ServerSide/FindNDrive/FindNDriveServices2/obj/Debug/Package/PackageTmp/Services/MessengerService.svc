@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="FindNDriveServices2.Services.MessengerService" CodeBehind="MessengerService.svc.cs" Factory="FindNDriveServices2.MyServiceHostFactory" %>

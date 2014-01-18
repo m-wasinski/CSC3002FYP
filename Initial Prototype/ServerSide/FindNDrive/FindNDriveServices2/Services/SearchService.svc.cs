@@ -60,16 +60,16 @@ namespace FindNDriveServices2.Services
         /// <param name="sessionManager">
         /// The session Manager.
         /// </param>
-        public SearchService(FindNDriveUnitOfWork findNDriveUnitOf, SessionManager sessionManager)
+        public SearchService(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager, GCMManager gcmManager)
         {
-            this._findNDriveUnitOfWork = findNDriveUnitOf;
+            this._findNDriveUnitOfWork = findNDriveUnitOfWork;
             this._sessionManager = sessionManager;
         }
 
         /// <summary>
         /// The search car shares.
         /// </summary>
-        /// <param name="carShare">
+        /// <param name="journey">
         /// The car share.
         /// </param>
         /// <returns>
@@ -77,59 +77,59 @@ namespace FindNDriveServices2.Services
         /// </returns>
         /// <exception cref="NotImplementedException">
         /// </exception>
-        public ServiceResponse<List<CarShare>> SearchCarShares(CarShareDTO carShare)
+        public ServiceResponse<List<Journey>> SearchForJourneys(JourneyDTO journey)
         {
             /*var carShares =
-                this._findNDriveUnitOfWork.CarShareRepository.AsQueryable()
+                this._findNDriveUnitOfWork.journeyRepository.AsQueryable()
                     .IncludeAll()
-                    .Where(_ => _.DepartureAddress.AddressLine == carShare.DepartureAddress.AddressLine &&
-                            _.DestinationAddress.AddressLine == carShare.DestinationAddress.AddressLine && _.AvailableSeats > 0 && _.CarShareStatus == CarShareStatus.Upcoming)
+                    .Where(_ => _.DepartureAddress.AddressLine == journey.DepartureAddress.AddressLine &&
+                            _.DestinationAddress.AddressLine == journey.DestinationAddress.AddressLine && _.AvailableSeats > 0 && _.JourneyStatus == JourneyStatus.Upcoming)
                     .ToList();*/
 
-            var carShares =
-                this._findNDriveUnitOfWork.CarShareRepository.AsQueryable()
+            var journeys =
+                this._findNDriveUnitOfWork.JourneyRepository.AsQueryable()
                     .IncludeAll().ToList();
 
-            if (carShare.SearchByDate)
+            if (journey.SearchByDate)
             {
-                carShares =
-                    carShares.Where(
+                journeys =
+                    journeys.Where(
                         _ =>
-                        Math.Abs(_.DateAndTimeOfDeparture.Date.Subtract(carShare.DateAndTimeOfDeparture.Date).TotalDays) <= 5).ToList();
+                        Math.Abs(_.DateAndTimeOfDeparture.Date.Subtract(journey.DateAndTimeOfDeparture.Date).TotalDays) <= 5).ToList();
             }
 
-            if (carShare.SearchByTime)
+            if (journey.SearchByTime)
             {   
-                carShares =
-                    carShares.Where(
+                journeys =
+                    journeys.Where(
                         _ =>
-                        Math.Abs(_.DateAndTimeOfDeparture.TimeOfDay.Subtract(carShare.DateAndTimeOfDeparture.TimeOfDay).TotalHours) <= 1).ToList();
+                        Math.Abs(_.DateAndTimeOfDeparture.TimeOfDay.Subtract(journey.DateAndTimeOfDeparture.TimeOfDay).TotalHours) <= 1).ToList();
             }
 
-            if (carShare.SmokersAllowed)
+            if (journey.SmokersAllowed)
             {
-                carShares = carShares.Where(_ => _.SmokersAllowed).ToList();
+                journeys = journeys.Where(_ => _.SmokersAllowed).ToList();
             }
 
-            if (carShare.WomenOnly)
+            if (journey.WomenOnly)
             {
-                carShares = carShares.Where(_ => _.WomenOnly).ToList();
+                journeys = journeys.Where(_ => _.WomenOnly).ToList();
             }
 
-            if (carShare.PetsAllowed)
+            if (journey.PetsAllowed)
             {
-                carShares = carShares.Where(_ => _.PetsAllowed).ToList();
+                journeys = journeys.Where(_ => _.PetsAllowed).ToList();
             }
 
 
-            if (carShare.Free)
+            if (journey.Free)
             {
-                carShares = carShares.Where(_ => _.Fee == 0.00).ToList();
+                journeys = journeys.Where(_ => _.Fee == 0.00).ToList();
             }
 
-            return new ServiceResponse<List<CarShare>>
+            return new ServiceResponse<List<Journey>>
             {
-                Result = carShares,
+                Result = journeys,
                 ServiceResponseCode = ServiceResponseCode.Success
             };
         }

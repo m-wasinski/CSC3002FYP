@@ -35,14 +35,6 @@ namespace FindNDriveInfrastructureDataAccessLayer
         void Remove(T entity);
 
         /// <summary>
-        /// The update.
-        /// </summary>
-        /// <param name="entity">
-        /// The entity.
-        /// </param>
-        void Update(T entity);
-
-        /// <summary>
         /// The find.
         /// </summary>
         /// <param name="id">

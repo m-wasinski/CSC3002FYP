@@ -9,11 +9,14 @@
 
 namespace FindNDriveServices2.Services
 {
+    using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
 
+    using DomainObjects.Constants;
     using DomainObjects.Domains;
 
     using FindNDriveDataAccessLayer;
@@ -51,6 +54,11 @@ namespace FindNDriveServices2.Services
         private readonly SessionManager sessionManager;
 
         /// <summary>
+        /// The gcm manager.
+        /// </summary>
+        private readonly GCMManager gcmManager;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="UserService"/> class.
         /// </summary>
         /// <param name="findNDriveUnitOfWork">
@@ -59,10 +67,12 @@ namespace FindNDriveServices2.Services
         /// <param name="sessionManager">
         /// The session manager.
         /// </param>
+        /// <param name="gcmManager"></param>
         public UserService(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager, GCMManager gcmManager)
         {
             this.findNDriveUnitOfWork = findNDriveUnitOfWork;
             this.sessionManager = sessionManager;
+            this.gcmManager = gcmManager;
         }
 
         public UserService()
@@ -77,30 +87,36 @@ namespace FindNDriveServices2.Services
         /// <returns></returns>
         public ServiceResponse<User> ManualUserLogin(LoginDTO login)
         {
-            User loggedInUser = null;
-
             var validatedUser = ValidationHelper.Validate(login);
        
             if (!validatedUser.IsValid || !WebSecurity.Login(login.UserName, login.Password))
             {   
-                validatedUser.ErrorMessages.Add("Invalid Username or Password.");
-                validatedUser.IsValid = false;
+                return ResponseBuilder.Failure<User>("Invalid Username or Password.");
             }
-            else
+
+            var userId = WebSecurity.GetUserId(login.UserName);
+            var loggedInUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.UserId == userId);
+            if (loggedInUser != null)
             {
-                loggedInUser = this.findNDriveUnitOfWork.UserRepository.Find(WebSecurity.GetUserId(login.UserName));
                 this.sessionManager.GenerateNewSession(loggedInUser.UserId);
                 loggedInUser.GCMRegistrationID = login.GCMRegistrationID;
+                loggedInUser.Status = Status.Online;
+
+                var gcmNotifications =
+                    this.findNDriveUnitOfWork.GCMNotificationsRepository.AsQueryable().Where(_ => _.UserId == userId && !_.Delivered).ToList();
+
+                gcmNotifications.ForEach(
+                    delegate(GCMNotification gcmNotification)
+                        {
+                            this.gcmManager.SendNotification(new Collection<string>{loggedInUser.GCMRegistrationID}, gcmNotification.NotificationType, gcmNotification.NotificationArguments, gcmNotification.ContentTitle, gcmNotification.NotificationMessage);
+                            gcmNotification.Delivered = true;
+                        });
 
                 this.findNDriveUnitOfWork.Commit();
-            }
 
-            return new ServiceResponse<User>
-            {
-                Result = loggedInUser,
-                ServiceResponseCode = (validatedUser.IsValid) ? ServiceResponseCode.Success : ServiceResponseCode.Unauthorized,
-                ErrorMessages = validatedUser.ErrorMessages
-            };
+                return ResponseBuilder.Success(loggedInUser);
+            }
+            return ResponseBuilder.Failure<User>("User does not exist!");
         }
 
         /// <summary>
@@ -114,23 +130,26 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<User> AutoUserLogin()
         {
-            User loggedInUser = null;
-
             if (this.sessionManager.ValidateSession())
             {
                 var userId = this.sessionManager.GetUserId();
-                
-                if (userId != -1)
+
+                if (userId == -1)
                 {
-                    loggedInUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.UserId == userId);
+                    return ResponseBuilder.Failure<User>("Unauthorised");
                 }
+
+                var loggedInUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.UserId == userId);
+                if (loggedInUser != null)
+                {
+                    loggedInUser.Status = Status.Online;
+                }
+
+                this.findNDriveUnitOfWork.Commit();
+                return ResponseBuilder.Success(loggedInUser);
             }
 
-            return new ServiceResponse<User>
-            {
-                Result = loggedInUser,
-                ServiceResponseCode = (loggedInUser == null) ? ServiceResponseCode.Failure : ServiceResponseCode.Success
-            };
+            return ResponseBuilder.Failure<User>("Unauthorised");
         }
 
         /// <summary>
@@ -140,8 +159,6 @@ namespace FindNDriveServices2.Services
         /// <returns></returns>
         public ServiceResponse<User> RegisterUser(RegisterDTO register)
         {
-            User newUser = null;
-
             var validatedRegisterDTO = ValidationHelper.Validate(register);
 
             //Check if an account with the same username already exists.
@@ -156,35 +173,27 @@ namespace FindNDriveServices2.Services
                 return ResponseBuilder.Failure<User>("Account with this email address already exists.");
             }
 
-            if (validatedRegisterDTO.IsValid)
+            if (!validatedRegisterDTO.IsValid)
             {
-                WebSecurity.CreateUserAndAccount(register.User.UserName, register.Password);
-                register.User.UserId = WebSecurity.GetUserId(register.User.UserName);
-
-                newUser = new User()
-                {
-                    FirstName = register.User.FirstName,
-                    LastName = register.User.LastName,
-                    DateOfBirth = register.User.DateOfBirth,
-                    EmailAddress = register.User.EmailAddress,
-                    Gender = register.User.Gender,
-                    Role = Roles.User,
-                    UserName = register.User.UserName,
-                    UserId = register.User.UserId
-                };
-
-                this.sessionManager.GenerateNewSession(newUser.UserId);
-                this.findNDriveUnitOfWork.UserRepository.Add(newUser);
-                this.findNDriveUnitOfWork.Commit();
+                return ResponseBuilder.Failure<User>("Failed to register");
             }
 
-            return new ServiceResponse<User>
-            {
-                Result = newUser,
-                ServiceResponseCode =
-                    validatedRegisterDTO.IsValid ? ServiceResponseCode.Success : ServiceResponseCode.Failure,
-                ErrorMessages = validatedRegisterDTO.ErrorMessages
-            };
+            WebSecurity.CreateUserAndAccount(register.User.UserName, register.Password);
+            register.User.UserId = WebSecurity.GetUserId(register.User.UserName);
+
+            var newUser = new User()
+                              {
+                                  EmailAddress = register.User.EmailAddress,
+                                  Role = Roles.User,
+                                  UserName = register.User.UserName,
+                                  UserId = register.User.UserId
+                              };
+
+            this.sessionManager.GenerateNewSession(newUser.UserId);
+            this.findNDriveUnitOfWork.UserRepository.Add(newUser);
+            this.findNDriveUnitOfWork.Commit();
+
+            return ResponseBuilder.Success(newUser);
         }
 
         /// <summary>
@@ -199,12 +208,7 @@ namespace FindNDriveServices2.Services
         public ServiceResponse<bool> LogoutUser(bool forceInvalidate)
         {
             var success = this.sessionManager.InvalidateSession(forceInvalidate);
- 
-            return new ServiceResponse<bool>
-            {
-                Result = success,
-                ServiceResponseCode = success ? ServiceResponseCode.Success : ServiceResponseCode.Failure
-            };
+            return ResponseBuilder.Success(success);
         }
 
         /// <summary>
@@ -234,54 +238,6 @@ namespace FindNDriveServices2.Services
 
             return ResponseBuilder.Failure<User>("Invalid user Id");
         }
-
-        /// <summary>
-        /// The add travel buddy.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        public ServiceResponse<User> AddTravelBuddy(FriendDTO user)
-        {
-            //TODO: Check if buddy is already in the list. Return error if yes.
-            var targetUser =
-                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                    .IncludeAll()
-                    .FirstOrDefault(_ => _.UserId == user.TargetUserId);
-
-            var newBuddy = this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                    .IncludeAll()
-                    .FirstOrDefault(_ => _.UserId == user.FriendUserId);
-
-            targetUser.Friends.Add(newBuddy);
-
-            this.findNDriveUnitOfWork.Commit();
-
-            return new ServiceResponse<User>()
-                       {
-                           Result = targetUser,
-                           ServiceResponseCode = ServiceResponseCode.Success
-                       };
-        }
-
-        public ServiceResponse<List<User>> GetTravelBuddies(int userId)
-        {
-            var user =
-                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                    .IncludeAll()
-                    .FirstOrDefault(_ => _.UserId == userId)
-                    .Friends.ToList();
-
-            return new ServiceResponse<List<User>>()
-                       {
-                           Result = user,
-                           ServiceResponseCode = ServiceResponseCode.Success
-                       };
-        }
     }
-    
 }
 

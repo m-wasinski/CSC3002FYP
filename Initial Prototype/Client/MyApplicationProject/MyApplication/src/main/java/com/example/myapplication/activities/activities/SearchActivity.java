@@ -1,5 +1,6 @@
 package com.example.myapplication.activities.activities;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,8 +13,10 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -23,9 +26,9 @@ import com.example.myapplication.activities.base.BaseMapActivity;
 import com.example.myapplication.activities.fragments.JourneyDetailsFragment;
 import com.example.myapplication.adapters.SearchResultsAdapter;
 import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.domain_objects.Journey;
-import com.example.myapplication.domain_objects.GeoAddress;
-import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.dtos.Journey;
+import com.example.myapplication.dtos.GeoAddress;
+import com.example.myapplication.dtos.ServiceResponse;
 import com.example.myapplication.experimental.GMapV2Direction;
 import com.example.myapplication.interfaces.FragmentClosed;
 import com.example.myapplication.interfaces.WCFServiceCallback;
@@ -58,21 +61,20 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
     private double departureRadiusValue;
     private double destinationRadiusValue;
     private DecimalFormat decimalFormat;
-    private ImageButton toggleSearchOptionsButton;
     private TextView toggleSearchResultsTextView;
     private TextView departureRadiusTextView;
     private TextView destinationRadiusTextView;
-    private LinearLayout searchPane;
+    private LinearLayout searchPaneHeaderLayout;
     private LinearLayout searchPaneOptions;
     private RelativeLayout resultsRelativeLayout;
     private RelativeLayout journeyDetailsRelativeLayout;
     private RelativeLayout parentSearchRelativeLayout;
     private Button searchButton;
-    private ImageButton optionsButton;
     private ListView searchResultsListView;
     private JourneyDetailsFragment journeyDetailsFragment;
     private int numOfSearchResults;
-
+    private ImageView arrowImageView;
+    private ProgressBar progressBar;
     private final int METERS_IN_MILE = 1600;
     private final int PROGRESS_BAR_UNITS = 160;
     @Override
@@ -80,12 +82,23 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_activity);
         actionBar.hide();
+        progressBar = (ProgressBar) findViewById(R.id.SearchActivityProgressBar);
         numOfSearchResults = 0;
         journeyDetailsRelativeLayout = (RelativeLayout) findViewById(R.id.ActivitySearchMapJourneyDetailsRelativeLayout);
         parentSearchRelativeLayout = (RelativeLayout) findViewById(R.id.ActivitySearchMapParentSearchRelativeLayout);
         searchResultsListView = (ListView) findViewById(R.id.ActivitySearchMapResultsListView);
         resultsRelativeLayout = (RelativeLayout) findViewById(R.id.ActivitySearchMapResultsRelativeLayout);
 
+        arrowImageView = (ImageView) findViewById(R.id.ActivitySearchMapArrowImageView);
+
+        searchPaneHeaderLayout = (LinearLayout) findViewById(R.id.ActivitySearchMapSearchHeaderLayout);
+        searchPaneHeaderLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                toggleSearchPaneVisibility();
+                return false;
+            }
+        });
         toggleSearchResultsTextView = (TextView) findViewById(R.id.ActivitySearchMapToggleResultsTextView);
         toggleSearchResultsTextView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -99,34 +112,20 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressBar.setVisibility(View.VISIBLE);
                 search();
             }
         });
 
-        optionsButton = (ImageButton) findViewById(R.id.ActivitySearchMapOptionsButton);
-        optionsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
         decimalFormat = new DecimalFormat("0.00");
-        searchPane = (LinearLayout) findViewById(R.id.ActivitySearchPaneLinearLayout);
         searchPaneOptions = (LinearLayout)findViewById(R.id.ActivitySearchPaneOptionsLinearLayout);
-
-        toggleSearchOptionsButton = (ImageButton) findViewById(R.id.ActivitySearchMapMinimizeButton);
-        toggleSearchOptionsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggleSearchPaneVisibility();
-            }
-        });
 
         departureRadiusTextView = (TextView) findViewById(R.id.ActivitySearchMapDepartureRadiusTextView);
 
         destinationRadiusTextView = (TextView) findViewById(R.id.ActivitySearchMapDestinationRadiusTextView);
 
         departureRadiusAddressSeekBar = (SeekBar) findViewById(R.id.ActivitySearchMapDepartureRadiusSeekBar);
+        departureRadiusAddressSeekBar.setEnabled(false);
         departureRadiusAddressSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -150,6 +149,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
             }
         });
         destinationRadiusAddressSeekBar = (SeekBar) findViewById(R.id.ActivitySearchMapDestinationRadiusSeekBar);
+        destinationRadiusAddressSeekBar.setEnabled(false);
         destinationRadiusAddressSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -173,12 +173,13 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
             }
         });
 
-        departureAddressEditText = (EditText) findViewById(R.id.MapActivityDepartureAddressTextView);
+
         destinationAddressEditText = (EditText) findViewById(R.id.MapActivityDestinationAddressTextView);
         destinationAddressEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     findNewLocation(destinationAddressEditText.getText().toString(), ModifiedMarker.Destination, destinationAddressEditText.getText().toString().isEmpty());
+                    destinationRadiusAddressSeekBar.setEnabled(destinationMarker != null);
                 }
             }
         });
@@ -189,17 +190,20 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
                 if(i == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_UP){
                     findNewLocation(destinationAddressEditText.getText().toString(), ModifiedMarker.Destination, destinationAddressEditText.getText().toString().isEmpty());
                     inputMethodManager.hideSoftInputFromWindow(destinationAddressEditText.getWindowToken(), 0);
+                    destinationRadiusAddressSeekBar.setEnabled(destinationMarker != null);
                 }
                 return false;
             }
         });
 
+        departureAddressEditText = (EditText) findViewById(R.id.MapActivityDepartureAddressTextView);
         departureAddressEditText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if(i == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_UP){
                     findNewLocation(departureAddressEditText.getText().toString(), ModifiedMarker.Departure, departureAddressEditText.getText().toString().isEmpty());
                     inputMethodManager.hideSoftInputFromWindow(departureAddressEditText.getWindowToken(), 0);
+                    departureRadiusAddressSeekBar.setEnabled(departureMarker != null);
                 }
                 return false;
             }
@@ -210,6 +214,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
                 if (!hasFocus) {
                     findNewLocation(departureAddressEditText.getText().toString(), ModifiedMarker.Departure, departureAddressEditText.getText().toString().isEmpty());
                     inputMethodManager.hideSoftInputFromWindow(departureAddressEditText.getWindowToken(), 0);
+                    departureRadiusAddressSeekBar.setEnabled(departureMarker != null);
                 }
             }
         });
@@ -274,6 +279,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
     @Override
     public void onServiceCallCompleted(final ServiceResponse<ArrayList<Journey>> serviceResponse, String parameter) {
         super.checkIfAuthorised(serviceResponse.ServiceResponseCode);
+        progressBar.setVisibility(View.GONE);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             numOfSearchResults = serviceResponse.Result.size();
@@ -281,12 +287,12 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
             {
                 toggleSearchResultsTextView.setText("Hide search results (" + numOfSearchResults +")");
                 searchResultsListView.setVisibility(View.VISIBLE);
-                searchPaneOptions.setVisibility(View.GONE);
+                parentSearchRelativeLayout.setVisibility(View.GONE);
             }
 
             DisplayMetrics metrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(metrics);
-            RelativeLayout.LayoutParams layout_description = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,  metrics.heightPixels /2);
+            RelativeLayout.LayoutParams layout_description = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, metrics.heightPixels);
             resultsRelativeLayout.setLayoutParams(layout_description);
 
             SearchResultsAdapter adapter = new SearchResultsAdapter(this, R.layout.fragment_search_results_listview_row, serviceResponse.Result);
@@ -315,6 +321,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
                         public void onFragmentClosed() {
                             getSupportFragmentManager().beginTransaction().remove(journeyDetailsFragment).commit();
                             parentSearchRelativeLayout.setVisibility(View.VISIBLE);
+                            arrowImageView.setImageResource(R.drawable.down);
                         }
                     });
                     journeyDetailsRelativeLayout.setVisibility(View.VISIBLE);
@@ -405,10 +412,17 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
     {
         searchResultsListView.setVisibility(searchResultsListView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
         toggleSearchResultsTextView.setText(searchResultsListView.getVisibility() == View.VISIBLE ? "Hide search results (" + numOfSearchResults +")" : "Show search results ("+ numOfSearchResults +")");
+        //searchPaneOptions.setVisibility(searchResultsListView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+        parentSearchRelativeLayout.setVisibility(searchResultsListView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+        if(journeyDetailsFragment != null)
+        {
+            getSupportFragmentManager().beginTransaction().remove(journeyDetailsFragment).commit();
+        }
     }
 
     private void toggleSearchPaneVisibility()
     {
         searchPaneOptions.setVisibility(searchPaneOptions.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+        arrowImageView.setImageResource(searchPaneOptions.getVisibility() == View.VISIBLE ? R.drawable.down : R.drawable.up);
     }
 }

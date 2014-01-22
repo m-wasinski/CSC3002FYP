@@ -40,13 +40,25 @@ namespace FindNDriveServices2
         /// <param name="registrationIds">
         /// The registration ids.
         /// </param>
+        /// <param name="notificationType">
+        /// The notification Type.
+        /// </param>
+        /// <param name="notificationArguments">
+        /// The notification Arguments.
+        /// </param>
+        /// <param name="contentTitle">
+        /// The notification Title.
+        /// </param>
         /// <param name="message">
         /// The message.
         /// </param>
-        public void SendMessage(Collection<string>registrationIds, int notificationType, int notificationArguments, string notificationTitle, string message)
+        public void SendNotification(
+            Collection<string> registrationIds,
+            int notificationType,
+            int notificationArguments,
+            string contentTitle,
+            string message)
         {
-            var convertedRegistrationIds = JsonConvert.SerializeObject(registrationIds);
-
             var gcmRequest = (HttpWebRequest)WebRequest.Create("https://android.googleapis.com/gcm/send");
             gcmRequest.KeepAlive = false;
             gcmRequest.Method = "POST";
@@ -55,17 +67,16 @@ namespace FindNDriveServices2
             gcmRequest.Headers.Add(string.Format("Authorization: key={0}", API_KEY));
             gcmRequest.Headers.Add(string.Format("Sender: id={0}", SENDER_ID));
 
-            var postData = "{ \"registration_ids\":" + convertedRegistrationIds + ", " +
+            var postData = "{ \"registration_ids\":" + JsonConvert.SerializeObject(registrationIds) + ", " +
              "\"data\": {\"tickerText\":\"" + string.Empty + "\", " +
-             "\"contentTitle\":\"" + notificationTitle + "\", " +
+             "\"contentTitle\":\"" + contentTitle + "\", " +
              "\"notificationType\":\"" + notificationType + "\", " +
              "\"notificationArguments\":\"" + notificationArguments + "\", " +
              "\"message\":" + message + "}}";
 
             // Write the string to a file.
-            System.IO.StreamWriter file = new System.IO.StreamWriter("c:\\CSC3002FYP\\test.txt");
+            var file = new StreamWriter("c:\\CSC3002FYP\\gcm_post_data.txt");
             file.WriteLine(postData);
-
             file.Close();
 
             var byteArray = Encoding.UTF8.GetBytes(postData);
@@ -79,11 +90,19 @@ namespace FindNDriveServices2
 
             dataStream = gcmResponse.GetResponseStream();
 
-            var reader = new StreamReader(dataStream);
+            if (dataStream != null)
+            {
+                var reader = new StreamReader(dataStream);
 
-            string response = reader.ReadToEnd();
-            reader.Close();
-            dataStream.Close();
+                string response = reader.ReadToEnd();
+                reader.Close();
+            }
+
+            if (dataStream != null)
+            {
+                dataStream.Close();
+            }
+
             gcmResponse.Close();
 
             

@@ -1,4 +1,4 @@
-package com.example.myapplication.domain_objects;
+package com.example.myapplication.dtos;
 
 /**
  * Created by Michal on 18/01/14.

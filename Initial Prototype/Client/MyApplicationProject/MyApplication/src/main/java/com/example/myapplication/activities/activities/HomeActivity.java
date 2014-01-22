@@ -15,13 +15,16 @@ import android.widget.TextView;
 
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.constants.GcmConstants;
-import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.domain_objects.User;
+import com.example.myapplication.constants.ServiceResponseCode;
+import com.example.myapplication.dtos.ServiceResponse;
+import com.example.myapplication.dtos.User;
 import com.example.myapplication.experimental.WakeLocker;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.example.myapplication.R;
 import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
 
 /**
  * Created by Michal on 14/01/14.
@@ -83,6 +86,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        appData.setCurrentlyVisibleActivity(this.getLocalClassName());
         refreshInformation();
     }
 
@@ -93,7 +97,10 @@ public class HomeActivity extends BaseActivity {
                 appData.getAuthorisationHeaders(), new WCFServiceCallback<User, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<User> serviceResponse, Void parameter) {
-                userRefreshed(serviceResponse.Result);
+                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
+                {
+                    userRefreshed(serviceResponse.Result);
+                }
             }
         }).execute();
 
@@ -102,7 +109,10 @@ public class HomeActivity extends BaseActivity {
                 appData.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {
-                notificationCountRetrieved(serviceResponse.Result);
+                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
+                {
+                    notificationCountRetrieved(serviceResponse.Result);
+                }
             }
         }).execute();
 
@@ -111,9 +121,23 @@ public class HomeActivity extends BaseActivity {
                 appData.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {
-                unreadMessagesCountRetrieved(serviceResponse.Result);
+                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
+                {
+                    unreadMessagesCountRetrieved(serviceResponse.Result);
+                }
             }
         }).execute();
+
+        /*new WCFServiceTask<Integer>(getResources().getString(R.string.GetFriendsURL), appData.getUser().UserId,
+                new TypeToken<ServiceResponse<ArrayList<User>>>() {}.getType(), appData.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<User>, Void>() {
+            @Override
+            public void onServiceCallCompleted(ServiceResponse<ArrayList<User>> serviceResponse, Void parameter) {
+                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
+                {
+                    friendsRetrieved(serviceResponse.Result);
+                }
+            }
+        }).execute();*/
     }
 
     private void setupUIEvents()
@@ -145,7 +169,7 @@ public class HomeActivity extends BaseActivity {
         friendsLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), FriendListActivity.class);
+                Intent intent = new Intent(getApplicationContext(), FriendsListActivity.class);
                 startActivity(intent);
             }
         });
@@ -175,5 +199,10 @@ public class HomeActivity extends BaseActivity {
     {
         unreadMessagesCountTextView.setText(count + " Messages");
         unreadMessagesCountTextView.setTypeface(null, count == 0 ? Typeface.NORMAL : Typeface.BOLD);
+    }
+
+    private void friendsRetrieved(ArrayList<User> friends)
+    {
+        appData.setFriends(friends);
     }
 }

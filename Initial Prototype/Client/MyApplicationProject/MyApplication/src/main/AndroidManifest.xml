@@ -36,6 +36,7 @@
     <!-- Permission to vibrate -->
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <uses-permission android:name="android.permission.GET_TASKS" />
     <application
         android:allowBackup="true"
         android:icon="@drawable/icon"
@@ -86,8 +87,8 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".activities.activities.FriendListActivity"
-            android:label="Manage Car Share" />
+            android:name=".activities.activities.FriendsListActivity"
+            android:label="Friends" />
 
         <activity
             android:name=".activities.activities.JourneyChatActivity"
@@ -107,7 +108,8 @@
         <activity
             android:name=".activities.activities.HomeActivity"
             android:label="Home"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"/>
 
         <activity
             android:name=".activities.activities.MyNotificationsActivity"
@@ -128,20 +130,12 @@
             </intent-filter>
         </receiver>
 
-        <receiver
-            android:name=".gcm.GcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <category android:name="com.example.gcm" />
-            </intent-filter>
-        </receiver>
-
         <service android:name=".gcm.GcmIntentService" />
         <!-- Goolge API Key -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAQYhCFfCMQuiqNQdDUof1QA1zXKTM4qKw" />
+
     </application>
 
 </manifest>

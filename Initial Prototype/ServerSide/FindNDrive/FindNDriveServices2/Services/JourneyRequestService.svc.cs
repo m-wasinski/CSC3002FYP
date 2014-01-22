@@ -136,14 +136,15 @@ namespace FindNDriveServices2.Services
                 targetJourney.Requests.Add(request);
                 this.findNDriveUnitOfWork.Commit();
 
-                this.gcmManager.SendMessage(
+                //TODO
+                /*this.gcmManager.SendMessage(
                     new Collection<string> { targetUser.GCMRegistrationID },
                     1,
                     0,
                     "New journey request!",
                     "You have received a new journey request from user " + requestingUser.UserName + " for journey id "
                     + targetJourney.JourneyId + " " + targetJourney.DepartureAddress.AddressLine + " to "
-                    + targetJourney.DestinationAddress.AddressLine);
+                    + targetJourney.DestinationAddress.AddressLine);*/
 
                 return ResponseBuilder.Success(request);
             }
@@ -215,12 +216,13 @@ namespace FindNDriveServices2.Services
                     ReceivedOnDate = DateTime.Now
                 });
 
-                this.gcmManager.SendMessage(
+                //TODO
+                /*this.gcmManager.SendMessage(
                     new Collection<string> { newPassenger.GCMRegistrationID },
                     1,
                     0,
                     "Journey request " + decision,
-                    message);
+                    message);*/
             }
 
             var request = this.findNDriveUnitOfWork.JourneyRequestRepository.Find(

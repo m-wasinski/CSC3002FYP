@@ -58,7 +58,9 @@
     <Compile Include="Constants\NotificationContext.cs" />
     <Compile Include="Constants\SessionConstants.cs" />
     <Compile Include="Constants\SessionTypes.cs" />
+    <Compile Include="Constants\Status.cs" />
     <Compile Include="Domains\ChatMessage.cs" />
+    <Compile Include="Domains\GCMNotification.cs" />
     <Compile Include="Domains\Journey.cs" />
     <Compile Include="Constants\Gender.cs" />
     <Compile Include="Constants\Roles.cs" />

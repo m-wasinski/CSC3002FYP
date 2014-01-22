@@ -9,8 +9,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.domain_objects.User;
+import com.example.myapplication.constants.StatusConstants;
+import com.example.myapplication.dtos.ServiceResponse;
+import com.example.myapplication.dtos.User;
 import com.example.myapplication.R;
 import com.example.myapplication.dtos.ChatMessageRetrieverDTO;
 import com.example.myapplication.experimental.AppData;
@@ -25,45 +26,49 @@ import java.util.ArrayList;
  */
 public class FriendsAdapter extends ArrayAdapter<User> {
 
-    private ArrayList<User> travelBuddies;
     private Context context;
     private int layoutResourceId;
     private ArrayList<User> friends;
     private AppData appData;
 
-    public FriendsAdapter(Context context, int resource, ArrayList<User> travelBuddies, ArrayList<User> friends, AppData appData) {
-        super(context, resource, travelBuddies);
-        this.travelBuddies = travelBuddies;
+    public FriendsAdapter(Context context, int resource, AppData appData, ArrayList<User> friends) {
+        super(context, resource, appData.getFriends());
         this.context = context;
         this.layoutResourceId = resource;
-        this.friends = friends;
         this.appData = appData;
+        this.friends = friends;
+    }
+
+    @Override
+    public int getCount() {
+        return this.friends.size();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
-        final TravelBuddyHolder holder;
+        final FriendHolder holder;
 
         if(row == null)
         {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
-            holder = new TravelBuddyHolder();
-            holder.profilePicture = (ImageView) row.findViewById(R.id.TravelBuddyListRowImage);
+            holder = new FriendHolder();
+            holder.profilePicture = (ImageView) row.findViewById(R.id.FriendListViewRowImage);
             holder.userNameTextView = (TextView) row.findViewById(R.id.TravelBuddyListRowNameTextView);
             holder.unreadMessagesCountTextView = (TextView) row.findViewById(R.id.FriendsListRowUnreadMessagesTextView);
+            holder.currentOnlineStatus = (ImageView) row.findViewById(R.id.FriendListViewRowStatusIcon);
             row.setTag(holder);
         }
         else
         {
-            holder = (TravelBuddyHolder)row.getTag();
+            holder = (FriendHolder)row.getTag();
         }
 
-        User travelBuddy = travelBuddies.get(position);
+        User friend = this.friends.get(position);
 
-        holder.userNameTextView.setText(travelBuddy.UserName);
-
+        holder.userNameTextView.setText(friend.UserName);
+        holder.currentOnlineStatus.setImageResource(friend.Status == StatusConstants.Online ? R.drawable.available : R.drawable.unavailable);
         new WCFServiceTask<ChatMessageRetrieverDTO>(getContext().getResources().getString(R.string.GetUnreadMessagesCountForFriendURL),
                 new ChatMessageRetrieverDTO(friends.get(position).UserId, appData.getUser().UserId),
                 new TypeToken<ServiceResponse<Integer>>() {}.getType(), appData.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
@@ -76,9 +81,10 @@ public class FriendsAdapter extends ArrayAdapter<User> {
         return row;
     }
 
-    class TravelBuddyHolder
+    class FriendHolder
     {
         ImageView profilePicture;
+        ImageView currentOnlineStatus;
         TextView userNameTextView;
         TextView unreadMessagesCountTextView;
     }

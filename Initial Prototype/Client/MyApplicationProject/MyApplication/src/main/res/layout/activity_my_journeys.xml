@@ -21,7 +21,7 @@
 
         <EditText
             android:layout_width="match_parent"
-            android:hint="Tap to filter"
+            android:hint="Search my journeys"
             android:paddingLeft="5sp"
             android:layout_height="?android:attr/actionBarSize"
             android:id="@+id/ActivityHomeFilterEditText"

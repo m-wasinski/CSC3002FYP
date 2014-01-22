@@ -12,9 +12,9 @@ import android.widget.TextView;
 
 import com.example.myapplication.activities.activities.ContactDriverActivity;
 import com.example.myapplication.activities.base.BaseFragment;
-import com.example.myapplication.domain_objects.Journey;
-import com.example.myapplication.domain_objects.JourneyRequest;
-import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.dtos.Journey;
+import com.example.myapplication.dtos.JourneyRequest;
+import com.example.myapplication.dtos.ServiceResponse;
 import com.example.myapplication.experimental.AppData;
 import com.example.myapplication.interfaces.FragmentClosed;
 import com.example.myapplication.interfaces.WCFServiceCallback;

@@ -95,8 +95,8 @@ namespace FindNDriveServices2.Contracts
         /// <summary>
         /// The mark messages as read for friend.
         /// </summary>
-        /// <param name="chatMessageRetrieverDTO">
-        /// The chat message retriever dto.
+        /// <param name="chatMessageDtos">
+        /// The chat Message Dtos.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
@@ -107,6 +107,6 @@ namespace FindNDriveServices2.Contracts
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/markasreadforfriend")]
-        ServiceResponse<bool> MarkMessagesAsReadForFriend(ChatMessageRetrieverDTO chatMessageRetrieverDTO);
+        ServiceResponse<bool> MarkMessagesAsRead(List<ChatMessageDTO> chatMessageDtos);
     }
 }

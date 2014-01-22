@@ -9,6 +9,7 @@
 
 namespace FindNDriveDataAccessLayer
 {
+    using System;
     using System.Data.Entity;
 
     using DomainObjects.Domains;
@@ -57,7 +58,13 @@ namespace FindNDriveDataAccessLayer
         /// <summary>
         /// Gets or sets the notification repository.
         /// </summary>
-        public IRepository<Notification> NotificationRepository { get; set; } 
+        public IRepository<Notification> NotificationRepository { get; set; }
+
+        /// <summary>
+        /// Gets or sets the gcm notifications repository.
+        /// </summary>
+        public IRepository<GCMNotification> GCMNotificationsRepository { get; set; } 
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FindNDriveUnitOfWork"/> class.
         /// </summary>
@@ -79,9 +86,21 @@ namespace FindNDriveDataAccessLayer
         /// <param name="chatMessageRepository">
         /// The chat Message Repository.
         /// </param>
-        public FindNDriveUnitOfWork(DbContext dbContext, IRepository<User> userRepository, IRepository<Journey> journeyRepository, 
-            IRepository<Session> sessionRepository, IRepository<JourneyRequest> journeyRequestRepository, 
-            IRepository<ChatMessage> chatMessageRepository, IRepository<Notification> notificationRepository)
+        /// <param name="notificationRepository">
+        /// The notification Repository.
+        /// </param>
+        /// <param name="gcmNotificationsRepository">
+        /// The gcm Notifications Repository.
+        /// </param>
+        public FindNDriveUnitOfWork(
+            DbContext dbContext,
+            IRepository<User> userRepository,
+            IRepository<Journey> journeyRepository,
+            IRepository<Session> sessionRepository,
+            IRepository<JourneyRequest> journeyRequestRepository,
+                                    IRepository<ChatMessage> chatMessageRepository,
+                                    IRepository<Notification> notificationRepository,
+                                    IRepository<GCMNotification> gcmNotificationsRepository)
         {
             this._dbContext = dbContext;
             this.UserRepository = userRepository;
@@ -90,6 +109,7 @@ namespace FindNDriveDataAccessLayer
             this.JourneyRequestRepository = journeyRequestRepository;
             this.ChatMessageRepository = chatMessageRepository;
             this.NotificationRepository = notificationRepository;
+            this.GCMNotificationsRepository = gcmNotificationsRepository;
         }
 
         /// <summary>

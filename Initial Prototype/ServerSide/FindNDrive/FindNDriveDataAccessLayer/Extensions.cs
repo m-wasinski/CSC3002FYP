@@ -60,5 +60,19 @@ namespace FindNDriveDataAccessLayer
         {
             return queryable.Include("User").Include("Journey");
         }
+
+        /// <summary>
+        /// The include all.
+        /// </summary>
+        /// <param name="queryable">
+        /// The queryable.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IQueryable"/>.
+        /// </returns>
+        public static IQueryable<GCMNotification> IncludeAll(this IQueryable<GCMNotification> queryable)
+        {
+            return queryable.Include("RegistrationIds");
+        }
     }
 }

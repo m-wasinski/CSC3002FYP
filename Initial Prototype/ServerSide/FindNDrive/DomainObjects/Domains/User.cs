@@ -11,7 +11,6 @@ namespace DomainObjects.Domains
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Runtime.Serialization;
@@ -86,5 +85,17 @@ namespace DomainObjects.Domains
         /// Gets or sets the travel buddies.
         /// </summary>
         public virtual ICollection<User> Friends { get; set; }
+
+        /// <summary>
+        /// Gets or sets the status.
+        /// </summary>
+        [DataMember]
+        public Status Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets the rating.
+        /// </summary>
+        [DataMember]
+        public int Rating { get; set; }
     }
 }

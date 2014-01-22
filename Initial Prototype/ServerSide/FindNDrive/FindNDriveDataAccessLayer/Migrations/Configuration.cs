@@ -51,6 +51,7 @@ namespace FindNDriveDataAccessLayer.Migrations
             AddAdministrator(context);
             AddJourneysAndPassengers(context);
             AddNotifications(context);
+            this.AddMessages(context);
         }
 
         /// <summary>
@@ -166,6 +167,8 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Friends = new Collection<User>{participant1, participant2}
             };
 
+            participant2.Friends = new Collection<User>(){driver};
+            context.SaveChanges();
             context.User.AddOrUpdate(_ => _.UserId, driver);
             context.SaveChanges();
 
@@ -746,6 +749,27 @@ namespace FindNDriveDataAccessLayer.Migrations
             };
 
             context.Journeys.AddOrUpdate(journey20);
+            
+        }
+
+        private void AddMessages(ApplicationContext context)
+        {
+            for (int i = 1; i <= 500; i++)
+            {
+                context.ChatMessages.Add(
+                    new ChatMessage()
+                        {
+                            ChatMessageId = i,
+                            Read = false,
+                            MessageBody = "Test message: " + i,
+                            SenderId = 2,
+                            RecipientId = 4,
+                            RecipientUserName = "jess",
+                            SentOnDate = DateTime.Now,
+                            SenderUserName = "john"
+                        });
+            }
+
             context.SaveChanges(); 
         }
 

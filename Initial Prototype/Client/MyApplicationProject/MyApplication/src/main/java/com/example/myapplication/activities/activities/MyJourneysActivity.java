@@ -23,9 +23,9 @@ import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.adapters.JourneyAdapter;
 import com.example.myapplication.constants.GcmConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.domain_objects.Journey;
+import com.example.myapplication.dtos.Journey;
 import com.example.myapplication.dtos.LoadRangeDTO;
-import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.dtos.ServiceResponse;
 import com.example.myapplication.experimental.WakeLocker;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;
@@ -195,8 +195,7 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
         switch (item.getItemId()) {
             case R.id.action_home:
                 finish();
-                intent = new Intent(this, HomeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent = new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 break;
             case R.id.logout_menu_option:

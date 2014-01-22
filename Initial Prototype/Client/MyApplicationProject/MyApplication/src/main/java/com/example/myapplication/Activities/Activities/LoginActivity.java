@@ -1,7 +1,6 @@
 package com.example.myapplication.activities.activities;
 
 import android.annotation.TargetApi;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,8 +22,8 @@ import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.constants.SessionConstants;
 import com.example.myapplication.constants.SharedPreferencesConstants;
-import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.domain_objects.User;
+import com.example.myapplication.dtos.ServiceResponse;
+import com.example.myapplication.dtos.User;
 import com.example.myapplication.dtos.LoginDTO;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;

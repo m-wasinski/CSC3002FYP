@@ -1,20 +1,23 @@
 package com.example.myapplication.activities.base;
 
+import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
 import com.example.myapplication.activities.activities.LoginActivity;
 import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.constants.SharedPreferencesConstants;
+import com.example.myapplication.dtos.ServiceResponse;
 import com.example.myapplication.experimental.AppData;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;
@@ -77,6 +80,7 @@ public class BaseActivity extends Activity {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     protected void exitApp(final boolean forceLogout)
     {
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
@@ -88,14 +92,31 @@ public class BaseActivity extends Activity {
                 forceLogout, new TypeToken<ServiceResponse<Boolean>>(){}.getType(), appData.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+
             }
         }).execute();
 
-        finish();
-        appData.setUser(null);
+        this.finish();
+
+        if(appData.getSessionId().endsWith("0") || forceLogout)
+        {
+            appData.setUser(null);
+            appData.setSessionId("");
+            SharedPreferences sharedPreferences = getSharedPreferences(SharedPreferencesConstants.GLOBAL_APP_DATA, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(SharedPreferencesConstants.PROPERTY_SESSION_ID, "");
+            editor.commit();
+            /*new GCMUnregisterTask(new GCMUnregistrationCallback() {
+                @Override
+                public void onGCMUnregistrationCompleted() {
+                    Log.i("Base Activity: ", "Device successfully unregistered from GCM");
+
+                }
+            }, this).execute();*/
+        }
+
         if(forceLogout)
         {
-            appData.setSessionId("");
             startActivity(intent);
         }
     }

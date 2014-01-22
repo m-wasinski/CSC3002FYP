@@ -89,5 +89,17 @@ namespace FindNDriveServices2.DTOs
         /// </summary>
         [DataMember]
         public virtual ICollection<User> Friends { get; set; }
+
+        /// <summary>
+        /// Gets or sets the status.
+        /// </summary>
+        [DataMember]
+        public Status Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets the rating.
+        /// </summary>
+        [DataMember]
+        public int Rating { get; set; }
     }
 }

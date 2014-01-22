@@ -185,7 +185,6 @@
         public void RefreshSession(Session session)
         {
             session.ExpiryDate = DateTime.Now.AddMinutes(30);
-            //this._findNDriveUnitOfWork.SessionRepository.Update(session);
             this._findNDriveUnitOfWork.Commit();
         }
 
@@ -218,9 +217,11 @@
                         //make the token expire in two weeks.
                         validUntil = DateTime.Now.AddDays(14);
                         sessionType = SessionTypes.Permanent;
+                        sessionId = sessionId+"1";
                     }
                     else
                     {
+                        sessionId = sessionId+"0"; 
                         if (savedSession != null)
                             savedSession.Uuid = randomId;
                     }
@@ -232,8 +233,6 @@
                         savedSession.ExpiryDate = validUntil;
                         savedSession.SessionType = sessionType;
                         savedSession.UserId = userId;
-                        //_findNDriveUnitOfWork.SessionRepository.Update(savedSession);
-                        this._findNDriveUnitOfWork.Commit();
                     }
                     else
                     {
@@ -284,10 +283,11 @@
                 if (userId != -1 && savedSession != null)
                 {
                     if (forceInvalidate || savedSession.SessionType == SessionTypes.Temporary)
-                    {   
+                    {
+                        var user = this._findNDriveUnitOfWork.UserRepository.Find(userId);
+                        user.Status = Status.Offline;
                         savedSession.ExpiryDate = DateTime.Now.AddDays(-1);
                         success = true;
-                        //this._findNDriveUnitOfWork.SessionRepository.Update(savedSession);
                         this._findNDriveUnitOfWork.Commit();
                     }
                 }

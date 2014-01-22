@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.example.myapplication.activities.activities.JourneyChatActivity;
 import com.example.myapplication.activities.activities.JourneyRequestsActivity;
 import com.example.myapplication.constants.JourneyStatus;
-import com.example.myapplication.domain_objects.Journey;
+import com.example.myapplication.dtos.Journey;
 import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.R;
 import com.google.gson.Gson;

@@ -8,9 +8,10 @@ import android.os.Build;
 
 import com.example.myapplication.constants.SessionConstants;
 import com.example.myapplication.constants.SharedPreferencesConstants;
-import com.example.myapplication.domain_objects.User;
+import com.example.myapplication.dtos.User;
 import com.example.myapplication.utilities.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -25,7 +26,9 @@ public class AppData extends Application {
     private String sessionId;
     private String registrationId;
     private String uniqueDeviceId;
-
+    private ArrayList<User> friends;
+    private String currentlyVisibleActivity;
+    private int currentChatRecipient;
     public void setSessionId(String sessionId)
     {
         this.sessionId = sessionId;
@@ -41,6 +44,15 @@ public class AppData extends Application {
         return user;
     }
 
+    public ArrayList<User> getFriends()
+    {
+        return this.friends;
+    }
+
+    public void setFriends(ArrayList<User> friends)
+    {
+        this.friends = friends;
+    }
     public void setUUID(String u)
     {
         uuid = u;
@@ -59,10 +71,31 @@ public class AppData extends Application {
         return sessionId;
     }
 
+    public void setCurrentlyVisibleActivity(String activityName)
+    {
+        this.currentlyVisibleActivity = activityName;
+    }
+
+    public String getCurrentlyVisibleActivity()
+    {
+        return this.currentlyVisibleActivity;
+    }
+
+    public int getCurrentChatRecipient()
+    {
+        return this.currentChatRecipient;
+    }
+
+    public void setCurrentChatRecipient(int id)
+    {
+        this.currentChatRecipient = id;
+    }
     public int getItemsPerCall()
     {
         return 10;
     }
+
+
     /**
      * Gets the current registration ID for application on GCM service.
      * <p>

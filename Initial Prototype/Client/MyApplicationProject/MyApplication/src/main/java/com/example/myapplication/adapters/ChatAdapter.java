@@ -6,16 +6,12 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.domain_objects.ChatMessage;
+import com.example.myapplication.dtos.ChatMessage;
 import com.example.myapplication.experimental.DateTimeHelper;
 
 import java.util.ArrayList;

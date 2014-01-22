@@ -45,6 +45,7 @@ public class GCMRegistrationTask extends AsyncTask<TextView, String, Boolean> {
 
             try {
                 registrationId = gcm.register(GcmConstants.SENDER_ID);
+
                 Log.e("ACQUIRED REGISTRATION ID", registrationId);
                 break;
             } catch (IOException ex) {

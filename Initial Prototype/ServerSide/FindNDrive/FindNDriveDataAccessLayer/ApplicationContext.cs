@@ -55,6 +55,8 @@ namespace FindNDriveDataAccessLayer
         /// </summary>
         public DbSet<Notification> Notifications { get; set; }
 
+        public DbSet<GCMNotification> GCMNotifications { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ApplicationContext"/> class.
         /// </summary>

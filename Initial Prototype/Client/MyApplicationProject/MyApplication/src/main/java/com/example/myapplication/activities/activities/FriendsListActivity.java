@@ -13,8 +13,8 @@ import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.adapters.FriendsAdapter;
 import com.example.myapplication.constants.GcmConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.domain_objects.User;
+import com.example.myapplication.dtos.ServiceResponse;
+import com.example.myapplication.dtos.User;
 import com.example.myapplication.experimental.WakeLocker;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;
@@ -26,18 +26,18 @@ import java.util.ArrayList;
 /**
  * Created by Michal on 04/01/14.
  */
-public class FriendListActivity extends BaseActivity implements WCFServiceCallback<ArrayList<User>, String> {
+public class FriendsListActivity extends BaseActivity implements WCFServiceCallback<ArrayList<User>, String> {
 
     private ListView travelBuddiesListView;
     private FriendsAdapter friendsAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.travel_buddy_list_activity);
+        setContentView(R.layout.friend_list_activity);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(GcmConstants.PROPERTY_ACTION_REFRESH);
         registerReceiver(GCMReceiver, intentFilter);
-        travelBuddiesListView = (ListView) findViewById(R.id.TravelBuddyListActivityListView);
+        travelBuddiesListView = (ListView) findViewById(R.id.FriendListActivityFriendsListView);
     }
 
     @Override
@@ -57,14 +57,18 @@ public class FriendListActivity extends BaseActivity implements WCFServiceCallba
         super.checkIfAuthorised(serviceResponse.ServiceResponseCode);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
-            friendsAdapter = new FriendsAdapter(this,  R.layout.travel_buddy_list_row, serviceResponse.Result, serviceResponse.Result, appData);
+            friendsAdapter = new FriendsAdapter(this,  R.layout.friend_list_listview_row, appData, serviceResponse.Result);
             travelBuddiesListView.setAdapter(friendsAdapter);
 
             travelBuddiesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     Intent intent = new Intent(getApplicationContext(), InstantMessengerActivity.class);
-                    intent.putExtra("Recipient", gson.toJson(serviceResponse.Result.get(i)));
+                    Bundle extras = new Bundle();
+                    extras.putString("RecipientUsername", serviceResponse.Result.get(i).UserName);
+                    extras.putInt("RecipientId", serviceResponse.Result.get(i).UserId);
+
+                    intent.putExtras(extras).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 }
             });

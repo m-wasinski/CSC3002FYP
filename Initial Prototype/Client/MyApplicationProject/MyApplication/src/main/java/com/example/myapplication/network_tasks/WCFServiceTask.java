@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.constants.SessionConstants;
-import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.dtos.ServiceResponse;
 import com.example.myapplication.experimental.SSLSocketFactory;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.utilities.Pair;

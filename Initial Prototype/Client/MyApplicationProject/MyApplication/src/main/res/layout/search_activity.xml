@@ -20,15 +20,25 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:id="@+id/ActivitySearchMapResultsRelativeLayout">
+
+        <ProgressBar
+            android:id="@+id/SearchActivityProgressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:indeterminateDrawable="@drawable/progress"
+            android:visibility="gone"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/SearchResultsHeader"
-            android:padding="5sp"
+            android:padding="10sp"
             android:gravity="center"
             android:id="@+id/ActivitySearchMapToggleResultsTextView"
             style="@style/RegularTextField"
@@ -45,142 +55,117 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:id="@+id/ActivitySearchMapParentSearchRelativeLayout">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#D9222930"
-        android:id="@+id/ActivitySearchPaneLinearLayout">
-
-        <!-- Dummy item to prevent AutoCompleteTextView from receiving focus -->
-        <LinearLayout
-            android:focusable="true" android:focusableInTouchMode="true"
-            android:layout_width="0px" android:layout_height="0px"/>
+        android:id="@+id/ActivitySearchMapParentSearchRelativeLayout"
+        android:focusable="true" android:focusableInTouchMode="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:background="#D9222930"
+            android:id="@+id/ActivitySearchPaneLinearLayout">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/SearchButtonText"
-                android:layout_marginLeft="5sp"
-                android:id="@+id/ActivitySearchMapMinimizeSearchLabelTextView"
-                style="@style/MyCarSharesHeader"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="right">
-
-                <ImageButton
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/minimize"
-                    android:layout_gravity="center"
-                    style="@style/TransparentButtonStyle"
-                    android:id="@+id/ActivitySearchMapMinimizeButton"/>
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:id="@+id/ActivitySearchMapSearchHeaderLayout">
 
-                <ImageButton
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/SearchButtonText"
+                        style="@style/MapSearchTitle"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/down"
+                        android:layout_marginLeft="10sp"
+                        android:id="@+id/ActivitySearchMapArrowImageView"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:id="@+id/ActivitySearchPaneOptionsLinearLayout">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="R: 0.00 miles"
+                            android:gravity="center"
+                            android:id="@+id/ActivitySearchMapDepartureRadiusTextView"
+                            style="@style/MapRadiusFields"/>
+
+                        <SeekBar
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/ActivitySearchMapDepartureRadiusSeekBar"
+                            android:max="50"/>
+
+                    </LinearLayout>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/MapActivityDepartureAddressTextView"
+                        android:hint="From: (City, Street, Post-Code)"
+                        style="@style/RegularTextField"
+                        android:layout_marginTop="10sp"
+                        android:singleLine="true"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="R: 0.00 miles"
+                            android:gravity="center"
+                            android:id="@+id/ActivitySearchMapDestinationRadiusTextView"
+                            style="@style/MapRadiusFields"/>
+
+                        <SeekBar
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/ActivitySearchMapDestinationRadiusSeekBar"
+                            android:max="50"/>
+
+                    </LinearLayout>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/MapActivityDestinationAddressTextView"
+                        android:hint="To: (City, Street, Post-Code)"
+                        style="@style/RegularTextField"
+                        android:layout_marginTop="10sp"
+                        android:singleLine="true"/>
+
+                <Button
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/settings"
-                    android:layout_gravity="center"
-                    style="@style/TransparentButtonStyle"
-                    android:id="@+id/ActivitySearchMapOptionsButton"/>
+                    android:text="Search"
+                    android:id="@+id/ActivitySearchMapSearchButton"
+                    android:layout_gravity="center_horizontal"
+                    style="@style/ButtonStyle"
+                    android:background="@drawable/button_selector"/>
 
             </LinearLayout>
-
-
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:id="@+id/ActivitySearchPaneOptionsLinearLayout">
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="R: 0.00 miles"
-                android:gravity="center"
-                android:id="@+id/ActivitySearchMapDepartureRadiusTextView"
-                style="@style/MapRadiusFields"/>
-
-            <SeekBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/ActivitySearchMapDepartureRadiusSeekBar"
-                android:max="50"/>
-
-        </LinearLayout>
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/MapActivityDepartureAddressTextView"
-            android:hint="From: (City, Street, Post-Code)"
-            style="@style/RegularTextField"
-            android:layout_marginTop="10sp"
-            android:singleLine="true"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="R: 0.00 miles"
-                android:gravity="center"
-                android:id="@+id/ActivitySearchMapDestinationRadiusTextView"
-                style="@style/MapRadiusFields"/>
-
-            <SeekBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/ActivitySearchMapDestinationRadiusSeekBar"
-                android:max="50"/>
-
-        </LinearLayout>
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/MapActivityDestinationAddressTextView"
-                android:hint="To: (City, Street, Post-Code)"
-                style="@style/RegularTextField"
-                android:layout_marginTop="10sp"
-                android:singleLine="true"/>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Search"
-            android:id="@+id/ActivitySearchMapSearchButton"
-            android:layout_gravity="center_horizontal"
-            style="@style/ButtonStyle"
-            android:background="@drawable/button_selector"/>
-
-    </LinearLayout>
-
-
-
-    </LinearLayout>
 
 
     </RelativeLayout>

@@ -14,18 +14,15 @@ namespace FindNDriveServices2.Services
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
-
-    using DomainObjects.Constants;
     using DomainObjects.Domains;
-
     using FindNDriveDataAccessLayer;
-
     using FindNDriveServices2.Contracts;
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
 
-    // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "SearchService" in code, svc and config file together.
-    // NOTE: In order to launch WCF Test Client for testing this service, please select SearchService.svc or SearchService.svc.cs at the Solution Explorer and start debugging.
+    /// <summary>
+    /// The search service.
+    /// </summary>
     [ServiceBehavior(
           InstanceContextMode = InstanceContextMode.PerCall,
           ConcurrencyMode = ConcurrencyMode.Multiple)]
@@ -37,48 +34,51 @@ namespace FindNDriveServices2.Services
         /// </summary>
         public SearchService()
         {
-                
         }
 
         /// <summary>
         /// The _find n drive unit of work.
         /// </summary>
-        private readonly FindNDriveUnitOfWork _findNDriveUnitOfWork;
+        private readonly FindNDriveUnitOfWork findNDriveUnitOfWork;
 
         /// <summary>
-        /// The _session manager.
+        /// The session manager.
         /// </summary>
-        private readonly SessionManager _sessionManager;
+        private readonly SessionManager sessionManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SearchService"/> class. 
-        /// Initializes a new instance of the <see cref="CarShareService"/> class.
         /// </summary>
-        /// <param name="findNDriveUnitOf">
-        /// The find n drive unit of.
+        /// <param name="findNDriveUnitOfWork">
+        /// The find N Drive Unit Of Work.
         /// </param>
         /// <param name="sessionManager">
         /// The session Manager.
         /// </param>
+        /// <param name="gcmManager">
+        /// The gcm Manager.
+        /// </param>
         public SearchService(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager, GCMManager gcmManager)
         {
-            this._findNDriveUnitOfWork = findNDriveUnitOfWork;
-            this._sessionManager = sessionManager;
+            this.findNDriveUnitOfWork = findNDriveUnitOfWork;
+            this.sessionManager = sessionManager;
         }
 
         /// <summary>
-        /// The search car shares.
+        /// The search for journeys.
         /// </summary>
         /// <param name="journey">
-        /// The car share.
+        /// The journey.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        /// <exception cref="NotImplementedException">
-        /// </exception>
         public ServiceResponse<List<Journey>> SearchForJourneys(JourneyDTO journey)
         {
+            if (!this.sessionManager.ValidateSession())
+            {
+                return ResponseBuilder.Unauthorised(new List<Journey>());
+            }
             /*var carShares =
                 this._findNDriveUnitOfWork.journeyRepository.AsQueryable()
                     .IncludeAll()
@@ -87,7 +87,7 @@ namespace FindNDriveServices2.Services
                     .ToList();*/
 
             var journeys =
-                this._findNDriveUnitOfWork.JourneyRepository.AsQueryable()
+                this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
                     .IncludeAll().ToList();
 
             if (journey.SearchByDate)

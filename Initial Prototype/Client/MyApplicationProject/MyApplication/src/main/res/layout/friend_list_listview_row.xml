@@ -2,23 +2,32 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="#80151515"
     android:layout_marginTop="2sp">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/TravelBuddyListRowImage"
+        android:id="@+id/FriendListViewRowStatusIcon"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20sp"
+        android:src="@drawable/available"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/FriendListViewRowImage"
+        android:layout_toRightOf="@+id/FriendListViewRowStatusIcon"
         android:src="@drawable/user_man"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Travel Buddy"
+        android:text="Friend"
         android:id="@+id/TravelBuddyListRowNameTextView"
         android:layout_gravity="center_horizontal"
-        android:layout_toRightOf="@+id/TravelBuddyListRowImage"
+        android:layout_toRightOf="@+id/FriendListViewRowImage"
         android:layout_centerInParent="true"
         style="@style/LoginFields"/>
 

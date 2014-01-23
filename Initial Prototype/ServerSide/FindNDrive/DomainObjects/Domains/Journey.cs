@@ -42,16 +42,10 @@ namespace DomainObjects.Domains
         public virtual User Driver { get; set; }
 
         /// <summary>
-        /// Gets or sets the departure city.
+        /// Gets or sets the travel locations.
         /// </summary>
-        [DataMember] 
-        public GeoAddress DepartureAddress { get; set; }
-
-        /// <summary>
-        /// Gets or sets the destination city.
-        /// </summary>
-        [DataMember] 
-        public GeoAddress DestinationAddress { get; set; }
+        [DataMember]
+        public virtual ICollection<GeoAddress> GeoAddresses { get; set; }
 
         /// <summary>
         /// Gets or sets the time of departure.

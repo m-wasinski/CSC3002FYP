@@ -35,6 +35,7 @@ public class HomeActivity extends BaseActivity {
     private LinearLayout searchLayout;
     private LinearLayout notificationsLayout;
     private LinearLayout friendsLayout;
+    private LinearLayout addNewJourneyLayout;
 
     private TextView generalNotificationsCountTextView;
     private TextView unreadMessagesCountTextView;
@@ -47,7 +48,7 @@ public class HomeActivity extends BaseActivity {
         searchLayout = (LinearLayout) findViewById(R.id.ActivityHomeSearchLayout);
         notificationsLayout = (LinearLayout) findViewById(R.id.ActivityHomeNotificationsLayout);
         friendsLayout = (LinearLayout) findViewById(R.id.ActivityHomeFriendsLayout);
-
+        addNewJourneyLayout = (LinearLayout) findViewById(R.id.ActivityHomeMyOfferJourneyLayout);
         generalNotificationsCountTextView = (TextView) findViewById(R.id.ActivityHomeNotificationCountTextView);
         unreadMessagesCountTextView =(TextView) findViewById(R.id.HomeActivityUnreadMessagesCountTextView);
         IntentFilter intentFilter = new IntentFilter();
@@ -170,6 +171,14 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), FriendsListActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        addNewJourneyLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), OfferJourneyActivity.class);
                 startActivity(intent);
             }
         });

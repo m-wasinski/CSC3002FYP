@@ -101,7 +101,7 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
         }
 
         holder.journeyId.setText("Journey id: " + journey.JourneyId);
-        holder.fromTo.setText(journey.DepartureAddress.AddressLine + " -> " + journey.DestinationAddress.AddressLine);
+        holder.fromTo.setText(journey.GeoAddresses.get(0).AddressLine + " -> " + journey.GeoAddresses.get(journey.GeoAddresses.size()-1).AddressLine);
         holder.departureDate.setText("Date: " + DateTimeHelper.getSimpleDate(journey.DateAndTimeOfDeparture));
         holder.departureTime.setText("Time: " + DateTimeHelper.getSimpleTime(journey.DateAndTimeOfDeparture));
         holder.availableSeats.setText("Available seats: " + journey.AvailableSeats);
@@ -173,7 +173,7 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
                 } else {
                     constraint = constraint.toString().toLowerCase();
                     for (int i = 0; i < originalCarShares.size(); i++) {
-                        String data = (originalCarShares.get(i).DepartureAddress.AddressLine + " " + originalCarShares.get(i).DestinationAddress.AddressLine).replace("->", "");
+                        String data = (originalCarShares.get(i).GeoAddresses.get(0).AddressLine + " " + originalCarShares.get(i).GeoAddresses.get(originalCarShares.get(i).GeoAddresses.size()-1).AddressLine).replace("->", "");
                         if (data.toLowerCase().contains(constraint.toString())) {
                             filteredValues.add(originalCarShares.get(i));
                         }

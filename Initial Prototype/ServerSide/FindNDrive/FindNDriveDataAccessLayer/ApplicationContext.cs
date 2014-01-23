@@ -126,6 +126,14 @@ namespace FindNDriveDataAccessLayer
                     map.ToTable("Friend_Mappings");
                 });
 
+            modelBuilder.Entity<Journey>()
+               .HasMany(_ => _.GeoAddresses).WithMany().Map(map =>
+               {
+                   map.MapLeftKey("JourneyId");
+                   map.MapRightKey("GeoAddressId");
+                   map.ToTable("Journey_GeoAddress");
+               });
+
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();   
         }
     }

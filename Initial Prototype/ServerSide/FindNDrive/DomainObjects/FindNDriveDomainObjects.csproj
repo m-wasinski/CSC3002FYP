@@ -68,6 +68,7 @@
     <Compile Include="Domains\JourneyMessage.cs" />
     <Compile Include="Domains\JourneyRequest.cs" />
     <Compile Include="Domains\GeoAddress.cs" />
+    <Compile Include="Domains\TravelLocation.cs" />
     <Compile Include="Domains\Notification.cs" />
     <Compile Include="Domains\Session.cs" />
     <Compile Include="Domains\User.cs" />

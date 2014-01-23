@@ -49,7 +49,7 @@ public class JourneyDetailsFragment extends BaseFragment {
         }.getType());
         appData = ((AppData)getActivity().getApplicationContext());
         journeyHeader = (TextView) view.findViewById(R.id.FragmentJourneyInformationFromToTextView);
-        journeyHeader.setText(carShare.DepartureAddress.AddressLine + " -> " + carShare.DestinationAddress.AddressLine);
+        journeyHeader.setText(carShare.GeoAddresses.get(0).AddressLine + " -> " + carShare.GeoAddresses.get(carShare.GeoAddresses.size()-1).AddressLine);
         contentLayout = (LinearLayout) view.findViewById(R.id.FragmentJourneyInformationContentLayout);
 
         closeButton = (ImageButton) view.findViewById(R.id.FragmentJourneyInformationCloseButton);

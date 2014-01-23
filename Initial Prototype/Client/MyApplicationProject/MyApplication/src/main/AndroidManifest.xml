@@ -121,6 +121,11 @@
             android:label="Chat"
             android:screenOrientation="portrait"/>
 
+        <activity
+            android:name=".activities.activities.OfferJourneyActivity"
+            android:label="New Journey"
+            android:screenOrientation="portrait"/>
+
         <receiver
             android:name=".gcm.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >

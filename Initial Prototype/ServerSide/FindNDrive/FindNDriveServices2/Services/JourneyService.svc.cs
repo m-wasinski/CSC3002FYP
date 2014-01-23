@@ -113,8 +113,6 @@ namespace FindNDriveServices2.Services
                              {
                                  AvailableSeats = journeyDTO.AvailableSeats,
                                  DateAndTimeOfDeparture = journeyDTO.DateAndTimeOfDeparture,
-                                 DepartureAddress = journeyDTO.DepartureAddress,
-                                 DestinationAddress = journeyDTO.DestinationAddress,
                                  Description = journeyDTO.Description,
                                  DriverId = journeyDTO.DriverId,
                                  Fee = journeyDTO.Fee,
@@ -123,7 +121,9 @@ namespace FindNDriveServices2.Services
                                  SmokersAllowed = journeyDTO.SmokersAllowed,
                                  VehicleType = journeyDTO.VehicleType,
                                  PetsAllowed = journeyDTO.PetsAllowed,
-                                 JourneyStatus = JourneyStatus.Upcoming
+                                 JourneyStatus = JourneyStatus.Upcoming,
+                                 GeoAddresses = journeyDTO.GeoAddresses,
+                                 CreationDate = journeyDTO.CreationDate
                              };
 
             this._findNDriveUnitOfWork.JourneyRepository.Add(newJourney);
@@ -203,8 +203,7 @@ namespace FindNDriveServices2.Services
             {
                 journey.AvailableSeats = journeyDTO.AvailableSeats;
                 journey.DateAndTimeOfDeparture = journeyDTO.DateAndTimeOfDeparture;
-                journey.DepartureAddress = journeyDTO.DepartureAddress;
-                journey.DestinationAddress = journeyDTO.DestinationAddress;
+                journey.GeoAddresses = journeyDTO.GeoAddresses;
                 journey.Description = journeyDTO.Description;
                 journey.DriverId = journeyDTO.DriverId;
                 journey.Fee = journeyDTO.Fee;

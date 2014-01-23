@@ -10,8 +10,7 @@ public class Journey {
     public int JourneyId;
     public int DriverId;
     public User Driver;
-    public GeoAddress DepartureAddress;
-    public GeoAddress DestinationAddress;
+    public ArrayList<GeoAddress> GeoAddresses;
     public String Description;
     public String DateAndTimeOfDeparture;
     public double Fee;
@@ -30,6 +29,7 @@ public class Journey {
     public int CarShareStatus;
     public ArrayList<JourneyMessage> Messages;
     public String CreationDate;
+
     public Journey()
     {
     }

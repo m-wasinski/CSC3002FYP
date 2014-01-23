@@ -1,6 +1,5 @@
 package com.example.myapplication.activities.activities;
 
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -64,12 +62,10 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
     private TextView toggleSearchResultsTextView;
     private TextView departureRadiusTextView;
     private TextView destinationRadiusTextView;
-    private LinearLayout searchPaneHeaderLayout;
     private LinearLayout searchPaneOptions;
     private RelativeLayout resultsRelativeLayout;
     private RelativeLayout journeyDetailsRelativeLayout;
     private RelativeLayout parentSearchRelativeLayout;
-    private Button searchButton;
     private ListView searchResultsListView;
     private JourneyDetailsFragment journeyDetailsFragment;
     private int numOfSearchResults;
@@ -77,6 +73,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
     private ProgressBar progressBar;
     private final int METERS_IN_MILE = 1600;
     private final int PROGRESS_BAR_UNITS = 160;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,10 +85,9 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         parentSearchRelativeLayout = (RelativeLayout) findViewById(R.id.ActivitySearchMapParentSearchRelativeLayout);
         searchResultsListView = (ListView) findViewById(R.id.ActivitySearchMapResultsListView);
         resultsRelativeLayout = (RelativeLayout) findViewById(R.id.ActivitySearchMapResultsRelativeLayout);
-
         arrowImageView = (ImageView) findViewById(R.id.ActivitySearchMapArrowImageView);
 
-        searchPaneHeaderLayout = (LinearLayout) findViewById(R.id.ActivitySearchMapSearchHeaderLayout);
+        LinearLayout searchPaneHeaderLayout = (LinearLayout) findViewById(R.id.ActivitySearchMapSearchHeaderLayout);
         searchPaneHeaderLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -108,7 +104,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
             }
         });
 
-        searchButton = (Button) findViewById(R.id.ActivitySearchMapSearchButton);
+        Button searchButton = (Button) findViewById(R.id.ActivitySearchMapSearchButton);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -153,12 +149,9 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         destinationRadiusAddressSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                if(destinationMarker != null && destinationRadius != null)
-                {
-                    destinationRadiusValue = destinationRadiusAddressSeekBar.getProgress()*PROGRESS_BAR_UNITS;
-                    destinationRadius.setRadius(destinationRadiusValue);
-                    destinationRadiusTextView.setText("R: " + decimalFormat.format(destinationRadiusValue / METERS_IN_MILE) + " miles");
-                }
+                destinationRadiusValue = destinationRadiusAddressSeekBar.getProgress()*PROGRESS_BAR_UNITS;
+                destinationRadius.setRadius(destinationRadiusValue);
+                destinationRadiusTextView.setText("R: " + decimalFormat.format(destinationRadiusValue / METERS_IN_MILE) + " miles");
             }
 
             @Override
@@ -173,36 +166,14 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
             }
         });
 
-
-        destinationAddressEditText = (EditText) findViewById(R.id.MapActivityDestinationAddressTextView);
-        destinationAddressEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    findNewLocation(destinationAddressEditText.getText().toString(), ModifiedMarker.Destination, destinationAddressEditText.getText().toString().isEmpty());
-                    destinationRadiusAddressSeekBar.setEnabled(destinationMarker != null);
-                }
-            }
-        });
-
-        destinationAddressEditText.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                if(i == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_UP){
-                    findNewLocation(destinationAddressEditText.getText().toString(), ModifiedMarker.Destination, destinationAddressEditText.getText().toString().isEmpty());
-                    inputMethodManager.hideSoftInputFromWindow(destinationAddressEditText.getWindowToken(), 0);
-                    destinationRadiusAddressSeekBar.setEnabled(destinationMarker != null);
-                }
-                return false;
-            }
-        });
-
+        //Departure edittext.
         departureAddressEditText = (EditText) findViewById(R.id.MapActivityDepartureAddressTextView);
         departureAddressEditText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if(i == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_UP){
-                    findNewLocation(departureAddressEditText.getText().toString(), ModifiedMarker.Departure, departureAddressEditText.getText().toString().isEmpty());
-                    inputMethodManager.hideSoftInputFromWindow(departureAddressEditText.getWindowToken(), 0);
+                    MarkerOptions markerOptions = getAddress(departureAddressEditText.getText().toString());
+                    showDeparturePoint(markerOptions);
                     departureRadiusAddressSeekBar.setEnabled(departureMarker != null);
                 }
                 return false;
@@ -212,10 +183,35 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         departureAddressEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    findNewLocation(departureAddressEditText.getText().toString(), ModifiedMarker.Departure, departureAddressEditText.getText().toString().isEmpty());
-                    inputMethodManager.hideSoftInputFromWindow(departureAddressEditText.getWindowToken(), 0);
+                    MarkerOptions markerOptions = getAddress(departureAddressEditText.getText().toString());
+                    showDeparturePoint(markerOptions);
                     departureRadiusAddressSeekBar.setEnabled(departureMarker != null);
                 }
+            }
+        });
+
+
+        //Destination edittext.
+        destinationAddressEditText = (EditText) findViewById(R.id.MapActivityDestinationAddressTextView);
+        destinationAddressEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    MarkerOptions markerOptions = getAddress(destinationAddressEditText.getText().toString());
+                    showDestinationPoint(markerOptions);
+                    destinationRadiusAddressSeekBar.setEnabled(destinationMarker != null);
+                }
+            }
+        });
+
+        destinationAddressEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if(i == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_UP){
+                    MarkerOptions markerOptions = getAddress(destinationAddressEditText.getText().toString());
+                    showDestinationPoint(markerOptions);
+                    destinationRadiusAddressSeekBar.setEnabled(destinationMarker != null);
+                }
+                return false;
             }
         });
 
@@ -262,8 +258,8 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
 
         Journey journey = new Journey();
 
-        journey.DepartureAddress = new GeoAddress(0, 0, "Belfast");
-        journey.DestinationAddress = new GeoAddress(0, 0, "Dublin");
+        //journey.DepartureAddress = new GeoAddress(0, 0, "Belfast");
+        //journey.DestinationAddress = new GeoAddress(0, 0, "Dublin");
         //journey.SmokersAllowed = smokers.isChecked();
         //journey.WomenOnly = womenOnly.isChecked();
         //journey.PetsAllowed = petsAllowed.isChecked();
@@ -336,16 +332,14 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
 
             for(Journey journey : serviceResponse.Result)
             {
-                googleMap.addMarker(new MarkerOptions().position(new LatLng(journey.DepartureAddress.Latitude, journey.DepartureAddress.Longitude)).title(journey.DepartureAddress.AddressLine)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                for(GeoAddress geoAddress : journey.GeoAddresses)
+                {
+                    googleMap.addMarker(new MarkerOptions().position(new LatLng(geoAddress.Latitude, geoAddress.Longitude)).title(geoAddress.AddressLine)
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
-                googleMap.addMarker(new MarkerOptions().position(new LatLng(journey.DestinationAddress.Latitude, journey.DestinationAddress.Longitude)).title(journey.DestinationAddress.AddressLine)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-
-
-                builder.include(new LatLng(journey.DepartureAddress.Latitude, journey.DepartureAddress.Longitude));
-                builder.include(new LatLng(journey.DestinationAddress.Latitude, journey.DestinationAddress.Longitude));
-
+                    builder.include(new LatLng(geoAddress.Latitude, geoAddress.Longitude));
+                    builder.include(new LatLng(geoAddress.Latitude, geoAddress.Longitude));
+                }
             }
 
             int padding = 100;
@@ -358,17 +352,16 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
     private void drawRouteOnMap(final Journey journey)
     {
         googleMap.clear();
-
-        googleMap.addMarker(new MarkerOptions().position(new LatLng(journey.DepartureAddress.Latitude, journey.DepartureAddress.Longitude)).title(journey.DepartureAddress.AddressLine)
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-
-        googleMap.addMarker(new MarkerOptions().position(new LatLng(journey.DestinationAddress.Latitude, journey.DestinationAddress.Longitude)).title(journey.DestinationAddress.AddressLine)
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-
-
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        builder.include(new LatLng(journey.DepartureAddress.Latitude, journey.DepartureAddress.Longitude));
-        builder.include(new LatLng(journey.DestinationAddress.Latitude, journey.DestinationAddress.Longitude));
+
+        for(GeoAddress geoAddress : journey.GeoAddresses)
+        {
+            googleMap.addMarker(new MarkerOptions().position(new LatLng(geoAddress.Latitude, geoAddress.Longitude)).title(geoAddress.AddressLine)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+
+            builder.include(new LatLng(geoAddress.Latitude, geoAddress.Longitude));
+            builder.include(new LatLng(geoAddress.Latitude, geoAddress.Longitude));
+        }
 
         int padding = 150;
         LatLngBounds bounds = builder.build();
@@ -399,8 +392,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
             @Override
             protected Void doInBackground(GoogleMap... googleMaps) {
                 gMapV2Direction = new GMapV2Direction();
-                doc = gMapV2Direction.getDocument(new LatLng(journey.DepartureAddress.Latitude, journey.DepartureAddress.Longitude),
-                        new LatLng(journey.DestinationAddress.Latitude, journey.DestinationAddress.Longitude), GMapV2Direction.MODE_DRIVING);
+                doc = gMapV2Direction.getDocument(journey.GeoAddresses, GMapV2Direction.MODE_DRIVING);
                 return null;
             }
         }.execute(googleMap);

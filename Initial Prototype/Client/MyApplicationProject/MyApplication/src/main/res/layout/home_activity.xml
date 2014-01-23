@@ -87,12 +87,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@drawable/home_navigation_selector"
+            android:gravity="center"
             android:layout_margin="10sp"
-            android:id="@+id/ActivityHomeMyOfferJourneyLayout"
             android:padding="15sp"
             android:layout_weight="1"
-            android:gravity="center">
+            android:clickable="true"
+            android:background="@drawable/home_navigation_selector"
+            android:id="@+id/ActivityHomeMyOfferJourneyLayout">
 
             <ImageButton
                 android:layout_width="wrap_content"

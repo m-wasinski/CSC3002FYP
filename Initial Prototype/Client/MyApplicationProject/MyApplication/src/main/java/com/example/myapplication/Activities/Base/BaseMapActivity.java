@@ -3,7 +3,6 @@ package com.example.myapplication.activities.base;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Address;
@@ -23,6 +22,7 @@ import com.example.myapplication.activities.activities.LoginActivity;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.experimental.AppData;
 import com.example.myapplication.experimental.GMapV2Direction;
+import com.example.myapplication.experimental.WaypointHolder;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -35,7 +35,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
+import org.apache.http.impl.conn.tsccm.WaitingThread;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,7 +52,6 @@ public class BaseMapActivity extends FragmentActivity
     protected LocationListener locationListener;
     protected Marker departureMarker;
     protected Marker destinationMarker;
-    protected int marker_count;
     protected GMapV2Direction gMapV2Direction;
     protected Location myLocation;
     protected LocationManager  locationManager;
@@ -61,44 +63,25 @@ public class BaseMapActivity extends FragmentActivity
     protected EditText departureAddressEditText;
     protected EditText destinationAddressEditText;
     protected InputMethodManager inputMethodManager;
+    protected ArrayList<WaypointHolder> waypointHolders;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        inputMethodManager = (InputMethodManager) this.getSystemService(this.INPUT_METHOD_SERVICE);
+        inputMethodManager = (InputMethodManager) this.getSystemService(INPUT_METHOD_SERVICE);
         appData = ((AppData)getApplication());
         gson = new Gson();
         actionBar = getActionBar();
         gMapV2Direction = new GMapV2Direction();
         geocoder = new Geocoder(this);
-        marker_count = 0;
-
-        locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                if (location != null) {
-                    centerMapOnMyLocation();
-                }
-            }
-
-            public void onProviderDisabled(String provider) {
-            }
-
-            public void onProviderEnabled(String provider) {
-            }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-            }
-        };
-
-
     }
 
-    protected void findNewLocation(String address, ModifiedMarker modifiedMarker, Boolean isEmpty)
+    protected MarkerOptions getAddress(String address)
     {
+        MarkerOptions markerOptions = null;
+
         if(Geocoder.isPresent()){
             try {
-                MarkerOptions markerOptions = null;
-
-                if(!isEmpty)
+                if(!address.isEmpty())
                 {
                     List<Address> addresses= geocoder.getFromLocationName(address, 1); // get the found Address Objects
 
@@ -117,85 +100,108 @@ public class BaseMapActivity extends FragmentActivity
                         LatLng latLng = new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude());
                         markerOptions = new MarkerOptions().position(latLng).title(addressText).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));;
                     }
-
                 }
-
-                showOnMap(markerOptions, modifiedMarker);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
+
+        return markerOptions;
     }
 
-    protected void showOnMap(MarkerOptions marker, ModifiedMarker modifiedMarker)
+    protected void showDeparturePoint(MarkerOptions markerOptions)
     {
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-
-        if(modifiedMarker == ModifiedMarker.Departure)
+        if(this.departureRadius != null)
         {
-            if(this.departureMarker != null)
-            {
-                if(departureRadius != null)
-                    this.departureRadius.remove();
-
-                this.departureMarker.remove();
-                this.departureMarker = null;
-                if(marker_count > 0)
-                    marker_count -= 1;
-            }
-
-            if(marker != null)
-            {
-                this.departureMarker = googleMap.addMarker(new MarkerOptions().position(marker.getPosition()).title(marker.getTitle())
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-                this.departureMarker.showInfoWindow();
-                this.departureRadius = googleMap.addCircle(new CircleOptions()
-                        .center(departureMarker.getPosition())
-                        .radius(0)
-                        .strokeColor(Color.rgb(15, 94, 135))
-                        .fillColor(Color.argb(50, 42, 124, 157)));
-                if(marker_count < 2)
-                    marker_count += 1;
-            }
-        }
-        else
-        {
-            if(this.destinationMarker != null)
-            {
-               if(destinationRadius != null)
-                    this.destinationRadius.remove();
-
-               this.destinationMarker.remove();
-               this.destinationMarker = null;
-               if(marker_count > 0)
-                    marker_count -= 1;
-            }
-
-            if(marker != null)
-            {
-                this.destinationMarker = googleMap.addMarker(new MarkerOptions().position(marker.getPosition()).title(marker.getTitle()));
-                this.destinationMarker.showInfoWindow();
-                this.destinationRadius = googleMap.addCircle(new CircleOptions()
-                        .center(destinationMarker.getPosition())
-                        .radius(0)
-                        .strokeColor(Color.rgb(15, 94, 135))
-                        .fillColor(Color.argb(50, 42, 124, 157)));
-                if(marker_count < 2)
-                    marker_count += 1;
-            }
+            this.departureRadius.remove();
         }
 
         if(this.departureMarker != null)
         {
-            builder.include(departureMarker.getPosition());
+            this.departureMarker.remove();
+            this.departureMarker = null;
+        }
 
+        if(markerOptions != null)
+        {
+            this.departureMarker = googleMap.addMarker(new MarkerOptions()
+                    .position(markerOptions.getPosition())
+                    .title(markerOptions.getTitle())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+
+            this.departureMarker.showInfoWindow();
+            this.departureRadius = googleMap.addCircle(new CircleOptions()
+                    .center(markerOptions.getPosition())
+                    .radius(0)
+                    .strokeColor(Color.rgb(15, 94, 135))
+                    .fillColor(Color.argb(50, 42, 124, 157)));
+        }
+
+        animateCamera();
+    }
+
+    protected void showDestinationPoint(MarkerOptions markerOptions)
+    {
+        if(this.destinationRadius != null)
+        {
+            this.destinationRadius.remove();
+        }
+
+        if(this.destinationMarker != null)
+        {
+            this.destinationMarker.remove();
+            this.destinationMarker = null;
+        }
+
+        if(markerOptions != null)
+        {
+            this.destinationMarker = googleMap.addMarker(new MarkerOptions()
+                    .position(markerOptions.getPosition())
+                    .title(markerOptions.getTitle())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+
+            this.destinationMarker.showInfoWindow();
+            this.destinationRadius = googleMap.addCircle(new CircleOptions()
+                    .center(markerOptions.getPosition())
+                    .radius(0)
+                    .strokeColor(Color.rgb(15, 94, 135))
+                    .fillColor(Color.argb(50, 42, 124, 157)));
+        }
+
+        animateCamera();
+    }
+
+    protected void animateCamera()
+    {
+        int marker_count = 0;
+        Marker marker = null;
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
+        if(this.departureMarker != null)
+        {
+            builder.include(departureMarker.getPosition());
+            marker = this.departureMarker;
+            marker_count += 1;
         }
 
         if(this.destinationMarker != null)
         {
             builder.include(destinationMarker.getPosition());
+            marker = this.destinationMarker;
+            marker_count += 1;
+        }
 
+        if(this.waypointHolders != null)
+        {
+            for(WaypointHolder waypointHolder : this.waypointHolders)
+            {
+                if(waypointHolder.googleMapMarker != null)
+                {
+                    builder.include(waypointHolder.googleMapMarker.getPosition());
+                    marker = waypointHolder.googleMapMarker;
+                    marker_count += 1;
+                }
+            }
         }
 
         if(marker_count == 0)
@@ -204,14 +210,14 @@ public class BaseMapActivity extends FragmentActivity
             return;
         }
 
-        CameraUpdate cameraUpdate;
+        CameraUpdate cameraUpdate = null;
 
         if(marker_count == 1)
         {
-            Marker marker1 = null;
-            marker1 = (this.departureMarker == null) ? this.destinationMarker : this.departureMarker;
-
-            cameraUpdate = CameraUpdateFactory.newLatLngZoom(marker1.getPosition(), 14);
+            if(marker != null)
+            {
+                cameraUpdate = CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 14);
+            }
         }
         else
         {
@@ -219,12 +225,14 @@ public class BaseMapActivity extends FragmentActivity
             Point size = new Point();
             display.getSize(size);
 
-            int padding = 100;
             LatLngBounds bounds = builder.build();
             cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 0);
         }
 
-        googleMap.animateCamera(cameraUpdate);
+        if(cameraUpdate != null)
+        {
+            googleMap.animateCamera(cameraUpdate);
+        }
     }
 
     protected void centerMapOnMyLocation() {
@@ -242,16 +250,6 @@ public class BaseMapActivity extends FragmentActivity
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-    }
-
     protected void checkIfAuthorised(int serviceResponseCode) {
 
         if(serviceResponseCode == ServiceResponseCode.UNAUTHORISED)
@@ -264,10 +262,5 @@ public class BaseMapActivity extends FragmentActivity
             Toast toast = Toast.makeText(this, "Your session has expired, you must log in again.", Toast.LENGTH_LONG);
             toast.show();
         }
-    }
-
-    protected enum ModifiedMarker{
-        Departure,
-        Destination
     }
 }

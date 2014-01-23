@@ -16,6 +16,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.example.myapplication.dtos.GeoAddress;
 import com.google.android.gms.maps.model.LatLng;
 
 import android.util.Log;
@@ -27,11 +28,24 @@ public class GMapV2Direction {
     public GMapV2Direction() {
     }
 
-    public Document getDocument(LatLng start, LatLng end, String mode) {
+    public Document getDocument(ArrayList<GeoAddress> geoAddresses, String mode) {
+
+        String waypoints = "";
+        for(int i = 1; i < geoAddresses.size()-1; i++)
+        {
+            waypoints = waypoints + geoAddresses.get(i).Latitude + "," + geoAddresses.get(i).Longitude;
+            if(i < geoAddresses.size()-2)
+            {
+                waypoints = waypoints +"%7C";
+            }
+        }
+
         String url = "http://maps.googleapis.com/maps/api/directions/xml?"
-                + "origin=" + start.latitude + "," + start.longitude
-                + "&destination=" + end.latitude + "," + end.longitude
+                + "origin=" + geoAddresses.get(0).Latitude + "," + geoAddresses.get(0).Longitude
+                + "&destination=" + geoAddresses.get(geoAddresses.size()-1).Latitude +","+geoAddresses.get(geoAddresses.size()-1).Longitude
+                + "&waypoints=" + waypoints
                 + "&sensor=false&units=metric&mode=driving";
+
         Log.d("url", url);
         try {
             HttpClient httpClient = new DefaultHttpClient();

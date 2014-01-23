@@ -38,6 +38,7 @@ public class BaseActivity extends Activity {
         finish();
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

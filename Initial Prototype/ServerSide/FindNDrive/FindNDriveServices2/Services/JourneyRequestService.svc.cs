@@ -111,12 +111,11 @@ namespace FindNDriveServices2.Services
 
                 this.findNDriveUnitOfWork.NotificationRepository.Add(new Notification
                 {   
+                    //TODO fix notification message for journey.
                     UserId = requestingUser.UserId,
                     NotificationBody =
                         "You sent a journey request to: " + targetUser.UserName
-                        + " for journey id: " + targetJourney.JourneyId + " "
-                        + targetJourney.DepartureAddress.AddressLine + " to "
-                        + targetJourney.DestinationAddress.AddressLine,
+                        + " for journey id: " + targetJourney.JourneyId,
                     Read = false,
                     Context = NotificationContext.Neutral,
                     ReceivedOnDate = DateTime.Now
@@ -198,11 +197,11 @@ namespace FindNDriveServices2.Services
                 }
             }
 
+            //TODO fix message for journey
             var decision = (journeyRequestDTO.Decision == JourneyRequestDecision.Accepted)
                                          ? "accepted."
                                          : "denied.";
-            var message = "Your request to join journey id: " + journey.JourneyId + " "
-                          + journey.DepartureAddress.AddressLine + " to " + journey.DestinationAddress.AddressLine
+            var message = "Your request to join journey id: " + journey.JourneyId
                           + " has been " + decision;
 
             if (newPassenger != null)

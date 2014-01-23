@@ -30,7 +30,12 @@ namespace FindNDriveDataAccessLayer
         /// </returns>
         public static IQueryable<Journey> IncludeAll(this IQueryable<Journey> queryable)
         {
-            return queryable.Include("Driver").Include("Participants").Include("Requests").Include("Messages").Include("DepartureAddress").Include("DestinationAddress");
+            return
+                queryable.Include("Driver")
+                    .Include("Participants")
+                    .Include("Requests")
+                    .Include("Messages")
+                    .Include("GeoAddresses");
         }
 
         /// <summary>

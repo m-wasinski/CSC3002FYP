@@ -23,6 +23,11 @@ namespace DomainObjects.Domains
         public int GeoAddressId { get; set; }
 
         /// <summary>
+        /// Gets or sets the order.
+        /// </summary>
+        public int Order { get; set; }
+
+        /// <summary>
         /// Gets or sets the address line.
         /// </summary>
         [DataMember]

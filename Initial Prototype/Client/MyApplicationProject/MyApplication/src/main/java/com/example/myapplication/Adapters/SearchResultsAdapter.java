@@ -57,7 +57,7 @@ public class SearchResultsAdapter extends ArrayAdapter<Journey> {
 
         Journey carShare = CarShares.get(position);
 
-        holder.fromToTextView.setText(carShare.DepartureAddress.AddressLine + " -> " + carShare.DestinationAddress.AddressLine);
+        holder.fromToTextView.setText(carShare.GeoAddresses.get(0).AddressLine + " -> " + carShare.GeoAddresses.get(carShare.GeoAddresses.size()-1).AddressLine);
 //        holder.journeyIdTextView.setText("Journey id: " + carShare.JourneyId);
 //        holder.driverNameTextView.setText("Driver: " + carShare.Driver.FirstName + " " + carShare.Driver.LastName);
         holder.dateTextView.setText("Date: " + DateTimeHelper.getSimpleDate(carShare.DateAndTimeOfDeparture));

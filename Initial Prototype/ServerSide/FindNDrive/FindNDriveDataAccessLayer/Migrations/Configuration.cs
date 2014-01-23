@@ -188,568 +188,73 @@ namespace FindNDriveDataAccessLayer.Migrations
             };
 
             context.Sessions.AddOrUpdate(_ => _.UserId, session3);
-
+             
             context.SaveChanges();
 
-            var journey1 = new Journey
-            {
-                AvailableSeats = 4,
-                DateAndTimeOfDeparture = new DateTime(2014, 2, 1, 20, 15, 0, cal),
-                DepartureAddress = new GeoAddress()
-                {
-                    AddressLine = "Belfast",
-                    Latitude = 54.5970,
-                    Longitude = -5.9300
-                },
-                DestinationAddress = new GeoAddress()
-                {
-                    AddressLine = "Dublin",
-                    Latitude = 53.3478,
-                    Longitude = -6.2597
-                },
-                Description = "Free ride to Dublin!",
-                Fee = 0.00,
-                WomenOnly = false,
-                Driver = driver,
-                SmokersAllowed = false,
-                JourneyStatus = JourneyStatus.Upcoming,
-                CreationDate = new DateTime(2014, 1, 1, 20, 15, 0, cal),
-            };
+            var geoAddress1 = new GeoAddress { AddressLine = "Dublin", Latitude = 53.3478, Longitude = -6.2597, Order = 1};
+            var geoAddress2 = new GeoAddress { AddressLine = "Warrenpoint", Latitude = 54.09900, Longitude = -6.24900, Order = 2 };
+            var geoAddress3 = new GeoAddress { AddressLine = "Belfast", Latitude = 54.5970, Longitude = -5.9300, Order = 3};
 
-            context.Journeys.AddOrUpdate(journey1);
+            for(int i = 0; i < 20; i++)
+            {
+                context.Journeys.AddOrUpdate(
+                    new Journey
+                        {
+                            AvailableSeats = 4,
+                            DateAndTimeOfDeparture = new DateTime(2014, 2, 1, 20, 15, 0, cal),
+                            GeoAddresses = new Collection<GeoAddress> { geoAddress1, geoAddress2, geoAddress3 },
+                            Description = "Free ride to Dublin!",
+                            Fee = 0.00,
+                            WomenOnly = false,
+                            Driver = driver,
+                            SmokersAllowed = false,
+                            JourneyStatus = JourneyStatus.Upcoming,
+                            CreationDate = new DateTime(2014, 1, 1, 20, 15, 0, cal),
+                        });
+            }
+
+            var geoAddress4 = new GeoAddress { AddressLine = "London", Latitude = 51.5072, Longitude = 0.12755, Order = 4 };
+            var geoAddress5 = new GeoAddress { AddressLine = "Manchester", Latitude = 53.4667, Longitude = -2.247926, Order = 5 };
+
+            for (int i = 0; i < 20; i++)
+            {
+                context.Journeys.AddOrUpdate(
+                    new Journey
+                    {
+                        AvailableSeats = 4,
+                        DateAndTimeOfDeparture = new DateTime(2014, 2, 1, 20, 15, 0, cal),
+                        GeoAddresses = new Collection<GeoAddress> { geoAddress4, geoAddress5},
+                        Description = "London to Manchester",
+                        Fee = 0.00,
+                        WomenOnly = false,
+                        Driver = driver,
+                        SmokersAllowed = false,
+                        JourneyStatus = JourneyStatus.Upcoming,
+                        CreationDate = new DateTime(2014, 1, 1, 20, 15, 0, cal),
+                    });
+            }
+
+
+
+            for (int i = 0; i < 20; i++)
+            {
+                context.Journeys.AddOrUpdate(
+                    new Journey
+                    {
+                        AvailableSeats = 4,
+                        DateAndTimeOfDeparture = new DateTime(2014, 2, 1, 20, 15, 0, cal),
+                        GeoAddresses = new Collection<GeoAddress> { geoAddress1, geoAddress2, geoAddress3, geoAddress4, geoAddress5 },
+                        Description = "Ultimate trip!",
+                        Fee = 0.00,
+                        WomenOnly = false,
+                        Driver = driver,
+                        SmokersAllowed = false,
+                        JourneyStatus = JourneyStatus.Upcoming,
+                        CreationDate = new DateTime(2014, 1, 1, 20, 15, 0, cal),
+                    });
+            }
+
             context.SaveChanges();
-
-            var journey2 = new Journey
-            {
-                AvailableSeats = 1,
-                DateAndTimeOfDeparture = new DateTime(2014, 6, 6, 15, 30, 0, cal),
-                DepartureAddress = new GeoAddress()
-                {
-                    AddressLine = "London",
-                    Latitude = 51.5072,
-                    Longitude = -0.1275
-                },
-                DestinationAddress = new GeoAddress()
-                {
-                    AddressLine = "Manchester",
-                    Latitude = 53.4667,
-                    Longitude = -2.2333
-                },
-                Description = "Free ride to Dublin!",
-                Fee = 0.00,
-                WomenOnly = false,
-                Driver = driver,
-                SmokersAllowed = false,
-                JourneyStatus = JourneyStatus.Upcoming,
-                CreationDate = new DateTime(2014, 1, 2, 20, 15, 0, cal),
-            };
-
-            context.Journeys.AddOrUpdate(journey2);
-            context.SaveChanges();
-
-            var journey3 = new Journey
-            {
-                AvailableSeats = 2,
-                DateAndTimeOfDeparture = new DateTime(2014, 3, 1, 20, 15, 0, cal),
-                DepartureAddress = new GeoAddress()
-                {
-                    AddressLine = "Belfast",
-                    Latitude = 54.5970,
-                    Longitude = -5.9300
-                },
-                DestinationAddress = new GeoAddress()
-                {
-                    AddressLine = "Dublin",
-                    Latitude = 53.3478,
-                    Longitude = -6.2597
-                },
-                Description = "Free ride to Dublin!",
-                Fee = 0.00,
-                WomenOnly = false,
-                Driver = driver,
-                SmokersAllowed = false,
-                JourneyStatus = JourneyStatus.Upcoming,
-                CreationDate = new DateTime(2014, 1, 3, 20, 15, 0, cal),
-            };
-
-            context.Journeys.AddOrUpdate(journey3);
-            context.SaveChanges();
-
-            var journey4 = new Journey
-            {
-                AvailableSeats = 4,
-                DateAndTimeOfDeparture = new DateTime(2014, 4, 1, 20, 15, 0, cal),
-                DepartureAddress = new GeoAddress()
-                {
-                    AddressLine = "Belfast",
-                    Latitude = 54.5970,
-                    Longitude = -5.9300
-                },
-                DestinationAddress = new GeoAddress()
-                {
-                    AddressLine = "Dublin",
-                    Latitude = 53.3478,
-                    Longitude = -6.2597
-                },
-                Description = "Free ride to Dublin!",
-                Fee = 0.00,
-                WomenOnly = false,
-                Driver = driver,
-                SmokersAllowed = false,
-                JourneyStatus = JourneyStatus.Upcoming,
-                CreationDate = new DateTime(2014, 1, 4, 20, 15, 0, cal),
-            };
-
-            context.Journeys.AddOrUpdate(journey4);
-            context.SaveChanges();
-
-            var journey5 = new Journey
-            {
-                AvailableSeats = 7,
-                DateAndTimeOfDeparture = new DateTime(2014, 5, 1, 20, 15, 0, cal),
-                DepartureAddress = new GeoAddress()
-                {
-                    AddressLine = "Belfast",
-                    Latitude = 54.5970,
-                    Longitude = -5.9300
-                },
-                DestinationAddress = new GeoAddress()
-                {
-                    AddressLine = "Dublin",
-                    Latitude = 53.3478,
-                    Longitude = -6.2597
-                },
-                Description = "Free ride to Dublin!",
-                Fee = 0.00,
-                WomenOnly = false,
-                Driver = driver,
-                SmokersAllowed = false,
-                JourneyStatus = JourneyStatus.Upcoming,
-                CreationDate = new DateTime(2014, 1, 5, 20, 15, 0, cal),
-            };
-
-            context.Journeys.AddOrUpdate(journey5);
-            context.SaveChanges();
-
-            var journey6 = new Journey
-            {
-                AvailableSeats = 1,
-                DateAndTimeOfDeparture = new DateTime(2014, 6, 1, 20, 15, 0, cal),
-                DepartureAddress = new GeoAddress()
-                {
-                    AddressLine = "Belfast",
-                    Latitude = 54.5970,
-                    Longitude = -5.9300
-                },
-                DestinationAddress = new GeoAddress()
-                {
-                    AddressLine = "Dublin",
-                    Latitude = 53.3478,
-                    Longitude = -6.2597
-                },
-                Description = "Free ride to Dublin!",
-                Fee = 0.00,
-                WomenOnly = false,
-                Driver = driver,
-                SmokersAllowed = false,
-                JourneyStatus = JourneyStatus.Upcoming,
-                CreationDate = new DateTime(2014, 1, 6, 20, 15, 0, cal),
-            };
-
-            context.Journeys.AddOrUpdate(journey6);
-            context.SaveChanges();
-
-            var journey7 = new Journey
-            {
-                AvailableSeats = 4,
-                DateAndTimeOfDeparture = new DateTime(2014, 7, 1, 20, 15, 0, cal),
-                DepartureAddress = new GeoAddress()
-                {
-                    AddressLine = "Belfast",
-                    Latitude = 54.5970,
-                    Longitude = -5.9300
-                },
-                DestinationAddress = new GeoAddress()
-                {
-                    AddressLine = "Dublin",
-                    Latitude = 53.3478,
-                    Longitude = -6.2597
-                },
-                Description = "Free ride to Dublin!",
-                Fee = 0.00,
-                WomenOnly = false,
-                Driver = driver,
-                SmokersAllowed = false,
-                JourneyStatus = JourneyStatus.Upcoming,
-                CreationDate = new DateTime(2014, 1, 7, 20, 15, 0, cal),
-            };
-
-            context.Journeys.AddOrUpdate(journey7);
-            context.SaveChanges();
-
-            var journey8 = new Journey
-            {
-                AvailableSeats = 10,
-                DateAndTimeOfDeparture = new DateTime(2014, 8, 1, 20, 15, 0, cal),
-                DepartureAddress = new GeoAddress()
-                {
-                    AddressLine = "Belfast",
-                    Latitude = 54.5970,
-                    Longitude = -5.9300
-                },
-                DestinationAddress = new GeoAddress()
-                {
-                    AddressLine = "Dublin",
-                    Latitude = 53.3478,
-                    Longitude = -6.2597
-                },
-                Description = "Free ride to Dublin!",
-                Fee = 0.00,
-                WomenOnly = false,
-                Driver = driver,
-                SmokersAllowed = false,
-                JourneyStatus = JourneyStatus.Upcoming,
-                CreationDate = new DateTime(2014, 1, 8, 20, 15, 0, cal),
-            };
-
-            context.Journeys.AddOrUpdate(journey8);
-            context.SaveChanges();
-
-            var journey9 = new Journey
-            {
-                AvailableSeats = 2,
-                DateAndTimeOfDeparture = new DateTime(2014, 9, 1, 20, 15, 0, cal),
-                DepartureAddress = new GeoAddress()
-                {
-                    AddressLine = "Belfast",
-                    Latitude = 54.5970,
-                    Longitude = -5.9300
-                },
-                DestinationAddress = new GeoAddress()
-                {
-                    AddressLine = "Dublin",
-                    Latitude = 53.3478,
-                    Longitude = -6.2597
-                },
-                Description = "Free ride to Dublin!",
-                Fee = 0.00,
-                WomenOnly = false,
-                Driver = driver,
-                SmokersAllowed = false,
-                JourneyStatus = JourneyStatus.Upcoming,
-                CreationDate = new DateTime(2014, 1, 9, 20, 15, 0, cal),
-            };
-
-            context.Journeys.AddOrUpdate(journey9);
-            context.SaveChanges();
-
-            var journey10 = new Journey
-            {
-                AvailableSeats = 4,
-                DateAndTimeOfDeparture = new DateTime(2014, 10, 1, 20, 15, 0, cal),
-                DepartureAddress = new GeoAddress()
-                {
-                    AddressLine = "Belfast",
-                    Latitude = 54.5970,
-                    Longitude = -5.9300
-                },
-                DestinationAddress = new GeoAddress()
-                {
-                    AddressLine = "Dublin",
-                    Latitude = 53.3478,
-                    Longitude = -6.2597
-                },
-                Description = "Free ride to Dublin!",
-                Fee = 0.00,
-                WomenOnly = false,
-                Driver = driver,
-                SmokersAllowed = false,
-                JourneyStatus = JourneyStatus.Upcoming,
-                CreationDate = new DateTime(2014, 1, 10, 20, 15, 0, cal),
-            };
-
-            context.Journeys.AddOrUpdate(journey10);
-            context.SaveChanges();
-
-            var journey11 = new Journey
-            {
-                AvailableSeats = 4,
-                DateAndTimeOfDeparture = new DateTime(2014, 2, 3, 20, 15, 0, cal),
-                DepartureAddress = new GeoAddress()
-                {
-                    AddressLine = "Belfast",
-                    Latitude = 54.5970,
-                    Longitude = -5.9300
-                },
-                DestinationAddress = new GeoAddress()
-                {
-                    AddressLine = "Dublin",
-                    Latitude = 53.3478,
-                    Longitude = -6.2597
-                },
-                Description = "Free ride to Dublin!",
-                Fee = 0.00,
-                WomenOnly = false,
-                Driver = driver,
-                SmokersAllowed = false,
-                JourneyStatus = JourneyStatus.Upcoming,
-                CreationDate = new DateTime(2014, 1, 11, 20, 15, 0, cal),
-            };
-
-            context.Journeys.AddOrUpdate(journey11);
-            context.SaveChanges();
-
-            var journey12 = new Journey
-            {
-                AvailableSeats = 4,
-                DateAndTimeOfDeparture = new DateTime(2014, 4, 5, 20, 15, 0, cal),
-                DepartureAddress = new GeoAddress()
-                {
-                    AddressLine = "Belfast",
-                    Latitude = 54.5970,
-                    Longitude = -5.9300
-                },
-                DestinationAddress = new GeoAddress()
-                {
-                    AddressLine = "Dublin",
-                    Latitude = 53.3478,
-                    Longitude = -6.2597
-                },
-                Description = "Free ride to Dublin!",
-                Fee = 0.00,
-                WomenOnly = false,
-                Driver = driver,
-                SmokersAllowed = false,
-                JourneyStatus = JourneyStatus.Upcoming,
-                CreationDate = new DateTime(2014, 1, 12, 20, 15, 0, cal),
-            };
-
-            context.Journeys.AddOrUpdate(journey12);
-            context.SaveChanges();
-
-            var journey13 = new Journey
-            {
-                AvailableSeats = 4,
-                DateAndTimeOfDeparture = new DateTime(2014, 5, 2, 20, 15, 0, cal),
-                DepartureAddress = new GeoAddress()
-                {
-                    AddressLine = "Belfast",
-                    Latitude = 54.5970,
-                    Longitude = -5.9300
-                },
-                DestinationAddress = new GeoAddress()
-                {
-                    AddressLine = "Dublin",
-                    Latitude = 53.3478,
-                    Longitude = -6.2597
-                },
-                Description = "Free ride to Dublin!",
-                Fee = 0.00,
-                WomenOnly = false,
-                Driver = driver,
-                SmokersAllowed = false,
-                JourneyStatus = JourneyStatus.Upcoming,
-                CreationDate = new DateTime(2014, 1, 13, 20, 15, 0, cal),
-            };
-
-            context.Journeys.AddOrUpdate(journey13);
-            context.SaveChanges();
-
-            var journey14 = new Journey
-            {
-                AvailableSeats = 4,
-                DateAndTimeOfDeparture = new DateTime(2014, 5, 2, 20, 15, 0, cal),
-                DepartureAddress = new GeoAddress()
-                {
-                    AddressLine = "Belfast",
-                    Latitude = 54.5970,
-                    Longitude = -5.9300
-                },
-                DestinationAddress = new GeoAddress()
-                {
-                    AddressLine = "Dublin",
-                    Latitude = 53.3478,
-                    Longitude = -6.2597
-                },
-                Description = "Free ride to Dublin!",
-                Fee = 0.00,
-                WomenOnly = false,
-                Driver = driver,
-                SmokersAllowed = false,
-                JourneyStatus = JourneyStatus.Upcoming,
-                CreationDate = new DateTime(2014, 1, 14, 20, 15, 0, cal),
-            };
-
-            context.Journeys.AddOrUpdate(journey14);
-            context.SaveChanges();
-
-            var journey15 = new Journey
-            {
-                AvailableSeats = 4,
-                DateAndTimeOfDeparture = new DateTime(2014, 2, 1, 20, 15, 0, cal),
-                DepartureAddress = new GeoAddress()
-                {
-                    AddressLine = "Belfast",
-                    Latitude = 54.5970,
-                    Longitude = -5.9300
-                },
-                DestinationAddress = new GeoAddress()
-                {
-                    AddressLine = "Dublin",
-                    Latitude = 53.3478,
-                    Longitude = -6.2597
-                },
-                Description = "Free ride to Dublin!",
-                Fee = 0.00,
-                WomenOnly = false,
-                Driver = driver,
-                SmokersAllowed = false,
-                JourneyStatus = JourneyStatus.Upcoming,
-                CreationDate = new DateTime(2014, 1, 15, 20, 15, 0, cal),
-            };
-
-            context.Journeys.AddOrUpdate(journey15);
-            context.SaveChanges();
-
-            var journey16 = new Journey
-            {
-                AvailableSeats = 4,
-                DateAndTimeOfDeparture = new DateTime(2014, 7, 7, 20, 15, 0, cal),
-                DepartureAddress = new GeoAddress()
-                {
-                    AddressLine = "Belfast",
-                    Latitude = 54.5970,
-                    Longitude = -5.9300
-                },
-                DestinationAddress = new GeoAddress()
-                {
-                    AddressLine = "Dublin",
-                    Latitude = 53.3478,
-                    Longitude = -6.2597
-                },
-                Description = "Free ride to Dublin!",
-                Fee = 0.00,
-                WomenOnly = false,
-                Driver = driver,
-                SmokersAllowed = false,
-                JourneyStatus = JourneyStatus.Upcoming,
-                CreationDate = new DateTime(2014, 1, 16, 20, 15, 0, cal),
-            };
-
-            context.Journeys.AddOrUpdate(journey16);
-            context.SaveChanges();
-
-            var journey17 = new Journey
-            {
-                AvailableSeats = 4,
-                DateAndTimeOfDeparture = new DateTime(2014, 4, 10, 20, 15, 0, cal),
-                DepartureAddress = new GeoAddress()
-                {
-                    AddressLine = "Belfast",
-                    Latitude = 54.5970,
-                    Longitude = -5.9300
-                },
-                DestinationAddress = new GeoAddress()
-                {
-                    AddressLine = "Dublin",
-                    Latitude = 53.3478,
-                    Longitude = -6.2597
-                },
-                Description = "Free ride to Dublin!",
-                Fee = 0.00,
-                WomenOnly = false,
-                Driver = driver,
-                SmokersAllowed = false,
-                JourneyStatus = JourneyStatus.Upcoming,
-                CreationDate = new DateTime(2014, 1, 17, 20, 15, 0, cal),
-            };
-
-            context.Journeys.AddOrUpdate(journey17);
-            context.SaveChanges();
-
-            var journey18 = new Journey
-            {
-                AvailableSeats = 4,
-                DateAndTimeOfDeparture = new DateTime(2014, 5, 2, 20, 15, 0, cal),
-                DepartureAddress = new GeoAddress()
-                {
-                    AddressLine = "Belfast",
-                    Latitude = 54.5970,
-                    Longitude = -5.9300
-                },
-                DestinationAddress = new GeoAddress()
-                {
-                    AddressLine = "Dublin",
-                    Latitude = 53.3478,
-                    Longitude = -6.2597
-                },
-                Description = "Free ride to Dublin!",
-                Fee = 0.00,
-                WomenOnly = false,
-                Driver = driver,
-                SmokersAllowed = false,
-                JourneyStatus = JourneyStatus.Upcoming,
-                CreationDate = new DateTime(2014, 1, 18, 20, 15, 0, cal),
-            };
-
-            context.Journeys.AddOrUpdate(journey18);
-            context.SaveChanges();
-
-            var journey19 = new Journey
-            {
-                AvailableSeats = 4,
-                DateAndTimeOfDeparture = new DateTime(2014, 11, 11, 20, 15, 0, cal),
-                DepartureAddress = new GeoAddress()
-                {
-                    AddressLine = "Belfast",
-                    Latitude = 54.5970,
-                    Longitude = -5.9300
-                },
-                DestinationAddress = new GeoAddress()
-                {
-                    AddressLine = "Dublin",
-                    Latitude = 53.3478,
-                    Longitude = -6.2597
-                },
-                Description = "Free ride to Dublin!",
-                Fee = 0.00,
-                WomenOnly = false,
-                Driver = driver,
-                SmokersAllowed = false,
-                JourneyStatus = JourneyStatus.Upcoming,
-                CreationDate = new DateTime(2014, 1, 19, 20, 15, 0, cal),
-            };
-
-            context.Journeys.AddOrUpdate(journey19);
-            context.SaveChanges();
-
-            var journey20 = new Journey
-            {
-                AvailableSeats = 4,
-                DateAndTimeOfDeparture = new DateTime(2014, 10, 10, 20, 15, 0, cal),
-                DepartureAddress = new GeoAddress()
-                {
-                    AddressLine = "Belfast",
-                    Latitude = 54.5970,
-                    Longitude = -5.9300
-                },
-                DestinationAddress = new GeoAddress()
-                {
-                    AddressLine = "Dublin",
-                    Latitude = 53.3478,
-                    Longitude = -6.2597
-                },
-                Description = "Free ride to Dublin!",
-                Fee = 0.00,
-                WomenOnly = false,
-                Driver = driver,
-                SmokersAllowed = false,
-                JourneyStatus = JourneyStatus.Upcoming,
-                CreationDate = new DateTime(2014, 1, 20, 20, 15, 0, cal),
-            };
-
-            context.Journeys.AddOrUpdate(journey20);
-            
         }
 
         private void AddMessages(ApplicationContext context)

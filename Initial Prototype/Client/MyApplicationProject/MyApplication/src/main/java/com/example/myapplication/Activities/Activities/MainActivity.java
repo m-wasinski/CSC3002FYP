@@ -6,12 +6,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 
-import com.example.myapplication.activities.base.BaseActionBarActivity;
+import com.example.myapplication.R;
+import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.constants.SharedPreferencesConstants;
 import com.example.myapplication.dtos.ServiceResponse;
@@ -20,19 +23,20 @@ import com.example.myapplication.interfaces.GCMRegistrationCallback;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.GCMRegistrationTask;
 import com.example.myapplication.network_tasks.WCFServiceTask;
-import com.example.myapplication.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.UUID;
 
-public class MainActivity extends BaseActionBarActivity implements WCFServiceCallback<User, String> {
+public class MainActivity extends BaseActivity implements WCFServiceCallback<User, String> {
 
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
 
         // Check device for Play Services APK.
         if (!checkPlayServices()) {
@@ -43,42 +47,36 @@ public class MainActivity extends BaseActionBarActivity implements WCFServiceCal
             finish();
         }
 
-        if(appData.getRegistrationId().isEmpty())
+        if(findNDriveManager.getRegistrationId().isEmpty())
         {
             Log.i(TAG, "GCM Registration Id is empty, attempting to register device.");
             GCMRegistrationTask registerGCMTask = new GCMRegistrationTask(new GCMRegistrationCallback() {
                 @Override
                 public void onGCMRegistrationCompleted(String registrationId) {
                     Log.i(TAG, "GCM Registration completed, the new registration id is: " + registrationId);
-                    if(!registrationId.isEmpty())
-                    {
-                        storeRegistrationId(registrationId);
-                    }
+                    findNDriveManager.setRegistrationId(registrationId);
                 }
             }, getApplicationContext());
             registerGCMTask.execute();
         }
         else
         {
-            Log.i(TAG, "Current GCM registration id: "+ appData.getRegistrationId());
+            Log.i(TAG, "Current GCM registration id: "+ findNDriveManager.getRegistrationId());
         }
 
         //Generate new random UUID for the duration of this session.
-        appData.setUUID(UUID.randomUUID().toString());
-        Log.i(TAG, "New UUID generated, " + appData.getUUID());
-
-        setContentView(R.layout.activity_main);
+        findNDriveManager.setUUID(UUID.randomUUID().toString());
+        Log.i(TAG, "New UUID generated, " + findNDriveManager.getUUID());
 
         //If session exists, attempt auto-login.
-        if (!appData.getSessionId().isEmpty())
+        if (!findNDriveManager.getSessionId().isEmpty())
         {
-            new WCFServiceTask<String>(getResources().getString(R.string.UserAutoLoginURL), "", new TypeToken<ServiceResponse<User>>() {}.getType(),
-                    appData.getAuthorisationHeaders(), this).execute();
+            new WCFServiceTask<String>(this, getResources().getString(R.string.UserAutoLoginURL), "", new TypeToken<ServiceResponse<User>>() {}.getType(),
+                    findNDriveManager.getAuthorisationHeaders(), this).execute();
         }
         else
         {
             //If auto-login fails, start login activity and ask user to log in manually.
-            try{ Thread.sleep(2000); }catch(InterruptedException e){ }
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
@@ -90,21 +88,6 @@ public class MainActivity extends BaseActionBarActivity implements WCFServiceCal
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
-    }
-
-    /**
-     * Stores the registration ID and app versionCode in the application's
-     * {@code SharedPreferences}.
-     *
-     * @param registrationId registration ID
-     */
-    private void storeRegistrationId(String registrationId) {
-        SharedPreferences sharedPreferences = getSharedPreferences(SharedPreferencesConstants.GLOBAL_APP_DATA, Context.MODE_PRIVATE);
-        int appVersion = appData.getAppVersion();
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(SharedPreferencesConstants.PROPERTY_REG_ID, registrationId);
-        editor.putInt(SharedPreferencesConstants.PROPERTY_APP_VERSION, appVersion);
-        editor.commit();
     }
 
     /**
@@ -129,34 +112,10 @@ public class MainActivity extends BaseActionBarActivity implements WCFServiceCal
 
     @Override
     public void onServiceCallCompleted(ServiceResponse<User> serviceResponse, String param) {
-        if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SERVER_ERROR)
-        {
-            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-            alertDialog.setCancelable(false);
-            alertDialog.setMessage("Server error,, please try again later.");
-            alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    finish();
-                    dialog.dismiss();
-                }
-            });
-            alertDialog.show();
-            return;
-        }
-
-        if (serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
-        {
-            appData.setUser(serviceResponse.Result);
-            Intent intent = new Intent(this, HomeActivity.class);
-            startActivity(intent);
-        }
-        else
-        {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-        }
-
+        findNDriveManager.setUser(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS ? serviceResponse.Result : null);
+        Intent intent = new Intent(this, serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS ? HomeActivity.class : LoginActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
         finish();
     }
 }

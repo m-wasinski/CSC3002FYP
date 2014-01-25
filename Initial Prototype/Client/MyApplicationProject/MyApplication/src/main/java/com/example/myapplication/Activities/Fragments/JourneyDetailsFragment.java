@@ -15,7 +15,7 @@ import com.example.myapplication.activities.base.BaseFragment;
 import com.example.myapplication.dtos.Journey;
 import com.example.myapplication.dtos.JourneyRequest;
 import com.example.myapplication.dtos.ServiceResponse;
-import com.example.myapplication.experimental.AppData;
+import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.interfaces.FragmentClosed;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;
@@ -47,7 +47,7 @@ public class JourneyDetailsFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_journey_information, container, false);
         carShare = new Gson().fromJson(getArguments().getString("CurrentCarShare"), new TypeToken<Journey>() {
         }.getType());
-        appData = ((AppData)getActivity().getApplicationContext());
+        findNDriveManager = ((FindNDriveManager)getActivity().getApplicationContext());
         journeyHeader = (TextView) view.findViewById(R.id.FragmentJourneyInformationFromToTextView);
         journeyHeader.setText(carShare.GeoAddresses.get(0).AddressLine + " -> " + carShare.GeoAddresses.get(carShare.GeoAddresses.size()-1).AddressLine);
         contentLayout = (LinearLayout) view.findViewById(R.id.FragmentJourneyInformationContentLayout);
@@ -72,10 +72,10 @@ public class JourneyDetailsFragment extends BaseFragment {
         contactDriverButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new WCFServiceTask<Integer>(getResources().getString(R.string.GetRequestsForJourneyURL),
+                new WCFServiceTask<Integer>(getActivity().getApplicationContext(), getResources().getString(R.string.GetRequestsForJourneyURL),
                         carShare.JourneyId,
                         new TypeToken<ServiceResponse<ArrayList<JourneyRequest>>>() {}.getType(),
-                        appData.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyRequest>, String>() {
+                        findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyRequest>, String>() {
                     @Override
                     public void onServiceCallCompleted(ServiceResponse<ArrayList<JourneyRequest>> serviceResponse, String parameter) {
                         Gson gson = new Gson();

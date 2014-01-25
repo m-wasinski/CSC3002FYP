@@ -87,14 +87,13 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
     private void getNotifications()
     {
         progressBar.setVisibility(View.VISIBLE);
-        new WCFServiceTask<LoadRangeDTO>(getResources().getString(R.string.GetAllNotificationsURL),
-                new LoadRangeDTO(appData.getUser().UserId, mainListView.getCount(),appData.getItemsPerCall(), loadMoreData),
+        new WCFServiceTask<LoadRangeDTO>(this, getResources().getString(R.string.GetAllNotificationsURL),
+                new LoadRangeDTO(findNDriveManager.getUser().UserId, mainListView.getCount(), findNDriveManager.getItemsPerCall(), loadMoreData),
                 new TypeToken<ServiceResponse<ArrayList<Notification>>>() {}.getType(),
-                appData.getAuthorisationHeaders(), this).execute();
+                findNDriveManager.getAuthorisationHeaders(), this).execute();
     }
     @Override
     public void onServiceCallCompleted(final ServiceResponse<ArrayList<Notification>> serviceResponse, Void parameter) {
-        super.checkIfAuthorised(serviceResponse.ServiceResponseCode);
         TextView noRequestsTextView = (TextView) findViewById(R.id.MyNotificationsActivityNoNotificationsTextView);
         progressBar.setVisibility(View.GONE);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -106,7 +105,7 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
             }
             else
             {
-                if(serviceResponse.Result.size() < appData.getItemsPerCall())
+                if(serviceResponse.Result.size() < findNDriveManager.getItemsPerCall())
                 {
                     loadMoreButton.setText("No more data to load");
                     loadMoreButton.setEnabled(false);
@@ -155,7 +154,7 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
 
             new WCFServiceTask<ArrayList<Integer>, ArrayList<Journey>>(getResources().getString(R.string.GetManyJourneysURL), ids,
                     new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(),
-                    appData.getAuthorisationHeaders(),null, new WCFServiceCallback<ArrayList<Journey>, String>() {
+                    findNDriveManager.getAuthorisationHeaders(),null, new WCFServiceCallback<ArrayList<Journey>, String>() {
 
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<ArrayList<Journey>> filteredJourneys, String parameter) {
@@ -179,10 +178,10 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
 
     private void markNotificationAsRead(int id)
     {
-        new WCFServiceTask<Integer>(getResources().getString(R.string.MarkNotificationAsReadURL),
+        new WCFServiceTask<Integer>(this, getResources().getString(R.string.MarkNotificationAsReadURL),
                 id,
                 new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
-                appData.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
 

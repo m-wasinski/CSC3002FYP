@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 import com.example.myapplication.activities.activities.LoginActivity;
 import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.experimental.AppData;
+import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.experimental.GMapV2Direction;
 import com.example.myapplication.experimental.WaypointHolder;
 import com.google.android.gms.maps.CameraUpdate;
@@ -34,8 +34,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
-
-import org.apache.http.impl.conn.tsccm.WaitingThread;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,7 +55,7 @@ public class BaseMapActivity extends FragmentActivity
     protected LocationManager  locationManager;
     protected Circle departureRadius;
     protected Circle destinationRadius;
-    protected AppData appData;
+    protected FindNDriveManager findNDriveManager;
     protected Gson gson;
     protected ActionBar actionBar;
     protected EditText departureAddressEditText;
@@ -68,7 +66,7 @@ public class BaseMapActivity extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         inputMethodManager = (InputMethodManager) this.getSystemService(INPUT_METHOD_SERVICE);
-        appData = ((AppData)getApplication());
+        findNDriveManager = ((FindNDriveManager)getApplication());
         gson = new Gson();
         actionBar = getActionBar();
         gMapV2Direction = new GMapV2Direction();
@@ -258,7 +256,7 @@ public class BaseMapActivity extends FragmentActivity
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             finish();
             startActivity(intent);
-            appData.setUser(null);
+            findNDriveManager.setUser(null);
             Toast toast = Toast.makeText(this, "Your session has expired, you must log in again.", Toast.LENGTH_LONG);
             toast.show();
         }

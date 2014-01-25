@@ -47,7 +47,7 @@ public class WaypointHolder {
         this.addressEditText = new EditText(context);
         this.addressEditText.setHint("Enter waypoint address");
         LinearLayout.LayoutParams buttonLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-        buttonLayoutParams.setMargins(20, 0, 0, 0);
+        buttonLayoutParams.setMargins(25, 0, 0, 0);
         this.addressEditText.setLayoutParams(buttonLayoutParams);
         this.addressEditText.setSingleLine(true);
 

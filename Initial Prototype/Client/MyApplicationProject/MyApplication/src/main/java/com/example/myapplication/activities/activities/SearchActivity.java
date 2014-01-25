@@ -1,17 +1,16 @@
 package com.example.myapplication.activities.activities;
 
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -59,7 +58,6 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
     private double departureRadiusValue;
     private double destinationRadiusValue;
     private DecimalFormat decimalFormat;
-    private TextView toggleSearchResultsTextView;
     private TextView departureRadiusTextView;
     private TextView destinationRadiusTextView;
     private LinearLayout searchPaneOptions;
@@ -69,7 +67,8 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
     private ListView searchResultsListView;
     private JourneyDetailsFragment journeyDetailsFragment;
     private int numOfSearchResults;
-    private ImageView arrowImageView;
+    private Button searchPaneHeaderButton;
+    private Button searchResultsButton;
     private ProgressBar progressBar;
     private final int METERS_IN_MILE = 1600;
     private final int PROGRESS_BAR_UNITS = 160;
@@ -85,22 +84,19 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         parentSearchRelativeLayout = (RelativeLayout) findViewById(R.id.ActivitySearchMapParentSearchRelativeLayout);
         searchResultsListView = (ListView) findViewById(R.id.ActivitySearchMapResultsListView);
         resultsRelativeLayout = (RelativeLayout) findViewById(R.id.ActivitySearchMapResultsRelativeLayout);
-        arrowImageView = (ImageView) findViewById(R.id.ActivitySearchMapArrowImageView);
-
-        LinearLayout searchPaneHeaderLayout = (LinearLayout) findViewById(R.id.ActivitySearchMapSearchHeaderLayout);
-        searchPaneHeaderLayout.setOnTouchListener(new View.OnTouchListener() {
+        searchPaneHeaderButton = (Button) findViewById(R.id.SearchActivitySearchPaneHeaderButton);
+        searchPaneHeaderButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
+            public void onClick(View view) {
                 toggleSearchPaneVisibility();
-                return false;
             }
         });
-        toggleSearchResultsTextView = (TextView) findViewById(R.id.ActivitySearchMapToggleResultsTextView);
-        toggleSearchResultsTextView.setOnTouchListener(new View.OnTouchListener() {
+
+        searchResultsButton = (Button) findViewById(R.id.SearchActivityResultsButton);
+        searchResultsButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
+            public void onClick(View view) {
                 toggleSearchResultsVisibility();
-                return false;
             }
         });
 
@@ -268,8 +264,8 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         //journey.SearchByDate = dateTextView.getText().toString().length() != 0;
         //journey.SearchByTime = timeTextView.getText().toString().length() != 0;
 
-        new WCFServiceTask<Journey>(getResources().getString(R.string.SearchForJourneysURL),
-                journey, new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(), appData.getAuthorisationHeaders(), this).execute();
+        new WCFServiceTask<Journey>(this, getResources().getString(R.string.SearchForJourneysURL),
+                journey, new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), this).execute();
     }
 
     @Override
@@ -279,11 +275,13 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             numOfSearchResults = serviceResponse.Result.size();
+            searchResultsButton.setVisibility(View.VISIBLE);
             if(serviceResponse.Result.size() > 0)
             {
-                toggleSearchResultsTextView.setText("Hide search results (" + numOfSearchResults +")");
+                searchResultsButton.setText("Hide search results (" + numOfSearchResults +")");
                 searchResultsListView.setVisibility(View.VISIBLE);
                 parentSearchRelativeLayout.setVisibility(View.GONE);
+
             }
 
             DisplayMetrics metrics = new DisplayMetrics();
@@ -317,13 +315,12 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
                         public void onFragmentClosed() {
                             getSupportFragmentManager().beginTransaction().remove(journeyDetailsFragment).commit();
                             parentSearchRelativeLayout.setVisibility(View.VISIBLE);
-                            arrowImageView.setImageResource(R.drawable.down);
                         }
                     });
                     journeyDetailsRelativeLayout.setVisibility(View.VISIBLE);
                     parentSearchRelativeLayout.setVisibility(View.GONE);
 
-                    toggleSearchResultsTextView.setText("Show search results ("+ numOfSearchResults +")");
+                    searchResultsButton.setText("Show search results ("+ numOfSearchResults +")");
                     drawRouteOnMap(serviceResponse.Result.get(i));
                 }
             });
@@ -403,9 +400,8 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
     private void toggleSearchResultsVisibility()
     {
         searchResultsListView.setVisibility(searchResultsListView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-        toggleSearchResultsTextView.setText(searchResultsListView.getVisibility() == View.VISIBLE ? "Hide search results (" + numOfSearchResults +")" : "Show search results ("+ numOfSearchResults +")");
-        //searchPaneOptions.setVisibility(searchResultsListView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-        parentSearchRelativeLayout.setVisibility(searchResultsListView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+        searchResultsButton.setText(searchResultsListView.getVisibility() == View.VISIBLE ? "Hide search results (" + numOfSearchResults +")" : "Show search results ("+ numOfSearchResults +")");
+        parentSearchRelativeLayout.setVisibility(searchResultsListView.getVisibility() == View.VISIBLE && searchResultsListView.getCount() > 0 ? View.GONE : View.VISIBLE);
         if(journeyDetailsFragment != null)
         {
             getSupportFragmentManager().beginTransaction().remove(journeyDetailsFragment).commit();
@@ -415,6 +411,24 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
     private void toggleSearchPaneVisibility()
     {
         searchPaneOptions.setVisibility(searchPaneOptions.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-        arrowImageView.setImageResource(searchPaneOptions.getVisibility() == View.VISIBLE ? R.drawable.down : R.drawable.up);
+        Drawable image = getResources().getDrawable(searchPaneOptions.getVisibility() == View.VISIBLE ? R.drawable.down : R.drawable.up);
+        searchPaneHeaderButton.setCompoundDrawablesWithIntrinsicBounds(null, null, image, null);
+        searchPaneHeaderButton.setText(searchPaneOptions.getVisibility() == View.VISIBLE ? "Minimize" : "Restore");
+    }
+
+    private void minimizeSearchPane()
+    {
+        searchPaneOptions.setVisibility(View.GONE);
+        Drawable image = getResources().getDrawable(R.drawable.up);
+        searchPaneHeaderButton.setCompoundDrawablesWithIntrinsicBounds(null, null, image, null);
+        searchPaneHeaderButton.setText("Restore");
+    }
+
+    private void restoreSearchPane()
+    {
+        searchPaneOptions.setVisibility(View.VISIBLE);
+        Drawable image = getResources().getDrawable(R.drawable.down);
+        searchPaneHeaderButton.setCompoundDrawablesWithIntrinsicBounds(null, null, image, null);
+        searchPaneHeaderButton.setText("Minimize");
     }
 }

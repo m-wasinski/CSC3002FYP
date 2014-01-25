@@ -89,7 +89,7 @@ namespace FindNDriveServices2.Services
             var journeys =
                 this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
                     .IncludeAll().ToList();
-
+            journeys = journeys.GetRange(0, 1);
             if (journey.SearchByDate)
             {
                 journeys =

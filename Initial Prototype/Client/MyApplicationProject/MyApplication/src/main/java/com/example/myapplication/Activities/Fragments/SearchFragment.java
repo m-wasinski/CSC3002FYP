@@ -202,8 +202,8 @@ public class SearchFragment extends BaseFragment implements WCFServiceCallback<A
         carShare.SearchByDate = dateTextView.getText().toString().length() != 0;
         carShare.SearchByTime = timeTextView.getText().toString().length() != 0;
 
-        new WCFServiceTask<Journey>("https://findndrive.no-ip.co.uk/Services/SearchService.svc/searchcarshare",
-                carShare, new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(), appData.getAuthorisationHeaders(), this).execute();
+        new WCFServiceTask<Journey>(getActivity().getApplicationContext(),"https://findndrive.no-ip.co.uk/Services/SearchService.svc/searchcarshare",
+                carShare, new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), this).execute();
     }
 
 
@@ -226,10 +226,10 @@ public class SearchFragment extends BaseFragment implements WCFServiceCallback<A
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
 
-                new WCFServiceTask<Integer>("https://findndrive.no-ip.co.uk/Services/RequestService.svc/getrequests",
+                new WCFServiceTask<Integer>(getActivity().getApplicationContext(), "https://findndrive.no-ip.co.uk/Services/RequestService.svc/getrequests",
                         carShareResults.Result.get(i).JourneyId,
                         new TypeToken<ServiceResponse<ArrayList<JourneyRequest>>>() {}.getType(),
-                        appData.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyRequest>, String>() {
+                        findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyRequest>, String>() {
                     @Override
                     public void onServiceCallCompleted(ServiceResponse<ArrayList<JourneyRequest>> serviceResponse, String parameter) {
                         Gson gson = new Gson();

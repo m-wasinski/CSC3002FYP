@@ -12,19 +12,19 @@ import android.widget.Toast;
 
 import com.example.myapplication.activities.activities.LoginActivity;
 import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.experimental.AppData;
+import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.R;
 
 /**
  * Created by Michal on 05/01/14.
  */
 public class BaseFragment extends Fragment {
-    protected AppData appData;
+    protected FindNDriveManager findNDriveManager;
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        appData = ((AppData)getActivity().getApplicationContext());
+        findNDriveManager = ((FindNDriveManager)getActivity().getApplicationContext());
         return inflater.inflate(R.layout.activity_my_journeys, container, false);
     }
 

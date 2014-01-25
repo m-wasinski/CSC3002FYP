@@ -60,9 +60,9 @@ public class JourneyChatActivity extends BaseActivity implements MessagesFragmen
         journeyMessageDTO.JourneyId = carShare.JourneyId;
         journeyMessageDTO.MessageBody = message;
 
-        new WCFServiceTask<JourneyMessageDTO>("https://findndrive.no-ip.co.uk/Services/CarShareService.svc/sendmessage", journeyMessageDTO,
+        new WCFServiceTask<JourneyMessageDTO>(this, "https://findndrive.no-ip.co.uk/Services/CarShareService.svc/sendmessage", journeyMessageDTO,
                 new TypeToken<ServiceResponse<Journey>>() {}.getType(),
-                appData.getAuthorisationHeaders(), new WCFServiceCallback<Journey, String>() {
+                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Journey, String>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Journey> serviceResponse, String parameter) {
 

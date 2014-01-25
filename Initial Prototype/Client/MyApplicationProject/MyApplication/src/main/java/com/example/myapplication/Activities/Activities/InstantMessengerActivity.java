@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,7 +49,6 @@ public class InstantMessengerActivity extends BaseListActivity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(GcmConstants.PROPERTY_FORWARD_MESSAGE);
         registerReceiver(GCMReceiver, intentFilter);
-        appData.setCurrentlyVisibleActivity(this.getClass().getSimpleName());
     }
 
     @Override
@@ -77,21 +75,21 @@ public class InstantMessengerActivity extends BaseListActivity {
         text = (EditText) this.findViewById(R.id.text);
         messages = new ArrayList<ChatMessage>();
 
-        adapter = new ChatAdapter(this, messages, appData.getUser().UserId);
+        adapter = new ChatAdapter(this, messages, findNDriveManager.getUser().UserId);
         setListAdapter(adapter);
         retrieveMessages();
     }
     private void sendMessage()
     {
-        addNewMessage(new ChatMessage(appData.getUser().UserId, recipientId, text.getText().toString(),
-                DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime()), false, recipientUserName, appData.getUser().UserName));
+        addNewMessage(new ChatMessage(findNDriveManager.getUser().UserId, recipientId, text.getText().toString(),
+                DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime()), false, recipientUserName, findNDriveManager.getUser().UserName));
         String newMessage = text.getText().toString();
         if(newMessage.length() > 0)
         {
-            new WCFServiceTask<ChatMessage>(getResources().getString(R.string.SendMessageURL), new ChatMessage(appData.getUser().UserId, recipientId, newMessage,
-                    DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime()), false, recipientUserName, appData.getUser().UserName),
+            new WCFServiceTask<ChatMessage>(this, getResources().getString(R.string.SendMessageURL), new ChatMessage(findNDriveManager.getUser().UserId, recipientId, newMessage,
+                    DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime()), false, recipientUserName, findNDriveManager.getUser().UserName),
                     new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
-                    appData.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+                    findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                     if(serviceResponse.ServiceResponseCode == ServiceResponseCode.UNAUTHORISED)
@@ -105,9 +103,9 @@ public class InstantMessengerActivity extends BaseListActivity {
 
     private void markMessagesAsRead(ArrayList<ChatMessage> unreadMessages)
     {
-        new WCFServiceTask<ArrayList<ChatMessage>>(getResources().getString(R.string.MarkMessagesAsReadURL), unreadMessages,
+        new WCFServiceTask<ArrayList<ChatMessage>>(this, getResources().getString(R.string.MarkMessagesAsReadURL), unreadMessages,
                 new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
-                appData.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                 checkIfAuthorised(serviceResponse.ServiceResponseCode);
@@ -124,9 +122,9 @@ public class InstantMessengerActivity extends BaseListActivity {
 
     private void retrieveMessages()
     {
-        new WCFServiceTask<ChatMessageRetrieverDTO>(getResources().getString(R.string.GetMessagesURL), new ChatMessageRetrieverDTO(appData.getUser().UserId, recipientId),
+        new WCFServiceTask<ChatMessageRetrieverDTO>(this, getResources().getString(R.string.GetMessagesURL), new ChatMessageRetrieverDTO(findNDriveManager.getUser().UserId, recipientId),
                 new TypeToken<ServiceResponse<ArrayList<ChatMessage>>>() {}.getType(),
-                appData.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<ChatMessage>, Void>() {
+                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<ChatMessage>, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<ArrayList<ChatMessage>> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.UNAUTHORISED)
@@ -168,7 +166,7 @@ public class InstantMessengerActivity extends BaseListActivity {
                     return;
                 }
             }
-            if(appData.getUser().UserId == chatMessage.RecipientId && chatMessage.SenderId == recipientId)
+            if(findNDriveManager.getUser().UserId == chatMessage.RecipientId && chatMessage.SenderId == recipientId)
             {
                 markMessagesAsRead(new ArrayList<ChatMessage>(Arrays.asList(chatMessage)));
                 addNewMessage(chatMessage);

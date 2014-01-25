@@ -16,7 +16,6 @@ import com.example.myapplication.dtos.ServiceResponse;
 import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.utilities.Helpers;
 import com.example.myapplication.interfaces.WCFServiceCallback;
-import com.example.myapplication.network_tasks.AddToBuddiesTask;
 import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.example.myapplication.R;
 import com.google.gson.reflect.TypeToken;
@@ -117,9 +116,9 @@ public class JourneyRequestDetailsActivity extends BaseActivity implements WCFSe
     {
         this.journeyRequest.DecidedOnDate = DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime());
 
-        new WCFServiceTask<JourneyRequest>(getResources().getString(R.string.ProcessRequestDecisionURL),
+        new WCFServiceTask<JourneyRequest>(this, getResources().getString(R.string.ProcessRequestDecisionURL),
                 this.journeyRequest, new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(),
-                appData.getAuthorisationHeaders(), this).execute();
+                findNDriveManager.getAuthorisationHeaders(), this).execute();
     }
 
     private void fillDetails()
@@ -136,15 +135,12 @@ public class JourneyRequestDetailsActivity extends BaseActivity implements WCFSe
     private void addTravelBuddy()
     {
         FriendDTO friendDTO = new FriendDTO();
-        friendDTO.TargetUserId = appData.getUser().UserId;
+        friendDTO.TargetUserId = findNDriveManager.getUser().UserId;
         friendDTO.FriendUserId = journeyRequest.UserId;
-        AddToBuddiesTask addToBuddiesTask = new AddToBuddiesTask(friendDTO);
-        addToBuddiesTask.execute();
     }
 
     @Override
     public void onServiceCallCompleted(ServiceResponse<JourneyRequest> serviceResponse, String parameter) {
-        super.checkIfAuthorised(serviceResponse.ServiceResponseCode);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             Toast toast = Toast.makeText(this, "Your reply was processed successfully.", Toast.LENGTH_LONG);

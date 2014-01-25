@@ -1,8 +1,6 @@
 package com.example.myapplication.activities.activities;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,17 +9,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myapplication.R;
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.constants.SessionConstants;
-import com.example.myapplication.constants.SharedPreferencesConstants;
 import com.example.myapplication.dtos.RegisterDTO;
 import com.example.myapplication.dtos.ServiceResponse;
 import com.example.myapplication.dtos.User;
-import com.example.myapplication.utilities.Pair;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;
-import com.example.myapplication.R;
+import com.example.myapplication.utilities.Pair;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.regex.Matcher;
@@ -108,14 +105,14 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
             registerDTO.User = new User();
             registerDTO.User.UserName = userNameEditText.getText().toString();
             registerDTO.User.EmailAddress = emailAddressEditText.getText().toString();
-            registerDTO.User.GCMRegistrationID = appData.getRegistrationId();
+            registerDTO.User.GCMRegistrationID = findNDriveManager.getRegistrationId();
 
-            new WCFServiceTask<RegisterDTO>(getResources().getString(R.string.UserRegisterURL),
+            new WCFServiceTask<RegisterDTO>(this, getResources().getString(R.string.UserRegisterURL),
                     registerDTO,
                     new TypeToken<ServiceResponse<User>>() {}.getType(),
                     asList(new Pair(SessionConstants.REMEMBER_ME, ""+false),
-                           new Pair(SessionConstants.DEVICE_ID, appData.getUniqueDeviceId()),
-                           new Pair(SessionConstants.UUID, appData.getUUID())), this).execute();
+                           new Pair(SessionConstants.DEVICE_ID, findNDriveManager.getUniqueDeviceId()),
+                           new Pair(SessionConstants.UUID, findNDriveManager.getUUID())), this).execute();
 
         }
     }
@@ -187,11 +184,11 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
         progressBar.setVisibility(View.VISIBLE);
         if (serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
-            storeSessionId(session);
-            appData.setUser(serviceResponse.Result);
+            findNDriveManager.setSessionId(session);
+            findNDriveManager.setUser(serviceResponse.Result);
             toast = Toast.makeText(this, "Registered successfully!", Toast.LENGTH_LONG);
             toast.show();
-            Intent intent = new Intent(this, HomeActivity.class);
+            Intent intent = new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);;
             startActivity(intent);
             finish();
         }
@@ -202,14 +199,5 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
                 errorMessagesEditText.append(error+"\n");
             }
         }
-    }
-
-    private void storeSessionId(String sessionId)
-    {
-        SharedPreferences sharedPreferences = getSharedPreferences(SharedPreferencesConstants.GLOBAL_APP_DATA, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(SharedPreferencesConstants.PROPERTY_SESSION_ID, sessionId);
-        editor.commit();
-        appData.setSessionId(sessionId);
     }
 }

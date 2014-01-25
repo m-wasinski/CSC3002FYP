@@ -15,19 +15,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5sp"
-        android:text="Step 1. Specify departure, destination and optional waypoints."
+        android:text="Step 1. Specify journey departure and destination, as well as optional waypoints."
         android:id="@+id/ActivityOfferJourneyStepOneTextView"
-        style="@style/RegularTextField"
+        style="@style/RegularEditText"
         android:background="#D9222930"/>
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Add  waypoint"
-        android:id="@+id/ActivityOfferJourneyThroughPointButton"
-        android:background="@drawable/button_selector"
-        android:layout_below="@+id/ActivityOfferJourneyStepOneTextView"
-        style="@style/ButtonStyle"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,69 +29,117 @@
         android:focusable="true"
         android:background="#D9222930">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/ActivityOfferJourneyFromEditText"
-            android:text="From:"
-            style="@style/MyCarSharesHeader"/>
-
-        <EditText
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/ActivityOfferJourneyDepartureEditText"
-            android:hint="Enter departure address"
-            style="@style/RegularTextField"
-            android:singleLine="true"/>
+            android:id="@+id/OfferJourneyStepOneActivityMinimizeLayout"
+            android:clickable="true"
+            android:gravity="center">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/ActivityOfferJourneyViaEditText"
-            android:text="via:"
-            android:layout_marginLeft="10sp"
-            style="@style/MyCarSharesHeader"
-            android:visibility="gone"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ActivityOfferJourneyHeaderPaneEditText"
+                android:text="Minimize Panel"
+                style="@style/MapSearchTitle"/>
 
-        <ScrollView
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/down"
+                android:layout_marginLeft="10sp"
+                android:id="@+id/ActivityOfferJourneyHeaderPaneImage"/>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/ActivityOfferJourneyScrollView">
+            android:id="@+id/OfferJourneyStepOneContentLayout"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ActivityOfferJourneyFromEditText"
+                android:text="From:"
+                android:layout_marginLeft="5sp"
+                style="@style/MyCarSharesHeader"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ActivityOfferJourneyDepartureEditText"
+                android:hint="Enter departure address"
+                style="@style/RegularEditText"
+                android:layout_marginLeft="10sp"
+                android:singleLine="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ActivityOfferJourneyViaEditText"
+                android:text="via:"
+                android:layout_marginLeft="20sp"
+                style="@style/MyCarSharesHeader"
+                android:visibility="gone"/>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ActivityOfferJourneyScrollView">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/AddNewJourneyAdditionalDestinationLayout">
+
+                </LinearLayout>
+
+            </ScrollView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ActivityOfferJourneyToEditText"
+                android:text="To:"
+                android:layout_marginLeft="5sp"
+                style="@style/MyCarSharesHeader"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ActivityOfferJourneyDestinationEditText"
+                android:hint="Enter destination address"
+                style="@style/RegularEditText"
+                android:layout_marginLeft="10sp"
+                android:singleLine="true"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/AddNewJourneyAdditionalDestinationLayout">
+                android:orientation="horizontal">
 
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Step 2..."
+                    android:id="@+id/AddNewJourneyDoneButton"
+                    android:background="@drawable/button_selector"
+                    style="@style/ButtonStyle"
+                    android:layout_weight="1"
+                    android:layout_marginRight="5sp"/>
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Add  waypoint"
+                    android:id="@+id/ActivityOfferJourneyThroughPointButton"
+                    android:background="@drawable/button_selector"
+                    style="@style/ButtonStyle"
+                    android:layout_marginLeft="5sp"
+                    android:layout_weight="1"/>
             </LinearLayout>
-
-        </ScrollView>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/ActivityOfferJourneyToEditText"
-            android:text="To:"
-            style="@style/MyCarSharesHeader"/>
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/ActivityOfferJourneyDestinationEditText"
-            android:hint="Enter destination address"
-            style="@style/RegularTextField"
-            android:layout_marginTop="10sp"
-            android:singleLine="true"/>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Step 2..."
-            android:id="@+id/AddNewJourneyDoneButton"
-            android:background="@drawable/button_selector"
-            style="@style/ButtonStyle"/>
-
+        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>

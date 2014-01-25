@@ -48,16 +48,15 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
 
     private void getFriends()
     {
-        new WCFServiceTask<Integer>(getResources().getString(R.string.GetFriendsURL), appData.getUser().UserId,
-                new TypeToken<ServiceResponse<ArrayList<User>>>() {}.getType(), appData.getAuthorisationHeaders(), this).execute();
+        new WCFServiceTask<Integer>(this, getResources().getString(R.string.GetFriendsURL), findNDriveManager.getUser().UserId,
+                new TypeToken<ServiceResponse<ArrayList<User>>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), this).execute();
     }
 
     @Override
     public void onServiceCallCompleted(final ServiceResponse<ArrayList<User>> serviceResponse, String parameter) {
-        super.checkIfAuthorised(serviceResponse.ServiceResponseCode);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
-            friendsAdapter = new FriendsAdapter(this,  R.layout.friend_list_listview_row, appData, serviceResponse.Result);
+            friendsAdapter = new FriendsAdapter(this,  R.layout.friend_list_listview_row, findNDriveManager, serviceResponse.Result);
             travelBuddiesListView.setAdapter(friendsAdapter);
 
             travelBuddiesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

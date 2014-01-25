@@ -24,8 +24,6 @@ import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.example.myapplication.R;
 import com.google.gson.reflect.TypeToken;
 
-import java.util.ArrayList;
-
 /**
  * Created by Michal on 14/01/14.
  */
@@ -43,7 +41,7 @@ public class HomeActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
-        actionBar.setTitle(" Hi " + appData.getUser().UserName);
+        actionBar.setTitle(" Hi " + findNDriveManager.getUser().UserName);
         myJourneysLayout = (LinearLayout) findViewById(R.id.ActivityHomeMyJourneysLayout);
         searchLayout = (LinearLayout) findViewById(R.id.ActivityHomeSearchLayout);
         notificationsLayout = (LinearLayout) findViewById(R.id.ActivityHomeNotificationsLayout);
@@ -60,7 +58,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        super.exitApp(false);
+        findNDriveManager.logout(false);
     }
 
     @Override
@@ -74,8 +72,7 @@ public class HomeActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout_menu_option:
-                super.exitApp(true);
-                finish();
+                findNDriveManager.logout(true);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -87,15 +84,14 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        appData.setCurrentlyVisibleActivity(this.getLocalClassName());
         refreshInformation();
     }
 
     private void refreshInformation()
     {
-        new WCFServiceTask<Integer>(getResources().getString(R.string.RefreshUserURL), appData.getUser().UserId,
+        new WCFServiceTask<Integer>(this, getResources().getString(R.string.RefreshUserURL), findNDriveManager.getUser().UserId,
                 new TypeToken<ServiceResponse<User>>() {}.getType(),
-                appData.getAuthorisationHeaders(), new WCFServiceCallback<User, Void>() {
+                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<User, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<User> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -105,9 +101,9 @@ public class HomeActivity extends BaseActivity {
             }
         }).execute();
 
-        new WCFServiceTask<Integer>(getResources().getString(R.string.GetUnreadNotificationsCountURL), appData.getUser().UserId,
+        new WCFServiceTask<Integer>(this, getResources().getString(R.string.GetUnreadNotificationsCountURL), findNDriveManager.getUser().UserId,
                 new TypeToken<ServiceResponse<Integer>>() {}.getType(),
-                appData.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
+                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -117,9 +113,9 @@ public class HomeActivity extends BaseActivity {
             }
         }).execute();
 
-        new WCFServiceTask<Integer>(getResources().getString(R.string.GetUnreadMessagesCountURL), appData.getUser().UserId,
+        new WCFServiceTask<Integer>(this, getResources().getString(R.string.GetUnreadMessagesCountURL), findNDriveManager.getUser().UserId,
                 new TypeToken<ServiceResponse<Integer>>() {}.getType(),
-                appData.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
+                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -128,17 +124,6 @@ public class HomeActivity extends BaseActivity {
                 }
             }
         }).execute();
-
-        /*new WCFServiceTask<Integer>(getResources().getString(R.string.GetFriendsURL), appData.getUser().UserId,
-                new TypeToken<ServiceResponse<ArrayList<User>>>() {}.getType(), appData.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<User>, Void>() {
-            @Override
-            public void onServiceCallCompleted(ServiceResponse<ArrayList<User>> serviceResponse, Void parameter) {
-                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
-                {
-                    friendsRetrieved(serviceResponse.Result);
-                }
-            }
-        }).execute();*/
     }
 
     private void setupUIEvents()
@@ -201,17 +186,12 @@ public class HomeActivity extends BaseActivity {
 
     private void userRefreshed(User user)
     {
-        appData.setUser(user);
+        findNDriveManager.setUser(user);
     }
 
     private void unreadMessagesCountRetrieved(int count)
     {
         unreadMessagesCountTextView.setText(count + " Messages");
         unreadMessagesCountTextView.setTypeface(null, count == 0 ? Typeface.NORMAL : Typeface.BOLD);
-    }
-
-    private void friendsRetrieved(ArrayList<User> friends)
-    {
-        appData.setFriends(friends);
     }
 }

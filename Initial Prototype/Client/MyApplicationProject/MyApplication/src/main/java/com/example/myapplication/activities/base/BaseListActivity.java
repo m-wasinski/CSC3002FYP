@@ -14,7 +14,7 @@ import android.widget.Toast;
 import com.example.myapplication.activities.activities.LoginActivity;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.dtos.ServiceResponse;
-import com.example.myapplication.experimental.AppData;
+import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.google.gson.Gson;
@@ -24,7 +24,7 @@ import com.google.gson.reflect.TypeToken;
  * Created by Michal on 18/01/14.
  */
 public class BaseListActivity extends ListActivity {
-    protected AppData appData;
+    protected FindNDriveManager findNDriveManager;
     protected Gson gson;
     protected ActionBar actionBar;
     @Override
@@ -36,7 +36,7 @@ public class BaseListActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        appData = ((AppData)getApplication());
+        findNDriveManager = ((FindNDriveManager)getApplication());
         gson = new Gson();
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         actionBar = getActionBar();
@@ -69,7 +69,7 @@ public class BaseListActivity extends ListActivity {
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             finish();
             startActivity(intent);
-            appData.setUser(null);
+            findNDriveManager.setUser(null);
             Toast toast = Toast.makeText(this, "Your session has expired, you must log in again.", Toast.LENGTH_LONG);
             toast.show();
         }
@@ -82,18 +82,18 @@ public class BaseListActivity extends ListActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-        new WCFServiceTask<Boolean>("https://findndrive.no-ip.co.uk/Services/UserService.svc/logout",
-                forceLogout, new TypeToken<ServiceResponse<Boolean>>(){}.getType(), appData.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+        new WCFServiceTask<Boolean>(this, "https://findndrive.no-ip.co.uk/Services/UserService.svc/logout",
+                forceLogout, new TypeToken<ServiceResponse<Boolean>>(){}.getType(), findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
             }
         }).execute();
 
         finish();
-        appData.setUser(null);
+        findNDriveManager.setUser(null);
         if(forceLogout)
         {
-            appData.setSessionId("");
+            findNDriveManager.setSessionId("");
             startActivity(intent);
         }
     }

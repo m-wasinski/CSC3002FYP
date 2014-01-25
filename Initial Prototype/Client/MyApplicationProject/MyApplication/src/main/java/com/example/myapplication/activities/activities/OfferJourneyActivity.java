@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +34,9 @@ import java.util.ArrayList;
 public class OfferJourneyActivity extends BaseMapActivity {
 
     private LinearLayout throughPointsLayout;
+    private LinearLayout contentLayout;
+    private LinearLayout headerLayout;
+
     private TextView viaTextView;
 
     @Override
@@ -42,6 +46,14 @@ public class OfferJourneyActivity extends BaseMapActivity {
         actionBar.hide();
         waypointHolders = new ArrayList<WaypointHolder>();
         throughPointsLayout = (LinearLayout) findViewById(R.id.AddNewJourneyAdditionalDestinationLayout);
+        contentLayout = (LinearLayout) findViewById(R.id.OfferJourneyStepOneContentLayout);
+        headerLayout = (LinearLayout) findViewById(R.id.OfferJourneyStepOneActivityMinimizeLayout);
+        headerLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return false;
+            }
+        });
         viaTextView = (TextView) findViewById(R.id.ActivityOfferJourneyViaEditText);
 
         Button addThroughPointButton = (Button) findViewById(R.id.ActivityOfferJourneyThroughPointButton);

@@ -65,7 +65,7 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
 
     private void attemptLogin()
     {
-        progressBar.setVisibility(View.VISIBLE);
+
         EditText userName = (EditText) findViewById(R.id.UserLoginUserNameEditText);
         EditText password = (EditText) findViewById(R.id.UserLoginPasswordTextField);
         CheckBox rememberMe  = (CheckBox) findViewById(R.id.RememberMeCheckBox);
@@ -75,15 +75,16 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
             return;
         }
 
+        progressBar.setVisibility(View.VISIBLE);
         LoginDTO loginDTO =new LoginDTO();
         loginDTO.UserName = userName.getText().toString();
         loginDTO.Password = password.getText().toString();
-        loginDTO.GCMRegistrationID = appData.getRegistrationId();
+        loginDTO.GCMRegistrationID = findNDriveManager.getRegistrationId();
 
 
-        new WCFServiceTask<LoginDTO>(getResources().getString(R.string.UserManualLoginURL), loginDTO, new TypeToken<ServiceResponse<User>>() {}.getType(),
-                asList(new Pair(SessionConstants.REMEMBER_ME, ""+rememberMe.isChecked()), new Pair(SessionConstants.DEVICE_ID, appData.getUniqueDeviceId()),
-                        new Pair(SessionConstants.UUID, appData.getUUID())), this).execute();
+        new WCFServiceTask<LoginDTO>(this, getResources().getString(R.string.UserManualLoginURL), loginDTO, new TypeToken<ServiceResponse<User>>() {}.getType(),
+                asList(new Pair(SessionConstants.REMEMBER_ME, ""+rememberMe.isChecked()), new Pair(SessionConstants.DEVICE_ID, findNDriveManager.getUniqueDeviceId()),
+                        new Pair(SessionConstants.UUID, findNDriveManager.getUUID())), this).execute();
     }
 
     private boolean checkIfFieldsEmpty(EditText editText, String value)
@@ -130,26 +131,18 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
         progressBar.setVisibility(View.GONE);
         if (serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
-            storeSessionId(session);
-            appData.setUser(serviceResponse.Result);
-            Intent intent = new Intent(this, HomeActivity.class);
+            findNDriveManager.setSessionId(session);
+            findNDriveManager.setUser(serviceResponse.Result);
+            Intent intent = new Intent(this, HomeActivity.class)
+                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
             finish();
         }
 
-        if (serviceResponse.ServiceResponseCode == ServiceResponseCode.UNAUTHORISED)
+        if (serviceResponse.ServiceResponseCode == ServiceResponseCode.FAILURE)
         {
             Toast toast = Toast.makeText(this, "Incorrect username or password.", Toast.LENGTH_LONG);
             toast.show();
         }
-    }
-
-    private void storeSessionId(String sessionId)
-    {
-        SharedPreferences sharedPreferences = getSharedPreferences(SharedPreferencesConstants.GLOBAL_APP_DATA, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(SharedPreferencesConstants.PROPERTY_SESSION_ID, sessionId);
-        editor.commit();
-        appData.setSessionId(sessionId);
     }
 }

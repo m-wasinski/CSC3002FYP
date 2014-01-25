@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@color/TransparentButtonPressed"
+        android:state_pressed="true"
+        android:textColor="@color/TransparentButtonFont"
+        android:textSize="18sp"/>
+
+    <item android:drawable="@color/TransparentButtonPressed"
+        android:state_focused="true"
+        android:textColor="@color/TransparentButtonFont"
+        android:textSize="18sp"/>
+
+    <item android:drawable="@color/TransparentButtonNormal"
+        android:textColor="@color/TransparentButtonFont"
+        android:textSize="18sp"/>
+
+</selector>

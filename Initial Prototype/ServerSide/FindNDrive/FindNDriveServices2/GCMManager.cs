@@ -13,6 +13,7 @@ namespace FindNDriveServices2
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;
     using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Text;
     using System.Web;
@@ -67,7 +68,9 @@ namespace FindNDriveServices2
             gcmRequest.Headers.Add(string.Format("Authorization: key={0}", API_KEY));
             gcmRequest.Headers.Add(string.Format("Sender: id={0}", SENDER_ID));
 
-            var postData = "{ \"registration_ids\":" + JsonConvert.SerializeObject(registrationIds) + ", " +
+            var filteredGcms = registrationIds.Where(_ => !_.Equals("0"));
+
+            var postData = "{ \"registration_ids\":" + JsonConvert.SerializeObject(filteredGcms) + ", " +
              "\"data\": {\"tickerText\":\"" + string.Empty + "\", " +
              "\"contentTitle\":\"" + contentTitle + "\", " +
              "\"notificationType\":\"" + notificationType + "\", " +

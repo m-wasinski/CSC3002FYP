@@ -1,12 +1,22 @@
 package com.example.myapplication.network_tasks;
 
+import android.app.AlertDialog;
+import android.app.IntentService;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.myapplication.activities.activities.LoginActivity;
+import com.example.myapplication.constants.GcmConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.constants.SessionConstants;
 import com.example.myapplication.dtos.ServiceResponse;
+import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.experimental.SSLSocketFactory;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.utilities.Pair;
@@ -46,19 +56,44 @@ public class WCFServiceTask<T> extends AsyncTask<TextView, String, Boolean> {
     private String sessionInformation;
     private final int HTTPConnectionTimeout = 10000;
     private final int HTTPSocketTimeout = 15000;
+    private Context context;
 
-    public WCFServiceTask(String url, T objectToSerialise, Type type, List<Pair> httpHeaders, WCFServiceCallback wcfServiceCallback)
+    public WCFServiceTask(Context context, String url, T objectToSerialise, Type type, List<Pair> httpHeaders, WCFServiceCallback wcfServiceCallback)
     {
         this.objectToSerialise = objectToSerialise;
         this.url = url;
         this.type = type;
         this.wcfServiceCallback = wcfServiceCallback;
         this.httpHeaders = httpHeaders;
+        this.context = context;
     }
 
     @Override
     protected void onPostExecute(Boolean aBoolean) {
         super.onPostExecute(aBoolean);
+
+        if(this.serviceResponse.ServiceResponseCode == ServiceResponseCode.UNAUTHORISED)
+        {
+            FindNDriveManager findNDriveManager = ((FindNDriveManager)this.context.getApplicationContext());
+            assert findNDriveManager != null;
+            findNDriveManager.logout(true);
+            return;
+        }
+
+        if(this.serviceResponse.ServiceResponseCode == ServiceResponseCode.SERVER_ERROR)
+        {
+            AlertDialog alertDialog = new AlertDialog.Builder(this.context).create();
+            alertDialog.setCancelable(false);
+            alertDialog.setMessage("Server error has occurred, please try again later.");
+            alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            alertDialog.show();
+        }
+
         this.wcfServiceCallback.onServiceCallCompleted(serviceResponse, this.sessionInformation);
     }
 
@@ -81,11 +116,11 @@ public class WCFServiceTask<T> extends AsyncTask<TextView, String, Boolean> {
 
             String toParse = gson.toJson(objectToSerialise);
 
-            Log.i(TAG + "Serialised objectToSerialise", toParse);
+            Log.i(TAG + "Serialised object: ", toParse);
 
-            StringEntity se = new StringEntity(toParse,"UTF-8");
-            se.setContentType("application/json;charset=UTF-8");
-            postRequest.setEntity(se);
+            StringEntity stringEntity = new StringEntity(toParse,"UTF-8");
+            stringEntity.setContentType("application/json;charset=UTF-8");
+            postRequest.setEntity(stringEntity);
 
             if(httpHeaders != null)
             {

@@ -63,7 +63,7 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
 
         filterEditText = (EditText) findViewById(R.id.ActivityHomeFilterEditText);
         mainListView = (ListView) findViewById(R.id.MyCarSharesListView);
-        journeyAdapter = new JourneyAdapter(appData.getUser().UserId, this, R.layout.my_journeys_listview_row, myJourneys);
+        journeyAdapter = new JourneyAdapter(findNDriveManager.getUser().UserId, this, R.layout.my_journeys_listview_row, myJourneys);
         journeyAdapter.getFilter().filter(filterEditText.getText().toString());
         mainListView.setAdapter(journeyAdapter);
         loadMoreButton = (Button) findViewById(R.id.ActivityMyJourneysLoadMoreButton);
@@ -128,7 +128,6 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
 
     @Override
     public void onServiceCallCompleted(final ServiceResponse<ArrayList<Journey>> serviceResponse, String s) {
-        super.checkIfAuthorised(serviceResponse.ServiceResponseCode);
         TextView noJourneysTextView = (TextView) findViewById(R.id.MyCarSharesNoJourneysTextView);
         progressBar.setVisibility(View.GONE);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -140,7 +139,7 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
             }
             else
             {
-                if(serviceResponse.Result.size() < appData.getItemsPerCall())
+                if(serviceResponse.Result.size() < findNDriveManager.getItemsPerCall())
                 {
                     loadMoreButton.setText("No more data to load");
                     loadMoreButton.setEnabled(false);
@@ -194,13 +193,11 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
         Intent intent;
         switch (item.getItemId()) {
             case R.id.action_home:
-                finish();
-                intent = new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent = new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 break;
             case R.id.logout_menu_option:
-                finish();
-                exitApp(true);
+                findNDriveManager.logout(true);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -212,9 +209,9 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
     private void retrieveJourneys()
     {
         progressBar.setVisibility(View.VISIBLE);
-        new WCFServiceTask<LoadRangeDTO>(getResources().getString(R.string.GetAllJourneysURL), new LoadRangeDTO(appData.getUser().UserId, mainListView.getCount(), appData.getItemsPerCall(), pollMoreData),
+        new WCFServiceTask<LoadRangeDTO>(this, getResources().getString(R.string.GetAllJourneysURL), new LoadRangeDTO(findNDriveManager.getUser().UserId, mainListView.getCount(), findNDriveManager.getItemsPerCall(), pollMoreData),
                 new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(),
-                appData.getAuthorisationHeaders(), this).execute();
+                findNDriveManager.getAuthorisationHeaders(), this).execute();
     }
 
     /**

@@ -126,7 +126,7 @@ public class CreateNewJourneyActivity extends BaseActivity implements WCFService
           Journey journey = new Journey();
           //journey.DestinationCity = destinationCity.getText().toString();
           //journey.DepartureCity = departureCity.getText().toString();
-          journey.DriverId = appData.getUser().UserId;
+          journey.DriverId = findNDriveManager.getUser().UserId;
           journey.Description = description.getText().toString();
           journey.Fee = Double.parseDouble(fee.getText().toString());
           journey.WomenOnly = womenOnly.isChecked();
@@ -138,10 +138,10 @@ public class CreateNewJourneyActivity extends BaseActivity implements WCFService
           journey.Private = privateShare.isChecked();
           journey.PetsAllowed = pets.isChecked();
 
-        new WCFServiceTask<Journey>("https://findndrive.no-ip.co.uk/Services/CarShareService.svc/create",
+        new WCFServiceTask<Journey>(this, "https://findndrive.no-ip.co.uk/Services/CarShareService.svc/create",
                 journey,
                 new TypeToken<ServiceResponse<Journey>>() {}.getType(),
-                appData.getAuthorisationHeaders(), this).execute();
+                findNDriveManager.getAuthorisationHeaders(), this).execute();
     }
 
     private void initialiseUIElements()
@@ -165,7 +165,6 @@ public class CreateNewJourneyActivity extends BaseActivity implements WCFService
 
     @Override
     public void onServiceCallCompleted(ServiceResponse<Journey> serviceResponse, String parameter) {
-        super.checkIfAuthorised(serviceResponse.ServiceResponseCode);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             Toast toast = Toast.makeText(this, "Car share posted successfully.", Toast.LENGTH_LONG);

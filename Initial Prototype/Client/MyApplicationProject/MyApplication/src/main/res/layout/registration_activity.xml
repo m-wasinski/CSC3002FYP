@@ -73,10 +73,12 @@
 
         <TextView
             android:id="@+id/infoTxtCredits"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textAlignment="center"
             android:layout_marginTop="20dp"
-            android:text="By registering, you agree to the terms and conditions."
+            android:text="By registering, you agree to the terms and conditions of the service."
             style="@style/ContentBody"/>
 
         <TextView

@@ -38,16 +38,16 @@ public class JourneyRequestsActivity extends BaseActivity implements WCFServiceC
     @Override
     protected void onResume() {
         super.onResume();
-        new WCFServiceTask<Integer>(getResources().getString(R.string.GetRequestsForJourneyURL),
+        new WCFServiceTask<Integer>(this, getResources().getString(R.string.GetRequestsForJourneyURL),
                 this.journey.JourneyId,
                 new TypeToken<ServiceResponse<ArrayList<JourneyRequest>>>() {}.getType(),
-                appData.getAuthorisationHeaders(), this).execute();
+                findNDriveManager.getAuthorisationHeaders(), this).execute();
     }
 
     private void markRequestAsRead(int id)
     {
-        new WCFServiceTask<Integer>(getResources().getString(R.string.MarkRequestAsReadURL),
-                id,new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(),appData.getAuthorisationHeaders(), new WCFServiceCallback() {
+        new WCFServiceTask<Integer>(this, getResources().getString(R.string.MarkRequestAsReadURL),
+                id,new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback() {
             @Override
             public void onServiceCallCompleted(ServiceResponse serviceResponse, Object parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -62,7 +62,6 @@ public class JourneyRequestsActivity extends BaseActivity implements WCFServiceC
 
     @Override
     public void onServiceCallCompleted(final ServiceResponse<ArrayList<JourneyRequest>> serviceResponse, String parameter) {
-        super.checkIfAuthorised(serviceResponse.ServiceResponseCode);
         if(serviceResponse.Result.size() > 0)
         {
             JourneyRequestAdapter adapter = new JourneyRequestAdapter(this, R.layout.journey_request_listview_row, serviceResponse.Result);

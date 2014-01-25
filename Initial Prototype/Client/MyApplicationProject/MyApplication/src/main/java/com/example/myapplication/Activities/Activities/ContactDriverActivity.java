@@ -96,7 +96,7 @@ public class ContactDriverActivity extends BaseActivity implements WCFServiceCal
 
         for(JourneyRequest request : journeyRequests)
         {
-            if(request.Decision == RequestDecision.UNDECIDED && request.UserId == appData.getUser().UserId)
+            if(request.Decision == RequestDecision.UNDECIDED && request.UserId == findNDriveManager.getUser().UserId)
             {
                 requestStatusTextView.setText("You already have a pending request for this journey.");
                 requestStatusTextView.setTextColor(Color.RED);
@@ -104,7 +104,7 @@ public class ContactDriverActivity extends BaseActivity implements WCFServiceCal
                 requestStatusTextView.setVisibility(View.VISIBLE);
             }
 
-            if(request.Decision == RequestDecision.ACCEPTED && request.UserId == appData.getUser().UserId)
+            if(request.Decision == RequestDecision.ACCEPTED && request.UserId == findNDriveManager.getUser().UserId)
             {
                 requestStatusTextView.setText("You are already a passenger in this journey.");
                 requestStatusTextView.setTextColor(Color.GREEN);
@@ -113,7 +113,7 @@ public class ContactDriverActivity extends BaseActivity implements WCFServiceCal
             }
         }
 
-        if(journey.Driver.UserId == appData.getUser().UserId)
+        if(journey.Driver.UserId == findNDriveManager.getUser().UserId)
         {
             requestStatusTextView.setText("You are the driver in this journey!");
             requestStatusTextView.setTextColor(Color.GREEN);
@@ -127,15 +127,15 @@ public class ContactDriverActivity extends BaseActivity implements WCFServiceCal
     private void sendRequest(){
         journeyRequest = new JourneyRequest();
         journeyRequest.AddToTravelBuddies = addToBuddies.isChecked();
-        journeyRequest.UserId = appData.getUser().UserId;
-        journeyRequest.User = appData.getUser();
+        journeyRequest.UserId = findNDriveManager.getUser().UserId;
+        journeyRequest.User = findNDriveManager.getUser();
         journeyRequest.JourneyId = journey.JourneyId;
         journeyRequest.Message = messageTextView.getText().toString();
         journeyRequest.Read = false;
         journeyRequest.Decision = RequestDecision.UNDECIDED;
         journeyRequest.SentOnDate = DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime());
-        new WCFServiceTask<JourneyRequest>(getResources().getString(R.string.SendRequestURL),
-                this.journeyRequest, new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(), appData.getAuthorisationHeaders(), this).execute();
+        new WCFServiceTask<JourneyRequest>(this, getResources().getString(R.string.SendRequestURL),
+                this.journeyRequest, new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), this).execute();
     }
 
     private void populateFields()
@@ -160,7 +160,6 @@ public class ContactDriverActivity extends BaseActivity implements WCFServiceCal
 
     @Override
     public void onServiceCallCompleted(ServiceResponse<JourneyRequest> serviceResponse, String parameter) {
-        super.checkIfAuthorised(serviceResponse.ServiceResponseCode);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             Toast toast = Toast.makeText(this, "Your request was sent successfully!", Toast.LENGTH_LONG);

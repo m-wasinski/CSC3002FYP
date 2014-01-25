@@ -27,6 +27,8 @@ namespace FindNDriveServices2.Services
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
 
+    using Microsoft.Practices.ObjectBuilder2;
+
     using WebMatrix.WebData;
 
     using Roles = DomainObjects.Constants.Roles;
@@ -96,11 +98,28 @@ namespace FindNDriveServices2.Services
 
             var userId = WebSecurity.GetUserId(login.UserName);
             var loggedInUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.UserId == userId);
+
             if (loggedInUser != null)
             {
                 this.sessionManager.GenerateNewSession(loggedInUser.UserId);
                 loggedInUser.GCMRegistrationID = login.GCMRegistrationID;
                 loggedInUser.Status = Status.Online;
+
+                var gcmsToReset =
+                    this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+                        .Where(
+                            _ =>
+                            _.GCMRegistrationID == loggedInUser.GCMRegistrationID
+                            && !_.UserName.Equals(loggedInUser.UserName))
+                        .ToList();
+
+                gcmsToReset.ForEach(
+                    delegate(User user)
+                        {
+                            user.GCMRegistrationID = "0";
+                        });
+
+                this.findNDriveUnitOfWork.Commit();
 
                 var gcmNotifications =
                     this.findNDriveUnitOfWork.GCMNotificationsRepository.AsQueryable().Where(_ => _.UserId == userId && !_.Delivered).ToList();
@@ -108,7 +127,12 @@ namespace FindNDriveServices2.Services
                 gcmNotifications.ForEach(
                     delegate(GCMNotification gcmNotification)
                         {
-                            this.gcmManager.SendNotification(new Collection<string>{loggedInUser.GCMRegistrationID}, gcmNotification.NotificationType, gcmNotification.NotificationArguments, gcmNotification.ContentTitle, gcmNotification.NotificationMessage);
+                            this.gcmManager.SendNotification(
+                                new Collection<string> { loggedInUser.GCMRegistrationID },
+                                gcmNotification.NotificationType,
+                                gcmNotification.NotificationArguments,
+                                gcmNotification.ContentTitle,
+                                gcmNotification.NotificationMessage);
                             gcmNotification.Delivered = true;
                         });
 

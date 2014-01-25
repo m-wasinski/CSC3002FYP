@@ -1,0 +1,10 @@
+{ "registration_ids":["APA91bHK3tHUL5Mc_JJGCi__ETzdyXjNcsFEYQaXZdQo9mFT3EyEPYLgA0PuYr7neD0CzfWS8CtVadkBrJ-rrKQTwH167S8_ToK5HeU2VC7Y0JBLErSekdnfp7mc_Z5x0svsmngolbDqG0DYsf-D1DSXKsDxUCA01OwrgXzAbFdYmNxF04M-UKY"], "data": {"tickerText":"", "contentTitle":"Message", "notificationType":"2", "notificationArguments":"0", "message":{
+  "ChatMessageId": 511,
+  "SenderId": 2,
+  "RecipientId": 4,
+  "MessageBody": "Hi",
+  "SentOnDate": "\/Date(1390661794240)\/",
+  "Read": false,
+  "RecipientUserName": "jess",
+  "SenderUserName": "john"
+}}}

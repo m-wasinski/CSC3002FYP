@@ -31,7 +31,7 @@
                 android:src="@drawable/minimize"
                 android:layout_gravity="right"
                 android:id="@+id/FragmentJourneyInformationMinimizeButton"
-                style="@style/TransparentButtonStyle"/>
+                style="@style/TransparentButton"/>
 
         </LinearLayout>
 
@@ -47,7 +47,7 @@
                     android:src="@drawable/close"
                     android:layout_gravity="right"
                     android:id="@+id/FragmentJourneyInformationCloseButton"
-                    style="@style/TransparentButtonStyle"/>
+                    style="@style/TransparentButton"/>
 
             </LinearLayout>
 

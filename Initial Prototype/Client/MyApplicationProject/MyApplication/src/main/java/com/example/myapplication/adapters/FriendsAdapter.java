@@ -14,7 +14,7 @@ import com.example.myapplication.dtos.ServiceResponse;
 import com.example.myapplication.dtos.User;
 import com.example.myapplication.R;
 import com.example.myapplication.dtos.ChatMessageRetrieverDTO;
-import com.example.myapplication.experimental.AppData;
+import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.google.gson.reflect.TypeToken;
@@ -29,13 +29,13 @@ public class FriendsAdapter extends ArrayAdapter<User> {
     private Context context;
     private int layoutResourceId;
     private ArrayList<User> friends;
-    private AppData appData;
+    private FindNDriveManager findNDriveManager;
 
-    public FriendsAdapter(Context context, int resource, AppData appData, ArrayList<User> friends) {
-        super(context, resource, appData.getFriends());
+    public FriendsAdapter(Context context, int resource, FindNDriveManager findNDriveManager, ArrayList<User> friends) {
+        super(context, resource, friends);
         this.context = context;
         this.layoutResourceId = resource;
-        this.appData = appData;
+        this.findNDriveManager = findNDriveManager;
         this.friends = friends;
     }
 
@@ -69,9 +69,9 @@ public class FriendsAdapter extends ArrayAdapter<User> {
 
         holder.userNameTextView.setText(friend.UserName);
         holder.currentOnlineStatus.setImageResource(friend.Status == StatusConstants.Online ? R.drawable.available : R.drawable.unavailable);
-        new WCFServiceTask<ChatMessageRetrieverDTO>(getContext().getResources().getString(R.string.GetUnreadMessagesCountForFriendURL),
-                new ChatMessageRetrieverDTO(friends.get(position).UserId, appData.getUser().UserId),
-                new TypeToken<ServiceResponse<Integer>>() {}.getType(), appData.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
+        new WCFServiceTask<ChatMessageRetrieverDTO>(this.context, getContext().getResources().getString(R.string.GetUnreadMessagesCountForFriendURL),
+                new ChatMessageRetrieverDTO(friends.get(position).UserId, findNDriveManager.getUser().UserId),
+                new TypeToken<ServiceResponse<Integer>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {
                 holder.unreadMessagesCountTextView.setText(serviceResponse.Result + " New messages");

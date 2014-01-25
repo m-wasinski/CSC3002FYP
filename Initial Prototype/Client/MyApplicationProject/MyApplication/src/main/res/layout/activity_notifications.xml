@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Content"
-            style="@style/RegularTextField"/>
+            style="@style/RegularEditText"/>
     </LinearLayout>
 
     <LinearLayout

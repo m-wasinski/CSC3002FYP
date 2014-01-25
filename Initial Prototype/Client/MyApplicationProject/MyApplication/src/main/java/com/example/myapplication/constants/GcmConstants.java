@@ -9,4 +9,5 @@ public class GcmConstants {
     public static final int ACTION_FORWARD_MESSAGE = 2;
     public static final String PROPERTY_ACTION_REFRESH = "ACTION_REFRESH";
     public static final String PROPERTY_FORWARD_MESSAGE = "FORWARD_MESSAGE";
+    public static final String ACTION_LOGOUT = "ACTOIN_LOGOUT";
 }

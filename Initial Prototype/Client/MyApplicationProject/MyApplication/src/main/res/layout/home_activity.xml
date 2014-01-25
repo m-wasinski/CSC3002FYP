@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/car"
                 android:layout_gravity="center"
-                style="@style/TransparentButtonStyle"
+                style="@style/TransparentButton"
                 android:focusable="false"/>
 
             <TextView
@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/search"
                 android:layout_gravity="center"
-                style="@style/TransparentButtonStyle"
+                style="@style/TransparentButton"
                 android:focusable="false"/>
 
             <TextView
@@ -95,18 +95,20 @@
             android:background="@drawable/home_navigation_selector"
             android:id="@+id/ActivityHomeMyOfferJourneyLayout">
 
-            <ImageButton
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/plus"
                 android:layout_gravity="center"
-                style="@style/TransparentButtonStyle"/>
+                style="@style/TransparentButton"
+                android:focusable="false"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="New Journey"
-                style="@style/LoginFields"/>
+                style="@style/LoginFields"
+                android:focusable="false"/>
         </LinearLayout>
 
         <LinearLayout
@@ -126,7 +128,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/New"
-                style="@style/RegularTextField"
+                style="@style/RegularEditText"
                 android:focusable="false"/>
 
             <ImageView
@@ -134,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/notification"
                 android:layout_gravity="center"
-                style="@style/TransparentButtonStyle"
+                style="@style/TransparentButton"
                 android:focusable="false"/>
 
             <TextView
@@ -170,7 +172,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/NewMessages"
-                style="@style/RegularTextField"
+                style="@style/RegularEditText"
                 android:focusable="false"/>
 
             <ImageView
@@ -178,7 +180,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/friends"
                 android:layout_gravity="center"
-                style="@style/TransparentButtonStyle"
+                style="@style/TransparentButton"
                 android:focusable="false"/>
 
             <TextView
@@ -206,7 +208,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/profile"
                 android:layout_gravity="center"
-                style="@style/TransparentButtonStyle"/>
+                style="@style/TransparentButton"/>
 
             <TextView
                 android:layout_width="wrap_content"

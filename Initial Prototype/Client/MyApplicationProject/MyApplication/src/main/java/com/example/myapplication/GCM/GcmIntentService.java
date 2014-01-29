@@ -1,10 +1,12 @@
 package com.example.myapplication.gcm;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -18,13 +20,18 @@ import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.InstantMessengerActivity;
 import com.example.myapplication.activities.activities.LoginActivity;
 import com.example.myapplication.constants.GcmConstants;
+import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.SessionConstants;
 import com.example.myapplication.constants.SharedPreferencesConstants;
 import com.example.myapplication.dtos.ChatMessage;
+import com.example.myapplication.dtos.ServiceResponse;
+import com.example.myapplication.experimental.FindNDriveManager;
+import com.example.myapplication.experimental.InstantMessengerReceiver;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,6 +45,9 @@ public class GcmIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+
+        FindNDriveManager findNDriveManager = ((FindNDriveManager)getApplication());
+
         Bundle extras = intent.getExtras();
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
         // The getMessageType() intent parameter must be the intent you received
@@ -59,116 +69,36 @@ public class GcmIntentService extends IntentService {
                 //sendNotification("Deleted messages on server: " +
                 //        intent.getExtras().getString("contentTitle"), intent.getExtras().getString("message"));
                 // If it's a regular GCM message, do some work.
-            } else if (GoogleCloudMessaging.
-                    MESSAGE_TYPE_MESSAGE.equals(messageType)) {
-                // This loop represents the service doing some work.
-                /*for (int i=0; i<5; i++) {
-                    Log.i("GCMIntentService", "Working... " + (i + 1)
-                            + "/5 @ " + SystemClock.elapsedRealtime());
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                    }
-                }*/
-                Log.i("GCMIntentService", "Completed work @ " + SystemClock.elapsedRealtime());
-                // Post notification of received message.
-                //sendNotification("Received: " + extras.toString());
+            } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType))
+            {
+                int requestType = Integer.parseInt(intent.getExtras().getString(IntentConstants.NOTIFICATION_TYPE));
 
-                int requestType = Integer.parseInt(intent.getExtras().getString("notificationType"));
-                Intent broadcastIntent;
+                Intent broadcastIntent = new Intent();
+                broadcastIntent.setAction(GcmConstants.BROADCAST_ACTION_REFRESH);
+
                 switch (requestType)
                 {
-                    case GcmConstants.ACTION_REFRESH:
-                        broadcastIntent = new Intent();
-                        broadcastIntent.setAction(GcmConstants.PROPERTY_ACTION_REFRESH);
+                    case GcmConstants.NOTIFICATION_REFRESH:
                         sendBroadcast(broadcastIntent);
                         break;
-                    case GcmConstants.ACTION_FORWARD_MESSAGE: //Chat instant message.
-                        ChatMessage chatMessage = new Gson().fromJson(intent.getExtras().getString("message"), new TypeToken<ChatMessage>() {}.getType());
-                        instantMessageReceived(chatMessage);
+                    case GcmConstants.NOTIFICATION_INSTANT_MESSENGER: //Chat instant message.
+                        sendBroadcast(broadcastIntent);
+                        instantMessageReceived(intent.getExtras().getString(IntentConstants.MESSAGE));
+                        break;
+                    case GcmConstants.NOTIFICATION_LOGOUT: //Force logout, user must have logged on somewhere using a different device.
+                        findNDriveManager.logout(true, true);
                         break;
                 }
             }
         }
+
         // Release the wake lock provided by the WakefulBroadcastReceiver.
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-    private void instantMessageReceived(ChatMessage chatMessage)
+    private void instantMessageReceived(String message)
     {
-        SharedPreferences sharedPreferences = getSharedPreferences(SharedPreferencesConstants.GLOBAL_APP_DATA, Context.MODE_PRIVATE);
-        String sessionId = sharedPreferences.getString(SessionConstants.SESSION_ID, "");
-        NotificationManager mNotificationManager = (NotificationManager)
-                this.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        if(sessionId.isEmpty())
-        {
-            PendingIntent contentIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(),
-                    new Intent(this, LoginActivity.class), 0);
-
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(this)
-                            .setSmallIcon(R.drawable.logo)
-                            .setContentTitle("You have a new message")
-                            .setStyle(new NotificationCompat.BigTextStyle().bigText(chatMessage.MessageBody))
-                            .setContentText("Please login to see it.");
-
-            mBuilder.setContentIntent(contentIntent);
-            Notification notification = mBuilder.build();
-            notification.flags = Notification.DEFAULT_LIGHTS | Notification.FLAG_AUTO_CANCEL;
-
-            mNotificationManager.notify(0, notification);
-        }
-
-
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(GcmConstants.PROPERTY_ACTION_REFRESH);
-        sendBroadcast(broadcastIntent);
-
-        Intent broadcastIntent2 = new Intent();
-        broadcastIntent2.setAction(GcmConstants.PROPERTY_FORWARD_MESSAGE);
-        broadcastIntent2.putExtra("message", new Gson().toJson(chatMessage));
-        sendBroadcast(broadcastIntent2);
-
-
-
-        ActivityManager am =(ActivityManager)getApplicationContext().getSystemService(ACTIVITY_SERVICE);
-
-        // get the info from the currently running task
-        List< ActivityManager.RunningTaskInfo > taskInfo = am.getRunningTasks(1);
-
-        Log.d("topActivity", "CURRENT Activity ::"
-                + taskInfo.get(0).topActivity.getClassName());
-
-        ComponentName componentInfo = taskInfo.get(0).topActivity;
-        //--- To get currently active activity in foreground. We can use getShortClassName() & getClassName()
-        String classname =componentInfo.getClassName();
-        //---get package name of currently running application in foreground. We can use getPackageName()
-        String packagename =componentInfo.getPackageName();
-
-        if(!classname.equals(InstantMessengerActivity.class.getName()))
-        {
-            int notificationId =  (int) System.currentTimeMillis();
-            Bundle extras = new Bundle();
-            extras.putString("RecipientUsername", chatMessage.SenderUserName);
-            extras.putInt("RecipientId", chatMessage.SenderId);
-            PendingIntent contentIntent = PendingIntent.getActivity(this, notificationId,
-                    new Intent(this, InstantMessengerActivity.class)
-                            .putExtras(extras).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), 0);
-
-             NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(this)
-                            .setSmallIcon(R.drawable.logo)
-                            .setContentTitle("Message from " + chatMessage.SenderUserName)
-                            .setStyle(new NotificationCompat.BigTextStyle().bigText(chatMessage.MessageBody))
-                            .setContentText(chatMessage.MessageBody);
-
-            mBuilder.setContentIntent(contentIntent);
-            Notification notification = mBuilder.build();
-            notification.flags = Notification.DEFAULT_LIGHTS | Notification.FLAG_AUTO_CANCEL;
-
-            mNotificationManager.notify(notificationId, notification);
-        }
-
+        Intent orderedBroadcastIntent = new Intent(GcmConstants.BROADCAST_INSTANT_MESSENGER);
+        sendOrderedBroadcast(orderedBroadcastIntent.putExtra(IntentConstants.MESSAGE, message), null);
     }
 }

@@ -16,6 +16,7 @@ import android.widget.EditText;
 import com.example.myapplication.activities.base.BaseListActivity;
 import com.example.myapplication.adapters.ChatAdapter;
 import com.example.myapplication.constants.GcmConstants;
+import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.dtos.ChatMessage;
 import com.example.myapplication.dtos.ServiceResponse;
@@ -39,7 +40,6 @@ public class InstantMessengerActivity extends BaseListActivity {
     private ArrayList<ChatMessage> messages;
     private ChatAdapter adapter;
     private EditText text;
-    private Button sendButton;
     private int recipientId;
     private String recipientUserName;
 
@@ -47,7 +47,8 @@ public class InstantMessengerActivity extends BaseListActivity {
     protected void onResume() {
         super.onResume();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(GcmConstants.PROPERTY_FORWARD_MESSAGE);
+        intentFilter.addAction(GcmConstants.BROADCAST_INSTANT_MESSENGER);
+        intentFilter.setPriority(1000);
         registerReceiver(GCMReceiver, intentFilter);
     }
 
@@ -62,10 +63,10 @@ public class InstantMessengerActivity extends BaseListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.instant_messenger_activity);
         Bundle extras = getIntent().getExtras();
-        this.recipientId = extras.getInt("RecipientId");
-        this.recipientUserName = extras.getString("RecipientUsername");
+        this.recipientId = extras.getInt(IntentConstants.RECIPIENT_ID);
+        this.recipientUserName = extras.getString(IntentConstants.RECIPIENT_USERNAME);
         this.actionBar.setTitle(this.recipientUserName);
-        sendButton = (Button) findViewById(R.id.InstantMessengerActivityButton);
+        Button sendButton = (Button) findViewById(R.id.InstantMessengerActivityButton);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,10 +93,6 @@ public class InstantMessengerActivity extends BaseListActivity {
                     findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
-                    if(serviceResponse.ServiceResponseCode == ServiceResponseCode.UNAUTHORISED)
-                    {
-
-                    }
                 }
             }).execute();
         }
@@ -108,7 +105,6 @@ public class InstantMessengerActivity extends BaseListActivity {
                 findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
-                checkIfAuthorised(serviceResponse.ServiceResponseCode);
             }
         }).execute();
     }
@@ -157,8 +153,8 @@ public class InstantMessengerActivity extends BaseListActivity {
     private final BroadcastReceiver GCMReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            ChatMessage chatMessage = gson.fromJson(intent.getExtras().getString("message"), new TypeToken<ChatMessage>() {}.getType());
 
+            ChatMessage chatMessage = gson.fromJson(intent.getExtras().getString("message"), new TypeToken<ChatMessage>() {}.getType());
             for(ChatMessage message : messages)
             {
                 if(message.ChatMessageId == chatMessage.ChatMessageId)
@@ -175,6 +171,8 @@ public class InstantMessengerActivity extends BaseListActivity {
             {
                 ohShitThisIsNotMyMessage(chatMessage);
             }
+
+            abortBroadcast();
         }
     };
 
@@ -186,8 +184,8 @@ public class InstantMessengerActivity extends BaseListActivity {
         int id =  (int) System.currentTimeMillis();
 
         Bundle extras = new Bundle();
-        extras.putString("RecipientUsername", chatMessage.SenderUserName);
-        extras.putInt("RecipientId", chatMessage.SenderId);
+        extras.putString(IntentConstants.RECIPIENT_USERNAME, chatMessage.SenderUserName);
+        extras.putInt(IntentConstants.RECIPIENT_ID, chatMessage.SenderId);
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, id,
                 new Intent(this, InstantMessengerActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -205,10 +203,5 @@ public class InstantMessengerActivity extends BaseListActivity {
         notification.flags = Notification.DEFAULT_LIGHTS | Notification.FLAG_AUTO_CANCEL;
 
         mNotificationManager.notify(id, notification);
-    }
-
-    private void checkIfStillLoggedIn(int serviceResponseCode)
-    {
-       super.checkIfAuthorised(serviceResponseCode);
     }
 }

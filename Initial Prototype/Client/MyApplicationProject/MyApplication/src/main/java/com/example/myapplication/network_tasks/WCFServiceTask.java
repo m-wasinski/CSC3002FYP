@@ -76,7 +76,7 @@ public class WCFServiceTask<T> extends AsyncTask<TextView, String, Boolean> {
         {
             FindNDriveManager findNDriveManager = ((FindNDriveManager)this.context.getApplicationContext());
             assert findNDriveManager != null;
-            findNDriveManager.logout(true);
+            findNDriveManager.logout(true, true);
             return;
         }
 

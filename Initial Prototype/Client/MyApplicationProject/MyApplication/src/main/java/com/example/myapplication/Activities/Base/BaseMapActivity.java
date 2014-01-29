@@ -247,18 +247,4 @@ public class BaseMapActivity extends FragmentActivity
             locationManager.requestLocationUpdates(locationManager.getBestProvider(new Criteria(), false), 1000, 10, locationListener);
         }
     }
-
-    protected void checkIfAuthorised(int serviceResponseCode) {
-
-        if(serviceResponseCode == ServiceResponseCode.UNAUTHORISED)
-        {
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            finish();
-            startActivity(intent);
-            findNDriveManager.setUser(null);
-            Toast toast = Toast.makeText(this, "Your session has expired, you must log in again.", Toast.LENGTH_LONG);
-            toast.show();
-        }
-    }
 }

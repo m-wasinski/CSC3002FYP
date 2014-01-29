@@ -50,7 +50,7 @@ public class HomeActivity extends BaseActivity {
         generalNotificationsCountTextView = (TextView) findViewById(R.id.ActivityHomeNotificationCountTextView);
         unreadMessagesCountTextView =(TextView) findViewById(R.id.HomeActivityUnreadMessagesCountTextView);
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(GcmConstants.PROPERTY_ACTION_REFRESH);
+        intentFilter.addAction(GcmConstants.BROADCAST_ACTION_REFRESH);
         registerReceiver(GCMReceiver, intentFilter);
         setupUIEvents();
     }
@@ -58,7 +58,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        findNDriveManager.logout(false);
+        findNDriveManager.logout(false, false);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class HomeActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout_menu_option:
-                findNDriveManager.logout(true);
+                findNDriveManager.logout(true, false);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -163,7 +163,7 @@ public class HomeActivity extends BaseActivity {
         addNewJourneyLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), OfferJourneyActivity.class);
+                Intent intent = new Intent(getApplicationContext(), OfferJourneyStepOneActivity.class);
                 startActivity(intent);
             }
         });

@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <fragment
-        android:id="@+id/OfferNewJourneyMapFragment"
+        android:id="@+id/OfferNewJourneyActivityStepOneMapFragment"
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
@@ -36,19 +36,16 @@
             android:clickable="true"
             android:gravity="center">
 
-            <TextView
+            <Button
                 android:layout_width="wrap_content"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/ActivityOfferJourneyHeaderPaneEditText"
-                android:text="Minimize Panel"
-                style="@style/MapSearchTitle"/>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/down"
-                android:layout_marginLeft="10sp"
-                android:id="@+id/ActivityOfferJourneyHeaderPaneImage"/>
+                android:text="Minimize"
+                android:id="@+id/OfferJourneyStepOneActivitySearchPaneHeaderButton"
+                style="@style/TransparentButton"
+                android:drawableRight="@drawable/down"
+                android:background="@drawable/transparent_button_selector"/>
 
         </LinearLayout>
 
@@ -124,11 +121,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Step 2..."
-                    android:id="@+id/AddNewJourneyDoneButton"
+                    android:id="@+id/OfferJourneyStepOneStepTwoButton"
                     android:background="@drawable/button_selector"
                     style="@style/ButtonStyle"
                     android:layout_weight="1"
                     android:layout_marginRight="5sp"/>
+
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

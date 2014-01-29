@@ -83,7 +83,6 @@ public class FindNDriveManager extends Application {
         return 10;
     }
 
-
     /**
      * Gets the current registration ID for application on GCM service.
      * <p>
@@ -138,15 +137,18 @@ public class FindNDriveManager extends Application {
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public void logout(boolean forceLogout)
+    public void logout(boolean forceLogout, boolean unauthorised)
     {
-        new WCFServiceTask<Boolean>(this, getResources().getString(R.string.UserLogoutURL),
-                forceLogout, new TypeToken<ServiceResponse<Boolean>>(){}.getType(), this.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
-            @Override
-            public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+        if(!unauthorised)
+        {
+            new WCFServiceTask<Boolean>(this, getResources().getString(R.string.UserLogoutURL),
+                    forceLogout, new TypeToken<ServiceResponse<Boolean>>(){}.getType(), this.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+                @Override
+                public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
 
-            }
-        }).execute();
+                }
+            }).execute();
+        }
 
         if(this.getSessionId().endsWith("0") || forceLogout)
         {

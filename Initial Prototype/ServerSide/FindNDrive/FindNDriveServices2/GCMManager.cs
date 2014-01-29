@@ -9,14 +9,15 @@
 
 namespace FindNDriveServices2
 {
-    using System;
     using System.Collections.ObjectModel;
-    using System.Collections.Specialized;
     using System.IO;
     using System.Linq;
     using System.Net;
     using System.Text;
-    using System.Web;
+
+    using DomainObjects.Constants;
+
+    using FindNDriveDataAccessLayer;
 
     using Newtonsoft.Json;
 
@@ -44,9 +45,6 @@ namespace FindNDriveServices2
         /// <param name="notificationType">
         /// The notification Type.
         /// </param>
-        /// <param name="notificationArguments">
-        /// The notification Arguments.
-        /// </param>
         /// <param name="contentTitle">
         /// The notification Title.
         /// </param>
@@ -55,8 +53,7 @@ namespace FindNDriveServices2
         /// </param>
         public void SendNotification(
             Collection<string> registrationIds,
-            int notificationType,
-            int notificationArguments,
+            GCMNotificationType notificationType,
             string contentTitle,
             string message)
         {
@@ -73,8 +70,7 @@ namespace FindNDriveServices2
             var postData = "{ \"registration_ids\":" + JsonConvert.SerializeObject(filteredGcms) + ", " +
              "\"data\": {\"tickerText\":\"" + string.Empty + "\", " +
              "\"contentTitle\":\"" + contentTitle + "\", " +
-             "\"notificationType\":\"" + notificationType + "\", " +
-             "\"notificationArguments\":\"" + notificationArguments + "\", " +
+             "\"notificationType\":\"" + JsonConvert.SerializeObject(notificationType) + "\", " +
              "\"message\":" + message + "}}";
 
             // Write the string to a file.
@@ -107,9 +103,6 @@ namespace FindNDriveServices2
             }
 
             gcmResponse.Close();
-
-            
-
         }
     }
 }

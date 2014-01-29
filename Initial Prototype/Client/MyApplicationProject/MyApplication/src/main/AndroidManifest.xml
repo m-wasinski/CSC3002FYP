@@ -122,8 +122,13 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".activities.activities.OfferJourneyActivity"
-            android:label="New Journey"
+            android:name=".activities.activities.OfferJourneyStepOneActivity"
+            android:label="Step 1"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".activities.activities.OfferJourneyStepTwoActivity"
+            android:label="Step 2"
             android:screenOrientation="portrait"/>
 
         <receiver
@@ -132,6 +137,12 @@
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <category android:name="com.example.gcm" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".experimental.InstantMessengerReceiver">
+            <intent-filter>
+                <action android:name="BROADCAST_INSTANT_MESSENGER" />
             </intent-filter>
         </receiver>
 

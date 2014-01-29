@@ -99,7 +99,7 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
         });
         progressBar = (ProgressBar) findViewById(R.id.ActivityMyJourneysProgressBar);
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(GcmConstants.PROPERTY_ACTION_REFRESH);
+        intentFilter.addAction(GcmConstants.BROADCAST_ACTION_REFRESH);
         registerReceiver(GCMReceiver, intentFilter);
         filterEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -197,7 +197,7 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
                 startActivity(intent);
                 break;
             case R.id.logout_menu_option:
-                findNDriveManager.logout(true);
+                findNDriveManager.logout(true, false);
                 break;
             default:
                 return super.onOptionsItemSelected(item);

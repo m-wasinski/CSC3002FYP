@@ -79,6 +79,7 @@ namespace FindNDriveServices2.Services
             {
                 return ResponseBuilder.Unauthorised(new List<Journey>());
             }
+
             /*var carShares =
                 this._findNDriveUnitOfWork.journeyRepository.AsQueryable()
                     .IncludeAll()

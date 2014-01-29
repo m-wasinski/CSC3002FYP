@@ -32,17 +32,4 @@ public class BaseFragment extends Fragment {
     public void onResume() {
         super.onResume();
     }
-
-    protected void checkIfAuthorised(int serviceResponseCode) {
-
-        if(serviceResponseCode == ServiceResponseCode.UNAUTHORISED)
-        {
-            Intent intent = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            getActivity().finish();
-            startActivity(intent);
-            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Your session has expired, you must log in again.", Toast.LENGTH_LONG);
-            toast.show();
-        }
-    }
 }

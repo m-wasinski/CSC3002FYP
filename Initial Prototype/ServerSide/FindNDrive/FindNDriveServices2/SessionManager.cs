@@ -18,7 +18,7 @@
         /// <summary>
         /// The _find n drive unit of work.
         /// </summary>
-        private readonly FindNDriveUnitOfWork _findNDriveUnitOfWork;
+        private readonly FindNDriveUnitOfWork findNDriveUnitOfWork;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SessionManager"/> class.
@@ -28,7 +28,7 @@
         /// </param>
         public SessionManager(FindNDriveUnitOfWork findNDriveUnitOfWork)
         {
-            this._findNDriveUnitOfWork = findNDriveUnitOfWork;
+            this.findNDriveUnitOfWork = findNDriveUnitOfWork;
         }
 
         //Generates a new session id for the user.
@@ -85,7 +85,7 @@
                 if (userId == -1)
                     return false;
 
-                var savedSession = _findNDriveUnitOfWork.SessionRepository.Find(GetUserId(incomingSessionId));
+                var savedSession = this.findNDriveUnitOfWork.SessionRepository.Find(GetUserId(incomingSessionId));
 
                 if (savedSession != null)
                 {
@@ -185,7 +185,7 @@
         public void RefreshSession(Session session)
         {
             session.ExpiryDate = DateTime.Now.AddMinutes(30);
-            this._findNDriveUnitOfWork.Commit();
+            this.findNDriveUnitOfWork.Commit();
         }
 
         /// <summary>
@@ -210,7 +210,7 @@
                 
                 if (rememberUser != null)
                 {
-                    var savedSession = _findNDriveUnitOfWork.SessionRepository.Find(userId);
+                    var savedSession = this.findNDriveUnitOfWork.SessionRepository.Find(userId);
 
                     if (rememberUser.Equals("true"))
                     {
@@ -246,10 +246,10 @@
                             UserId = userId
                         };
 
-                        this._findNDriveUnitOfWork.SessionRepository.Add(newSession);
+                        this.findNDriveUnitOfWork.SessionRepository.Add(newSession);
                     }
                         
-                    this._findNDriveUnitOfWork.Commit();
+                    this.findNDriveUnitOfWork.Commit();
 
                     WebOperationContext.Current.OutgoingResponse.Headers.Add(SessionConstants.SESSION_ID, sessionId);
                 }
@@ -278,17 +278,18 @@
                 if (userId == -1)
                     return false;
 
-                var savedSession = _findNDriveUnitOfWork.SessionRepository.Find(userId);
+                var savedSession = this.findNDriveUnitOfWork.SessionRepository.Find(userId);
 
                 if (userId != -1 && savedSession != null)
                 {
                     if (forceInvalidate || savedSession.SessionType == SessionTypes.Temporary)
                     {
-                        var user = this._findNDriveUnitOfWork.UserRepository.Find(userId);
+                        var user = this.findNDriveUnitOfWork.UserRepository.Find(userId);
                         user.Status = Status.Offline;
+                        user.GCMRegistrationID = "0";
                         savedSession.ExpiryDate = DateTime.Now.AddDays(-1);
                         success = true;
-                        this._findNDriveUnitOfWork.Commit();
+                        this.findNDriveUnitOfWork.Commit();
                     }
                 }
             }

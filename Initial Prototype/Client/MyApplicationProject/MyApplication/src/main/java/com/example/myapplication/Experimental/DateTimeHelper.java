@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -47,7 +48,7 @@ public class DateTimeHelper {
     {
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(DateTimeHelper.parseWCFDate(wcfDate));
-        SimpleDateFormat simpleDateFormat  = new SimpleDateFormat("dd-MMMM-yyyy");
+        SimpleDateFormat simpleDateFormat  = new SimpleDateFormat("dd-MMMM-yyyy", Locale.UK);
         simpleDateFormat.setTimeZone( TimeZone.getTimeZone("GMT"));
         return simpleDateFormat.format(calendar.getTime());
     }

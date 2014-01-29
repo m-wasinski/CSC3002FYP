@@ -39,9 +39,10 @@ public class WaypointHolder {
         this.holderLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         this.holderLayout.setOrientation(LinearLayout.HORIZONTAL);
 
+        Drawable image = this.context.getResources().getDrawable(R.drawable.close);
         this.closeButton = new Button(context);
-        this.closeButton.setText("X");
         this.closeButton.setBackgroundColor(Color.parseColor("#00000000"));
+        this.closeButton.setCompoundDrawablesWithIntrinsicBounds(null, null, image, null);
         this.closeButton.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         this.addressEditText = new EditText(context);

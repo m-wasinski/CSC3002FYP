@@ -12,6 +12,7 @@ import android.widget.ListView;
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.adapters.FriendsAdapter;
 import com.example.myapplication.constants.GcmConstants;
+import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.dtos.ServiceResponse;
 import com.example.myapplication.dtos.User;
@@ -35,7 +36,7 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
         super.onCreate(savedInstanceState);
         setContentView(R.layout.friend_list_activity);
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(GcmConstants.PROPERTY_ACTION_REFRESH);
+        intentFilter.addAction(GcmConstants.BROADCAST_ACTION_REFRESH);
         registerReceiver(GCMReceiver, intentFilter);
         travelBuddiesListView = (ListView) findViewById(R.id.FriendListActivityFriendsListView);
     }
@@ -64,8 +65,8 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     Intent intent = new Intent(getApplicationContext(), InstantMessengerActivity.class);
                     Bundle extras = new Bundle();
-                    extras.putString("RecipientUsername", serviceResponse.Result.get(i).UserName);
-                    extras.putInt("RecipientId", serviceResponse.Result.get(i).UserId);
+                    extras.putString(IntentConstants.RECIPIENT_USERNAME, serviceResponse.Result.get(i).UserName);
+                    extras.putInt(IntentConstants.RECIPIENT_ID, serviceResponse.Result.get(i).UserId);
 
                     intent.putExtras(extras).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);

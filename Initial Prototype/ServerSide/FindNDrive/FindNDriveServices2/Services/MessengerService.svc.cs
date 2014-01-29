@@ -94,55 +94,58 @@ namespace FindNDriveServices2.Services
                 return ResponseBuilder.Unauthorised(false);
             }
 
-            var senderGCM = this.findNDriveUnitOfWork.UserRepository.Find(chatMessageDTO.SenderId).GCMRegistrationID;
-            var recipientGCM = this.findNDriveUnitOfWork.UserRepository.Find(chatMessageDTO.RecipientId).GCMRegistrationID;
+            var targetUser = this.findNDriveUnitOfWork.UserRepository.Find(chatMessageDTO.RecipientId);
+            var sendingUser = this.findNDriveUnitOfWork.UserRepository.Find(chatMessageDTO.SenderId);
 
-            if (recipientGCM != null && senderGCM != null)
+            if (targetUser == null || sendingUser == null)
             {
-                var newMessage = new ChatMessage()
-                                     {
-                                         MessageBody = chatMessageDTO.MessageBody,
-                                         Read = false,
-                                         SenderId = chatMessageDTO.SenderId,
-                                         RecipientId = chatMessageDTO.RecipientId,
-                                         SentOnDate = chatMessageDTO.SentOnDate,
-                                         SenderUserName = chatMessageDTO.SenderUserName,
-                                         RecipientUserName = chatMessageDTO.RecipientUserName
-                                     };
-                this.findNDriveUnitOfWork.ChatMessageRepository.Add(newMessage);
-                this.findNDriveUnitOfWork.Commit();
-
-                chatMessageDTO.ChatMessageId = newMessage.ChatMessageId;
-
-                var targetUser = this.findNDriveUnitOfWork.UserRepository.Find(chatMessageDTO.RecipientId);
-
-                var settings = new JsonSerializerSettings();
-                settings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
-
-                string message = JsonConvert.SerializeObject(chatMessageDTO, typeof(ChatMessageDTO),Formatting.Indented,settings);
-
-                if (targetUser.Status == Status.Online)
-                {
-                    this.gcmManager.SendNotification(new Collection<string> { recipientGCM }, 2, 0, "Message", message);
-                }
-                else
-                {
-                    this.findNDriveUnitOfWork.GCMNotificationsRepository.Add(new GCMNotification
-                                                                                 {  
-                                                                                     UserId = targetUser.UserId,
-                                                                                     Delivered = false, 
-                                                                                     ContentTitle = "Message", 
-                                                                                     NotificationArguments = 0, 
-                                                                                     NotificationType = 2, 
-                                                                                     NotificationMessage = message
-                                                                                 });
-                    this.findNDriveUnitOfWork.Commit();
-                }
-                
-                return ResponseBuilder.Success(true);
+                return ResponseBuilder.Failure<bool>("Invalid sender or recipient id");
             }
 
-            return ResponseBuilder.Failure<bool>("Invalid sender or recipient id");
+            var newMessage = new ChatMessage()
+                                 {
+                                     MessageBody = chatMessageDTO.MessageBody,
+                                     Read = false,
+                                     SenderId = chatMessageDTO.SenderId,
+                                     RecipientId = chatMessageDTO.RecipientId,
+                                     SentOnDate = chatMessageDTO.SentOnDate,
+                                     SenderUserName = chatMessageDTO.SenderUserName,
+                                     RecipientUserName = chatMessageDTO.RecipientUserName
+                                 };
+            this.findNDriveUnitOfWork.ChatMessageRepository.Add(newMessage);
+            this.findNDriveUnitOfWork.Commit();
+
+            chatMessageDTO.ChatMessageId = newMessage.ChatMessageId;
+
+            var message = JsonConvert.SerializeObject(
+                chatMessageDTO,
+                typeof(ChatMessageDTO),
+                Formatting.Indented,
+                new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.MicrosoftDateFormat });
+
+            if (targetUser.Status == Status.Online)
+            {
+                this.gcmManager.SendNotification(
+                    new Collection<string> { targetUser.GCMRegistrationID },
+                    GCMNotificationType.InstantMessenger,
+                    "Message",
+                    message);
+            }
+            else
+            {
+                this.findNDriveUnitOfWork.GCMNotificationsRepository.Add(
+                    new GCMNotification
+                        {
+                            UserId = targetUser.UserId,
+                            Delivered = false,
+                            ContentTitle = "Message",
+                            NotificationType = GCMNotificationType.InstantMessenger,
+                            NotificationMessage = message
+                        });
+                this.findNDriveUnitOfWork.Commit();
+            }
+
+            return ResponseBuilder.Success(true);
         }
 
         /// <summary>

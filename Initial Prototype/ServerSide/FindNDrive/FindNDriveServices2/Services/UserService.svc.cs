@@ -29,6 +29,8 @@ namespace FindNDriveServices2.Services
 
     using Microsoft.Practices.ObjectBuilder2;
 
+    using Newtonsoft.Json;
+
     using WebMatrix.WebData;
 
     using Roles = DomainObjects.Constants.Roles;
@@ -99,48 +101,61 @@ namespace FindNDriveServices2.Services
             var userId = WebSecurity.GetUserId(login.UserName);
             var loggedInUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.UserId == userId);
 
-            if (loggedInUser != null)
+            if (loggedInUser == null)
             {
-                this.sessionManager.GenerateNewSession(loggedInUser.UserId);
-                loggedInUser.GCMRegistrationID = login.GCMRegistrationID;
-                loggedInUser.Status = Status.Online;
-
-                var gcmsToReset =
-                    this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                        .Where(
-                            _ =>
-                            _.GCMRegistrationID == loggedInUser.GCMRegistrationID
-                            && !_.UserName.Equals(loggedInUser.UserName))
-                        .ToList();
-
-                gcmsToReset.ForEach(
-                    delegate(User user)
-                        {
-                            user.GCMRegistrationID = "0";
-                        });
-
-                this.findNDriveUnitOfWork.Commit();
-
-                var gcmNotifications =
-                    this.findNDriveUnitOfWork.GCMNotificationsRepository.AsQueryable().Where(_ => _.UserId == userId && !_.Delivered).ToList();
-
-                gcmNotifications.ForEach(
-                    delegate(GCMNotification gcmNotification)
-                        {
-                            this.gcmManager.SendNotification(
-                                new Collection<string> { loggedInUser.GCMRegistrationID },
-                                gcmNotification.NotificationType,
-                                gcmNotification.NotificationArguments,
-                                gcmNotification.ContentTitle,
-                                gcmNotification.NotificationMessage);
-                            gcmNotification.Delivered = true;
-                        });
-
-                this.findNDriveUnitOfWork.Commit();
-
-                return ResponseBuilder.Success(loggedInUser);
+                return ResponseBuilder.Failure<User>("User does not exist!");
             }
-            return ResponseBuilder.Failure<User>("User does not exist!");
+
+            // Check if this user is currently logged onto another device, if yes, log them out.
+            if (!loggedInUser.GCMRegistrationID.Equals(login.GCMRegistrationID) && loggedInUser.Status == Status.Online && !loggedInUser.GCMRegistrationID.Equals("0"))
+            {
+                this.gcmManager.SendNotification(
+                            new Collection<string> { loggedInUser.GCMRegistrationID },
+                            GCMNotificationType.Logout,
+                            "LOGOUT",
+                             JsonConvert.SerializeObject(string.Empty));
+            }
+
+            // Check if another user has been logged on on the same device before.
+            var userToReset =
+                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+                    .FirstOrDefault(
+                        _ =>
+                        _.GCMRegistrationID == loggedInUser.GCMRegistrationID
+                        && !_.UserName.Equals(loggedInUser.UserName));
+
+            // If yes, reset this user's GCM registration ID to 0 to prevent GCM notifications from being sent to the wrong device.
+            if (userToReset != null)
+            {
+                userToReset.GCMRegistrationID = "0";
+                userToReset.Status = Status.Offline;
+            }
+
+            this.sessionManager.GenerateNewSession(loggedInUser.UserId);
+            loggedInUser.GCMRegistrationID = login.GCMRegistrationID;
+            loggedInUser.Status = Status.Online;
+
+            this.findNDriveUnitOfWork.Commit();
+
+            // Gather all unread offline GCM notifications.
+            var gcmNotifications =
+                this.findNDriveUnitOfWork.GCMNotificationsRepository.AsQueryable().Where(_ => _.UserId == userId && !_.Delivered).ToList();
+
+            // And forward them to the user.
+            gcmNotifications.ForEach(
+                delegate(GCMNotification gcmNotification)
+                    {
+                        this.gcmManager.SendNotification(
+                            new Collection<string> { loggedInUser.GCMRegistrationID },
+                            gcmNotification.NotificationType,
+                            gcmNotification.ContentTitle,
+                            gcmNotification.NotificationMessage);
+                        gcmNotification.Delivered = true;
+                    });
+
+            this.findNDriveUnitOfWork.Commit();
+
+            return ResponseBuilder.Success(loggedInUser);
         }
 
         /// <summary>
@@ -186,13 +201,17 @@ namespace FindNDriveServices2.Services
             var validatedRegisterDTO = ValidationHelper.Validate(register);
 
             //Check if an account with the same username already exists.
-            if (this.findNDriveUnitOfWork.UserRepository.AsQueryable().Any(_ => _.UserName.Equals(register.User.UserName)))
+            if (
+                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+                    .Any(_ => _.UserName.Equals(register.User.UserName)))
             {
                 return ResponseBuilder.Failure<User>("Account with this username already exists.");
             }
 
             //Check if an account with the same username already exists.
-            if (this.findNDriveUnitOfWork.UserRepository.AsQueryable().Any(_ => _.EmailAddress.Equals(register.User.EmailAddress)))
+            if (
+                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+                    .Any(_ => _.EmailAddress.Equals(register.User.EmailAddress)))
             {
                 return ResponseBuilder.Failure<User>("Account with this email address already exists.");
             }
@@ -205,7 +224,7 @@ namespace FindNDriveServices2.Services
             WebSecurity.CreateUserAndAccount(register.User.UserName, register.Password);
             register.User.UserId = WebSecurity.GetUserId(register.User.UserName);
 
-            var newUser = new User()
+            var newUser = new User
                               {
                                   EmailAddress = register.User.EmailAddress,
                                   Role = Roles.User,
@@ -255,12 +274,7 @@ namespace FindNDriveServices2.Services
                     .IncludeAll()
                     .FirstOrDefault(_ => _.UserId == userId);
 
-            if (user != null)
-            {
-                return ResponseBuilder.Success(user);
-            }
-
-            return ResponseBuilder.Failure<User>("Invalid user Id");
+            return user != null ? ResponseBuilder.Success(user) : ResponseBuilder.Unauthorised(new User());
         }
     }
 }

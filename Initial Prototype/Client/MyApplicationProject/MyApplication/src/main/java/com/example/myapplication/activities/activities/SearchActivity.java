@@ -76,7 +76,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.search_activity);
+        setContentView(R.layout.activity_search);
         actionBar.hide();
         progressBar = (ProgressBar) findViewById(R.id.SearchActivityProgressBar);
         numOfSearchResults = 0;
@@ -270,7 +270,6 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
 
     @Override
     public void onServiceCallCompleted(final ServiceResponse<ArrayList<Journey>> serviceResponse, String parameter) {
-        super.checkIfAuthorised(serviceResponse.ServiceResponseCode);
         progressBar.setVisibility(View.GONE);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {

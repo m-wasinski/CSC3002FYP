@@ -9,11 +9,8 @@
 
 namespace DomainObjects.Domains
 {
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations.Schema;
     using System.Runtime.Serialization;
-
-    using Newtonsoft.Json;
+    using DomainObjects.Constants;
 
     /// <summary>
     /// The gcm notification.
@@ -37,13 +34,7 @@ namespace DomainObjects.Domains
         /// Gets or sets the notification type.
         /// </summary>
         [DataMember]
-        public int NotificationType { get; set; }
-
-        /// <summary>
-        /// Gets or sets the notification arguments.
-        /// </summary>
-        [DataMember]
-        public int NotificationArguments { get; set; }
+        public GCMNotificationType NotificationType { get; set; }
 
         /// <summary>
         /// Gets or sets the ContentTitle title.

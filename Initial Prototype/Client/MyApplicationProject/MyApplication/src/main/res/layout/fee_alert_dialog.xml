@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFFFFF"
+    android:focusableInTouchMode="true"
+    android:focusable="true">
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Free"
+        android:id="@+id/FeeAlertDialogFreeButton"
+        android:layout_marginTop="10sp"/>
+
+        <TextView
+            android:layout_marginTop="20sp"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="OR"
+            style="@style/MyCarSharesHeader"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20sp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="£"
+            android:padding="5dp"
+            android:gravity="center_horizontal"
+            android:id="@+id/FeeAlertDialogFeeLabel"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:layout_marginLeft="10sp"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:id="@+id/FeeAlertDialogFeeEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="0.00"
+            android:padding="5dp"
+            android:numeric="decimal"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_marginTop="10sp"
+        android:layout_marginLeft="10sp"
+        android:id="@+id/FeeAlertDialogOrLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select preferred payment method"
+        style="@style/MyCarSharesHeader"/>
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10sp">
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/FeeAlertDialogCashInHandRadioButton"
+            android:text="Cash in hand"
+            android:checked="true"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/FeeAlertDialogOtherPaymentRadioButton"
+            android:text="Other (Passengers must contact driver)"/>
+    </RadioGroup>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/FeeAlertDialogOKButton"
+        android:text="OK"
+        android:layout_marginTop="10sp"/>
+</LinearLayout>

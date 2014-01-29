@@ -39,7 +39,7 @@
     <string name="NewMessages">Messages</string>
     <string name="ShowMore">Show more</string>
     <string name="SelectGender">Select gender</string>
-    <string name="KeepMeLoggedIn">  Keep me logged in</string>
+    <string name="KeepMeLoggedIn">Keep me logged in</string>
     <string name="CreateAccount">Create account</string>
     <string-array name="app_menu_options">
         <item>Home</item>

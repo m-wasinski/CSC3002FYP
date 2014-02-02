@@ -26,6 +26,7 @@ namespace DomainObjects.Domains
         /// Gets or sets the notification id.
         /// </summary>
         [DataMember]
+        [ConcurrencyCheck]
         public int NotificationId { get; set; }
 
         /// <summary>

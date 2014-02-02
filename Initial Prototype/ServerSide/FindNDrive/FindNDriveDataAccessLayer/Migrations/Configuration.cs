@@ -13,6 +13,9 @@ namespace FindNDriveDataAccessLayer.Migrations
     using System.Collections.ObjectModel;
     using System.Data.Entity.Migrations;
     using System.Globalization;
+    using System.Runtime.Remoting.Metadata.W3cXsd2001;
+    using System.Security.Cryptography;
+    using System.Text;
 
     using DomainObjects.Constants;
     using DomainObjects.Domains;
@@ -110,7 +113,8 @@ namespace FindNDriveDataAccessLayer.Migrations
                 LastName = "Doe",
                 Gender = Gender.Male,
                 UserName = "john",
-                Role = Roles.User
+                Role = Roles.User,
+                UserId = 2            
             };
 
             context.User.AddOrUpdate(_ => _.UserId, participant1);
@@ -138,6 +142,7 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Gender = Gender.Female,
                 UserName = "laura",
                 Role = Roles.User,
+                UserId = 3
             };
 
             context.User.AddOrUpdate(_ => _.UserId, participant2);
@@ -164,7 +169,8 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Gender = Gender.Female,
                 UserName = "jess",
                 Role = Roles.User,
-                Friends = new Collection<User>{participant1, participant2}
+                Friends = new Collection<User>{participant1, participant2},
+                UserId = 4
             };
 
             participant2.Friends = new Collection<User>(){driver};
@@ -178,12 +184,20 @@ namespace FindNDriveDataAccessLayer.Migrations
 
             WebSecurity.CreateUserAndAccount(driver.UserName, "p");
 
+            var encoding = new UTF8Encoding();
+            var bytes = encoding.GetBytes("Test1");
+
+            var sha = new SHA1CryptoServiceProvider();
+            var hash = sha.ComputeHash(bytes);
+            
+
             var session3 = new Session()
             {
                 UserId = driver.UserId,
                 SessionType = SessionTypes.Permanent,
-                SessionId = SessionManager.GenerateNewSessionId(driver.UserId),
-                DeviceId = "Test",
+                SessionId = "4:Test1",
+                DeviceId = Convert.ToBase64String(hash),
+                Uuid = "Test1",
                 ExpiryDate = DateTime.Now.AddDays(14),
             };
 

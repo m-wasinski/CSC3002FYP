@@ -117,7 +117,6 @@ namespace FindNDriveServices2.Services
                                  DriverId = journeyDTO.DriverId,
                                  Fee = journeyDTO.Fee,
                                  Private = journeyDTO.Private,
-                                 WomenOnly = journeyDTO.WomenOnly,
                                  SmokersAllowed = journeyDTO.SmokersAllowed,
                                  VehicleType = journeyDTO.VehicleType,
                                  PetsAllowed = journeyDTO.PetsAllowed,

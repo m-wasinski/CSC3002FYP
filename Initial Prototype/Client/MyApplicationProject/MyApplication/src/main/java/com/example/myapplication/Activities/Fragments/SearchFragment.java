@@ -199,8 +199,8 @@ public class SearchFragment extends BaseFragment implements WCFServiceCallback<A
         //carShare.PetsAllowed = petsAllowed.isChecked();
         //carShare.Free = free.isChecked();
         carShare.DateAndTimeOfDeparture = DateTimeHelper.convertToWCFDate(myCalendar.getTime());
-        carShare.SearchByDate = dateTextView.getText().toString().length() != 0;
-        carShare.SearchByTime = timeTextView.getText().toString().length() != 0;
+        //carShare.SearchByDate = dateTextView.getText().toString().length() != 0;
+        //carShare.SearchByTime = timeTextView.getText().toString().length() != 0;
 
         new WCFServiceTask<Journey>(getActivity().getApplicationContext(),"https://findndrive.no-ip.co.uk/Services/SearchService.svc/searchcarshare",
                 carShare, new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), this).execute();

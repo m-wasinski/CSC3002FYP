@@ -27,15 +27,16 @@ namespace FindNDriveServices2.DTOs
         /// <summary>
         /// Gets or sets the id.
         /// </summary>
+        [ConcurrencyCheck]
         [ScaffoldColumn(false)]
-        public virtual int Id { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Gets or sets the user name.
         /// </summary>
         [Required]
         [DataMember]
-        public virtual string UserName { get; set; }
+        public string UserName { get; set; }
 
         /// <summary>
         /// Gets or sets the email address.
@@ -43,19 +44,19 @@ namespace FindNDriveServices2.DTOs
         [EmailAddress]
         [Required]
         [DataMember]
-        public virtual string EmailAddress { get; set; }
+        public string EmailAddress { get; set; }
 
         /// <summary>
         /// Gets or sets the first name.
         /// </summary>
         [DataMember]
-        public virtual string FirstName { get; set; }
+        public string FirstName { get; set; }
 
         /// <summary>
         /// Gets or sets the last name.
         /// </summary>
         [DataMember]
-        public virtual string LastName { get; set; }
+        public string LastName { get; set; }
 
         /// <summary>
         /// Gets or sets the date of birth.
@@ -63,19 +64,19 @@ namespace FindNDriveServices2.DTOs
         [DataMember]
         [DataType(DataType.Date)]
         [Column(TypeName = "DateTime2")]
-        public virtual DateTime DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
 
         /// <summary>
         /// Gets or sets the gender.
         /// </summary>
         [DataMember]
-        public virtual Gender Gender { get; set; }
+        public Gender Gender { get; set; }
 
         /// <summary>
         /// Gets or sets the role.
         /// </summary>
         [DataMember]
-        public virtual Roles Role { get; set; }
+        public Roles Role { get; set; }
 
         /// <summary>
         /// Gets or sets the gcm registration id.

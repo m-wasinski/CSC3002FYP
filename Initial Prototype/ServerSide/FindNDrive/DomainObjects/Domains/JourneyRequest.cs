@@ -25,6 +25,7 @@ namespace DomainObjects.Domains
         /// Gets or sets the car share request id.
         /// </summary>
         [DataMember]
+        [ConcurrencyCheck]
         public int JourneyRequestId { get; set; }
 
         /// <summary>

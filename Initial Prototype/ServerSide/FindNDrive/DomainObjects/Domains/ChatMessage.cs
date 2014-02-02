@@ -24,6 +24,7 @@ namespace DomainObjects.Domains
         /// Gets or sets the chat message id.
         /// </summary>
         [DataMember]
+        [ConcurrencyCheck]
         public int ChatMessageId { get; set; }
 
         /// <summary>

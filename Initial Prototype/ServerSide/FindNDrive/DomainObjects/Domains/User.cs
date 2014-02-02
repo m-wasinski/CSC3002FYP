@@ -26,6 +26,8 @@ namespace DomainObjects.Domains
         /// Gets or sets the user id.
         /// </summary>
         [DataMember]
+        [ConcurrencyCheck]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int UserId { get; set; }
 
         /// <summary>

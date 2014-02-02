@@ -9,6 +9,7 @@
 
 namespace DomainObjects.Domains
 {
+    using System.ComponentModel.DataAnnotations;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -20,11 +21,14 @@ namespace DomainObjects.Domains
         /// <summary>
         /// Gets or sets the geo address id.
         /// </summary>
+        [DataMember]
+        [ConcurrencyCheck]
         public int GeoAddressId { get; set; }
 
         /// <summary>
         /// Gets or sets the order.
         /// </summary>
+        [DataMember]
         public int Order { get; set; }
 
         /// <summary>

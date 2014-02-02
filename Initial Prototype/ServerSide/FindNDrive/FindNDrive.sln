@@ -11,7 +11,20 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindNDriveServices2", "Find
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindNDriveDataAccessLayer", "FindNDriveDataAccessLayer\FindNDriveDataAccessLayer.csproj", "{6FEF620A-4B02-48D3-B1ED-A7AEBCC47DEA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindNDriveLoadTests", "FindNDriveLoadTests\FindNDriveLoadTests.csproj", "{0CD5048D-18D5-4F91-B214-4B666161B309}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{39B7C77E-61F5-4264-BC28-BE411844E675}"
+	ProjectSection(SolutionItems) = preProject
+		FindNDrive.vsmdi = FindNDrive.vsmdi
+		Local.testsettings = Local.testsettings
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindNDriveUnitTests", "FindNDriveUnitTests\FindNDriveUnitTests.csproj", "{8F1ED93E-EAD1-4E42-9074-AEEA45CEA5B5}"
+EndProject
 Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = FindNDrive.vsmdi
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -37,6 +50,14 @@ Global
 		{6FEF620A-4B02-48D3-B1ED-A7AEBCC47DEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FEF620A-4B02-48D3-B1ED-A7AEBCC47DEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FEF620A-4B02-48D3-B1ED-A7AEBCC47DEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CD5048D-18D5-4F91-B214-4B666161B309}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CD5048D-18D5-4F91-B214-4B666161B309}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CD5048D-18D5-4F91-B214-4B666161B309}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CD5048D-18D5-4F91-B214-4B666161B309}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F1ED93E-EAD1-4E42-9074-AEEA45CEA5B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F1ED93E-EAD1-4E42-9074-AEEA45CEA5B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F1ED93E-EAD1-4E42-9074-AEEA45CEA5B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F1ED93E-EAD1-4E42-9074-AEEA45CEA5B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

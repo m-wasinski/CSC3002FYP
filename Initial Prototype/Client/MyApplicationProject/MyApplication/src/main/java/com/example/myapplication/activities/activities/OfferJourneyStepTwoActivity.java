@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
@@ -15,16 +16,22 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.example.myapplication.R;
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.constants.IntentConstants;
+import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.dtos.Journey;
+import com.example.myapplication.dtos.ServiceResponse;
 import com.example.myapplication.experimental.DateTimeHelper;
+import com.example.myapplication.interfaces.WCFServiceCallback;
+import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.example.myapplication.utilities.Helpers;
 import com.google.gson.reflect.TypeToken;
 
@@ -67,6 +74,14 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
 
     private EditText journeyCommentsEditText;
 
+    private Button createButton;
+
+    private ProgressBar progressBar;
+
+    private final String SELECT_DATE = "Select Date";
+    private final String SELECT_TIME = "Select Time";
+    private final String SELECT_FEE = "Select fee & payment method";
+    private final String SELECT_VEHICLE = "Select vehicle type";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,9 +106,11 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
 
         this.journeyTimeRelativeLayout = (RelativeLayout) findViewById(R.id.OfferJourneyStepTwoActivityJourneyTimeRelativeLayout);
         this.journeyTimeTextView = (TextView) findViewById(R.id.OfferJourneyStepTwoActivityJourneyTimeTextView);
+        this.journeyTimeTextView.setText(this.SELECT_TIME);
 
         this.journeyDateRelativeLayout = (RelativeLayout) findViewById(R.id.OfferJourneyStepTwoActivityJourneyDateRelativeLayout);
         this.journeyDateTextView = (TextView) findViewById(R.id.OfferJourneyStepTwoActivityDateTextView);
+        this.journeyDateTextView.setText(this.SELECT_DATE);
 
         this.journeyPrivateRelativeLayout = (RelativeLayout) findViewById(R.id.OfferJourneyStepTwoActivityJourneyPrivateRelativeLayout);
         this.journeyPrivateCheckbox = (CheckBox) findViewById(R.id.OfferJourneyStepTwoActivityJourneyPrivateCheckbox);
@@ -109,14 +126,20 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
 
         this.journeyVehicleTypeRelativeLayout = (RelativeLayout) findViewById(R.id.OfferJourneyStepTwoActivityJourneyVehicleTypeRelativeLayout);
         this.journeyVehicleTypeTextView = (TextView) findViewById(R.id.OfferJourneyStepTwoActivityVehicleTextView);
+        this.journeyVehicleTypeTextView.setText(this.SELECT_VEHICLE);
 
         this.journeyAvailableSeatsRelativeLayout = (RelativeLayout) findViewById(R.id.OfferJourneyStepTwoActivityJourneyAvailableSeatsRelativeLayout);
         this.journeyAvailableSeatsTextView = (TextView) findViewById(R.id.OfferJourneyStepTwoActivityAvailableSeatsTextView);
 
         this.journeyFeeRelativeLayout = (RelativeLayout) findViewById(R.id.OfferJourneyStepTwoActivityJourneyFeeRelativeLayout);
         this.journeyFeeTextView = (TextView) findViewById(R.id.OfferJourneyStepTwoActivityFeeTextView);
+        this.journeyFeeTextView.setText(this.SELECT_FEE);
 
         this.journeyCommentsEditText = (EditText) findViewById(R.id.OfferJourneyStepTwoActivityCommentsEditText);
+
+        this.createButton = (Button) findViewById(R.id.OfferJourneyStepTwoActivityCreateButton);
+
+        this.progressBar = (ProgressBar) findViewById(R.id.OfferJourneyStepTwoActivityProgressBar);
 
         //set the from address next to minimap.
         this.fromTextView = (TextView) findViewById(R.id.OfferJourneyStepTwoActivityFromTextView);
@@ -219,6 +242,13 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
                 getFee();
             }
         });
+
+        this.createButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createJourney();
+            }
+        });
     }
 
     private void getDate()
@@ -230,6 +260,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMMM-yyyy", Locale.UK);
                 journeyDateTextView.setText(simpleDateFormat.format(calendar.getTime()));
+                journeyDateTextView.setError(null);
                 journey.DateAndTimeOfDeparture = DateTimeHelper.convertToWCFDate(calendar.getTime());
             }
         } ,calendar
@@ -247,6 +278,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
                 calendar.set(Calendar.MINUTE, timePicker.getCurrentMinute());
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.UK);
                 journeyTimeTextView.setText(sdf.format(calendar.getTime()));
+                journeyTimeTextView.setError(null);
                 journey.DateAndTimeOfDeparture = DateTimeHelper.convertToWCFDate(calendar.getTime());
             }
         }, Calendar.HOUR_OF_DAY, Calendar.MINUTE, true);
@@ -261,6 +293,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
         builder.setItems(vehicleTypes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 journeyVehicleTypeTextView.setText(vehicleTypes[item]);
+                journeyVehicleTypeTextView.setError(null);
                 journey.VehicleType = item;
             }
         });
@@ -280,6 +313,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 journeyFeeTextView.setText("Free (£0.00)");
+                journeyFeeTextView.setError(null);
                 journey.Fee = 0.00;
                 feeDialog.dismiss();
             }
@@ -294,6 +328,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
                 journeyFeeTextView.setText(feeEditText.getText().toString().equals("") ?
                         "Free (£0.00)" : "£"+feeEditText.getText().toString()  + (cashInHandRadioButton.isChecked() ? ", Cash in hand preferred." : " , Contact driver for payment options."));
                 journey.Fee = feeEditText.getText().toString().equals("") ? 0.00 : Double.parseDouble(feeEditText.getText().toString());
+                journeyFeeTextView.setError(null);
                 feeDialog.dismiss();
             }
         });
@@ -316,30 +351,70 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
         alert.show();
     }
 
-    private boolean isJourneyValid()
+    private boolean buildAndValidate()
     {
-        boolean isValid = true;
+        boolean isValid;
 
-        if(this.journeyVehicleTypeTextView.getText().toString().equals("Select vehicle type"))
-        {
-            isValid = false;
-        }
+        isValid = !this.journeyVehicleTypeTextView.getText().toString().equals(this.SELECT_VEHICLE);
+        this.journeyVehicleTypeTextView.setError(this.journeyVehicleTypeTextView.getText().toString().equals(this.SELECT_VEHICLE) ? "Please select vehicle type" : null);
 
-        if(this.journeyFeeTextView.getText().toString().equals("Select fee & payment method"))
-        {
-            isValid = false;
-        }
+        isValid = !this.journeyFeeTextView.getText().toString().equals(this.SELECT_FEE);
+        this.journeyFeeTextView.setError(this.journeyFeeTextView.getText().toString().equals(this.SELECT_FEE) ? "Please enter fee" : null);
 
-        if(this.journeyDateTextView.getText().toString().equals("Select Date"))
-        {
-            isValid = false;
-        }
+        isValid = !this.journeyDateTextView.getText().toString().equals(this.SELECT_DATE);
+        this.journeyDateTextView.setError(this.journeyDateTextView.getText().toString().equals(this.SELECT_DATE) ? "Please select date" : null);
+        if(this.journeyDateTextView.getText().toString().equals(this.SELECT_DATE))
 
-        if(this.journeyTimeTextView.getText().toString().equals("Select Time"))
+        isValid = !this.journeyTimeTextView.getText().toString().equals(this.SELECT_TIME);
+        this.journeyTimeTextView.setError(this.journeyTimeTextView.getText().toString().equals(this.SELECT_TIME) ? "Please select time" : null);
+
+        if(isValid)
         {
-            isValid = false;
+            this.journey.Description = this.journeyCommentsEditText.getText().toString();
+            this.journey.DriverId = this.findNDriveManager.getUser().UserId;
+            this.journey.CreationDate = DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime());
         }
 
         return  isValid;
+    }
+
+    private void createJourney()
+    {
+        if(buildAndValidate())
+        {
+            this.progressBar.setVisibility(View.VISIBLE);
+            new WCFServiceTask<Journey>(this, getResources().getString(R.string.CreateNewJourneyURL),
+                    journey,
+                    new TypeToken<ServiceResponse<Journey>>() {}.getType(),
+                    findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Journey, Void>() {
+                @Override
+                public void onServiceCallCompleted(ServiceResponse<Journey> serviceResponse, Void parameter) {
+                    progressBar.setVisibility(View.GONE);
+
+                    if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
+                    {
+                        journeyCreatedSuccessfully();
+                    }
+                    else
+                    {
+                        errorWhileCreatingJourney();
+                    }
+                }
+            }).execute();
+        }
+    }
+
+    private void journeyCreatedSuccessfully()
+    {
+        Intent intent = new Intent(this, HomeActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        Toast toast = Toast.makeText(this, "Your journey was created successfully.", Toast.LENGTH_LONG);
+        toast.show();
+    }
+
+    private void errorWhileCreatingJourney()
+    {
+
     }
 }

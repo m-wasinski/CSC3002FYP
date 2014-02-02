@@ -26,6 +26,7 @@ namespace DomainObjects.Domains
         /// Gets or sets the car share id.
         /// </summary>
         [DataMember] 
+        [ConcurrencyCheck]
         public int JourneyId { get; set; }
 
         /// <summary>
@@ -64,7 +65,6 @@ namespace DomainObjects.Domains
         /// <summary>
         /// Gets or sets the fee.
         /// </summary>
-        [Required]
         [DataMember]
         public double Fee { get; set; }
 

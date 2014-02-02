@@ -12,6 +12,7 @@ namespace FindNDriveServices2.Services
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Data.SqlClient;
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
@@ -107,14 +108,18 @@ namespace FindNDriveServices2.Services
             }
 
             // Check if this user is currently logged onto another device, if yes, log them out.
-            if (!loggedInUser.GCMRegistrationID.Equals(login.GCMRegistrationID) && loggedInUser.Status == Status.Online && !loggedInUser.GCMRegistrationID.Equals("0"))
+            if (loggedInUser.GCMRegistrationID != null)
             {
-                this.gcmManager.SendNotification(
-                            new Collection<string> { loggedInUser.GCMRegistrationID },
-                            GCMNotificationType.Logout,
-                            "LOGOUT",
-                             JsonConvert.SerializeObject(string.Empty));
+                if (!loggedInUser.GCMRegistrationID.Equals(login.GCMRegistrationID) && loggedInUser.Status == Status.Online && !loggedInUser.GCMRegistrationID.Equals("0"))
+                {
+                    this.gcmManager.SendNotification(
+                                new Collection<string> { loggedInUser.GCMRegistrationID },
+                                GCMNotificationType.Logout,
+                                "LOGOUT",
+                                 JsonConvert.SerializeObject(string.Empty));
+                }
             }
+            
 
             // Check if another user has been logged on on the same device before.
             var userToReset =
@@ -187,10 +192,8 @@ namespace FindNDriveServices2.Services
                 this.findNDriveUnitOfWork.Commit();
                 return ResponseBuilder.Success(loggedInUser);
             }
-
             return ResponseBuilder.Failure<User>("Unauthorised");
         }
-
         /// <summary>
         /// Registers a new user.
         /// </summary>
@@ -199,7 +202,6 @@ namespace FindNDriveServices2.Services
         public ServiceResponse<User> RegisterUser(RegisterDTO register)
         {
             var validatedRegisterDTO = ValidationHelper.Validate(register);
-
             //Check if an account with the same username already exists.
             if (
                 this.findNDriveUnitOfWork.UserRepository.AsQueryable()
@@ -207,7 +209,6 @@ namespace FindNDriveServices2.Services
             {
                 return ResponseBuilder.Failure<User>("Account with this username already exists.");
             }
-
             //Check if an account with the same username already exists.
             if (
                 this.findNDriveUnitOfWork.UserRepository.AsQueryable()
@@ -221,22 +222,28 @@ namespace FindNDriveServices2.Services
                 return ResponseBuilder.Failure<User>("Failed to register");
             }
 
-            WebSecurity.CreateUserAndAccount(register.User.UserName, register.Password);
-            register.User.UserId = WebSecurity.GetUserId(register.User.UserName);
+            try
+            {
+                WebSecurity.CreateUserAndAccount(register.User.UserName, register.Password);
+                register.User.UserId = WebSecurity.GetUserId(register.User.UserName);
 
-            var newUser = new User
-                              {
-                                  EmailAddress = register.User.EmailAddress,
-                                  Role = Roles.User,
-                                  UserName = register.User.UserName,
-                                  UserId = register.User.UserId
-                              };
+                var newUser = new User
+                {
+                    EmailAddress = register.User.EmailAddress,
+                    Role = Roles.User,
+                    UserName = register.User.UserName,
+                    UserId = register.User.UserId
+                };
 
-            this.sessionManager.GenerateNewSession(newUser.UserId);
-            this.findNDriveUnitOfWork.UserRepository.Add(newUser);
-            this.findNDriveUnitOfWork.Commit();
-
-            return ResponseBuilder.Success(newUser);
+                this.sessionManager.GenerateNewSession(newUser.UserId);
+                this.findNDriveUnitOfWork.UserRepository.Add(newUser);
+                this.findNDriveUnitOfWork.Commit();
+                return ResponseBuilder.Success(newUser);
+            }
+            catch (Exception e)
+            {
+                return ResponseBuilder.Failure<User>("Account with this username already exists.");
+            }     
         }
 
         /// <summary>

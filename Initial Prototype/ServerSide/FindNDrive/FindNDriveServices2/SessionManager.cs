@@ -80,12 +80,14 @@
                 var incomingDeviceId = WebOperationContext.Current.IncomingRequest.Headers[SessionConstants.DEVICE_ID];
                 var randomId = WebOperationContext.Current.IncomingRequest.Headers[SessionConstants.UUID];
 
-                int userId = GetUserId(incomingSessionId);
+                var userId = this.GetUserId(incomingSessionId);
 
                 if (userId == -1)
+                {
                     return false;
+                }
 
-                var savedSession = this.findNDriveUnitOfWork.SessionRepository.Find(GetUserId(incomingSessionId));
+                var savedSession = this.findNDriveUnitOfWork.SessionRepository.Find(this.GetUserId(incomingSessionId));
 
                 if (savedSession != null)
                 {
@@ -100,7 +102,7 @@
                     if (!incomingSessionId.Equals(savedSession.SessionId))
                         return false;
 
-                    var encryptedId = EncryptValue(incomingDeviceId);
+                    var encryptedId = this.EncryptValue(incomingDeviceId);
 
                     if (!savedSession.DeviceId.Equals(encryptedId))
                         return false;
@@ -155,21 +157,26 @@
             string stringId;
             int id;
 
-            try{
+            try
+            {
                 stringId = session.Substring(0, session.IndexOf(":", StringComparison.Ordinal));
             }
-            catch (ArgumentOutOfRangeException){
+            catch (ArgumentOutOfRangeException)
+            {
                 return -1;
             }
-            
+
             // ToInt32 can throw FormatException or OverflowException. 
-            try{
+            try
+            {
                 id = Convert.ToInt32(stringId);
             }
-            catch (FormatException){
+            catch (FormatException)
+            {
                 return -1;
             }
-            catch (OverflowException){
+            catch (OverflowException)
+            {
                 return -1;
             }
 
@@ -232,7 +239,6 @@
                         savedSession.DeviceId = hashedDeviceId;
                         savedSession.ExpiryDate = validUntil;
                         savedSession.SessionType = sessionType;
-                        savedSession.UserId = userId;
                     }
                     else
                     {
@@ -243,7 +249,7 @@
                             ExpiryDate = validUntil,
                             SessionType = sessionType,
                             SessionId = sessionId,
-                            UserId = userId
+                            UserId = userId,
                         };
 
                         this.findNDriveUnitOfWork.SessionRepository.Add(newSession);

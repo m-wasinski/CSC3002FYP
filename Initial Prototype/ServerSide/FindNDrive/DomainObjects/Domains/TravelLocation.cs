@@ -9,6 +9,7 @@
 
 namespace DomainObjects.Domains
 {
+    using System.ComponentModel.DataAnnotations;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -21,6 +22,7 @@ namespace DomainObjects.Domains
         /// Gets or sets the travel location id.
         /// </summary>
         [DataMember]
+        [ConcurrencyCheck]
         public int TravelLocationId { get; set; }
 
         /// <summary>

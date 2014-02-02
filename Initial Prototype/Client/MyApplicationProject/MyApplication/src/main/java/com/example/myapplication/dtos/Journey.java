@@ -21,12 +21,9 @@ public class Journey {
     public boolean PetsAllowed;
     public int VehicleType;
     public boolean Private;
-    public boolean SearchByDate;
-    public boolean SearchByTime;
-    public boolean Free;
     public ArrayList<JourneyRequest> Requests;
     public int UnreadRequestsCount;
-    public int CarShareStatus;
+    public int JourneyStatus;
     public ArrayList<JourneyMessage> Messages;
     public String CreationDate;
 

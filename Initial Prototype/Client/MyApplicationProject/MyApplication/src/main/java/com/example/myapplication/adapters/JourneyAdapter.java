@@ -84,7 +84,7 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
         int statusIconResource = 0;
         String statusText = "";
 
-        switch(journey.CarShareStatus)
+        switch(journey.JourneyStatus)
         {
             case JourneyStatus.Upcoming:
                 statusIconResource = R.drawable.upcoming;

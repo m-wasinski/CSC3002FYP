@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,555 +8,573 @@
     android:focusable="true"
     android:focusableInTouchMode="true">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Step 2: journey summary &amp; extra options"
-        style="@style/LoginFields"
-        android:padding="5dp"
-        android:background="#80151515"/>
-
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="#80151515">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10sp"
-            android:id="@+id/OfferJourneyStepTwoActivityMiniMapImageView"/>
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="10sp"
-            android:requiresFadingEdge="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="From:"
-                    style="@style/MyCarSharesHeader"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityFromTextView"
-                    style="@style/SmallEditText"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="via:"
-                    android:layout_marginLeft="20dp"
-                    style="@style/MyCarSharesHeader"
-                    android:id="@+id/OfferJourneyStepTwoActivityViaTextView"
-                    android:visibility="gone"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:id="@+id/OfferJourneyStepTwoActivityViaLinearLayout">
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="To:"
-                    style="@style/MyCarSharesHeader"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityToTextView"
-                    style="@style/SmallEditText"/>
-            </LinearLayout>
-        </ScrollView>
-    </LinearLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:requiresFadingEdge="vertical">
-
-        <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Step 2: journey summary &amp; extra options"
+            style="@style/LoginFields"
+            android:padding="5dp"
+            android:background="#80151515"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="#80151515">
+
+            <ImageView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="2sp"
-                android:clickable="true"
-                android:background="@drawable/home_navigation_selector"
-                android:id="@+id/OfferJourneyStepTwoActivityJourneyTypeRelativeLayout">
+                android:layout_margin="10sp"
+                android:id="@+id/OfferJourneyStepTwoActivityMiniMapImageView"/>
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityRepeatImageView"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/repeat"
-                    android:focusable="false"/>
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/downarrow"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="15sp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityJourneyTypeLabel"
-                    android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityRepeatImageView"
-                    android:text="Regular/One time:"
-                    android:layout_marginLeft="10sp"
-                    style="@style/MyCarSharesHeader"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityJourneyTypeTextView"
-                    android:text="One time"
-                    android:layout_marginLeft="10sp"
-                    android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityRepeatImageView"
-                    android:layout_below="@+id/OfferJourneyStepTwoActivityJourneyTypeLabel"
-                    style="@style/RegularEditText"
-                    android:singleLine="true"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="2sp"
-                android:clickable="true"
-                android:id="@+id/OfferJourneyStepTwoActivityJourneyDateRelativeLayout"
-                android:background="@drawable/home_navigation_selector">
+                android:layout_height="match_parent"
+                android:layout_marginTop="10sp"
+                android:requiresFadingEdge="vertical">
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityCalendarImageView"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/calendar"
-                    android:focusable="false"/>
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/downarrow"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="15sp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10sp"
-                    android:id="@+id/OfferJourneyStepTwoActivityJourneyDateLabel"
-                    android:text="Date:"
-                    android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityCalendarImageView"
-                    style="@style/MyCarSharesHeader"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityDateTextView"
-                    android:text="Select Date"
-                    android:layout_marginLeft="10sp"
-                    android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityCalendarImageView"
-                    android:layout_below="@+id/OfferJourneyStepTwoActivityJourneyDateLabel"
-                    style="@style/RegularEditText"
-                    android:singleLine="true"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="2sp"
-                android:clickable="true"
-                android:id="@+id/OfferJourneyStepTwoActivityJourneyTimeRelativeLayout"
-                android:background="@drawable/home_navigation_selector">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityClockImageView"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/clock"
-                    android:focusable="false"/>
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/downarrow"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="15sp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityJourneyTimeLabel"
-                    android:text="Time:"
-                    android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityClockImageView"
-                    android:layout_marginLeft="10sp"
-                    style="@style/MyCarSharesHeader"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/OfferJourneyStepTwoActivityJourneyTimeLabel"
-                    android:id="@+id/OfferJourneyStepTwoActivityJourneyTimeTextView"
-                    android:text="Select Time"
-                    android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityClockImageView"
-                    android:layout_marginLeft="10sp"
-                    style="@style/RegularEditText"
-                    android:singleLine="true"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="2sp"
-                android:clickable="true"
-                android:id="@+id/OfferJourneyStepTwoActivityJourneyPrivateRelativeLayout"
-                android:background="@drawable/home_navigation_selector">
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:button="@drawable/checkbox_selector"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:id="@+id/OfferJourneyStepTwoActivityJourneyPrivateCheckbox"
-                    android:layout_marginRight="15sp"
-                    android:clickable="false"/>
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityLockImageView"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/lock"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Private:"
-                    android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityLockImageView"
-                    android:layout_marginLeft="10sp"
-                    android:id="@+id/OfferJourneyStepTwoActivityPrivateLabel"
-                    style="@style/MyCarSharesHeader"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="No"
-                    android:layout_marginLeft="10sp"
-                    android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityLockImageView"
-                    android:layout_below="@+id/OfferJourneyStepTwoActivityPrivateLabel"
-                    android:id="@+id/OfferJourneyStepTwoActivityPrivateTextView"
-                    style="@style/RegularEditText"
-                    android:singleLine="true"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="2sp"
-                android:clickable="true"
-                android:id="@+id/OfferJourneyStepTwoActivityJourneySmokersRelativeLayout"
-                android:background="@drawable/home_navigation_selector">
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:button="@drawable/checkbox_selector"
-                    android:id="@+id/OfferJourneyStepTwoActivitySmokersCheckBox"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="15sp"
-                    android:clickable="false"/>
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityCigaretteImageView"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/cigarette"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivitySmokersLabel"
-                    android:text="Smokers:"
-                    android:layout_marginLeft="10sp"
-                    android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityCigaretteImageView"
-                    style="@style/MyCarSharesHeader"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/OfferJourneyStepTwoActivitySmokersLabel"
-                    android:id="@+id/OfferJourneyStepTwoActivitySmokersTextView"
-                    android:text="No"
-                    android:layout_marginLeft="10sp"
-                    android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityCigaretteImageView"
-                    style="@style/RegularEditText"
-                    android:singleLine="true"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="2sp"
-                android:clickable="true"
-                android:id="@+id/OfferJourneyStepTwoActivityJourneyPetsRelativeLayout"
-                android:background="@drawable/home_navigation_selector">
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:button="@drawable/checkbox_selector"
-                    android:layout_alignParentRight="true"
-                    android:id="@+id/OfferJourneyStepTwoActivityPetCheckBox"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="15sp"/>
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityPetImageView"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/pet"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityPetsLabel"
-                    android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityPetImageView"
-                    android:layout_marginLeft="10sp"
-                    android:text="Pets:"
-                    style="@style/MyCarSharesHeader"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/OfferJourneyStepTwoActivityPetsLabel"
-                    android:id="@+id/OfferJourneyStepTwoActivityPetsTextView"
-                    android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityPetImageView"
-                    android:layout_marginLeft="10sp"
-                    android:text="No"
-                    style="@style/RegularEditText"
-                    android:singleLine="true"/>
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="2sp"
-                android:clickable="true"
-                android:id="@+id/OfferJourneyStepTwoActivityJourneyVehicleTypeRelativeLayout"
-                android:background="@drawable/home_navigation_selector">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityVehicleImageView"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/small_car"/>
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/downarrow"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="15sp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityVehicleTypeLabel"
-                    android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityVehicleImageView"
-                    android:layout_marginLeft="10sp"
-                    android:text="Vehicle type:"
-                    style="@style/MyCarSharesHeader"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/OfferJourneyStepTwoActivityVehicleTypeLabel"
-                    android:id="@+id/OfferJourneyStepTwoActivityVehicleTextView"
-                    android:text="Select vehicle type"
-                    android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityVehicleImageView"
-                    android:layout_marginLeft="10sp"
-                    style="@style/RegularEditText"
-                    android:singleLine="true"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="2sp"
-                android:clickable="true"
-                android:id="@+id/OfferJourneyStepTwoActivityJourneyAvailableSeatsRelativeLayout"
-                android:background="@drawable/home_navigation_selector">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityAvailableSeatsImageView"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/car_chair"/>
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/downarrow"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="15sp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityAvailableSeatsLabel"
-                    android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityAvailableSeatsImageView"
-                    android:layout_marginLeft="10sp"
-                    android:text="Available seats:"
-                    style="@style/MyCarSharesHeader"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/OfferJourneyStepTwoActivityAvailableSeatsLabel"
-                    android:id="@+id/OfferJourneyStepTwoActivityAvailableSeatsTextView"
-                    android:text="1"
-                    android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityAvailableSeatsImageView"
-                    android:layout_marginLeft="10sp"
-                    style="@style/RegularEditText"
-                    android:singleLine="true"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="2sp"
-                android:clickable="true"
-                android:id="@+id/OfferJourneyStepTwoActivityJourneyFeeRelativeLayout"
-                android:background="@drawable/home_navigation_selector">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityFeeImageView"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/pound"/>
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/downarrow"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="15sp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityFeeLabel"
-                    android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityFeeImageView"
-                    android:layout_marginLeft="10sp"
-                    android:text="Fee:"
-                    style="@style/MyCarSharesHeader"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/OfferJourneyStepTwoActivityFeeLabel"
-                    android:id="@+id/OfferJourneyStepTwoActivityFeeTextView"
-                    android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityFeeImageView"
-                    android:layout_marginLeft="10sp"
-                    android:text="Select fee &amp; payment method"
-                    style="@style/RegularEditText"
-                    android:singleLine="true"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="2sp"
-                android:id="@+id/OfferJourneyStepTwoActivityCommentsRelativeLayout"
-                android:background="@drawable/home_navigation_selector">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityCommentsImageView"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/comment"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OfferJourneyStepTwoActivityCommentsLabel"
-                    android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityCommentsImageView"
-                    android:layout_marginLeft="10sp"
-                    android:text="Comments:"
-                    style="@style/MyCarSharesHeader"/>
-
-                <EditText
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityCommentsImageView"
-                    android:layout_below="@+id/OfferJourneyStepTwoActivityCommentsLabel"
-                    android:id="@+id/OfferJourneyStepTwoActivityCommentsEditText"
-                    android:layout_marginLeft="5sp"
-                    android:layout_marginTop="2sp"
-                    android:hint="Additional comments"
-                    style="@style/RegularEditText"
-                    android:singleLine="true"/>
+                    android:orientation="vertical">
 
-            </RelativeLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="From:"
+                        style="@style/MyCarSharesHeader"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityFromTextView"
+                        style="@style/SmallEditText"/>
 
-            <Button
-                android:layout_marginTop="10sp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Offer this journey"
-                style="@style/ButtonStyle"
-                android:background="@drawable/button_selector"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="via:"
+                        android:layout_marginLeft="20dp"
+                        style="@style/MyCarSharesHeader"
+                        android:id="@+id/OfferJourneyStepTwoActivityViaTextView"
+                        android:visibility="gone"/>
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/OfferJourneyStepTwoActivityViaLinearLayout">
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="To:"
+                        style="@style/MyCarSharesHeader"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityToTextView"
+                        style="@style/SmallEditText"/>
+                </LinearLayout>
+            </ScrollView>
         </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:requiresFadingEdge="vertical">
+
+            <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="2sp"
+                    android:clickable="true"
+                    android:background="@drawable/home_navigation_selector"
+                    android:id="@+id/OfferJourneyStepTwoActivityJourneyTypeRelativeLayout">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityRepeatImageView"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/repeat"
+                        android:focusable="false"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/downarrow"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="15sp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityJourneyTypeLabel"
+                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityRepeatImageView"
+                        android:text="Regular/One time:"
+                        android:layout_marginLeft="10sp"
+                        style="@style/MyCarSharesHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityJourneyTypeTextView"
+                        android:text="One time"
+                        android:layout_marginLeft="10sp"
+                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityRepeatImageView"
+                        android:layout_below="@+id/OfferJourneyStepTwoActivityJourneyTypeLabel"
+                        style="@style/RegularEditText"
+                        android:singleLine="true"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="2sp"
+                    android:clickable="true"
+                    android:id="@+id/OfferJourneyStepTwoActivityJourneyDateRelativeLayout"
+                    android:background="@drawable/home_navigation_selector">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityCalendarImageView"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/calendar"
+                        android:focusable="false"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/downarrow"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="15sp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10sp"
+                        android:id="@+id/OfferJourneyStepTwoActivityJourneyDateLabel"
+                        android:text="Date:"
+                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityCalendarImageView"
+                        style="@style/MyCarSharesHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityDateTextView"
+                        android:text="Select Date"
+                        android:layout_marginLeft="10sp"
+                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityCalendarImageView"
+                        android:layout_below="@+id/OfferJourneyStepTwoActivityJourneyDateLabel"
+                        style="@style/RegularEditText"
+                        android:singleLine="true"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="2sp"
+                    android:clickable="true"
+                    android:id="@+id/OfferJourneyStepTwoActivityJourneyTimeRelativeLayout"
+                    android:background="@drawable/home_navigation_selector">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityClockImageView"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/clock"
+                        android:focusable="false"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/downarrow"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="15sp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityJourneyTimeLabel"
+                        android:text="Time:"
+                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityClockImageView"
+                        android:layout_marginLeft="10sp"
+                        style="@style/MyCarSharesHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/OfferJourneyStepTwoActivityJourneyTimeLabel"
+                        android:id="@+id/OfferJourneyStepTwoActivityJourneyTimeTextView"
+                        android:text="Select Time"
+                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityClockImageView"
+                        android:layout_marginLeft="10sp"
+                        style="@style/RegularEditText"
+                        android:singleLine="true"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="2sp"
+                    android:clickable="true"
+                    android:id="@+id/OfferJourneyStepTwoActivityJourneyPrivateRelativeLayout"
+                    android:background="@drawable/home_navigation_selector">
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:button="@drawable/checkbox_selector"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:id="@+id/OfferJourneyStepTwoActivityJourneyPrivateCheckbox"
+                        android:layout_marginRight="15sp"
+                        android:clickable="false"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityLockImageView"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/lock"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Private:"
+                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityLockImageView"
+                        android:layout_marginLeft="10sp"
+                        android:id="@+id/OfferJourneyStepTwoActivityPrivateLabel"
+                        style="@style/MyCarSharesHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No"
+                        android:layout_marginLeft="10sp"
+                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityLockImageView"
+                        android:layout_below="@+id/OfferJourneyStepTwoActivityPrivateLabel"
+                        android:id="@+id/OfferJourneyStepTwoActivityPrivateTextView"
+                        style="@style/RegularEditText"
+                        android:singleLine="true"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="2sp"
+                    android:clickable="true"
+                    android:id="@+id/OfferJourneyStepTwoActivityJourneySmokersRelativeLayout"
+                    android:background="@drawable/home_navigation_selector">
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:button="@drawable/checkbox_selector"
+                        android:id="@+id/OfferJourneyStepTwoActivitySmokersCheckBox"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="15sp"
+                        android:clickable="false"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityCigaretteImageView"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/cigarette"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivitySmokersLabel"
+                        android:text="Smokers:"
+                        android:layout_marginLeft="10sp"
+                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityCigaretteImageView"
+                        style="@style/MyCarSharesHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/OfferJourneyStepTwoActivitySmokersLabel"
+                        android:id="@+id/OfferJourneyStepTwoActivitySmokersTextView"
+                        android:text="No"
+                        android:layout_marginLeft="10sp"
+                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityCigaretteImageView"
+                        style="@style/RegularEditText"
+                        android:singleLine="true"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="2sp"
+                    android:clickable="true"
+                    android:id="@+id/OfferJourneyStepTwoActivityJourneyPetsRelativeLayout"
+                    android:background="@drawable/home_navigation_selector">
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:button="@drawable/checkbox_selector"
+                        android:layout_alignParentRight="true"
+                        android:id="@+id/OfferJourneyStepTwoActivityPetCheckBox"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="15sp"
+                        android:clickable="false"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityPetImageView"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/pet"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityPetsLabel"
+                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityPetImageView"
+                        android:layout_marginLeft="10sp"
+                        android:text="Pets:"
+                        style="@style/MyCarSharesHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/OfferJourneyStepTwoActivityPetsLabel"
+                        android:id="@+id/OfferJourneyStepTwoActivityPetsTextView"
+                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityPetImageView"
+                        android:layout_marginLeft="10sp"
+                        android:text="No"
+                        style="@style/RegularEditText"
+                        android:singleLine="true"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="2sp"
+                    android:clickable="true"
+                    android:id="@+id/OfferJourneyStepTwoActivityJourneyVehicleTypeRelativeLayout"
+                    android:background="@drawable/home_navigation_selector">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityVehicleImageView"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/small_car"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/downarrow"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="15sp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityVehicleTypeLabel"
+                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityVehicleImageView"
+                        android:layout_marginLeft="10sp"
+                        android:text="Vehicle type:"
+                        style="@style/MyCarSharesHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/OfferJourneyStepTwoActivityVehicleTypeLabel"
+                        android:id="@+id/OfferJourneyStepTwoActivityVehicleTextView"
+                        android:text="Select vehicle type"
+                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityVehicleImageView"
+                        android:layout_marginLeft="10sp"
+                        style="@style/RegularEditText"
+                        android:singleLine="true"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="2sp"
+                    android:clickable="true"
+                    android:id="@+id/OfferJourneyStepTwoActivityJourneyAvailableSeatsRelativeLayout"
+                    android:background="@drawable/home_navigation_selector">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityAvailableSeatsImageView"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/car_chair"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/downarrow"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="15sp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityAvailableSeatsLabel"
+                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityAvailableSeatsImageView"
+                        android:layout_marginLeft="10sp"
+                        android:text="Available seats:"
+                        style="@style/MyCarSharesHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/OfferJourneyStepTwoActivityAvailableSeatsLabel"
+                        android:id="@+id/OfferJourneyStepTwoActivityAvailableSeatsTextView"
+                        android:text="1"
+                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityAvailableSeatsImageView"
+                        android:layout_marginLeft="10sp"
+                        style="@style/RegularEditText"
+                        android:singleLine="true"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="2sp"
+                    android:clickable="true"
+                    android:id="@+id/OfferJourneyStepTwoActivityJourneyFeeRelativeLayout"
+                    android:background="@drawable/home_navigation_selector">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityFeeImageView"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/pound"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/downarrow"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="15sp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityFeeLabel"
+                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityFeeImageView"
+                        android:layout_marginLeft="10sp"
+                        android:text="Fee:"
+                        style="@style/MyCarSharesHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/OfferJourneyStepTwoActivityFeeLabel"
+                        android:id="@+id/OfferJourneyStepTwoActivityFeeTextView"
+                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityFeeImageView"
+                        android:layout_marginLeft="10sp"
+                        android:text="Select fee &amp; payment method"
+                        style="@style/RegularEditText"
+                        android:singleLine="true"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="2sp"
+                    android:id="@+id/OfferJourneyStepTwoActivityCommentsRelativeLayout"
+                    android:background="@drawable/home_navigation_selector">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityCommentsImageView"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/comment"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OfferJourneyStepTwoActivityCommentsLabel"
+                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityCommentsImageView"
+                        android:layout_marginLeft="10sp"
+                        android:text="Comments:"
+                        style="@style/MyCarSharesHeader"/>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityCommentsImageView"
+                        android:layout_below="@+id/OfferJourneyStepTwoActivityCommentsLabel"
+                        android:id="@+id/OfferJourneyStepTwoActivityCommentsEditText"
+                        android:layout_marginLeft="5sp"
+                        android:layout_marginTop="2sp"
+                        android:hint="Additional comments"
+                        style="@style/RegularEditText"
+                        android:singleLine="true"/>
+
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/OfferJourneyStepTwoActivityCreateButton"
+                    android:layout_marginTop="10sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Offer this journey"
+                    style="@style/ButtonStyle"
+                    android:background="@drawable/button_selector"/>
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/OfferJourneyStepTwoActivityProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:indeterminateDrawable="@drawable/progress"
+        android:visibility="gone"/>
+</RelativeLayout>

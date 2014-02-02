@@ -9,6 +9,7 @@
 
 namespace DomainObjects.Domains
 {
+    using System.ComponentModel.DataAnnotations;
     using System.Runtime.Serialization;
     using DomainObjects.Constants;
 
@@ -22,6 +23,7 @@ namespace DomainObjects.Domains
         /// Gets or sets the gcm notification id.
         /// </summary>
         [DataMember]
+        [ConcurrencyCheck]
         public int GCMNotificationId { get; set; }
 
         /// <summary>

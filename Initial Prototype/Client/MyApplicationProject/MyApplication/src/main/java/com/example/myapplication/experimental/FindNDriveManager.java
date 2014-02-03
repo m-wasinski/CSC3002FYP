@@ -13,8 +13,8 @@ import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.LoginActivity;
 import com.example.myapplication.constants.SessionConstants;
 import com.example.myapplication.constants.SharedPreferencesConstants;
-import com.example.myapplication.dtos.ServiceResponse;
-import com.example.myapplication.dtos.User;
+import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.example.myapplication.utilities.Pair;
@@ -93,7 +93,7 @@ public class FindNDriveManager extends Application {
      */
     public String getRegistrationId()
     {
-        return this.registrationId.isEmpty() || this.registrationId == null ? "" : this.registrationId;
+        return this.registrationId == null ? "" : this.registrationId;
     }
 
     public void setRegistrationId(String registrationId)

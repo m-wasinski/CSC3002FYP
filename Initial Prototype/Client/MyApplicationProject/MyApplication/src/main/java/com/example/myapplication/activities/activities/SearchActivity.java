@@ -1,13 +1,14 @@
 package com.example.myapplication.activities.activities;
 
+import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
-import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,20 +23,25 @@ import android.widget.Toast;
 import com.example.myapplication.activities.base.BaseMapActivity;
 import com.example.myapplication.activities.fragments.JourneyDetailsFragment;
 import com.example.myapplication.adapters.SearchResultsAdapter;
+import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.dtos.Journey;
-import com.example.myapplication.dtos.GeoAddress;
-import com.example.myapplication.dtos.ServiceResponse;
+import com.example.myapplication.domain_objects.Journey;
+import com.example.myapplication.domain_objects.GeoAddress;
+import com.example.myapplication.dtos.JourneySearchDTO;
+import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.experimental.GMapV2Direction;
 import com.example.myapplication.interfaces.FragmentClosed;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.example.myapplication.R;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -43,82 +49,206 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.reflect.TypeToken;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Text;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by Michal on 08/01/14.
  */
 
-public class SearchActivity extends BaseMapActivity implements WCFServiceCallback<ArrayList<Journey>, String>{
+public class SearchActivity extends BaseMapActivity implements WCFServiceCallback<ArrayList<Journey>, String>, GooglePlayServicesClient.ConnectionCallbacks,
+        GooglePlayServicesClient.OnConnectionFailedListener{
 
     private SeekBar departureRadiusAddressSeekBar;
     private SeekBar destinationRadiusAddressSeekBar;
+
     private double departureRadiusValue;
     private double destinationRadiusValue;
+
     private DecimalFormat decimalFormat;
+
     private TextView departureRadiusTextView;
     private TextView destinationRadiusTextView;
+
     private LinearLayout searchPaneOptions;
+
     private RelativeLayout resultsRelativeLayout;
     private RelativeLayout journeyDetailsRelativeLayout;
     private RelativeLayout parentSearchRelativeLayout;
+
     private ListView searchResultsListView;
+
     private JourneyDetailsFragment journeyDetailsFragment;
+
     private int numOfSearchResults;
+
     private Button searchPaneHeaderButton;
     private Button searchResultsButton;
+    private Button searchButton;
+    private Button departureGPSButton;
+    private Button destinationGPSButton;
+
     private ProgressBar progressBar;
+
+    private RelativeLayout departureRelativeLayout;
+    private RelativeLayout destinationRelativeLayout;
+
+    private TextView departureTextView;
+    private TextView destinationTextView;
+
     private final int METERS_IN_MILE = 1600;
     private final int PROGRESS_BAR_UNITS = 160;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
-        actionBar.hide();
-        progressBar = (ProgressBar) findViewById(R.id.SearchActivityProgressBar);
-        numOfSearchResults = 0;
-        journeyDetailsRelativeLayout = (RelativeLayout) findViewById(R.id.ActivitySearchMapJourneyDetailsRelativeLayout);
-        parentSearchRelativeLayout = (RelativeLayout) findViewById(R.id.ActivitySearchMapParentSearchRelativeLayout);
-        searchResultsListView = (ListView) findViewById(R.id.ActivitySearchMapResultsListView);
-        resultsRelativeLayout = (RelativeLayout) findViewById(R.id.ActivitySearchMapResultsRelativeLayout);
-        searchPaneHeaderButton = (Button) findViewById(R.id.SearchActivitySearchPaneHeaderButton);
-        searchPaneHeaderButton.setOnClickListener(new View.OnClickListener() {
+        this.setContentView(R.layout.activity_search);
+        this.actionBar.hide();
+        this.numOfSearchResults = 0;
+        this.decimalFormat = new DecimalFormat("0.00");
+
+        //Initialise UI elements.
+        this.progressBar = (ProgressBar) this.findViewById(R.id.SearchActivityProgressBar);
+        this.departureRelativeLayout = (RelativeLayout) this.findViewById(R.id.SearchActivityDepartureRelativeLayout);
+        this.destinationRelativeLayout = (RelativeLayout) this.findViewById(R.id.SearchActivityDestinationRelativeLayout);
+        this.departureTextView = (TextView) this.findViewById(R.id.SearchActivityDepartureTextView);
+        this.destinationTextView = (TextView) this.findViewById(R.id.SearchActivityDestinationTextView);
+        this.searchResultsButton = (Button) this.findViewById(R.id.SearchActivityResultsButton);
+        this.departureGPSButton = (Button) this.findViewById(R.id.SearchActivityDepartureGpsButton);
+        this.destinationGPSButton = (Button) this.findViewById(R.id.SearchActivityDestinationGpsButton);
+
+        /*
+        this.journeyDetailsRelativeLayout = (RelativeLayout) findViewById(R.id.ActivitySearchMapJourneyDetailsRelativeLayout);
+        this.parentSearchRelativeLayout = (RelativeLayout) findViewById(R.id.ActivitySearchMapParentSearchRelativeLayout);
+        this.searchResultsListView = (ListView) findViewById(R.id.ActivitySearchMapResultsListView);
+        this.resultsRelativeLayout = (RelativeLayout) findViewById(R.id.ActivitySearchMapResultsRelativeLayout);
+        this.searchPaneHeaderButton = (Button) findViewById(R.id.SearchActivitySearchPaneHeaderButton);
+
+        this.searchPaneOptions = (LinearLayout)findViewById(R.id.ActivitySearchPaneOptionsLinearLayout);
+        this.departureRadiusTextView = (TextView) findViewById(R.id.ActivitySearchMapDepartureRadiusTextView);
+        this.destinationRadiusTextView = (TextView) findViewById(R.id.ActivitySearchMapDestinationRadiusTextView);
+        this.departureRadiusAddressSeekBar = (SeekBar) findViewById(R.id.ActivitySearchMapDepartureRadiusSeekBar);
+        this.departureRadiusAddressSeekBar.setEnabled(false);
+        this.departureAddressEditText = (EditText) findViewById(R.id.MapActivityDepartureAddressTextView);
+        this.destinationAddressEditText = (EditText) findViewById(R.id.MapActivityDestinationAddressTextView);
+        this.destinationRadiusAddressSeekBar = (SeekBar) findViewById(R.id.ActivitySearchMapDestinationRadiusSeekBar);
+        this.destinationRadiusAddressSeekBar.setEnabled(false);*/
+        this.setupEventHandlers();
+
+        try {
+            // Loading map
+            this.initialiseMap();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if(googleMap != null)
+            centerMapOnMyLocation();
+    }
+
+    private void showAddressDialog(final Boolean isDeparture)
+    {
+        // custom addressDialog
+        final Dialog addressDialog = new Dialog(this);
+
+        addressDialog.setContentView(R.layout.address_dialog);
+        addressDialog.setTitle(isDeparture ? "Enter departure point" : "Enter destination point");
+
+        final EditText addressEditText = (EditText) addressDialog.findViewById(R.id.AddressDialogAddressEditText);
+        final EditText perimeterEditText = (EditText) addressDialog.findViewById(R.id.AddressDialogPerimeterEditText);
+        Button okButton = (Button) addressDialog.findViewById(R.id.AddressDialogOKButton);
+
+        okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                toggleSearchPaneVisibility();
+
+                String addressText = addressEditText.getText().toString();
+
+                if(addressText != null && !addressText.isEmpty())
+                {
+                    MarkerOptions markerOptions = getAddress(addressEditText.getText().toString());
+                    addressEntered(isDeparture, markerOptions, Integer.parseInt(perimeterEditText.getText().toString()));
+                }
+
+                addressDialog.dismiss();
             }
         });
 
-        searchResultsButton = (Button) findViewById(R.id.SearchActivityResultsButton);
-        searchResultsButton.setOnClickListener(new View.OnClickListener() {
+        addressDialog.show();
+    }
+
+    private void addressEntered(Boolean isDeparture, MarkerOptions markerOptions, int perimeter)
+    {
+        if(isDeparture)
+        {
+            showDeparturePoint(markerOptions, perimeter);
+            this.departureTextView.setText(markerOptions.getTitle());
+        }
+        else
+        {
+            showDestinationPoint(markerOptions, perimeter);
+            this.destinationTextView.setText(markerOptions.getTitle());
+        }
+    }
+
+    private void setupEventHandlers()
+    {
+        this.departureRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                toggleSearchResultsVisibility();
+                showAddressDialog(true);
             }
         });
 
-        Button searchButton = (Button) findViewById(R.id.ActivitySearchMapSearchButton);
-        searchButton.setOnClickListener(new View.OnClickListener() {
+        this.destinationRelativeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAddressDialog(false);
+            }
+        });
+
+        this.departureGPSButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
+
+        this.destinationGPSButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        this.searchButton = (Button) findViewById(R.id.ActivitySearchMapSearchButton);
+        this.searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 progressBar.setVisibility(View.VISIBLE);
                 search();
             }
         });
+        /*this.searchPaneHeaderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggleSearchPaneVisibility();
+            }
+        });
 
-        decimalFormat = new DecimalFormat("0.00");
-        searchPaneOptions = (LinearLayout)findViewById(R.id.ActivitySearchPaneOptionsLinearLayout);
 
-        departureRadiusTextView = (TextView) findViewById(R.id.ActivitySearchMapDepartureRadiusTextView);
+        this.searchResultsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggleSearchResultsVisibility();
+            }
+        });
 
-        destinationRadiusTextView = (TextView) findViewById(R.id.ActivitySearchMapDestinationRadiusTextView);
 
-        departureRadiusAddressSeekBar = (SeekBar) findViewById(R.id.ActivitySearchMapDepartureRadiusSeekBar);
-        departureRadiusAddressSeekBar.setEnabled(false);
-        departureRadiusAddressSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+        this.departureRadiusAddressSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 if(departureMarker != null && departureRadius != null)
@@ -140,9 +270,8 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
 
             }
         });
-        destinationRadiusAddressSeekBar = (SeekBar) findViewById(R.id.ActivitySearchMapDestinationRadiusSeekBar);
-        destinationRadiusAddressSeekBar.setEnabled(false);
-        destinationRadiusAddressSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+        this.destinationRadiusAddressSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 destinationRadiusValue = destinationRadiusAddressSeekBar.getProgress()*PROGRESS_BAR_UNITS;
@@ -162,9 +291,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
             }
         });
 
-        //Departure edittext.
-        departureAddressEditText = (EditText) findViewById(R.id.MapActivityDepartureAddressTextView);
-        departureAddressEditText.setOnKeyListener(new View.OnKeyListener() {
+        this.departureAddressEditText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if(i == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_UP){
@@ -176,7 +303,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
             }
         });
 
-        departureAddressEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        this.departureAddressEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     MarkerOptions markerOptions = getAddress(departureAddressEditText.getText().toString());
@@ -186,10 +313,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
             }
         });
 
-
-        //Destination edittext.
-        destinationAddressEditText = (EditText) findViewById(R.id.MapActivityDestinationAddressTextView);
-        destinationAddressEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        this.destinationAddressEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     MarkerOptions markerOptions = getAddress(destinationAddressEditText.getText().toString());
@@ -199,7 +323,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
             }
         });
 
-        destinationAddressEditText.setOnKeyListener(new View.OnKeyListener() {
+        this.destinationAddressEditText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if(i == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_UP){
@@ -209,19 +333,8 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
                 }
                 return false;
             }
-        });
-
-        try {
-            // Loading map
-            initialiseMap();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if(googleMap != null)
-            centerMapOnMyLocation();
+        });*/
     }
-
 
     private void initialiseMap() {
 
@@ -230,7 +343,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
 
             if (googleMap == null) {
                 Toast.makeText(this,
-                        "Sorry! unable to create maps", Toast.LENGTH_SHORT)
+                        "Unable to initialise Google Maps, please check your network connection.", Toast.LENGTH_SHORT)
                         .show();
             }
         }
@@ -243,44 +356,33 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
     }
 
     private void search() {
-        googleMap.clear();
-        //TextView departureCityTextView = (TextView)  getView().findViewById(R.id.FragmentSearchDepartureAndDestinationTextView);
-        //TextView destinationCityTextView = (TextView) view.findViewById(R.id.SearchDestinationCityTextView);
-        //searchPaneOptions.setVisibility(searchPaneOptions.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-        /*CheckBox smokers = (CheckBox)  view.findViewById(R.id.SmokersCheckbox);
-        CheckBox womenOnly = (CheckBox)  view.findViewById(R.id.SearchWomenOnlyCheckbox);
-        CheckBox free = (CheckBox) view.findViewById(R.id.SearchFreeCheckbox);
-        CheckBox petsAllowed = (CheckBox) view.findViewById(R.id.SearchPetsCheckBox);*/
-
-        Journey journey = new Journey();
-
-        //journey.DepartureAddress = new GeoAddress(0, 0, "Belfast");
-        //journey.DestinationAddress = new GeoAddress(0, 0, "Dublin");
-        //journey.SmokersAllowed = smokers.isChecked();
-        //journey.WomenOnly = womenOnly.isChecked();
-        //journey.PetsAllowed = petsAllowed.isChecked();
-        //journey.Free = free.isChecked();
-        //journey.DateAndTimeOfDeparture = DateTimeHelper.convertToWCFDate(myCalendar.getTime());
-        //journey.SearchByDate = dateTextView.getText().toString().length() != 0;
-        //journey.SearchByTime = timeTextView.getText().toString().length() != 0;
-
-        new WCFServiceTask<Journey>(this, getResources().getString(R.string.SearchForJourneysURL),
-                journey, new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), this).execute();
+        JourneySearchDTO journeySearchDTO = new JourneySearchDTO();
+        journeySearchDTO.Journey = new Journey();
+        journeySearchDTO.Journey.GeoAddresses = new ArrayList<GeoAddress>(Arrays.asList(
+                new GeoAddress(departureMarker.getPosition().latitude, departureMarker.getPosition().longitude, departureMarker.getTitle(), 0),
+                new GeoAddress(destinationMarker.getPosition().latitude, destinationMarker.getPosition().longitude, destinationMarker.getTitle(), 1)));
+        journeySearchDTO.DepartureRadius = departureRadiusValue / METERS_IN_MILE;
+        journeySearchDTO.DestinationRadius = destinationRadiusValue / METERS_IN_MILE;
+        // Call the webservice to begin the search.
+        new WCFServiceTask<JourneySearchDTO>(this, getResources().getString(R.string.SearchForJourneysURL),
+                journeySearchDTO, new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), this).execute();
     }
 
     @Override
     public void onServiceCallCompleted(final ServiceResponse<ArrayList<Journey>> serviceResponse, String parameter) {
-        progressBar.setVisibility(View.GONE);
+        this.progressBar.setVisibility(View.GONE);
+
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
-            numOfSearchResults = serviceResponse.Result.size();
-            searchResultsButton.setVisibility(View.VISIBLE);
+            this.numOfSearchResults = serviceResponse.Result.size();
+            this.searchResultsButton.setVisibility(View.VISIBLE);
+
             if(serviceResponse.Result.size() > 0)
             {
+                googleMap.clear();
                 searchResultsButton.setText("Hide search results (" + numOfSearchResults +")");
                 searchResultsListView.setVisibility(View.VISIBLE);
                 parentSearchRelativeLayout.setVisibility(View.GONE);
-
             }
 
             DisplayMetrics metrics = new DisplayMetrics();
@@ -307,7 +409,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
                     fragmentTransaction.add(journeyDetailsRelativeLayout.getId(), journeyDetailsFragment);
                     fragmentTransaction.commit();
                     Bundle bundle = new Bundle();
-                    bundle.putString("CurrentCarShare", gson.toJson(serviceResponse.Result.get(i)));
+                    bundle.putString(IntentConstants.JOURNEY, gson.toJson(serviceResponse.Result.get(i)));
                     journeyDetailsFragment.setArguments(bundle);
                     journeyDetailsFragment.setOnCloseListener(new FragmentClosed() {
                         @Override
@@ -331,17 +433,21 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
                 for(GeoAddress geoAddress : journey.GeoAddresses)
                 {
                     googleMap.addMarker(new MarkerOptions().position(new LatLng(geoAddress.Latitude, geoAddress.Longitude)).title(geoAddress.AddressLine)
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
 
                     builder.include(new LatLng(geoAddress.Latitude, geoAddress.Longitude));
                     builder.include(new LatLng(geoAddress.Latitude, geoAddress.Longitude));
                 }
             }
 
-            int padding = 100;
-            LatLngBounds bounds = builder.build();
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-            googleMap.animateCamera(cameraUpdate);
+            if(serviceResponse.Result.size() > 0)
+            {
+                int padding = 100;
+                LatLngBounds bounds = builder.build();
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                googleMap.animateCamera(cameraUpdate);
+            }
+
         }
     }
 
@@ -353,7 +459,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         for(GeoAddress geoAddress : journey.GeoAddresses)
         {
             googleMap.addMarker(new MarkerOptions().position(new LatLng(geoAddress.Latitude, geoAddress.Longitude)).title(geoAddress.AddressLine)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
 
             builder.include(new LatLng(geoAddress.Latitude, geoAddress.Longitude));
             builder.include(new LatLng(geoAddress.Latitude, geoAddress.Longitude));
@@ -429,5 +535,20 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         Drawable image = getResources().getDrawable(R.drawable.down);
         searchPaneHeaderButton.setCompoundDrawablesWithIntrinsicBounds(null, null, image, null);
         searchPaneHeaderButton.setText("Minimize");
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onDisconnected() {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 }

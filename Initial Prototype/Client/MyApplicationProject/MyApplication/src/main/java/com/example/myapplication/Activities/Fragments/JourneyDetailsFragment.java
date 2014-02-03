@@ -12,9 +12,10 @@ import android.widget.TextView;
 
 import com.example.myapplication.activities.activities.ContactDriverActivity;
 import com.example.myapplication.activities.base.BaseFragment;
-import com.example.myapplication.dtos.Journey;
-import com.example.myapplication.dtos.JourneyRequest;
-import com.example.myapplication.dtos.ServiceResponse;
+import com.example.myapplication.constants.IntentConstants;
+import com.example.myapplication.domain_objects.Journey;
+import com.example.myapplication.domain_objects.JourneyRequest;
+import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.interfaces.FragmentClosed;
 import com.example.myapplication.interfaces.WCFServiceCallback;
@@ -45,7 +46,7 @@ public class JourneyDetailsFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_journey_information, container, false);
-        carShare = new Gson().fromJson(getArguments().getString("CurrentCarShare"), new TypeToken<Journey>() {
+        carShare = new Gson().fromJson(getArguments().getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {
         }.getType());
         findNDriveManager = ((FindNDriveManager)getActivity().getApplicationContext());
         journeyHeader = (TextView) view.findViewById(R.id.FragmentJourneyInformationFromToTextView);

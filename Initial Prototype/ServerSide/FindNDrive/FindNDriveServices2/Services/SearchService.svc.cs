@@ -11,6 +11,8 @@ namespace FindNDriveServices2.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.IO;
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
@@ -19,6 +21,8 @@ namespace FindNDriveServices2.Services
     using FindNDriveServices2.Contracts;
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
+
+    using Microsoft.Practices.ObjectBuilder2;
 
     /// <summary>
     /// The search service.
@@ -67,31 +71,51 @@ namespace FindNDriveServices2.Services
         /// <summary>
         /// The search for journeys.
         /// </summary>
-        /// <param name="journey">
-        /// The journey.
+        /// <param name="journeySearchDTO">
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<List<Journey>> SearchForJourneys(JourneyDTO journey)
+        public ServiceResponse<List<Journey>> SearchForJourneys(JourneySearchDTO journeySearchDTO)
         {
             if (!this.sessionManager.ValidateSession())
             {
                 return ResponseBuilder.Unauthorised(new List<Journey>());
             }
 
-            /*var carShares =
-                this._findNDriveUnitOfWork.journeyRepository.AsQueryable()
-                    .IncludeAll()
-                    .Where(_ => _.DepartureAddress.AddressLine == journey.DepartureAddress.AddressLine &&
-                            _.DestinationAddress.AddressLine == journey.DestinationAddress.AddressLine && _.AvailableSeats > 0 && _.JourneyStatus == JourneyStatus.Upcoming)
-                    .ToList();*/
+            Func<Journey, bool> filter = x => 
+                {
+                    var matchDeparture = -1;
+                    var matchDestination = -1;
+
+                    foreach (var geoAddress in x.GeoAddresses)
+                    {
+                        if (journeySearchDTO.DepartureRadius
+                            >= new Haversine().Distance(
+                                geoAddress,
+                                journeySearchDTO.Journey.GeoAddresses.First(),
+                                DistanceType.Miles) && matchDeparture == -1)
+                        {
+                            matchDeparture = geoAddress.Order;
+                        }
+
+                        if (journeySearchDTO.DestinationRadius
+                            >= new Haversine().Distance(
+                                geoAddress,
+                                journeySearchDTO.Journey.GeoAddresses.Last(),
+                                DistanceType.Miles) && matchDestination == -1)
+                        {
+                            matchDestination = geoAddress.Order;
+                        }
+                    }
+                    return matchDeparture < matchDestination && matchDeparture != -1 && matchDestination != -1;
+                };
 
             var journeys =
-                this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
-                    .IncludeAll().ToList();
-            journeys = journeys.GetRange(0, 1);
-            if (journey.SearchByDate)
+                this.findNDriveUnitOfWork.JourneyRepository.AsQueryable().IncludeAll().AsEnumerable().Where(filter).ToList();
+                
+            /*
+            if (journeySearchDTO.SearchByDate)
             {
                 journeys =
                     journeys.Where(
@@ -99,7 +123,7 @@ namespace FindNDriveServices2.Services
                         Math.Abs(_.DateAndTimeOfDeparture.Date.Subtract(journey.DateAndTimeOfDeparture.Date).TotalDays) <= 5).ToList();
             }
 
-            if (journey.SearchByTime)
+            if (journeySearchDTO.SearchByTime)
             {   
                 journeys =
                     journeys.Where(
@@ -126,7 +150,7 @@ namespace FindNDriveServices2.Services
             if (journey.Free)
             {
                 journeys = journeys.Where(_ => _.Fee == 0.00).ToList();
-            }
+            }*/
 
             return new ServiceResponse<List<Journey>>
             {

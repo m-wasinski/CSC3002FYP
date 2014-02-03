@@ -13,7 +13,7 @@ import android.util.Log;
 import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.InstantMessengerActivity;
 import com.example.myapplication.constants.IntentConstants;
-import com.example.myapplication.dtos.ChatMessage;
+import com.example.myapplication.domain_objects.ChatMessage;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

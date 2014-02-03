@@ -5,18 +5,122 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:duplicateParentState="true">
+        android:orientation="vertical"
+        android:duplicateParentState="true"
+        android:background="@drawable/background">
 
         <fragment
             android:id="@+id/FragmentSearchMap"
             android:name="com.google.android.gms.maps.MapFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </RelativeLayout>
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:id="@+id/SearchActivityDepartureRelativeLayout"
+            android:background="@drawable/home_navigation_selector">
+
+            <ImageView
+                android:id="@+id/SearchActivityStartImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/start_arrow_right"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/SearchActivityFromLabelTextView"
+                android:layout_toRightOf="@+id/SearchActivityStartImageView"
+                android:layout_marginLeft="10sp"
+                android:text="From:"
+                style="@style/MyCarSharesHeader"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/SearchActivityFromLabelTextView"
+                android:id="@+id/SearchActivityDepartureTextView"
+                android:layout_toRightOf="@+id/SearchActivityStartImageView"
+                android:layout_toLeftOf="@+id/SearchActivityDepartureGpsButton"
+                android:layout_marginLeft="10sp"
+                android:text="Select departure point"
+                style="@style/RegularEditText"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/SearchActivityDepartureGpsButton"
+                android:background="@drawable/transparent_button_selector"
+                android:drawableLeft="@drawable/my_location"
+                android:layout_alignParentRight="true"
+                android:paddingLeft="2sp"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:id="@+id/SearchActivityDestinationRelativeLayout"
+            android:background="@drawable/home_navigation_selector">
+
+            <ImageView
+                android:id="@+id/SearchActivityFinishImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/finish"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/SearchActivityToLabelTextView"
+                android:layout_toRightOf="@+id/SearchActivityFinishImageView"
+                android:layout_marginLeft="10sp"
+                android:text="To:"
+                style="@style/MyCarSharesHeader"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/SearchActivityToLabelTextView"
+                android:id="@+id/SearchActivityDestinationTextView"
+                android:layout_toRightOf="@+id/SearchActivityFinishImageView"
+                android:layout_marginLeft="10sp"
+                android:text="Select destination point"
+                style="@style/RegularEditText"
+                android:singleLine="true"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/SearchActivityDestinationGpsButton"
+                android:background="@drawable/transparent_button_selector"
+                android:drawableLeft="@drawable/my_location"
+                android:layout_alignParentRight="true"
+                android:paddingLeft="2sp"/>
+
+        </RelativeLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Search"
+            android:id="@+id/ActivitySearchMapSearchButton"
+            style="@style/TransparentButton"
+            android:background="@drawable/button_selector"/>
+    </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -54,125 +158,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:id="@+id/ActivitySearchMapParentSearchRelativeLayout"
-        android:focusable="true" android:focusableInTouchMode="true">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="#D9222930"
-            android:id="@+id/ActivitySearchPaneLinearLayout">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:id="@+id/ActivitySearchMapSearchHeaderLayout">
-
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:minHeight="0dp"
-                        android:minWidth="0dp"
-                        android:text="Minimize"
-                        android:id="@+id/SearchActivitySearchPaneHeaderButton"
-                        style="@style/TransparentButton"
-                        android:drawableRight="@drawable/down"
-                        android:background="@drawable/transparent_button_selector"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:id="@+id/ActivitySearchPaneOptionsLinearLayout">
-
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:text="R: 0.00 miles"
-                            android:gravity="center"
-                            android:id="@+id/ActivitySearchMapDepartureRadiusTextView"
-                            style="@style/MapRadiusFields"/>
-
-                        <SeekBar
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/ActivitySearchMapDepartureRadiusSeekBar"
-                            android:max="50"/>
-
-                    </LinearLayout>
-
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/MapActivityDepartureAddressTextView"
-                        android:hint="From: (City, Street, Post-Code)"
-                        style="@style/RegularEditText"
-                        android:layout_marginTop="10sp"
-                        android:singleLine="true"/>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:text="R: 0.00 miles"
-                            android:gravity="center"
-                            android:id="@+id/ActivitySearchMapDestinationRadiusTextView"
-                            style="@style/MapRadiusFields"/>
-
-                        <SeekBar
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/ActivitySearchMapDestinationRadiusSeekBar"
-                            android:max="50"/>
-
-                    </LinearLayout>
-
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/MapActivityDestinationAddressTextView"
-                        android:hint="To: (City, Street, Post-Code)"
-                        style="@style/RegularEditText"
-                        android:layout_marginTop="10sp"
-                        android:singleLine="true"/>
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Search"
-                    android:id="@+id/ActivitySearchMapSearchButton"
-                    android:layout_gravity="center_horizontal"
-                    style="@style/TransparentButton"
-                    android:background="@drawable/button_selector"/>
-
-            </LinearLayout>
-        </LinearLayout>
-
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:id="@+id/ActivitySearchMapJourneyDetailsRelativeLayout"
-        android:visibility="gone">
-
-    </RelativeLayout>
+        android:visibility="gone"/>
 </RelativeLayout>

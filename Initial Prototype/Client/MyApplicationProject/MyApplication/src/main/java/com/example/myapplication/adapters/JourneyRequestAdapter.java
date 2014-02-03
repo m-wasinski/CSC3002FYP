@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.myapplication.constants.RequestDecision;
-import com.example.myapplication.dtos.JourneyRequest;
+import com.example.myapplication.domain_objects.JourneyRequest;
 import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.R;
 

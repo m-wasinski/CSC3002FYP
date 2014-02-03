@@ -10,8 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.myapplication.constants.StatusConstants;
-import com.example.myapplication.dtos.ServiceResponse;
-import com.example.myapplication.dtos.User;
+import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.R;
 import com.example.myapplication.dtos.ChatMessageRetrieverDTO;
 import com.example.myapplication.experimental.FindNDriveManager;

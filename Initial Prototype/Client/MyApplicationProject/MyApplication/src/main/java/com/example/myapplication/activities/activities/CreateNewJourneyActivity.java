@@ -20,8 +20,8 @@ import android.widget.Toast;
 
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.dtos.Journey;
-import com.example.myapplication.dtos.ServiceResponse;
+import com.example.myapplication.domain_objects.Journey;
+import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;

@@ -11,7 +11,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.dtos.ChatMessage;
+import com.example.myapplication.domain_objects.ChatMessage;
 import com.example.myapplication.experimental.DateTimeHelper;
 
 import java.util.ArrayList;

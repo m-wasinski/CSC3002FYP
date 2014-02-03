@@ -1,4 +1,4 @@
-package com.example.myapplication.dtos;
+package com.example.myapplication.domain_objects;
 
 import java.util.ArrayList;
 

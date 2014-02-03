@@ -123,6 +123,7 @@
     <Compile Include="DTOs\JourneyDTO.cs" />
     <Compile Include="DTOs\JourneyMessageDTO.cs" />
     <Compile Include="DTOs\JourneyRequestDTO.cs" />
+    <Compile Include="DTOs\JourneySearchDTO.cs" />
     <Compile Include="DTOs\LoadRangeDTO.cs" />
     <Compile Include="DTOs\LoginDTO.cs" />
     <Compile Include="DTOs\NotificationDTO.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="DTOs\FriendDTO.cs" />
     <Compile Include="DTOs\UserDTO.cs" />
     <Compile Include="GCMManager.cs" />
+    <Compile Include="Haversine.cs" />
     <Compile Include="LoadRangeHelper.cs" />
     <Compile Include="MyServiceHost.cs" />
     <Compile Include="MyServiceHostFactory.cs" />

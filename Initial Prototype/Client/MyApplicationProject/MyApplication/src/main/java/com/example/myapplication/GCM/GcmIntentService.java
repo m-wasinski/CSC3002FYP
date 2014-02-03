@@ -1,38 +1,13 @@
 package com.example.myapplication.gcm;
 
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.SystemClock;
-import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
-import com.example.myapplication.R;
-import com.example.myapplication.activities.activities.InstantMessengerActivity;
-import com.example.myapplication.activities.activities.LoginActivity;
 import com.example.myapplication.constants.GcmConstants;
 import com.example.myapplication.constants.IntentConstants;
-import com.example.myapplication.constants.SessionConstants;
-import com.example.myapplication.constants.SharedPreferencesConstants;
-import com.example.myapplication.dtos.ChatMessage;
-import com.example.myapplication.dtos.ServiceResponse;
 import com.example.myapplication.experimental.FindNDriveManager;
-import com.example.myapplication.experimental.InstantMessengerReceiver;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Michal on 30/12/13.

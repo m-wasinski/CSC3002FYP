@@ -1,21 +1,15 @@
 package com.example.myapplication.network_tasks;
 
 import android.app.AlertDialog;
-import android.app.IntentService;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.myapplication.activities.activities.LoginActivity;
-import com.example.myapplication.constants.GcmConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.constants.SessionConstants;
-import com.example.myapplication.dtos.ServiceResponse;
+import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.experimental.SSLSocketFactory;
 import com.example.myapplication.interfaces.WCFServiceCallback;

@@ -1,24 +1,14 @@
 package com.example.myapplication.activities.base;
 
 import android.app.ActionBar;
-import android.app.AlertDialog;
 import android.app.ListActivity;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Window;
-import android.widget.Toast;
 
-import com.example.myapplication.activities.activities.LoginActivity;
-import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.dtos.ServiceResponse;
 import com.example.myapplication.experimental.FindNDriveManager;
-import com.example.myapplication.interfaces.WCFServiceCallback;
-import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 /**
  * Created by Michal on 18/01/14.

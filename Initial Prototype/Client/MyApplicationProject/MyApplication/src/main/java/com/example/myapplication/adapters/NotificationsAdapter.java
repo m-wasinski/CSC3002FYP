@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.myapplication.constants.NotificationContext;
-import com.example.myapplication.dtos.Notification;
+import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.R;
 

@@ -107,7 +107,7 @@ public class BaseMapActivity extends FragmentActivity
         return markerOptions;
     }
 
-    protected void showDeparturePoint(MarkerOptions markerOptions)
+    protected void showDeparturePoint(MarkerOptions markerOptions, int perimeter)
     {
         if(this.departureRadius != null)
         {
@@ -122,15 +122,12 @@ public class BaseMapActivity extends FragmentActivity
 
         if(markerOptions != null)
         {
-            this.departureMarker = googleMap.addMarker(new MarkerOptions()
-                    .position(markerOptions.getPosition())
-                    .title(markerOptions.getTitle())
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+            this.departureMarker = googleMap.addMarker(markerOptions);
 
             this.departureMarker.showInfoWindow();
             this.departureRadius = googleMap.addCircle(new CircleOptions()
                     .center(markerOptions.getPosition())
-                    .radius(0)
+                    .radius(perimeter * 1600)
                     .strokeColor(Color.rgb(15, 94, 135))
                     .fillColor(Color.argb(50, 42, 124, 157)));
         }
@@ -138,7 +135,7 @@ public class BaseMapActivity extends FragmentActivity
         animateCamera();
     }
 
-    protected void showDestinationPoint(MarkerOptions markerOptions)
+    protected void showDestinationPoint(MarkerOptions markerOptions, int perimeter)
     {
         if(this.destinationRadius != null)
         {
@@ -153,15 +150,12 @@ public class BaseMapActivity extends FragmentActivity
 
         if(markerOptions != null)
         {
-            this.destinationMarker = googleMap.addMarker(new MarkerOptions()
-                    .position(markerOptions.getPosition())
-                    .title(markerOptions.getTitle())
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+            this.destinationMarker = googleMap.addMarker(markerOptions);
 
             this.destinationMarker.showInfoWindow();
             this.destinationRadius = googleMap.addCircle(new CircleOptions()
                     .center(markerOptions.getPosition())
-                    .radius(0)
+                    .radius(perimeter * 1600)
                     .strokeColor(Color.rgb(15, 94, 135))
                     .fillColor(Color.argb(50, 42, 124, 157)));
         }
@@ -214,7 +208,7 @@ public class BaseMapActivity extends FragmentActivity
         {
             if(marker != null)
             {
-                cameraUpdate = CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 14);
+                cameraUpdate = CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 12);
             }
         }
         else
@@ -224,7 +218,7 @@ public class BaseMapActivity extends FragmentActivity
             display.getSize(size);
 
             LatLngBounds bounds = builder.build();
-            cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 0);
+            cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 150);
         }
 
         if(cameraUpdate != null)

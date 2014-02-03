@@ -27,8 +27,8 @@ import com.example.myapplication.R;
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.dtos.Journey;
-import com.example.myapplication.dtos.ServiceResponse;
+import com.example.myapplication.domain_objects.Journey;
+import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;
@@ -44,6 +44,7 @@ import java.util.Locale;
  */
 public class OfferJourneyStepTwoActivity extends BaseActivity {
 
+    // Private variables.
     private ImageView minimapImageView;
     private Journey journey;
     private Calendar calendar;
@@ -82,6 +83,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
     private final String SELECT_TIME = "Select Time";
     private final String SELECT_FEE = "Select fee & payment method";
     private final String SELECT_VEHICLE = "Select vehicle type";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -154,7 +156,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
             addViaPoints();
         }
 
-        setupUIevents();
+        setupEventHandlers();
     }
 
     private void addViaPoints()
@@ -179,7 +181,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
         }
     }
 
-    private void setupUIevents()
+    private void setupEventHandlers()
     {
         this.journeyDateRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override

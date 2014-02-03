@@ -1,6 +1,8 @@
 package com.example.myapplication.network_tasks;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
@@ -57,6 +59,21 @@ public class GCMRegistrationTask extends AsyncTask<TextView, String, Boolean> {
                 // increase backoff exponentially
                 backoff *= 2;
 
+                if(i == MAX_ATTEMPTS)
+                {
+                    AlertDialog alertDialog = new AlertDialog.Builder(this.context).create();
+                    alertDialog.setCancelable(false);
+                    alertDialog.setMessage("Could not register your phone with GCM. You will not be able to receive notifications.");
+                    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    alertDialog.show();
+                    this.registrationId = "0";
+                    break;
+                }
                 try {
 
                     Log.d("", "Sleeping for " + backoff + " ms before retry");
@@ -66,6 +83,7 @@ public class GCMRegistrationTask extends AsyncTask<TextView, String, Boolean> {
                     // Activity finished before we complete - exit.
                     Log.d("", "Thread interrupted: abort remaining retries!");
                     Thread.currentThread().interrupt();
+                    this.registrationId = "0";
                     return null;
                 }
             }

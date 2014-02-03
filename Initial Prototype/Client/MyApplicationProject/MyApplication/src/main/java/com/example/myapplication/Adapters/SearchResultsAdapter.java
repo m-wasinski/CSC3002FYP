@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.myapplication.dtos.Journey;
+import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.R;
 

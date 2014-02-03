@@ -16,7 +16,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.example.myapplication.dtos.GeoAddress;
+import com.example.myapplication.domain_objects.GeoAddress;
 import com.google.android.gms.maps.model.LatLng;
 
 import android.util.Log;

@@ -14,5 +14,5 @@
     <item android:drawable="@color/TransparentButtonNormal"
         android:textColor="@color/TransparentButtonFont"
         android:textSize="18sp"/>
-
 </selector>
+

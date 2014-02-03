@@ -20,8 +20,8 @@ import android.widget.Toast;
 import com.example.myapplication.R;
 import com.example.myapplication.activities.base.BaseMapActivity;
 import com.example.myapplication.constants.IntentConstants;
-import com.example.myapplication.dtos.GeoAddress;
-import com.example.myapplication.dtos.Journey;
+import com.example.myapplication.domain_objects.GeoAddress;
+import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.experimental.GMapV2Direction;
 import com.example.myapplication.experimental.WaypointHolder;
 import com.google.android.gms.maps.GoogleMap;
@@ -169,7 +169,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if(i == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_UP){
                     MarkerOptions markerOptions = getAddress(departureAddressEditText.getText().toString());
-                    showDeparturePoint(markerOptions);
+                    showDeparturePoint(markerOptions, 0);
                     inputMethodManager.hideSoftInputFromWindow(departureAddressEditText.getWindowToken(), 0);
                 }
                 return false;
@@ -180,7 +180,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     MarkerOptions markerOptions = getAddress(departureAddressEditText.getText().toString());
-                    showDeparturePoint(markerOptions);
+                    showDeparturePoint(markerOptions, 0);
                 }
             }
         });
@@ -191,7 +191,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     MarkerOptions markerOptions = getAddress(destinationAddressEditText.getText().toString());
-                    showDestinationPoint(markerOptions);
+                    showDestinationPoint(markerOptions, 0);
                 }
             }
         });
@@ -201,7 +201,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if(i == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_UP){
                     MarkerOptions markerOptions = getAddress(destinationAddressEditText.getText().toString());
-                    showDestinationPoint(markerOptions);
+                    showDestinationPoint(markerOptions, 0);
                     inputMethodManager.hideSoftInputFromWindow(destinationAddressEditText.getWindowToken(), 0);
                 }
                 return false;

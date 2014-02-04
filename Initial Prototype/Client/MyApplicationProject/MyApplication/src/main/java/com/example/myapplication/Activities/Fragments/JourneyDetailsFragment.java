@@ -53,21 +53,6 @@ public class JourneyDetailsFragment extends BaseFragment {
         journeyHeader.setText(carShare.GeoAddresses.get(0).AddressLine + " -> " + carShare.GeoAddresses.get(carShare.GeoAddresses.size()-1).AddressLine);
         contentLayout = (LinearLayout) view.findViewById(R.id.FragmentJourneyInformationContentLayout);
 
-        closeButton = (ImageButton) view.findViewById(R.id.FragmentJourneyInformationCloseButton);
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dismiss();
-            }
-        });
-
-        minimiseButton = (ImageButton) view.findViewById(R.id.FragmentJourneyInformationMinimizeButton);
-        minimiseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                contentLayout.setVisibility(contentLayout.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-            }
-        });
 
         contactDriverButton = (Button) view.findViewById(R.id.FragmentJourneyInformationContactDriverButton);
         contactDriverButton.setOnClickListener(new View.OnClickListener() {

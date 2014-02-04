@@ -73,41 +73,7 @@ public class BaseMapActivity extends FragmentActivity
         geocoder = new Geocoder(this);
     }
 
-    protected MarkerOptions getAddress(String address)
-    {
-        MarkerOptions markerOptions = null;
-
-        if(Geocoder.isPresent()){
-            try {
-                if(!address.isEmpty())
-                {
-                    List<Address> addresses= geocoder.getFromLocationName(address, 1); // get the found Address Objects
-
-                    if(addresses.size() > 0)
-                    {
-                        String addressText = String.format(
-                                "%s, %s, %s",
-                                // If there's a street address, add it
-                                addresses.get(0).getMaxAddressLineIndex() > 0 ?
-                                        addresses.get(0).getAddressLine(0) : "",
-                                // Locality is usually a city
-                                addresses.get(0).getLocality(),
-                                // The country of the address
-                                addresses.get(0).getCountryName());
-
-                        LatLng latLng = new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude());
-                        markerOptions = new MarkerOptions().position(latLng).title(addressText).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));;
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return markerOptions;
-    }
-
-    protected void showDeparturePoint(MarkerOptions markerOptions, int perimeter)
+    protected void showDeparturePoint(MarkerOptions markerOptions, double perimeter)
     {
         if(this.departureRadius != null)
         {
@@ -135,7 +101,7 @@ public class BaseMapActivity extends FragmentActivity
         animateCamera();
     }
 
-    protected void showDestinationPoint(MarkerOptions markerOptions, int perimeter)
+    protected void showDestinationPoint(MarkerOptions markerOptions, double perimeter)
     {
         if(this.destinationRadius != null)
         {

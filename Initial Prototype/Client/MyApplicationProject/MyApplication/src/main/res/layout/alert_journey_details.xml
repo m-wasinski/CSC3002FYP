@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#151515"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <TextView android:id="@+id/JourneyDetailsActivityJourneyTitleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5sp"
+        android:text="From City A to city B"
+        style="@style/MyCarSharesHeader"/>
+
+    <fragment
+        android:layout_below="@+id/JourneyDetailsActivityJourneyTitleTextView"
+        android:id="@+id/AlertJourneyDetailsMap"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_below="@+id/AlertJourneyDetailsMap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:requiresFadingEdge="vertical"
+            android:id="@+id/JourneyDetailsActivityScrollView">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5sp">
+
+                        <TextView android:id="@+id/JourneyDetailsActivityJourneyIdTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Journey id: "
+                            style="@style/ContentBody"/>
+
+                        <TextView android:id="@+id/JourneyDetailsActivityJourneyDriverTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Driver: "
+                            style="@style/ContentBody"/>
+
+                        <TextView android:id="@+id/JourneyDetailsActivityJourneyDateTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Date: "
+                            style="@style/ContentBody"
+                            android:layout_weight="1"/>
+
+                        <TextView android:id="@+id/JourneyDetailsActivityJourneyTimeTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Time: "
+                            style="@style/ContentBody"/>
+
+                        <TextView android:id="@+id/JourneyDetailsActivityJourneySeatsTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Seats left: "
+                            style="@style/ContentBody"/>
+
+                        <TextView android:id="@+id/JourneyDetailsActivityJourneyPetsTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Pets: "
+                            style="@style/ContentBody"/>
+
+                        <TextView android:id="@+id/JourneyDetailsActivityJourneySmokersTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Smokers: "
+                            style="@style/ContentBody"/>
+
+                        <TextView android:id="@+id/JourneyDetailsActivityJourneyFeeTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Fee: "
+                            style="@style/ContentBody"/>
+
+                        <Button
+                            android:id="@+id/JourneyDetailsActivityViewDriversProfileButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="View driver's profile"
+                            style="@style/ButtonStyle"
+                            android:layout_alignParentBottom="true"
+                            android:background="@drawable/button_selector"/>
+
+                        <EditText
+                            android:id="@+id/JourneyDetailsActivityJourneyMessageToDriverEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Message to driver"
+                            android:layout_above="@+id/JourneyDetailsActivityJourneySendRequestButton"
+                            android:singleLine="true"/>
+
+                        <Button
+                            android:id="@+id/JourneyDetailsActivityJourneySendRequestButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Send Request"
+                            style="@style/ButtonStyle"
+                            android:layout_alignParentBottom="true"
+                            android:background="@drawable/button_selector"/>
+                    </LinearLayout>
+            </LinearLayout>
+
+        </ScrollView>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

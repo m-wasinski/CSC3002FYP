@@ -91,6 +91,8 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
                 }
             });
             alertDialog.show();
+
+
         }
         else
         {

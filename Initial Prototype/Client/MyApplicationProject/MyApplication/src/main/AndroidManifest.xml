@@ -131,6 +131,11 @@
             android:label="Step 2"
             android:screenOrientation="portrait"/>
 
+        <activity
+            android:name=".activities.activities.JourneyDetailsActivity"
+            android:label="Journey Details"
+            android:screenOrientation="portrait"/>
+
         <receiver
             android:name=".gcm.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >

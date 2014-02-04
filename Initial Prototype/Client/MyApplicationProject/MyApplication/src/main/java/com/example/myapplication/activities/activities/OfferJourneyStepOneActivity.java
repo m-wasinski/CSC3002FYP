@@ -133,8 +133,8 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
                     @Override
                     public void onFocusChange(View view, boolean b) {
                         if (!b) {
-                            MarkerOptions markerOptions = getAddress(waypointHolder.addressEditText.getText().toString());
-                            showWaypointOnMap(waypointHolder, markerOptions);
+                            //MarkerOptions markerOptions = getAddress(waypointHolder.addressEditText.getText().toString());
+                            //showWaypointOnMap(waypointHolder, markerOptions);
                         }
                     }
                 });
@@ -142,10 +142,10 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
                 waypointHolder.addressEditText.setOnKeyListener(new View.OnKeyListener() {
                     @Override
                     public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                        if(i == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_UP){MarkerOptions markerOptions = getAddress(waypointHolder.addressEditText.getText().toString());
+                        /*if(i == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_UP){MarkerOptions markerOptions = getAddress(waypointHolder.addressEditText.getText().toString());
                             showWaypointOnMap(waypointHolder, markerOptions);
                             inputMethodManager.hideSoftInputFromWindow(waypointHolder.addressEditText.getWindowToken(), 0);
-                        }
+                        }*/
                         return false;
                     }
                 });
@@ -168,8 +168,8 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if(i == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_UP){
-                    MarkerOptions markerOptions = getAddress(departureAddressEditText.getText().toString());
-                    showDeparturePoint(markerOptions, 0);
+                    //MarkerOptions markerOptions = getAddress(departureAddressEditText.getText().toString());
+                    //showDeparturePoint(markerOptions, 0);
                     inputMethodManager.hideSoftInputFromWindow(departureAddressEditText.getWindowToken(), 0);
                 }
                 return false;
@@ -179,8 +179,8 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
         this.departureAddressEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    MarkerOptions markerOptions = getAddress(departureAddressEditText.getText().toString());
-                    showDeparturePoint(markerOptions, 0);
+                    //MarkerOptions markerOptions = getAddress(departureAddressEditText.getText().toString());
+                    //showDeparturePoint(markerOptions, 0);
                 }
             }
         });
@@ -190,8 +190,8 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
         this.destinationAddressEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    MarkerOptions markerOptions = getAddress(destinationAddressEditText.getText().toString());
-                    showDestinationPoint(markerOptions, 0);
+                    //MarkerOptions markerOptions = getAddress(destinationAddressEditText.getText().toString());
+                    //showDestinationPoint(markerOptions, 0);
                 }
             }
         });
@@ -200,8 +200,8 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if(i == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_UP){
-                    MarkerOptions markerOptions = getAddress(destinationAddressEditText.getText().toString());
-                    showDestinationPoint(markerOptions, 0);
+                    //MarkerOptions markerOptions = getAddress(destinationAddressEditText.getText().toString());
+                    //showDestinationPoint(markerOptions, 0);
                     inputMethodManager.hideSoftInputFromWindow(destinationAddressEditText.getWindowToken(), 0);
                 }
                 return false;

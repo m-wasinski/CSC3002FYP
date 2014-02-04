@@ -1,184 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="#D9222930">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <fragment
+            android:id="@+id/JourneyDetailsMap"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
 
         <TextView android:id="@+id/FragmentJourneyInformationFromToTextView"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5sp"
             android:text="From City A to city B"
-            style="@style/MyCarSharesHeader"
-            android:layout_weight="1"/>
-
+            style="@style/MyCarSharesHeader"/>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/minimize"
-                android:layout_gravity="right"
-                android:id="@+id/FragmentJourneyInformationMinimizeButton"
-                style="@style/TransparentButton"/>
-
-        </LinearLayout>
+            android:orientation="vertical"
+            android:id="@+id/FragmentJourneyInformationContentLayout">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-
-                <ImageButton
+                <ImageView android:id="@+id/FragmentJourneyInformationQualityImageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/close"
-                    android:layout_gravity="right"
-                    android:id="@+id/FragmentJourneyInformationCloseButton"
-                    style="@style/TransparentButton"/>
+                    android:layout_marginTop="10sp"
+                    android:src="@drawable/green_light"/>
+
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5sp">
+
+                    <TextView android:id="@+id/FragmentJourneyInformationJourneyIdTextView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:gravity="center_vertical"
+                        android:text="Journey id: "
+                        android:layout_weight="1"
+                        style="@style/ContentBody"/>
+
+                    <TextView android:id="@+id/FragmentJourneyInformationDriverNameTextView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:gravity="center_vertical"
+                        android:text="Driver: "
+                        style="@style/ContentBody"
+                        android:layout_weight="1"/>
+
+                    <TextView android:id="@+id/FragmentJourneyInformationDateTextView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:gravity="center_vertical"
+                        android:text="Date: "
+                        style="@style/ContentBody"
+                        android:layout_weight="1"/>
+
+                    <TextView android:id="@+id/FragmentJourneyInformationTimeTextView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:gravity="center_vertical"
+                        android:text="Time: "
+                        android:layout_weight="1"
+                        style="@style/ContentBody"/>
+
+                    <TextView android:id="@+id/FragmentJourneyInformationSeatsLeftTextView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:gravity="center_vertical"
+                        android:text="Seats left: "
+                        android:layout_weight="1"
+                        style="@style/ContentBody"/>
+                </LinearLayout>
 
             </LinearLayout>
 
-    </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/FragmentJourneyInformationContentLayout">
+                <TextView android:id="@+id/FragmentJourneyInformationDriverRatingTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5sp"
+                    android:layout_marginLeft="10sp"
+                    android:text="Driver rating:"
+                    android:textAppearance="@android:style/TextAppearance.Small.Inverse"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+                <ImageView android:id="@+id/FragmentJourneyInformationDriverRatingIcon1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/star_rating"/>
 
-        <ImageView android:id="@+id/FragmentJourneyInformationQualityImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10sp"
-            android:src="@drawable/green_light"/>
+                <ImageView android:id="@+id/FragmentJourneyInformationDriverRatingIcon2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/star_rating"/>
+
+                <ImageView android:id="@+id/FragmentJourneyInformationDriverRatingIcon3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/star_rating"/>
+
+                <ImageView android:id="@+id/FragmentJourneyInformationDriverRatingIcon4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/star_rating"/>
+
+                <ImageView android:id="@+id/FragmentJourneyInformationDriverRatingIcon5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/star_rating"/>
+
+                <ImageView android:id="@+id/FragmentJourneyInformationFeeImageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10sp"
+                    android:src="@drawable/pound_sign"/>
+
+                <TextView android:id="@+id/FragmentJourneyInformationFeeTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fee"
+                    android:layout_margin="5sp"
+                    android:textAppearance="@android:style/TextAppearance.Small.Inverse"/>
 
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5sp">
+            </LinearLayout>
 
-            <TextView android:id="@+id/FragmentJourneyInformationJourneyIdTextView"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:gravity="center_vertical"
-                android:text="Journey id: "
-                android:layout_weight="1"
-                style="@style/ContentBody"/>
-
-            <TextView android:id="@+id/FragmentJourneyInformationDriverNameTextView"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:gravity="center_vertical"
-                android:text="Driver: "
-                style="@style/ContentBody"
-                android:layout_weight="1"/>
-
-            <TextView android:id="@+id/FragmentJourneyInformationDateTextView"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:gravity="center_vertical"
-                android:text="Date: "
-                style="@style/ContentBody"
-                android:layout_weight="1"/>
-
-            <TextView android:id="@+id/FragmentJourneyInformationTimeTextView"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:gravity="center_vertical"
-                android:text="Time: "
-                android:layout_weight="1"
-                style="@style/ContentBody"/>
-
-            <TextView android:id="@+id/FragmentJourneyInformationSeatsLeftTextView"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:gravity="center_vertical"
-                android:text="Seats left: "
-                android:layout_weight="1"
-                style="@style/ContentBody"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/FragmentJourneyInformationContactDriverButton"
+                android:text="Contact Driver"
+                style="@style/ButtonStyle"/>
         </LinearLayout>
-
     </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView android:id="@+id/FragmentJourneyInformationDriverRatingTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5sp"
-            android:layout_marginLeft="10sp"
-            android:text="Driver rating:"
-            android:textAppearance="@android:style/TextAppearance.Small.Inverse"/>
-
-        <ImageView android:id="@+id/FragmentJourneyInformationDriverRatingIcon1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/star_rating"/>
-
-        <ImageView android:id="@+id/FragmentJourneyInformationDriverRatingIcon2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/star_rating"/>
-
-        <ImageView android:id="@+id/FragmentJourneyInformationDriverRatingIcon3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/star_rating"/>
-
-        <ImageView android:id="@+id/FragmentJourneyInformationDriverRatingIcon4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/star_rating"/>
-
-        <ImageView android:id="@+id/FragmentJourneyInformationDriverRatingIcon5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/star_rating"/>
-
-        <ImageView android:id="@+id/FragmentJourneyInformationFeeImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10sp"
-            android:src="@drawable/pound_sign"/>
-
-        <TextView android:id="@+id/FragmentJourneyInformationFeeTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Fee"
-            android:layout_margin="5sp"
-            android:textAppearance="@android:style/TextAppearance.Small.Inverse"/>
-
-
-    </LinearLayout>
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/FragmentJourneyInformationContactDriverButton"
-        android:text="Contact Driver"
-        style="@style/ButtonStyle"/>
-</LinearLayout>
-</LinearLayout>
+</RelativeLayout>

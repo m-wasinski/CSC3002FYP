@@ -126,7 +126,7 @@ public class JourneyRequestDetailsActivity extends BaseActivity implements WCFSe
         userNameTextView.setText(userNameTextView.getText() + journeyRequest.User.UserName);
         firstNameTextView.setText(firstNameTextView.getText() + journeyRequest.User.FirstName);
         lastNameTextView.setText(lastNameTextView.getText() + journeyRequest.User.LastName);
-        genderTextView.setText(genderTextView.getText() + Helpers.TranslateGender(journeyRequest.User.Gender));
+        genderTextView.setText(genderTextView.getText() + Helpers.translateGender(journeyRequest.User.Gender));
         emailAddressTextView.setText(emailAddressTextView.getText() + journeyRequest.User.EmailAddress);
         dateOfBirthTextView.setText(dateOfBirthTextView.getText() + DateTimeHelper.getSimpleDate(journeyRequest.User.DateOfBirth));
         messageTextView.setText(messageTextView.getText() + journeyRequest.Message);

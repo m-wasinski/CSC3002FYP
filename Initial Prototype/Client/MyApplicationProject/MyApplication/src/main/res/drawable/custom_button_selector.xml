@@ -4,15 +4,19 @@
     <item android:drawable="@color/CustomButtonPressed"
         android:state_pressed="true"
         android:textColor="@color/CustomButtonFont"
-        android:textSize="18sp"/>
+        android:textSize="20sp"/>
 
     <item android:drawable="@color/CustomButtonPressed"
         android:state_focused="true"
         android:textColor="@color/CustomButtonFont"
-        android:textSize="18sp"/>
+        android:textSize="20sp"/>
 
     <item android:drawable="@color/CustomButtonNormal"
         android:textColor="@color/CustomButtonFont"
-        android:textSize="18sp"/>
+        android:textSize="20sp"/>
 
+    <item android:drawable="@color/RegularButtonPressed"
+        android:state_enabled="false"
+        android:textColor="@color/RegularButtonFont"
+        android:textSize="20sp"/>
 </selector>

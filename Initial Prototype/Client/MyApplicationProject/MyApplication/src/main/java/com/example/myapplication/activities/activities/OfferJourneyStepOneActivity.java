@@ -1,19 +1,16 @@
 package com.example.myapplication.activities.activities;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,17 +19,15 @@ import com.example.myapplication.activities.base.BaseMapActivity;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.domain_objects.GeoAddress;
 import com.example.myapplication.domain_objects.Journey;
-import com.example.myapplication.experimental.GMapV2Direction;
+import com.example.myapplication.domain_objects.MarkerType;
+import com.example.myapplication.experimental.GeocoderParams;
 import com.example.myapplication.experimental.WaypointHolder;
+import com.example.myapplication.network_tasks.GeocoderTask;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
-
-import org.w3c.dom.Document;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -42,29 +37,37 @@ import java.util.ArrayList;
  */
 public class OfferJourneyStepOneActivity extends BaseMapActivity {
 
-    private LinearLayout throughPointsLayout;
-    private LinearLayout contentLayout;
-    private TextView viaTextView;
-    private Button minimizeButton;
+    private RelativeLayout departureRelativeLayout;
+    private RelativeLayout destinationRelativeLayout;
+    private RelativeLayout waypointRelativeLayout;
+
+    private Button departureGPSButton;
+    private Button destinationGPSButton;
     private Button stepTwoButton;
-    private Button addThroughPointButton;
+
+    private TextView departureTextView;
+    private TextView destinationTextView;
+    private TextView viaTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offer_journey_step_one);
+
+        // Initialise variables.
         actionBar.hide();
-        this.waypointHolders = new ArrayList<WaypointHolder>();
+        this.wayPoints = new ArrayList<WaypointHolder>();
 
         //Initialise UI elements.
-        this.stepTwoButton = (Button) findViewById(R.id.OfferJourneyStepOneStepTwoButton);
-        this.contentLayout = (LinearLayout) findViewById(R.id.OfferJourneyStepOneContentLayout);
-        this.minimizeButton = (Button) findViewById(R.id.OfferJourneyStepOneActivitySearchPaneHeaderButton);
-        this.throughPointsLayout = (LinearLayout) findViewById(R.id.AddNewJourneyAdditionalDestinationLayout);
-        this.viaTextView = (TextView) findViewById(R.id.ActivityOfferJourneyViaEditText);
-        this.addThroughPointButton = (Button) findViewById(R.id.ActivityOfferJourneyThroughPointButton);
-        this.departureAddressEditText = (EditText) findViewById(R.id.ActivityOfferJourneyDepartureEditText);
-        this.destinationAddressEditText = (EditText) findViewById(R.id.ActivityOfferJourneyDestinationEditText);
-
+        this.stepTwoButton = (Button) this.findViewById(R.id.OfferJourneyStepOneActivityStepTwoButton);
+        this.departureGPSButton = (Button) this.findViewById(R.id.OfferJourneyStepOneActivityDepartureGPSButton);
+        this.destinationGPSButton = (Button) this.findViewById(R.id.OfferJourneyStepOneActivityDestinationGPSButton);
+        this.departureRelativeLayout = (RelativeLayout) this.findViewById(R.id.OfferJourneyStepOneActivityDepartureRelativeLayout);
+        this.destinationRelativeLayout = (RelativeLayout) this.findViewById(R.id.OfferJourneyStepOneActivityDestinationRelativeLayout);
+        this.waypointRelativeLayout = (RelativeLayout) this.findViewById(R.id.OfferJourneyStepOneActivityViaRelativeLayout);
+        this.departureTextView = (TextView) this.findViewById(R.id.OfferJourneyStepOneActivityDepartureTextView);
+        this.destinationTextView = (TextView) this.findViewById(R.id.OfferJourneyStepOneActivityDestinationTextView);
+        this.viaTextView = (TextView) this.findViewById(R.id.OfferJourneyStepOneActivityViaTextView);
         // Setting up event handlers.
         this.setupEventHandlers();
 
@@ -82,7 +85,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
     private void initialiseMap() {
 
         if (googleMap == null) {
-            googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.OfferNewJourneyActivityStepOneMapFragment)).getMap();
+            this.googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.OfferJourneyStepOneActivityMap)).getMap();
 
             if (googleMap == null) {
                 Toast.makeText(this,
@@ -94,8 +97,6 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
 
     private void showWaypointOnMap(WaypointHolder waypointHolder, MarkerOptions markerOptions)
     {
-        waypointHolder.removeMarker();
-
         if(markerOptions != null)
         {
             waypointHolder.googleMapMarker = googleMap.addMarker(new MarkerOptions()
@@ -105,6 +106,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
 
             waypointHolder.googleMapMarker.showInfoWindow();
         }
+
         animateCamera();
     }
 
@@ -113,126 +115,201 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
         this.stepTwoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                buildJourney();
+                buildJourneyAndProceed();
             }
         });
 
-        this.addThroughPointButton.setOnClickListener(new View.OnClickListener() {
+        this.departureRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if(waypointHolders.size() == 6)
-                {
-                    return;
-                }
-
-                final WaypointHolder waypointHolder = new WaypointHolder(throughPointsLayout, getApplicationContext(), waypointHolders);
-                waypointHolder.initialise();
-                viaTextView.setVisibility(View.VISIBLE);
-                waypointHolder.addressEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                    @Override
-                    public void onFocusChange(View view, boolean b) {
-                        if (!b) {
-                            //MarkerOptions markerOptions = getAddress(waypointHolder.addressEditText.getText().toString());
-                            //showWaypointOnMap(waypointHolder, markerOptions);
-                        }
-                    }
-                });
-
-                waypointHolder.addressEditText.setOnKeyListener(new View.OnKeyListener() {
-                    @Override
-                    public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                        /*if(i == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_UP){MarkerOptions markerOptions = getAddress(waypointHolder.addressEditText.getText().toString());
-                            showWaypointOnMap(waypointHolder, markerOptions);
-                            inputMethodManager.hideSoftInputFromWindow(waypointHolder.addressEditText.getWindowToken(), 0);
-                        }*/
-                        return false;
-                    }
-                });
-
-                waypointHolder.closeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        waypointHolder.removeItself();
-                        if(waypointHolders.size() == 0)
-                        {
-                            viaTextView.setVisibility(View.GONE);
-                        }
-                    }
-                });
+                showAddressSelectionDialog(MarkerType.Departure, departureMarker);
             }
         });
 
-
-        this.departureAddressEditText.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                if(i == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_UP){
-                    //MarkerOptions markerOptions = getAddress(departureAddressEditText.getText().toString());
-                    //showDeparturePoint(markerOptions, 0);
-                    inputMethodManager.hideSoftInputFromWindow(departureAddressEditText.getWindowToken(), 0);
-                }
-                return false;
-            }
-        });
-
-        this.departureAddressEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    //MarkerOptions markerOptions = getAddress(departureAddressEditText.getText().toString());
-                    //showDeparturePoint(markerOptions, 0);
-                }
-            }
-        });
-
-
-
-        this.destinationAddressEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    //MarkerOptions markerOptions = getAddress(destinationAddressEditText.getText().toString());
-                    //showDestinationPoint(markerOptions, 0);
-                }
-            }
-        });
-
-        this.destinationAddressEditText.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                if(i == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_UP){
-                    //MarkerOptions markerOptions = getAddress(destinationAddressEditText.getText().toString());
-                    //showDestinationPoint(markerOptions, 0);
-                    inputMethodManager.hideSoftInputFromWindow(destinationAddressEditText.getWindowToken(), 0);
-                }
-                return false;
-            }
-        });
-
-        this.minimizeButton.setOnClickListener(new View.OnClickListener() {
+        this.destinationRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                contentLayout.setVisibility(contentLayout.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-                minimizeButton.setText(contentLayout.getVisibility() == View.VISIBLE ? "Minimize" : "Restore");
-                Drawable image = getResources().getDrawable(contentLayout.getVisibility() == View.VISIBLE ? R.drawable.down : R.drawable.up);
-                minimizeButton.setCompoundDrawablesWithIntrinsicBounds(null, null, image, null);
+                showAddressSelectionDialog(MarkerType.Destination, destinationMarker);
+            }
+        });
+
+        this.departureGPSButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getCurrentAddress(MarkerType.Departure, locationClient.getLastLocation());
+            }
+        });
+
+        this.destinationGPSButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getCurrentAddress(MarkerType.Destination, locationClient.getLastLocation());
+            }
+        });
+
+        this.waypointRelativeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showWayPointAddressDialog();
             }
         });
     }
 
-    private void buildJourney()
+    private void showWayPointAddressDialog()
+    {
+        final Dialog wayPointDialog = new Dialog(this);
+        wayPointDialog.setCanceledOnTouchOutside(true);
+        wayPointDialog.setContentView(R.layout.alert_dialog_waypoint_selector);
+        wayPointDialog.setTitle("Journey waypoints");
+
+        final EditText firstWayPointEditText  = (EditText) wayPointDialog.findViewById(R.id.AlertDialogWaypointSelectorFirstWaypointEditText);
+        final EditText secondWayPointEditText  = (EditText) wayPointDialog.findViewById(R.id.AlertDialogWaypointSelectorSecondWaypointEditText);
+        final EditText thirdWayPointEditText  = (EditText) wayPointDialog.findViewById(R.id.AlertDialogWaypointSelectorThirdWaypointEditText);
+        final EditText fourthWayPointEditText  = (EditText) wayPointDialog.findViewById(R.id.AlertDialogWaypointSelectorFourthWaypointEditText);
+        final EditText fifthWayPointEditText  = (EditText) wayPointDialog.findViewById(R.id.AlertDialogWaypointSelectorFifthWaypointEditText);
+        final EditText sixthWayPointEditText  = (EditText) wayPointDialog.findViewById(R.id.AlertDialogWaypointSelectorSixthWaypointEditText);
+
+        for(WaypointHolder waypointHolder : this.wayPoints)
+        {
+            if(waypointHolder.geoAddress.Order == 1 && waypointHolder.googleMapMarker != null)
+            {
+
+                firstWayPointEditText.setText(waypointHolder.googleMapMarker.getTitle());
+            }
+
+            if(waypointHolder.geoAddress.Order == 2 && waypointHolder.googleMapMarker != null)
+            {
+                secondWayPointEditText.setText(waypointHolder.googleMapMarker.getTitle());
+            }
+
+            if(waypointHolder.geoAddress.Order == 3 && waypointHolder.googleMapMarker != null)
+            {
+                thirdWayPointEditText.setText(waypointHolder.googleMapMarker.getTitle());
+            }
+
+            if(waypointHolder.geoAddress.Order == 4 && waypointHolder.googleMapMarker != null)
+            {
+                fourthWayPointEditText.setText(waypointHolder.googleMapMarker.getTitle());
+            }
+
+            if(waypointHolder.geoAddress.Order == 5 && waypointHolder.googleMapMarker != null)
+            {
+                fifthWayPointEditText.setText(waypointHolder.googleMapMarker.getTitle());
+            }
+
+            if(waypointHolder.geoAddress.Order == 6 && waypointHolder.googleMapMarker != null)
+            {
+                sixthWayPointEditText.setText(waypointHolder.googleMapMarker.getTitle());
+            }
+        }
+
+
+        Button okButton = (Button) wayPointDialog.findViewById(R.id.AlertDialogWaypointSelectorOkButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                for(WaypointHolder waypointHolder : wayPoints)
+                {
+                    waypointHolder.removeMarker();
+                }
+
+                wayPoints.clear();
+                viaTextView.setText("Add new waypoint (optional)");
+                int wayPointCounter = 1;
+                if(!firstWayPointEditText.getText().toString().isEmpty())
+                {
+                    addressDialogClosed(MarkerType.Waypoint, firstWayPointEditText.getText().toString(), wayPointCounter);
+                    viaTextView.setText("");
+                    wayPointCounter += 1;
+                }
+
+                if(!secondWayPointEditText.getText().toString().isEmpty())
+                {
+                    addressDialogClosed(MarkerType.Waypoint, secondWayPointEditText.getText().toString(), wayPointCounter);
+                    viaTextView.setText("");
+                    wayPointCounter += 1;
+                }
+
+                if(!thirdWayPointEditText.getText().toString().isEmpty())
+                {
+                    addressDialogClosed(MarkerType.Waypoint, thirdWayPointEditText.getText().toString(), wayPointCounter);
+                    viaTextView.setText("");
+                    wayPointCounter += 1;
+                }
+
+                if(!fourthWayPointEditText.getText().toString().isEmpty())
+                {
+                    addressDialogClosed(MarkerType.Waypoint, fourthWayPointEditText.getText().toString(), wayPointCounter);
+                    viaTextView.setText("");
+                    wayPointCounter += 1;
+                }
+
+                if(!fifthWayPointEditText.getText().toString().isEmpty())
+                {
+                    addressDialogClosed(MarkerType.Waypoint, fifthWayPointEditText.getText().toString(), wayPointCounter);
+                    viaTextView.setText("");
+                    wayPointCounter += 1;
+                }
+
+                if(!sixthWayPointEditText.getText().toString().isEmpty())
+                {
+                    addressDialogClosed(MarkerType.Waypoint, sixthWayPointEditText.getText().toString(), wayPointCounter);
+                    viaTextView.setText("");
+                }
+                wayPointDialog.dismiss();
+                drawDrivingDirectionsOnMap();
+            }
+        });
+
+        wayPointDialog.show();
+    }
+
+    private void showAddressSelectionDialog(final MarkerType markerType, Marker marker)
+    {
+        final Dialog addressSelectorDialog = new Dialog(this);
+        addressSelectorDialog.setCanceledOnTouchOutside(true);
+        addressSelectorDialog.setContentView(R.layout.alert_dialog_offer_journey_address_selector);
+        addressSelectorDialog.setTitle(markerType == MarkerType.Departure ? "Enter departure address" : "Enter destination address");
+        final  EditText addressEditText = (EditText) addressSelectorDialog.findViewById(R.id.AlertDialogOfferJourneyAddressSelectorAddressEditText);
+        addressEditText.setText(marker == null ? "" : marker.getTitle());
+        Button okButton = (Button) addressSelectorDialog.findViewById(R.id.AlertDialogOfferJourneyAddressSelectorOkButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String addressText = addressEditText.getText().toString();
+                if(addressText != null && !addressText.isEmpty())
+                {
+                    addressDialogClosed(markerType, addressText, 0);
+                    addressSelectorDialog.dismiss();
+
+                }
+            }
+        });
+
+        addressSelectorDialog.show();
+    }
+
+    private void addressDialogClosed(MarkerType markerType, String address, double order)
+    {
+        new GeocoderTask(this, this, markerType, order).execute(new GeocoderParams(address, null));
+    }
+
+    private void buildJourneyAndProceed()
     {
         if(this.departureMarker == null || this.destinationMarker == null)
         {
-            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-            alertDialog.setCancelable(false);
-            alertDialog.setMessage("You must specify departure and destination points.");
-            alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            alertDialog.show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("You must specify departure and destination points.")
+                    .setCancelable(false)
+                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+
+            AlertDialog alert = builder.create();
+            alert.show();
             return;
         }
 
@@ -240,92 +317,111 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
         journey.GeoAddresses = new ArrayList<GeoAddress>();
         journey.GeoAddresses.add(new GeoAddress(departureMarker.getPosition().latitude, departureMarker.getPosition().longitude, departureMarker.getTitle(), 0));
 
-        int counter = 1;
-        for(WaypointHolder waypointHolder : this.waypointHolders)
+        for(WaypointHolder waypointHolder : this.wayPoints)
         {
             if(waypointHolder.googleMapMarker != null)
             {
-                journey.GeoAddresses.add(new GeoAddress(waypointHolder.googleMapMarker.getPosition().latitude,
-                        waypointHolder.googleMapMarker.getPosition().longitude,
-                        waypointHolder.googleMapMarker.getTitle(), counter));
-
-                counter += 1;
+                journey.GeoAddresses.add(waypointHolder.geoAddress);
             }
         }
 
-        journey.GeoAddresses.add(new GeoAddress(destinationMarker.getPosition().latitude, destinationMarker.getPosition().longitude, destinationMarker.getTitle(), counter));
+        journey.GeoAddresses.add(new GeoAddress(destinationMarker.getPosition().latitude, destinationMarker.getPosition().longitude, destinationMarker.getTitle(), this.wayPoints.size()+1));
         Log.i("This journey has the following geoaddresses", "\n");
         for(GeoAddress geoAddress : journey.GeoAddresses)
         {
             Log.i("GeoAddress " + geoAddress.Order, " "+geoAddress.Latitude + " " + geoAddress.Longitude + " " + geoAddress.AddressLine);
         }
 
-        new AsyncTask<GoogleMap, Journey, Void>(){
-
-            private GMapV2Direction gMapV2Direction;
-            private Document doc;
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-
-
-                if(doc != null)
-                {
-                    ArrayList<LatLng> directionPoint = gMapV2Direction.getDirection(doc);
-
-                    PolylineOptions polylineOptions = new PolylineOptions().width(10).color(Color.BLUE);
-                    for(int i = 0 ; i < directionPoint.size() ; i++) {
-                        polylineOptions.add(directionPoint.get(i));
-                    }
-                    Polyline polyline = googleMap.addPolyline(polylineOptions);
-
-                }
-
-                alrightImDone(journey);
-            }
-
-            @Override
-            protected Void doInBackground(GoogleMap... googleMaps) {
-                gMapV2Direction = new GMapV2Direction();
-                doc = gMapV2Direction.getDocument(journey.GeoAddresses, GMapV2Direction.MODE_DRIVING);
-                return null;
-            }
-        }.execute(googleMap);
-
-
+        this.alrightImDone(journey);
     }
 
     private void alrightImDone(final Journey journey)
     {
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setCancelable(false);
-        alertDialog.setMessage("Grand?");
-        alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+        googleMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                googleMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
-                    @Override
-                    public void onSnapshotReady(Bitmap bitmap) {
-                        float densityMultiplier = getApplicationContext().getResources().getDisplayMetrics().density;
-                        int h = (int) getApplicationContext().getResources().getDisplayMetrics().heightPixels / 3;
-                        int w = (int) (h * bitmap.getWidth() / ((double) bitmap.getHeight()));
+            public void onSnapshotReady(Bitmap bitmap) {
+                int h = getApplicationContext().getResources().getDisplayMetrics().heightPixels / 3;
+                int w = (int) (h * bitmap.getWidth() / ((double) bitmap.getHeight()));
 
-                        bitmap = Bitmap.createScaledBitmap(bitmap, w, h, true);
-                        ByteArrayOutputStream bs = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 50, bs);
-                        Bundle bundle = new Bundle();
-                        bundle.putString(IntentConstants.JOURNEY, gson.toJson(journey));
-                        Intent intent = new Intent(getApplicationContext(), OfferJourneyStepTwoActivity.class);
-                        intent.putExtras(bundle);
-                        intent.putExtra(IntentConstants.MINIMAP, bs.toByteArray());
-                        startActivity(intent);
-                    }
-                });
-                dialog.dismiss();
+                bitmap = Bitmap.createScaledBitmap(bitmap, w, h, true);
+                ByteArrayOutputStream bs = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 50, bs);
+                Bundle bundle = new Bundle();
+                bundle.putString(IntentConstants.JOURNEY, gson.toJson(journey));
+                Intent intent = new Intent(getApplicationContext(), OfferJourneyStepTwoActivity.class);
+                intent.putExtras(bundle);
+                intent.putExtra(IntentConstants.MINIMAP, bs.toByteArray());
+                startActivity(intent);
             }
         });
-        alertDialog.show();
+    }
 
+    @Override
+    public void onGeoCoderFinished(MarkerOptions address, MarkerType markerType, double perimeter)
+    {
+        super.onGeoCoderFinished(address, markerType, perimeter);
 
+        if(address != null)
+        {
+            addressEntered(markerType, address, perimeter);
+        }
+        else
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Could not retrieve current location. Please enter it manually.")
+                    .setCancelable(false)
+                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+    }
+
+    private void addressEntered(MarkerType markerType, MarkerOptions markerOptions, Double perimeter)
+    {
+        if(markerType == MarkerType.Departure)
+        {
+            showDeparturePoint(markerOptions, perimeter);
+            this.departureTextView.setText(markerOptions.getTitle());
+        }
+        else if(markerType == MarkerType.Destination)
+        {
+            showDestinationPoint(markerOptions, perimeter);
+            this.destinationTextView.setText(markerOptions.getTitle());
+        }else
+        {
+            WaypointHolder waypointHolder = new WaypointHolder();
+            waypointHolder.geoAddress = new GeoAddress(markerOptions.getPosition().latitude, markerOptions.getPosition().longitude, markerOptions.getTitle(), perimeter.intValue());
+            this.wayPoints.add(waypointHolder);
+            this.showWaypointOnMap(waypointHolder, markerOptions);
+            this.viaTextView.setText(this.viaTextView.getText().toString() + markerOptions.getTitle() + ", ");
+        }
+
+        this.drawDrivingDirectionsOnMap();
+    }
+
+    private void drawDrivingDirectionsOnMap()
+    {
+        if(departureMarker != null && destinationMarker != null)
+        {
+            ArrayList<GeoAddress> geoAddresses = new ArrayList<GeoAddress>();
+            geoAddresses.add(new GeoAddress(departureMarker.getPosition().latitude, departureMarker.getPosition().longitude, departureMarker.getTitle(), 0));
+            geoAddresses.add(new GeoAddress(destinationMarker.getPosition().latitude, destinationMarker.getPosition().longitude, destinationMarker.getTitle(), 1));
+            if(wayPoints.size() > 0)
+            {
+                for(WaypointHolder waypointHolder : this.wayPoints)
+                {
+                    if(waypointHolder.geoAddress != null)
+                    {
+                        geoAddresses.add(waypointHolder.geoAddress);
+                    }
+                }
+            }
+            drawDrivingDirectionsOnMap(googleMap, geoAddresses);
+        }
     }
 }

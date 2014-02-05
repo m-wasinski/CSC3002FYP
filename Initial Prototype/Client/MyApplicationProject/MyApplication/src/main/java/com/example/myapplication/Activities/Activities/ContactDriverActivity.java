@@ -142,15 +142,15 @@ public class ContactDriverActivity extends BaseActivity implements WCFServiceCal
     {
         driverUserNameTextView.setText(journey.Driver.UserName);
         driverNameTextView.setText(journey.Driver.FirstName + " " + journey.Driver.LastName);
-        driverGenderTextView.setText(Helpers.TranslateGender(journey.Driver.Gender));
+        driverGenderTextView.setText(Helpers.translateGender(journey.Driver.Gender));
         driverDateOfBirthTextView.setText(DateTimeHelper.getSimpleDate(journey.Driver.DateOfBirth));
         driverRatingTextView.setText("TODO");
 
         //carShareCitiesTextView.setText(journey.DepartureCity +" to " + journey.DestinationCity);
         //carShareDateAndTimeTextView.setText("Leaving on: " + DateTimeHelper.getSimpleDate(journey.DateAndTimeOfDeparture)
         //        + " at: " + DateTimeHelper.getSimpleTime(journey.DateAndTimeOfDeparture));
-        carShareSmokersTextView.setText(carShareSmokersTextView.getText() + Helpers.TranslateBoolean(journey.SmokersAllowed));
-        carSharePetsTextView.setText(carSharePetsTextView.getText() + Helpers.TranslateBoolean(journey.PetsAllowed));
+        carShareSmokersTextView.setText(carShareSmokersTextView.getText() + Helpers.translateBoolean(journey.SmokersAllowed));
+        carSharePetsTextView.setText(carSharePetsTextView.getText() + Helpers.translateBoolean(journey.PetsAllowed));
         carShareGenderTextView.setText(carShareGenderTextView.getText() + "TODO");
         carShareSeatsTextView.setText(carShareSeatsTextView.getText() + ""+ journey.AvailableSeats);
         carShareFeeTextView.setText(carShareFeeTextView.getText() + "£"+decimalFormat.format(journey.Fee));

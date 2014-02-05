@@ -6,12 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.R;
+import com.example.myapplication.utilities.Helpers;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -23,71 +23,52 @@ public class SearchResultsAdapter extends ArrayAdapter<Journey> {
 
     private Context context;
     private int layoutResourceId;
-    private ArrayList<Journey> CarShares;
+    private ArrayList<Journey> journeys;
     private DecimalFormat decimalFormat;
 
-    public SearchResultsAdapter(Context context, int resource, ArrayList<Journey> carShares) {
-        super(context, resource, carShares);
+    public SearchResultsAdapter(Context context, int resource, ArrayList<Journey> journeys) {
+        super(context, resource, journeys);
         this.layoutResourceId = resource;
         this.context = context;
-        this.CarShares = carShares;
+        this.journeys = journeys;
         this.decimalFormat = new DecimalFormat("0.00");
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View row = convertView;
-        CarShareHolder holder;
+        View currentRow = convertView;
+        SearchResultHolder holder;
 
-        if(row == null)
+        if(currentRow == null)
         {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
-            row = inflater.inflate(layoutResourceId, parent, false);
-            holder = new CarShareHolder();
-            holder.fromToTextView = (TextView) row.findViewById(R.id.FragmentSearchFromToTextView);
-            holder.dateTextView = (TextView) row.findViewById(R.id.FragmentSearchDateTextView);
-            holder.timeTextView = (TextView)row.findViewById(R.id.FragmentSearchTimeTextView);
-            holder.seatsLeftTextView = (TextView) row.findViewById(R.id.FragmentSearchSeatsLeftTextView);
-            row.setTag(holder);
+            currentRow = inflater.inflate(layoutResourceId, parent, false);
+            holder = new SearchResultHolder();
+            holder.fromToTextView = (TextView) currentRow.findViewById(R.id.FragmentSearchFromToTextView);
+            holder.dateTextView = (TextView) currentRow.findViewById(R.id.FragmentSearchDateTextView);
+            holder.timeTextView = (TextView)currentRow.findViewById(R.id.FragmentSearchTimeTextView);
+            holder.seatsLeftTextView = (TextView) currentRow.findViewById(R.id.FragmentSearchSeatsLeftTextView);
+            holder.feeTextView = (TextView) currentRow.findViewById(R.id.FragmentSearchFeeTextView);
+            currentRow.setTag(holder);
         }
         else
         {
-            holder = (CarShareHolder)row.getTag();
+            holder = (SearchResultHolder)currentRow.getTag();
         }
 
-        Journey carShare = CarShares.get(position);
+        Journey journey = journeys.get(position);
 
-        holder.fromToTextView.setText(carShare.GeoAddresses.get(0).AddressLine + " -> " + carShare.GeoAddresses.get(carShare.GeoAddresses.size()-1).AddressLine);
-//        holder.journeyIdTextView.setText("Journey id: " + carShare.JourneyId);
-//        holder.driverNameTextView.setText("Driver: " + carShare.Driver.FirstName + " " + carShare.Driver.LastName);
-        holder.dateTextView.setText("Date: " + DateTimeHelper.getSimpleDate(carShare.DateAndTimeOfDeparture));
-        holder.timeTextView.setText("Time: " + DateTimeHelper.getSimpleTime(carShare.DateAndTimeOfDeparture));
-        holder.seatsLeftTextView.setText("Seats left: " + carShare.AvailableSeats);
-  //      holder.feeTextView.setText(decimalFormat.format(carShare.Fee));
-
-        /*if(carShare.AvailableSeats >= 2)
-        {
-            holder.qualityIcon.setImageResource(R.drawable.green_light);
-        }
-        else
-        {
-            holder.qualityIcon.setImageResource(R.drawable.yellow_light);
-        }*/
-
-        return row;
+        holder.fromToTextView.setText(Helpers.getJourneyHeader(journey.GeoAddresses));
+        holder.dateTextView.setText("Date: " + DateTimeHelper.getSimpleDate(journey.DateAndTimeOfDeparture));
+        holder.timeTextView.setText("Time: " + DateTimeHelper.getSimpleTime(journey.DateAndTimeOfDeparture));
+        holder.seatsLeftTextView.setText("Seats left: " + journey.AvailableSeats);
+        holder.feeTextView.setText("Fee: £"+decimalFormat.format(journey.Fee));
+        return currentRow;
     }
 
-    class CarShareHolder
+    class SearchResultHolder
     {
-        ImageView qualityIcon;
-        ImageView star1;
-        ImageView star2;
-        ImageView star3;
-        ImageView star4;
-        ImageView star5;
         TextView fromToTextView;
-        TextView journeyIdTextView;
-        TextView driverNameTextView;
         TextView dateTextView;
         TextView timeTextView;
         TextView seatsLeftTextView;

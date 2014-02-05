@@ -28,7 +28,6 @@
             android:layout_height="wrap_content"
             android:text="@string/ShowMore"
             android:layout_alignParentBottom="true"
-            style="@style/ButtonStyle"
             android:background="@drawable/button_selector"
             android:visibility="gone"/>
 

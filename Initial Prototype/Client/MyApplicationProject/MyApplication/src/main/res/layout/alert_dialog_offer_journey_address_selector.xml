@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <TextView
+        android:layout_marginTop="10sp"
+        android:layout_marginLeft="10sp"
+        android:id="@+id/AlertDialogOfferJourneyAddressSelectorLabelTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Address:"
+        style="@style/MyCarSharesHeader"/>
+
+    <EditText
+        android:id="@+id/AlertDialogOfferJourneyAddressSelectorAddressEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="City, Street, Post-Code"
+        android:textColor="#000000"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:layout_marginTop="10sp"
+        android:layout_marginLeft="10sp"
+        android:id="@+id/AddressDialogAddressHintTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hint: You can enter a very specific address such as City, Street Name and Post-Code, or a very generic one for example just the City. The more specific the address the more accurate the results."/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/AlertDialogOfferJourneyAddressSelectorOkButton"
+        android:text="OK"
+        android:layout_marginTop="10sp"/>
+</LinearLayout>

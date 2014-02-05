@@ -202,7 +202,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
             public void onClick(View view) {
                 journeyPrivateCheckbox.setChecked(!journeyPrivateCheckbox.isChecked());
                 journey.Private = journeyPrivateCheckbox.isChecked();
-                journeyPrivateTextView.setText(Helpers.TranslateBoolean(journeyPrivateCheckbox.isChecked()));
+                journeyPrivateTextView.setText(Helpers.translateBoolean(journeyPrivateCheckbox.isChecked()));
             }
         });
 
@@ -211,7 +211,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
             public void onClick(View view) {
                 journeySmokersCheckbox.setChecked(!journeySmokersCheckbox.isChecked());
                 journey.SmokersAllowed = journeySmokersCheckbox.isChecked();
-                journeySmokersTextView.setText(Helpers.TranslateBoolean(journeySmokersCheckbox.isChecked()));
+                journeySmokersTextView.setText(Helpers.translateBoolean(journeySmokersCheckbox.isChecked()));
             }
         });
 
@@ -220,7 +220,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
             public void onClick(View view) {
                 journeyPetsCheckbox.setChecked(!journeyPetsCheckbox.isChecked());
                 journey.PetsAllowed = journeyPetsCheckbox.isChecked();
-                journeyPetsTextView.setText(Helpers.TranslateBoolean(journeyPetsCheckbox.isChecked()));
+                journeyPetsTextView.setText(Helpers.translateBoolean(journeyPetsCheckbox.isChecked()));
             }
         });
 
@@ -307,7 +307,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
     {
         // custom feeDialog
         final Dialog feeDialog = new Dialog(this);
-        feeDialog.setContentView(R.layout.fee_alert_dialog);
+        feeDialog.setContentView(R.layout.alert_dialog_fee_selector);
         feeDialog.setTitle("Fee & Payment options");
 
         Button freeButton = (Button) feeDialog.findViewById(R.id.FeeAlertDialogFreeButton);

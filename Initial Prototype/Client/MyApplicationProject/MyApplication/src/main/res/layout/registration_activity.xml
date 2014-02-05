@@ -102,7 +102,6 @@
             android:layout_height="wrap_content"
             android:text="@string/CreateAccount"
             android:id="@+id/RegisterNewUserButton"
-            style="@style/ButtonStyle"
             android:background="@drawable/button_selector"/>
 
     </LinearLayout>

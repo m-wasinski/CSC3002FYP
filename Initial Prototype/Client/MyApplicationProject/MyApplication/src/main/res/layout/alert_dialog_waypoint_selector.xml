@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:padding="10sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Waypoints:"
+        style="@style/MyCarSharesHeader"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="#1"
+            android:textSize="20sp"
+            android:layout_marginLeft="10sp"
+            android:textColor="#000000"/>
+
+        <EditText
+            android:id="@+id/AlertDialogWaypointSelectorFirstWaypointEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="City, Street, Post-Code"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="#2"
+            android:textSize="20sp"
+            android:layout_marginLeft="10sp"
+            android:textColor="#000000"/>
+
+        <EditText
+            android:id="@+id/AlertDialogWaypointSelectorSecondWaypointEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="City, Street, Post-Code"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="#3"
+            android:textSize="20sp"
+            android:layout_marginLeft="10sp"
+            android:textColor="#000000"/>
+
+        <EditText
+            android:id="@+id/AlertDialogWaypointSelectorThirdWaypointEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="City, Street, Post-Code"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="#4"
+            android:layout_marginLeft="10sp"
+            android:textSize="20sp"
+            android:textColor="#000000"/>
+
+        <EditText
+            android:id="@+id/AlertDialogWaypointSelectorFourthWaypointEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="City, Street, Post-Code"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="#5"
+            android:layout_marginLeft="10sp"
+            android:textSize="20sp"
+            android:textColor="#000000"/>
+
+        <EditText
+            android:id="@+id/AlertDialogWaypointSelectorFifthWaypointEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="City, Street, Post-Code"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="#6"
+            android:layout_marginLeft="10sp"
+            android:textSize="20sp"
+            android:textColor="#000000"/>
+
+        <EditText
+            android:id="@+id/AlertDialogWaypointSelectorSixthWaypointEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="City, Street, Post-Code"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/AlertDialogWaypointSelectorOkButton"
+        android:text="OK"/>
+
+</LinearLayout>

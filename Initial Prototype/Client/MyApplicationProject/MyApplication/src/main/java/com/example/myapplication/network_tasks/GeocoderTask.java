@@ -6,6 +6,7 @@ import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.myapplication.domain_objects.MarkerType;
 import com.example.myapplication.experimental.GeocoderParams;
 import com.example.myapplication.interfaces.GeoCoderFinishedCallBack;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -24,15 +25,15 @@ public class GeocoderTask extends AsyncTask<GeocoderParams, Void, MarkerOptions>
     private Context context;
     private GeoCoderFinishedCallBack listener;
     private MarkerOptions markerOptions;
-    private Boolean isDeparture;
+    private MarkerType markerType;
     private double perimeter;
 
-    public GeocoderTask(Context context, GeoCoderFinishedCallBack geoCoderFinishedCallBack, Boolean isDeparture, double perimeter)
+    public GeocoderTask(Context context, GeoCoderFinishedCallBack geoCoderFinishedCallBack, MarkerType markerType, double perimeter)
     {
         super();
         this.listener = geoCoderFinishedCallBack;
         this.context = context;
-        this.isDeparture = isDeparture;
+        this.markerType = markerType;
         this.perimeter = perimeter;
     }
     @Override
@@ -86,6 +87,6 @@ public class GeocoderTask extends AsyncTask<GeocoderParams, Void, MarkerOptions>
     @Override
     protected void onPostExecute(MarkerOptions s) {
         super.onPostExecute(s);
-        this.listener.onGeoCoderFinished(this.markerOptions, this.isDeparture, this.perimeter);
+        this.listener.onGeoCoderFinished(this.markerOptions, this.markerType, this.perimeter);
     }
 }

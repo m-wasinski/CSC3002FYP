@@ -3,7 +3,10 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@color/LayoutPressed"
         android:state_pressed="true" />
+
     <item android:drawable="@color/LayoutPressed"
         android:state_focused="true" />
-    <item android:drawable="@color/LayoutNormal" />
+
+    <item android:drawable="@color/LayoutNormal"
+        android:state_pressed="false"/>
 </selector>

@@ -41,6 +41,14 @@
     <string name="SelectGender">Select gender</string>
     <string name="KeepMeLoggedIn">Keep me logged in</string>
     <string name="CreateAccount">Create account</string>
+    <string name="StepTwo">Step 2...</string>
+    <string name="StepOneDescription">Step 1. Specify journey departure and destination, as well as optional waypoints.</string>
+    <string name="From">From:</string>
+    <string name="Via">Via:</string>
+    <string name="To">To:</string>
+    <string name="SelectDeparturePoint">Select departure point</string>
+    <string name="AddNewWaypoint">Add new waypoint (optional)</string>
+    <string name="SelectDestinationPoint">Select destination point</string>
     <string-array name="app_menu_options">
         <item>Home</item>
         <item>My Car Shares</item>
@@ -54,6 +62,10 @@
         <item>Lorry</item>
         <item>Motorbike</item>
         <item>Other</item>
+    </string-array>
+    <string-array name="payment_options">
+        <item>Cash in hand</item>
+        <item>Contact driver</item>
     </string-array>
     <string-array name="gender">
         <item>Male</item>

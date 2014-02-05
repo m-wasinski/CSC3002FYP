@@ -2,27 +2,32 @@ package com.example.myapplication.activities.base;
 
 import android.app.ActionBar;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Display;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.example.myapplication.activities.activities.LoginActivity;
-import com.example.myapplication.constants.ServiceResponseCode;
+import com.example.myapplication.domain_objects.GeoAddress;
+import com.example.myapplication.domain_objects.Journey;
+import com.example.myapplication.domain_objects.MarkerType;
 import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.experimental.GMapV2Direction;
+import com.example.myapplication.experimental.GeocoderParams;
 import com.example.myapplication.experimental.WaypointHolder;
+import com.example.myapplication.interfaces.GeoCoderFinishedCallBack;
+import com.example.myapplication.network_tasks.GeocoderTask;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -33,16 +38,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 
-import java.io.IOException;
+import org.w3c.dom.Document;
+
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Michal on 07/01/14.
  */
-public class BaseMapActivity extends FragmentActivity
+public class BaseMapActivity extends FragmentActivity implements GooglePlayServicesClient.ConnectionCallbacks,
+        GooglePlayServicesClient.OnConnectionFailedListener, GeoCoderFinishedCallBack
 {
     // Google Map
     protected GoogleMap googleMap;
@@ -61,15 +69,21 @@ public class BaseMapActivity extends FragmentActivity
     protected EditText departureAddressEditText;
     protected EditText destinationAddressEditText;
     protected InputMethodManager inputMethodManager;
-    protected ArrayList<WaypointHolder> waypointHolders;
+    protected ArrayList<WaypointHolder> wayPoints;
+    protected LocationClient locationClient;
+    private Polyline polyline;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Initialise variables.
         inputMethodManager = (InputMethodManager) this.getSystemService(INPUT_METHOD_SERVICE);
         findNDriveManager = ((FindNDriveManager)getApplication());
         gson = new Gson();
         actionBar = getActionBar();
         gMapV2Direction = new GMapV2Direction();
+        this.locationClient = new LocationClient(this, this, this);
         geocoder = new Geocoder(this);
     }
 
@@ -149,9 +163,9 @@ public class BaseMapActivity extends FragmentActivity
             marker_count += 1;
         }
 
-        if(this.waypointHolders != null)
+        if(this.wayPoints != null)
         {
-            for(WaypointHolder waypointHolder : this.waypointHolders)
+            for(WaypointHolder waypointHolder : this.wayPoints)
             {
                 if(waypointHolder.googleMapMarker != null)
                 {
@@ -206,5 +220,80 @@ public class BaseMapActivity extends FragmentActivity
         {
             locationManager.requestLocationUpdates(locationManager.getBestProvider(new Criteria(), false), 1000, 10, locationListener);
         }
+    }
+
+    protected void drawDrivingDirectionsOnMap(final GoogleMap map, final ArrayList<GeoAddress> geoAddresses)
+    {
+
+        new AsyncTask<GoogleMap, Journey, Void>(){
+
+            private GMapV2Direction gMapV2Direction;
+            private Document doc;
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+
+                if(doc != null)
+                {
+                    ArrayList<LatLng> directionPoint = gMapV2Direction.getDirection(doc);
+
+                    PolylineOptions rectLine = new PolylineOptions().width(10).color(Color.BLUE);
+                    for(int i = 0 ; i < directionPoint.size() ; i++) {
+                        rectLine.add(directionPoint.get(i));
+                    }
+                    if(polyline != null)
+                    {
+                        polyline.remove();
+                    }
+
+                    polyline = map.addPolyline(rectLine);
+                }
+            }
+
+            @Override
+            protected Void doInBackground(GoogleMap... googleMaps) {
+                gMapV2Direction = new GMapV2Direction();
+                doc = gMapV2Direction.getDocument(geoAddresses, GMapV2Direction.MODE_DRIVING);
+                return null;
+            }
+        }.execute(map);
+    }
+
+    protected void getCurrentAddress(MarkerType markerType, Location location)
+    {
+        new GeocoderTask(this, this, markerType, 0).execute(new GeocoderParams(null, location));
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onDisconnected() {
+
+    }
+
+    @Override
+    public void onGeoCoderFinished(MarkerOptions address, MarkerType markerType, double perimeter) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        this.locationClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        this.locationClient.disconnect();
     }
 }

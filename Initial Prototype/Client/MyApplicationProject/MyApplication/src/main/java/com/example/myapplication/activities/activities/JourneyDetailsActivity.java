@@ -1,23 +1,37 @@
 package com.example.myapplication.activities.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.ViewGroup;
+import android.view.View;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myapplication.R;
 import com.example.myapplication.activities.base.BaseActivity;
+import com.example.myapplication.activities.base.BaseMapActivity;
 import com.example.myapplication.constants.IntentConstants;
+import com.example.myapplication.constants.RequestDecision;
+import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.GeoAddress;
 import com.example.myapplication.domain_objects.Journey;
+import com.example.myapplication.domain_objects.JourneyRequest;
+import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.domain_objects.User;
+import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.experimental.GMapV2Direction;
+import com.example.myapplication.interfaces.WCFServiceCallback;
+import com.example.myapplication.network_tasks.WCFServiceTask;
+import com.example.myapplication.utilities.Helpers;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,16 +44,15 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.reflect.TypeToken;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Text;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by Michal on 04/02/14.
  */
-public class JourneyDetailsActivity extends BaseActivity {
-
-    private GoogleMap googleMap;
+public class JourneyDetailsActivity extends BaseMapActivity implements WCFServiceCallback<JourneyRequest, Void>{
 
     private Journey journey;
 
@@ -53,26 +66,31 @@ public class JourneyDetailsActivity extends BaseActivity {
     private TextView journeySmokersTextView;
     private TextView journeyPetsTextView;
     private TextView journeyFeeTextView;
+    private TextView journeyHeaderTextView;
+    private TextView journeyVehicleTypeTextView;
 
-    private ScrollView scrollView;
+    private EditText journeyMessageToDriverEditText;
+
+    private TableRow journeyDriverTableRow;
+
+    private Button sendRequestButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.alert_journey_details);
+        setContentView(R.layout.activity_search_journey_details);
 
         // Initialise variables.
         Bundle extras = getIntent().getExtras();
         this.journey = gson.fromJson(extras.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int halfScreen = metrics.heightPixels/2;
-        int thirdScreen = metrics.heightPixels/3;
-        int fifthScreen = metrics.heightPixels/5;
-        LinearLayout.LayoutParams layout_description = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, halfScreen);
+        int halfScreen = (int) (metrics.heightPixels/2.5f);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, halfScreen);
+        layoutParams.setMargins(10, 0, 0, 10);
         this.mapFragment = ((MapFragment)  getFragmentManager().findFragmentById(R.id.AlertJourneyDetailsMap));
-        this.mapFragment.getView().setLayoutParams(layout_description);
+        this.mapFragment.getView().setLayoutParams(layoutParams);
 
         // Initialise UI elements.
         this.journeyIdTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyIdTextView);
@@ -83,7 +101,21 @@ public class JourneyDetailsActivity extends BaseActivity {
         this.journeyPetsTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyPetsTextView);
         this.journeySmokersTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneySmokersTextView);
         this.journeyFeeTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyFeeTextView);
-        this.scrollView = (ScrollView) this.findViewById(R.id.JourneyDetailsActivityScrollView);
+        this.journeyHeaderTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyTitleTextView);
+        this.journeyVehicleTypeTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyVehicleTypeTextView);
+
+        this.journeyDriverTableRow = (TableRow) this.findViewById(R.id.JourneyDetailsActivityJourneyDriverTableRow);
+
+        this.sendRequestButton = (Button) this.findViewById(R.id.JourneyDetailsActivityJourneySendRequestButton);
+        this.sendRequestButton.setEnabled(this.checkIfSendRequestAllowed());
+
+        this.journeyMessageToDriverEditText = (EditText) this.findViewById(R.id.JourneyDetailsActivityMessageToDriverEditText);
+
+        // Fill journey information
+        this.fillJourneyInformation();
+
+        // Setup event handlers.
+        this.setupEventHandlers();
 
         try {
             // Loading map
@@ -95,9 +127,26 @@ public class JourneyDetailsActivity extends BaseActivity {
         this.googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
             public void onMapLoaded() {
-                drawDrivingDirectionsOnMap();
+                drawDrivingDirectionsOnMap(googleMap, journey.GeoAddresses);
             }
         });
+    }
+
+    private void fillJourneyInformation()
+    {
+        String[] vehicleTypes = getResources().getStringArray(R.array.vehicle_types);
+        String[] paymentOptions = getResources().getStringArray(R.array.payment_options);
+
+        this.journeyHeaderTextView.setText(Helpers.getJourneyHeader(this.journey.GeoAddresses));
+        this.journeyIdTextView.setText(String.valueOf(this.journey.JourneyId));
+        this.journeyDriverTextView.setText(this.journey.Driver.FirstName + " " + this.journey.Driver.LastName);
+        this.journeyDateTextView.setText(DateTimeHelper.getSimpleDate(this.journey.DateAndTimeOfDeparture));
+        this.journeyTimeTextView.setText(DateTimeHelper.getSimpleTime(this.journey.DateAndTimeOfDeparture));
+        this.journeySmokersTextView.setText(Helpers.translateBoolean(this.journey.SmokersAllowed));
+        this.journeyPetsTextView.setText(Helpers.translateBoolean(this.journey.PetsAllowed));
+        this.journeyVehicleTypeTextView.setText(vehicleTypes[this.journey.VehicleType]);
+        this.journeySeatsAvailableTextView.setText(String.valueOf(this.journey.AvailableSeats));
+        this.journeyFeeTextView.setText("£"+new DecimalFormat("0.00").format(this.journey.Fee)+" "+paymentOptions[this.journey.PaymentOption]);
     }
 
     private void initialiseMap() {
@@ -113,52 +162,81 @@ public class JourneyDetailsActivity extends BaseActivity {
         }
     }
 
-    private void drawDrivingDirectionsOnMap()
+    private void setupEventHandlers()
     {
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        this.journeyDriverTableRow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                 showDriverAlertDialog();
+            }
+        });
 
-        for(GeoAddress geoAddress : journey.GeoAddresses)
+        this.sendRequestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendRequest();
+            }
+        });
+    }
+
+    private void sendRequest()
+    {
+        JourneyRequest journeyRequest = new JourneyRequest();
+        journeyRequest.UserId = this.findNDriveManager.getUser().UserId;
+        journeyRequest.User = this.findNDriveManager.getUser();
+        journeyRequest.JourneyId = this.journey.JourneyId;
+        journeyRequest.Message = this.journeyMessageToDriverEditText.getText().toString();
+        journeyRequest.Read = false;
+        journeyRequest.Decision = RequestDecision.UNDECIDED;
+        journeyRequest.SentOnDate = DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime());
+
+        new WCFServiceTask<JourneyRequest>(this, getResources().getString(R.string.SendRequestURL),
+                journeyRequest, new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), this).execute();
+    }
+
+    private void showDriverAlertDialog()
+    {
+        CharSequence options[] = new CharSequence[] {"Show profile", "Send friend request"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(this.journey.Driver.FirstName + " " + this.journey.Driver.LastName);
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.show();
+    }
+
+
+
+    private boolean checkIfSendRequestAllowed()
+    {
+        if(this.journey.Driver.UserId == this.findNDriveManager.getUser().UserId)
         {
-            googleMap.addMarker(new MarkerOptions().position(new LatLng(geoAddress.Latitude, geoAddress.Longitude)).title(geoAddress.AddressLine)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-
-            builder.include(new LatLng(geoAddress.Latitude, geoAddress.Longitude));
-            builder.include(new LatLng(geoAddress.Latitude, geoAddress.Longitude));
+            return false;
         }
 
-        int padding = 40;
-        LatLngBounds bounds = builder.build();
-        final CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-
-
-        new AsyncTask<GoogleMap, Journey, Void>(){
-
-            private GMapV2Direction gMapV2Direction;
-            private Document doc;
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-
-                if(doc != null)
-                {
-                    ArrayList<LatLng> directionPoint = gMapV2Direction.getDirection(doc);
-
-                    PolylineOptions rectLine = new PolylineOptions().width(10).color(Color.BLUE);
-                    for(int i = 0 ; i < directionPoint.size() ; i++) {
-                        rectLine.add(directionPoint.get(i));
-                    }
-                    googleMap.addPolyline(rectLine);
-                    googleMap.animateCamera(cameraUpdate);
-                }
+        for(User passenger : this.journey.Participants)
+        {
+            if(passenger.UserId == this.findNDriveManager.getUser().UserId)
+            {
+                return false;
             }
+        }
 
-            @Override
-            protected Void doInBackground(GoogleMap... googleMaps) {
-                gMapV2Direction = new GMapV2Direction();
-                doc = gMapV2Direction.getDocument(journey.GeoAddresses, GMapV2Direction.MODE_DRIVING);
-                return null;
-            }
-        }.execute(googleMap);
+        return true;
+    }
+
+    @Override
+    public void onServiceCallCompleted(ServiceResponse<JourneyRequest> serviceResponse, Void parameter) {
+        if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
+        {
+            Intent intent = new Intent(this, HomeActivity.class)
+                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            Toast toast = Toast.makeText(this, "Your request was sent successfully!", Toast.LENGTH_LONG);
+            toast.show();
+        }
     }
 }

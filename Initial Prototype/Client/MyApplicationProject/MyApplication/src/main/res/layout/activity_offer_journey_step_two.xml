@@ -561,7 +561,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Offer this journey"
-                    style="@style/ButtonStyle"
                     android:background="@drawable/button_selector"/>
 
             </LinearLayout>

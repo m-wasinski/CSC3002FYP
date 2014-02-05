@@ -36,7 +36,6 @@
             android:paddingRight="15sp"
             android:paddingTop="5sp"
             android:text="Send"
-            style="@style/ButtonStyle"
             android:background="@drawable/button_selector"/>
     </LinearLayout>
 

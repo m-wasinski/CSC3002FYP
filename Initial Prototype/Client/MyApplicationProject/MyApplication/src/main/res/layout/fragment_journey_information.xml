@@ -150,8 +150,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/FragmentJourneyInformationContactDriverButton"
-                android:text="Contact Driver"
-                style="@style/ButtonStyle"/>
+                android:text="Contact Driver"/>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

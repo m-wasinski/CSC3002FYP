@@ -2,17 +2,14 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:drawable="@color/RegularButtonPressed"
-        android:state_pressed="true"
-        android:textColor="@color/RegularButtonFont"
-        android:textSize="20sp"/>
+        android:state_pressed="true"/>
 
     <item android:drawable="@color/RegularButtonPressed"
-        android:state_focused="true"
-        android:textColor="@color/RegularButtonFont"
-        android:textSize="20sp"/>
+        android:state_focused="true"/>
 
     <item android:drawable="@color/RegularButtonNormal"
-        android:textColor="@color/RegularButtonFont"
-        android:textSize="20sp"/>
+        android:state_enabled="true"/>
 
+    <item android:drawable="@color/RegularButtonPressed"
+        android:state_enabled="false"/>
 </selector>

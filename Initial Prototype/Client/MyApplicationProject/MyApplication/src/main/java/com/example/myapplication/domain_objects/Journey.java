@@ -26,6 +26,7 @@ public class Journey {
     public int JourneyStatus;
     public ArrayList<JourneyMessage> Messages;
     public String CreationDate;
+    public int PaymentOption;
 
     public Journey()
     {

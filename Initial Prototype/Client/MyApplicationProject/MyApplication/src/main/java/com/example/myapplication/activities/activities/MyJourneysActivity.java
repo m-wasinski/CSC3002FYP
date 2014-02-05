@@ -130,6 +130,7 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
     public void onServiceCallCompleted(final ServiceResponse<ArrayList<Journey>> serviceResponse, String s) {
         TextView noJourneysTextView = (TextView) findViewById(R.id.MyCarSharesNoJourneysTextView);
         progressBar.setVisibility(View.GONE);
+        this.loadMoreButton.setEnabled(true);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             if(serviceResponse.Result.size() == 0 && mainListView.getCount() == 0)
@@ -208,6 +209,7 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
 
     private void retrieveJourneys()
     {
+        loadMoreButton.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
         new WCFServiceTask<LoadRangeDTO>(this, getResources().getString(R.string.GetAllJourneysURL), new LoadRangeDTO(findNDriveManager.getUser().UserId, mainListView.getCount(), findNDriveManager.getItemsPerCall(), pollMoreData),
                 new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(),

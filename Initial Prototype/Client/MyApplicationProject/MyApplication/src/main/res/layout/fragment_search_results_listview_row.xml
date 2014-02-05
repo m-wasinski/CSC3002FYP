@@ -54,6 +54,14 @@
                 android:layout_weight="1"
                 style="@style/ContentBody"/>
 
+            <TextView android:id="@+id/FragmentSearchFeeTextView"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical"
+                android:text="Fee: "
+                android:layout_weight="1"
+                style="@style/ContentBody"/>
+
     </LinearLayout>
 
 </LinearLayout>

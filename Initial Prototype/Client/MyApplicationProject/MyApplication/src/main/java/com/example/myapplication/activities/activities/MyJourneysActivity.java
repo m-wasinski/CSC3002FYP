@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.adapters.JourneyAdapter;
 import com.example.myapplication.constants.GcmConstants;
+import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.dtos.LoadRangeDTO;
@@ -165,8 +166,8 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
                 mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        Intent intent = new Intent(getApplicationContext(), JourneyRequestsActivity.class);
-                        intent.putExtra("CurrentCarShare", new Gson().toJson(myJourneys.get(i)));
+                        Intent intent = new Intent(getApplicationContext(), JourneyDetailsActivity.class);
+                        intent.putExtra(IntentConstants.JOURNEY, gson.toJson(myJourneys.get(i)));
                         startActivity(intent);
                     }
                 });

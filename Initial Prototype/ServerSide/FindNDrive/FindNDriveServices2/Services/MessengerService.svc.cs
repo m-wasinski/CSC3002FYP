@@ -9,27 +9,17 @@
 
 namespace FindNDriveServices2.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
-    using System.Runtime.Serialization.Json;
-    using System.Security.Cryptography;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
-    using System.ServiceModel.Activities;
-    using System.Web.Services.Protocols;
-
     using DomainObjects.Constants;
     using DomainObjects.Domains;
-
     using FindNDriveDataAccessLayer;
-
     using FindNDriveServices2.Contracts;
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
-
-    using Microsoft.Practices.ObjectBuilder2;
 
     using Newtonsoft.Json;
 
@@ -125,11 +115,7 @@ namespace FindNDriveServices2.Services
 
             if (targetUser.Status == Status.Online)
             {
-                this.gcmManager.SendNotification(
-                    new Collection<string> { targetUser.GCMRegistrationID },
-                    GCMNotificationType.InstantMessenger,
-                    "Message",
-                    message);
+                this.gcmManager.SendInstantMessageNotification(new Collection<string> { targetUser.GCMRegistrationID }, message);
             }
             else
             {
@@ -139,7 +125,7 @@ namespace FindNDriveServices2.Services
                             UserId = targetUser.UserId,
                             Delivered = false,
                             ContentTitle = "Message",
-                            NotificationType = GCMNotificationType.InstantMessenger,
+                            NotificationType = NotificationType.InstantMessenger,
                             NotificationMessage = message
                         });
                 this.findNDriveUnitOfWork.Commit();

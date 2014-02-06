@@ -36,11 +36,16 @@ public class FindNDriveManager extends Application {
     private String registrationId;
     private String uniqueDeviceId;
     private SharedPreferences sharedPreferences;
-    private Gson gson;
 
     public void setSessionId(String sessionId)
     {
         this.sessionId = sessionId;
+
+        if(this.sharedPreferences == null)
+        {
+            this.sharedPreferences = this.retrieveSharedPreferences();
+        }
+
         SharedPreferences.Editor editor = this.sharedPreferences.edit();
         editor.putString(SharedPreferencesConstants.PROPERTY_SESSION_ID, sessionId);
         editor.commit();
@@ -49,8 +54,14 @@ public class FindNDriveManager extends Application {
     public void setUser(User u)
     {
         this.user = u;
+
+        if(this.sharedPreferences == null)
+        {
+            this.sharedPreferences = this.retrieveSharedPreferences();
+        }
+
         SharedPreferences.Editor editor = this.sharedPreferences.edit();
-        editor.putString(SharedPreferencesConstants.PROPERTY_USER, u == null ? "" : gson.toJson(user));
+        editor.putString(SharedPreferencesConstants.PROPERTY_USER, u == null ? "" : new Gson().toJson(user));
         editor.commit();
     }
 
@@ -58,8 +69,14 @@ public class FindNDriveManager extends Application {
     {
         if(this.user == null)
         {
-            this.user = gson.fromJson(sharedPreferences.getString(SharedPreferencesConstants.PROPERTY_USER, ""), new TypeToken<User>() {}.getType());
+            if(this.sharedPreferences == null)
+            {
+                this.sharedPreferences = this.retrieveSharedPreferences();
+            }
+
+            this.user = new Gson().fromJson(sharedPreferences.getString(SharedPreferencesConstants.PROPERTY_USER, ""), new TypeToken<User>() {}.getType());
         }
+
         return this.user;
     }
 
@@ -75,7 +92,12 @@ public class FindNDriveManager extends Application {
 
     public String getSessionId()
     {
-        return this.sessionId.isEmpty() || this.sessionId == null ? "" : this.sessionId;
+        if(this.sessionId == null)
+        {
+            this.sessionId = this.retrieveSessionId();
+        }
+
+        return this.sessionId;
     }
 
     public int getItemsPerCall()
@@ -93,12 +115,23 @@ public class FindNDriveManager extends Application {
      */
     public String getRegistrationId()
     {
-        return this.registrationId == null ? "" : this.registrationId;
+        if(this.registrationId == null)
+        {
+            this.registrationId = this.retrieveRegistrationId();
+        }
+
+        return this.registrationId;
     }
 
     public void setRegistrationId(String registrationId)
     {
         this.registrationId = registrationId;
+
+        if(this.sharedPreferences == null)
+        {
+            this.sharedPreferences = this.retrieveSharedPreferences();
+        }
+
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(SharedPreferencesConstants.PROPERTY_REG_ID, registrationId);
         editor.putInt(SharedPreferencesConstants.PROPERTY_APP_VERSION, this.getAppVersion());
@@ -126,14 +159,19 @@ public class FindNDriveManager extends Application {
 
     public String getUniqueDeviceId()
     {
+        if(this.uniqueDeviceId == null)
+        {
+            this.uniqueDeviceId = this.retrieveUniqueDeviceId();
+        }
+
         return this.uniqueDeviceId;
     }
 
     public List<Pair> getAuthorisationHeaders()
     {
-        return asList(new Pair(SessionConstants.DEVICE_ID, this.uniqueDeviceId),
-                new Pair(SessionConstants.SESSION_ID, this.sessionId),
-                new Pair(SessionConstants.UUID, this.uuid));
+        return asList(new Pair(SessionConstants.DEVICE_ID, this.getUniqueDeviceId()),
+                new Pair(SessionConstants.SESSION_ID, this.getSessionId()),
+                new Pair(SessionConstants.UUID, this.getUUID()));
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -169,17 +207,53 @@ public class FindNDriveManager extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        this.gson = new Gson();
-        this.sharedPreferences = getSharedPreferences(SharedPreferencesConstants.GLOBAL_APP_DATA, Context.MODE_PRIVATE);
-        this.registrationId = sharedPreferences.getString(SharedPreferencesConstants.PROPERTY_REG_ID, "");
-        this.sessionId = sharedPreferences.getString(SessionConstants.SESSION_ID, "");
-        this.uniqueDeviceId = ""+ Build.BOARD.length()%10+ Build.BRAND.length()%10 +
+        this.sharedPreferences = this.retrieveSharedPreferences();
+        this.registrationId = this.retrieveRegistrationId();
+        this.sessionId = this.retrieveSessionId();
+        this.uniqueDeviceId = this.retrieveUniqueDeviceId();
+    }
+
+    private String retrieveUniqueDeviceId()
+    {
+        return ""+ Build.BOARD.length()%10+ Build.BRAND.length()%10 +
                 Build.CPU_ABI.length()%10 + Build.DEVICE.length()%10 +
                 Build.DISPLAY.length()%10 + Build.HOST.length()%10 +
                 Build.ID.length()%10 + Build.MANUFACTURER.length()%10 +
                 Build.MODEL.length()%10 + Build.PRODUCT.length()%10 +
                 Build.TAGS.length()%10 + Build.TYPE.length()%10 +
                 Build.USER.length()%10 ;
+    }
 
+    private String retrieveSessionId()
+    {
+        if(this.sharedPreferences == null)
+        {
+            this.sharedPreferences = this.retrieveSharedPreferences();
+        }
+
+        String session = sharedPreferences.getString(SessionConstants.SESSION_ID, "");
+
+        this.sessionId = session == null ? "" : session;
+
+        return this.sessionId;
+    }
+
+    private String retrieveRegistrationId()
+    {
+        if(this.sharedPreferences == null)
+        {
+            this.sharedPreferences = this.retrieveSharedPreferences();
+        }
+
+        String registrationId = sharedPreferences.getString(SharedPreferencesConstants.PROPERTY_REG_ID, "");
+
+        this.registrationId = registrationId == null ? "0" : registrationId;
+
+        return this.registrationId;
+    }
+
+    private SharedPreferences retrieveSharedPreferences()
+    {
+        return getSharedPreferences(SharedPreferencesConstants.GLOBAL_APP_DATA, Context.MODE_PRIVATE);
     }
 }

@@ -126,13 +126,10 @@ public class ContactDriverActivity extends BaseActivity implements WCFServiceCal
 
     private void sendRequest(){
         journeyRequest = new JourneyRequest();
-        journeyRequest.AddToTravelBuddies = addToBuddies.isChecked();
         journeyRequest.UserId = findNDriveManager.getUser().UserId;
         journeyRequest.User = findNDriveManager.getUser();
         journeyRequest.JourneyId = journey.JourneyId;
         journeyRequest.Message = messageTextView.getText().toString();
-        journeyRequest.Read = false;
-        journeyRequest.Decision = RequestDecision.UNDECIDED;
         journeyRequest.SentOnDate = DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime());
         new WCFServiceTask<JourneyRequest>(this, getResources().getString(R.string.SendRequestURL),
                 this.journeyRequest, new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), this).execute();

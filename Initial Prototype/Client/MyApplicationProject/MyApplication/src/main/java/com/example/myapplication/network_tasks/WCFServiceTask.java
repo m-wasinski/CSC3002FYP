@@ -76,16 +76,33 @@ public class WCFServiceTask<T> extends AsyncTask<TextView, String, Boolean> {
 
         if(this.serviceResponse.ServiceResponseCode == ServiceResponseCode.SERVER_ERROR)
         {
-            AlertDialog alertDialog = new AlertDialog.Builder(this.context).create();
-            alertDialog.setCancelable(false);
-            alertDialog.setMessage("Server error has occurred, please try again later.");
-            alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            alertDialog.show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
+            builder.setMessage("Server error has occurred, please try again later.")
+                    .setCancelable(false)
+                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+
+        if(this.serviceResponse.ServiceResponseCode == ServiceResponseCode.FAILURE)
+        {
+            String errors = serviceResponse.ErrorMessages.toString();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
+            builder.setMessage(errors)
+                    .setCancelable(false)
+                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+
+            AlertDialog alert = builder.create();
+            alert.show();
         }
 
         this.wcfServiceCallback.onServiceCallCompleted(serviceResponse, this.sessionInformation);

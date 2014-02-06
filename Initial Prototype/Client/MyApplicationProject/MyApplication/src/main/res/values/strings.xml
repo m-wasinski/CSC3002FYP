@@ -49,6 +49,12 @@
     <string name="SelectDeparturePoint">Select departure point</string>
     <string name="AddNewWaypoint">Add new waypoint (optional)</string>
     <string name="SelectDestinationPoint">Select destination point</string>
+    <string name="ShowRequests">Requests</string>
+    <string name="CancelJourney">Cancel journey</string>
+    <string name="MakeChange">Make a change</string>
+    <string name="EnterChat">Enter chat</string>
+    <string name="ShowPassengers">Passengers</string>
+    <string name="ShowSummary">Summary</string>
     <string-array name="app_menu_options">
         <item>Home</item>
         <item>My Car Shares</item>

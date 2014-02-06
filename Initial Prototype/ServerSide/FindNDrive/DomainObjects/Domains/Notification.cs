@@ -43,6 +43,12 @@ namespace DomainObjects.Domains
         public User User { get; set; }
 
         /// <summary>
+        /// Gets or sets the notification type.
+        /// </summary>
+        [DataMember]
+        public NotificationType NotificationType { get; set; }
+
+        /// <summary>
         /// Gets or sets the notification body.
         /// </summary>
         [DataMember]

@@ -1,118 +1,58 @@
 package com.example.myapplication.activities.activities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.myapplication.R;
-import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.activities.base.BaseMapActivity;
+import com.example.myapplication.adapters.JourneyRequestAdapter;
 import com.example.myapplication.constants.IntentConstants;
-import com.example.myapplication.constants.RequestDecision;
 import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.domain_objects.GeoAddress;
 import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.domain_objects.JourneyRequest;
 import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.domain_objects.User;
-import com.example.myapplication.experimental.DateTimeHelper;
-import com.example.myapplication.experimental.GMapV2Direction;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;
-import com.example.myapplication.utilities.Helpers;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.reflect.TypeToken;
 
-import org.w3c.dom.Document;
-
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 /**
- * Created by Michal on 04/02/14.
+ * Created by Michal on 06/02/14.
  */
-public class JourneyDetailsActivity extends BaseMapActivity implements WCFServiceCallback<JourneyRequest, Void>{
+public class JourneyDetailsActivity extends BaseMapActivity {
 
     private Journey journey;
 
-    private MapFragment mapFragment;
-
-    private TextView journeyIdTextView;
-    private TextView journeyDriverTextView;
-    private TextView journeyDateTextView;
-    private TextView journeyTimeTextView;
-    private TextView journeySeatsAvailableTextView;
-    private TextView journeySmokersTextView;
-    private TextView journeyPetsTextView;
-    private TextView journeyFeeTextView;
-    private TextView journeyHeaderTextView;
-    private TextView journeyVehicleTypeTextView;
-
-    private EditText journeyMessageToDriverEditText;
-
-    private TableRow journeyDriverTableRow;
-
-    private Button sendRequestButton;
+    private Button showRequestsButton;
+    private Button showPassengersButton;
+    private Button enterChatButton;
+    private Button makeChangeButton;
+    private Button cancelJourneyButton;
+    private Button summaryButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_journey_details);
+        actionBar.hide();
+        setContentView(R.layout.activity_journey_details);
 
-        // Initialise variables.
-        Bundle extras = getIntent().getExtras();
-        this.journey = gson.fromJson(extras.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int halfScreen = (int) (metrics.heightPixels/2.5f);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, halfScreen);
-        layoutParams.setMargins(10, 0, 0, 10);
-        this.mapFragment = ((MapFragment)  getFragmentManager().findFragmentById(R.id.AlertJourneyDetailsMap));
-        this.mapFragment.getView().setLayoutParams(layoutParams);
+        // Initialise local private variables.
+        this.journey = gson.fromJson(getIntent().getExtras().getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
 
-        // Initialise UI elements.
-        this.journeyIdTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyIdTextView);
-        this.journeyDriverTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyDriverTextView);
-        this.journeyDateTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyDateTextView);
-        this.journeyTimeTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyTimeTextView);
-        this.journeySeatsAvailableTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneySeatsTextView);
-        this.journeyPetsTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyPetsTextView);
-        this.journeySmokersTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneySmokersTextView);
-        this.journeyFeeTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyFeeTextView);
-        this.journeyHeaderTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyTitleTextView);
-        this.journeyVehicleTypeTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyVehicleTypeTextView);
-
-        this.journeyDriverTableRow = (TableRow) this.findViewById(R.id.JourneyDetailsActivityJourneyDriverTableRow);
-
-        this.sendRequestButton = (Button) this.findViewById(R.id.JourneyDetailsActivityJourneySendRequestButton);
-        this.sendRequestButton.setEnabled(this.checkIfSendRequestAllowed());
-
-        this.journeyMessageToDriverEditText = (EditText) this.findViewById(R.id.JourneyDetailsActivityMessageToDriverEditText);
-
-        // Fill journey information
-        this.fillJourneyInformation();
+        this.showRequestsButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityShowRequestsButton);
+        this.showPassengersButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityShowPassengersButton);
+        this.enterChatButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityEnterChatButton);
+        this.makeChangeButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityMakeChangeButton);
+        this.cancelJourneyButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityCancelJourneyButton);
+        this.summaryButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityShowSummaryButton);
 
         // Setup event handlers.
         this.setupEventHandlers();
@@ -124,37 +64,15 @@ public class JourneyDetailsActivity extends BaseMapActivity implements WCFServic
             e.printStackTrace();
         }
 
-        this.googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-            @Override
-            public void onMapLoaded() {
-                drawDrivingDirectionsOnMap(googleMap, journey.GeoAddresses);
-            }
-        });
-    }
-
-    private void fillJourneyInformation()
-    {
-        String[] vehicleTypes = getResources().getStringArray(R.array.vehicle_types);
-        String[] paymentOptions = getResources().getStringArray(R.array.payment_options);
-
-        this.journeyHeaderTextView.setText(Helpers.getJourneyHeader(this.journey.GeoAddresses));
-        this.journeyIdTextView.setText(String.valueOf(this.journey.JourneyId));
-        this.journeyDriverTextView.setText(this.journey.Driver.FirstName + " " + this.journey.Driver.LastName);
-        this.journeyDateTextView.setText(DateTimeHelper.getSimpleDate(this.journey.DateAndTimeOfDeparture));
-        this.journeyTimeTextView.setText(DateTimeHelper.getSimpleTime(this.journey.DateAndTimeOfDeparture));
-        this.journeySmokersTextView.setText(Helpers.translateBoolean(this.journey.SmokersAllowed));
-        this.journeyPetsTextView.setText(Helpers.translateBoolean(this.journey.PetsAllowed));
-        this.journeyVehicleTypeTextView.setText(vehicleTypes[this.journey.VehicleType]);
-        this.journeySeatsAvailableTextView.setText(String.valueOf(this.journey.AvailableSeats));
-        this.journeyFeeTextView.setText("£"+new DecimalFormat("0.00").format(this.journey.Fee)+" "+paymentOptions[this.journey.PaymentOption]);
+        super.drawDrivingDirectionsOnMap(googleMap, journey.GeoAddresses);
     }
 
     private void initialiseMap() {
 
-        if (this.googleMap == null && this.mapFragment != null) {
-            this.googleMap = this.mapFragment.getMap();
+        if (this.googleMap == null) {
+            this.googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.FragmentJourneyDetailsMap)).getMap();
 
-            if (googleMap == null) {
+            if (this.googleMap == null) {
                 Toast.makeText(this,
                         "Unable to initialise Google Maps, please check your network connection.", Toast.LENGTH_SHORT)
                         .show();
@@ -164,79 +82,78 @@ public class JourneyDetailsActivity extends BaseMapActivity implements WCFServic
 
     private void setupEventHandlers()
     {
-        this.journeyDriverTableRow.setOnClickListener(new View.OnClickListener() {
+        this.showRequestsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                 showDriverAlertDialog();
+                retrieveJourneyRequests();
             }
         });
 
-        this.sendRequestButton.setOnClickListener(new View.OnClickListener() {
+        this.showPassengersButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendRequest();
+                showPassengers();
             }
         });
     }
 
-    private void sendRequest()
+    private void retrieveJourneyRequests()
     {
-        JourneyRequest journeyRequest = new JourneyRequest();
-        journeyRequest.UserId = this.findNDriveManager.getUser().UserId;
-        journeyRequest.User = this.findNDriveManager.getUser();
-        journeyRequest.JourneyId = this.journey.JourneyId;
-        journeyRequest.Message = this.journeyMessageToDriverEditText.getText().toString();
-        journeyRequest.Read = false;
-        journeyRequest.Decision = RequestDecision.UNDECIDED;
-        journeyRequest.SentOnDate = DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime());
-
-        new WCFServiceTask<JourneyRequest>(this, getResources().getString(R.string.SendRequestURL),
-                journeyRequest, new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), this).execute();
-    }
-
-    private void showDriverAlertDialog()
-    {
-        CharSequence options[] = new CharSequence[] {"Show profile", "Send friend request"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(this.journey.Driver.FirstName + " " + this.journey.Driver.LastName);
-        builder.setItems(options, new DialogInterface.OnClickListener() {
+        new WCFServiceTask<Integer>(this, getResources().getString(R.string.GetRequestsForJourneyURL),
+                this.journey.JourneyId,
+                new TypeToken<ServiceResponse<ArrayList<JourneyRequest>>>() {}.getType(),
+                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyRequest>, Void>() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-
+            public void onServiceCallCompleted(ServiceResponse<ArrayList<JourneyRequest>> serviceResponse, Void parameter) {
+                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
+                {
+                    showRequests(serviceResponse.Result);
+                }
             }
-        });
-        builder.show();
+        }).execute();
     }
 
-
-
-    private boolean checkIfSendRequestAllowed()
+    private void showRequests(final ArrayList<JourneyRequest> requests)
     {
-        if(this.journey.Driver.UserId == this.findNDriveManager.getUser().UserId)
+        // Show the journey requests dialog.
+        final Dialog requestsDialog = new Dialog(this);
+        requestsDialog.setContentView(R.layout.activity_journey_requests);
+        requestsDialog.setTitle("Requests");
+        ListView requestsListView = (ListView) requestsDialog.findViewById(R.id.JourneyRequestsListView);
+
+        if(requests.size() > 0)
         {
-            return false;
+            JourneyRequestAdapter adapter = new JourneyRequestAdapter(this, R.layout.journey_request_listview_row, requests);
+            requestsListView.setAdapter(adapter);
+            requestsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    markRequestAsRead(requests.get(i).JourneyRequestId);
+                }
+            });
         }
 
-        for(User passenger : this.journey.Participants)
-        {
-            if(passenger.UserId == this.findNDriveManager.getUser().UserId)
-            {
-                return false;
-            }
-        }
-
-        return true;
+        requestsDialog.show();
     }
 
-    @Override
-    public void onServiceCallCompleted(ServiceResponse<JourneyRequest> serviceResponse, Void parameter) {
-        if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
-        {
-            Intent intent = new Intent(this, HomeActivity.class)
-                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            Toast toast = Toast.makeText(this, "Your request was sent successfully!", Toast.LENGTH_LONG);
-            toast.show();
-        }
+    private void markRequestAsRead(int id)
+    {
+        new WCFServiceTask<Integer>(this, getResources().getString(R.string.MarkRequestAsReadURL),
+                id,new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback() {
+            @Override
+            public void onServiceCallCompleted(ServiceResponse serviceResponse, Object parameter) {
+                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
+                {
+                    Intent intent = new Intent(getBaseContext(), JourneyRequestDetailsActivity.class);
+                    intent.putExtra(IntentConstants.JOURNEY_REQUEST, gson.toJson(serviceResponse.Result));
+                    startActivity(intent);
+                }
+            }
+        }).execute();
+    }
+
+    private void showPassengers()
+    {
+
     }
 }

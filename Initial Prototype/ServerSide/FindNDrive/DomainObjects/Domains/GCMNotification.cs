@@ -36,7 +36,7 @@ namespace DomainObjects.Domains
         /// Gets or sets the notification type.
         /// </summary>
         [DataMember]
-        public GCMNotificationType NotificationType { get; set; }
+        public NotificationType NotificationType { get; set; }
 
         /// <summary>
         /// Gets or sets the ContentTitle title.

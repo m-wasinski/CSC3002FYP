@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -30,13 +29,9 @@ import com.example.myapplication.domain_objects.MarkerType;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.dtos.JourneySearchDTO;
 import com.example.myapplication.experimental.GeocoderParams;
-import com.example.myapplication.interfaces.GeoCoderFinishedCallBack;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.GeocoderTask;
 import com.example.myapplication.network_tasks.WCFServiceTask;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.Marker;
@@ -127,7 +122,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         addressEditText.setText(marker == null ? "" : marker.getTitle());
 
         final EditText perimeterEditText = (EditText) addressDialog.findViewById(R.id.AddressDialogPerimeterEditText);
-        perimeterEditText.setText(radius == null ? "0.0" : ""+radius.getRadius()/METERS_IN_MILE);
+        perimeterEditText.setText(radius == null ? "2.0" : ""+radius.getRadius()/METERS_IN_MILE);
 
         Button okButton = (Button) addressDialog.findViewById(R.id.AddressDialogOKButton);
 
@@ -287,10 +282,8 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
 
             if(serviceResponse.Result.size() > 0)
             {
-                this.googleMap.clear();
                 this.searchResults = serviceResponse.Result;
                 this.showSearchResultsDialog();
-
             }
         }
     }
@@ -334,7 +327,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
     {
         Bundle bundle = new Bundle();
         bundle.putString(IntentConstants.JOURNEY, gson.toJson(journey));
-        Intent intent = new Intent(this, JourneyDetailsActivity.class);
+        Intent intent = new Intent(this, SearchResultsJourneyDetailsActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
     }

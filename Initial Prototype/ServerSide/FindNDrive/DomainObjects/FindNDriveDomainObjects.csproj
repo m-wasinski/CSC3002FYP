@@ -53,7 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Constants\GCMNotificationType.cs" />
+    <Compile Include="Constants\NotificationType.cs" />
     <Compile Include="Constants\JourneyRequestDecision.cs" />
     <Compile Include="Constants\JourneyStatus.cs" />
     <Compile Include="Constants\NotificationContext.cs" />

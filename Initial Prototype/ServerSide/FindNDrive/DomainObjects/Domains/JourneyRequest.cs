@@ -29,12 +29,6 @@ namespace DomainObjects.Domains
         public int JourneyRequestId { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether add to travel buddies.
-        /// </summary>
-        [DataMember]
-        public bool AddToTravelBuddies { get; set; }
-
-        /// <summary>
         /// Gets or sets the car share id.
         /// </summary>
         [DataMember]

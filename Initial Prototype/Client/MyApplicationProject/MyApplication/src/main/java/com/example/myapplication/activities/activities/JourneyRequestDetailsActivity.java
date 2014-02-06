@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myapplication.activities.base.BaseActivity;
+import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.RequestDecision;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.dtos.FriendDTO;
@@ -52,7 +53,7 @@ public class JourneyRequestDetailsActivity extends BaseActivity implements WCFSe
         dateOfBirthTextView = (TextView) findViewById(R.id.CarShareRequestDetailsDateOfBirthTextView);
         messageTextView = (TextView) findViewById(R.id.CarShareRequestDetailsMessageTextView);
 
-        journeyRequest = gson.fromJson(getIntent().getExtras().getString("CurrentCarShareRequest"), new TypeToken<JourneyRequest>() {}.getType());
+        journeyRequest = gson.fromJson(getIntent().getExtras().getString(IntentConstants.JOURNEY_REQUEST), new TypeToken<JourneyRequest>() {}.getType());
 
         TextView decisionMessageTextView = (TextView) findViewById(R.id.CarShareRequestDecisionMessage);
 

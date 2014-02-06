@@ -132,6 +132,11 @@
             android:screenOrientation="portrait"/>
 
         <activity
+            android:name=".activities.activities.SearchResultsJourneyDetailsActivity"
+            android:label="Journey Details"
+            android:screenOrientation="portrait"/>
+
+        <activity
             android:name=".activities.activities.JourneyDetailsActivity"
             android:label="Journey Details"
             android:screenOrientation="portrait"/>

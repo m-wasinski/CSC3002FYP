@@ -112,11 +112,7 @@ namespace FindNDriveServices2.Services
             {
                 if (!loggedInUser.GCMRegistrationID.Equals(login.GCMRegistrationID) && loggedInUser.Status == Status.Online && !loggedInUser.GCMRegistrationID.Equals("0"))
                 {
-                    this.gcmManager.SendNotification(
-                                new Collection<string> { loggedInUser.GCMRegistrationID },
-                                GCMNotificationType.Logout,
-                                "LOGOUT",
-                                 JsonConvert.SerializeObject(string.Empty));
+                    this.gcmManager.SendLogoutNotification(new Collection<string> { loggedInUser.GCMRegistrationID });
                 }
             }
             
@@ -150,7 +146,7 @@ namespace FindNDriveServices2.Services
             gcmNotifications.ForEach(
                 delegate(GCMNotification gcmNotification)
                     {
-                        this.gcmManager.SendNotification(
+                        this.gcmManager.SendOfflineNotification(
                             new Collection<string> { loggedInUser.GCMRegistrationID },
                             gcmNotification.NotificationType,
                             gcmNotification.ContentTitle,

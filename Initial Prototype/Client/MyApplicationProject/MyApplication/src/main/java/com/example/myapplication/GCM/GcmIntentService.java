@@ -1,13 +1,24 @@
 package com.example.myapplication.gcm;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
+import com.example.myapplication.R;
+import com.example.myapplication.activities.activities.InstantMessengerActivity;
 import com.example.myapplication.constants.GcmConstants;
 import com.example.myapplication.constants.IntentConstants;
+import com.example.myapplication.domain_objects.ChatMessage;
 import com.example.myapplication.experimental.FindNDriveManager;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * Created by Michal on 30/12/13.
@@ -63,6 +74,10 @@ public class GcmIntentService extends IntentService {
                     case GcmConstants.NOTIFICATION_LOGOUT: //Force logout, user must have logged on somewhere using a different device.
                         findNDriveManager.logout(true, true);
                         break;
+                    case GcmConstants.NOTIFICATION_JOURNEY_REQUEST:
+                        sendBroadcast(broadcastIntent);
+                        journeyRequestReceived(getApplicationContext(), intent);
+                        break;
                 }
             }
         }
@@ -75,5 +90,36 @@ public class GcmIntentService extends IntentService {
     {
         Intent orderedBroadcastIntent = new Intent(GcmConstants.BROADCAST_INSTANT_MESSENGER);
         sendOrderedBroadcast(orderedBroadcastIntent.putExtra(IntentConstants.MESSAGE, message), null);
+    }
+
+    private void journeyRequestReceived(Context context, Intent intent)
+    {
+        NotificationManager mNotificationManager = (NotificationManager)
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        /*ChatMessage chatMessage = new Gson().fromJson(intent.getStringExtra(IntentConstants.MESSAGE), new TypeToken<ChatMessage>() {}.getType());
+        Log.i("Received Message: ", intent.getStringExtra(IntentConstants.MESSAGE));
+        int notificationId =  (int) System.currentTimeMillis();
+
+        Bundle extras = new Bundle();
+        extras.putString(IntentConstants.RECIPIENT_USERNAME, chatMessage.SenderUserName);
+        extras.putInt(IntentConstants.RECIPIENT_ID, chatMessage.SenderId);
+
+        PendingIntent contentIntent = PendingIntent.getActivity(context, notificationId,
+                new Intent(context, InstantMessengerActivity.class)
+                        .putExtras(extras).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), 0);*/
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(context)
+                        .setSmallIcon(R.drawable.logo)
+                        .setContentTitle("New journey request.")
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(intent.getStringExtra(IntentConstants.MESSAGE)))
+                        .setContentText(intent.getStringExtra(IntentConstants.MESSAGE));
+
+        //mBuilder.setContentIntent(contentIntent);
+        Notification notification = mBuilder.build();
+        notification.flags = Notification.DEFAULT_LIGHTS | Notification.FLAG_AUTO_CANCEL;
+
+        mNotificationManager.notify(0,notification);
     }
 }

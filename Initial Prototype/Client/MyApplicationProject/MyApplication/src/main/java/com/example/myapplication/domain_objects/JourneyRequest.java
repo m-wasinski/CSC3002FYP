@@ -5,7 +5,6 @@ package com.example.myapplication.domain_objects;
  */
 public class JourneyRequest {
     public int JourneyRequestId;
-    public Boolean AddToTravelBuddies;
     public int UserId;
     public User User;
     public int JourneyId;

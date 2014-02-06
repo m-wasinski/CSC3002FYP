@@ -12,6 +12,7 @@ namespace FindNDriveServices2.Services
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Data.Entity.Core.Metadata.Edm;
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
@@ -24,6 +25,10 @@ namespace FindNDriveServices2.Services
     using FindNDriveServices2.Contracts;
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
+
+    using Newtonsoft.Json;
+
+    using ConcurrencyMode = System.ServiceModel.ConcurrencyMode;
 
     /// <summary>
     /// The request service.
@@ -55,6 +60,18 @@ namespace FindNDriveServices2.Services
 
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JourneyRequestService"/> class.
+        /// </summary>
+        /// <param name="findNDriveUnitOfWork">
+        /// The find n drive unit of work.
+        /// </param>
+        /// <param name="sessionManager">
+        /// The session manager.
+        /// </param>
+        /// <param name="gcmManager">
+        /// The gcm manager.
+        /// </param>
         public JourneyRequestService(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager, GCMManager gcmManager)
         {
             this.findNDriveUnitOfWork = findNDriveUnitOfWork;
@@ -63,10 +80,10 @@ namespace FindNDriveServices2.Services
         }
 
         /// <summary>
-        /// The send request.
+        /// Performs appropriate validation and sends a journey request.
         /// </summary>
         /// <param name="journeyRequestDTO">
-        /// The car share request dto.
+        /// JourneyRequestDTO
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
@@ -78,11 +95,38 @@ namespace FindNDriveServices2.Services
                 return ResponseBuilder.Unauthorised(new JourneyRequest());
             }
 
+            // Retrieve the journey to which this particular request relates.
             var targetJourney = this.findNDriveUnitOfWork.JourneyRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.JourneyId == journeyRequestDTO.JourneyId);
 
+            // Invalid journey Id, return failure immediately.
             if (targetJourney == null)
             {
                 return ResponseBuilder.Failure<JourneyRequest>("Invalid journey Id");
+            }
+
+            // Check if this user is already participating in this journey. If yes, return a failure with appropriate error message.
+            var alreadyInJourney =
+                   targetJourney.Participants.FirstOrDefault(_ => _.UserId == journeyRequestDTO.UserId);
+
+            if (alreadyInJourney != null)
+            {
+                return ResponseBuilder.Failure<JourneyRequest>("You are already one of the passengers in this journey.");
+            }
+
+            // Check if this user already has a pending request for this journey. This is to avoid user spamming the driver with request when no decision is made.
+            var hasPendingRequest = this.findNDriveUnitOfWork.JourneyRequestRepository.AsQueryable()
+                    .IncludeAll()
+                    .FirstOrDefault(_ => _.JourneyId == targetJourney.JourneyId && _.UserId == journeyRequestDTO.UserId && _.Decision == JourneyRequestDecision.Undecided);
+
+            if (hasPendingRequest != null)
+            {
+                return ResponseBuilder.Failure<JourneyRequest>("You already have a pending request for this journey.");
+            }
+
+            // Also check if the user is not trying to join journey in which they are the driver.
+            if (targetJourney.Driver.UserId == journeyRequestDTO.UserId)
+            {
+                return ResponseBuilder.Failure<JourneyRequest>("You are the driver in this journey.");
             }
 
             targetJourney.UnreadRequestsCount += 1;
@@ -98,53 +142,30 @@ namespace FindNDriveServices2.Services
                 return ResponseBuilder.Failure<JourneyRequest>("Could not find user");
             }
 
-            this.findNDriveUnitOfWork.NotificationRepository.Add(new Notification
-                                                                     {   
-                                                                         UserId = targetUser.UserId,
-                                                                         NotificationBody =
-                                                                             "You received a request for journey: " + targetJourney.JourneyId
-                                                                             + " from: " + requestingUser.UserName,
-                                                                         Read = false,
-                                                                         Context = NotificationContext.Positive,
-                                                                         ReceivedOnDate = DateTime.Now
-                                                                     });
+            var receiverMessage = "You received a request from user: " + targetUser.UserName + "asking to join journey no: " + targetJourney.JourneyId
+            + " " + targetJourney.GeoAddresses.First().AddressLine + " to " + targetJourney.GeoAddresses.Last().AddressLine;
 
-            this.findNDriveUnitOfWork.NotificationRepository.Add(new Notification
-                                                                     {   
-                                                                         //TODO fix notification message for journey.
-                                                                         UserId = requestingUser.UserId,
-                                                                         NotificationBody =
-                                                                             "You sent a journey request to: " + targetUser.UserName
-                                                                             + " for journey id: " + targetJourney.JourneyId,
-                                                                         Read = false,
-                                                                         Context = NotificationContext.Neutral,
-                                                                         ReceivedOnDate = DateTime.Now
-                                                                     });
+            var senderMessage = "You sent a request to user: " + targetJourney.Driver.UserName + "asking to join journey no: " + targetJourney.JourneyId
+            + " " + targetJourney.GeoAddresses.First().AddressLine + " to " + targetJourney.GeoAddresses.Last().AddressLine;
 
-            var request = new JourneyRequest()
-                              {
-                                  AddToTravelBuddies = journeyRequestDTO.AddToTravelBuddies,
-                                  JourneyId = journeyRequestDTO.JourneyId,
-                                  UserId = journeyRequestDTO.UserId,
-                                  Decision = journeyRequestDTO.Decision,
-                                  Read = journeyRequestDTO.Read,
-                                  Message = journeyRequestDTO.Message,
-                                  SentOnDate = journeyRequestDTO.SentOnDate,
-                              };
+            this.findNDriveUnitOfWork.NotificationRepository.Add(new Notification { UserId = targetUser.UserId, NotificationBody = receiverMessage, Read = false, Context = NotificationContext.Positive, ReceivedOnDate = DateTime.Now });
+
+            this.findNDriveUnitOfWork.NotificationRepository.Add(new Notification { UserId = requestingUser.UserId, NotificationBody = senderMessage, Read = false, Context = NotificationContext.Neutral, ReceivedOnDate = DateTime.Now });
+
+            var request = new JourneyRequest { JourneyId = journeyRequestDTO.JourneyId, UserId = journeyRequestDTO.UserId, Decision = JourneyRequestDecision.Undecided, Read = false, Message = journeyRequestDTO.Message, SentOnDate = journeyRequestDTO.SentOnDate};
 
             targetJourney.Requests.Add(request);
+
+            if (targetUser.Status == Status.Online)
+            {
+                this.gcmManager.SendJourneyRequestNotification(new Collection<string> { targetUser.GCMRegistrationID }, receiverMessage);
+            }
+            else
+            {
+                this.findNDriveUnitOfWork.GCMNotificationsRepository.Add(new GCMNotification { UserId = targetUser.UserId, Delivered = false, ContentTitle = "Journey Request", NotificationType = NotificationType.JourneyRequest, NotificationMessage = receiverMessage });
+            }
+
             this.findNDriveUnitOfWork.Commit();
-
-            //TODO
-            /*this.gcmManager.SendMessage(
-                    new Collection<string> { targetUser.GCMRegistrationID },
-                    1,
-                    0,
-                    "New journey request!",
-                    "You have received a new journey request from user " + requestingUser.UserName + " for journey id "
-                    + targetJourney.JourneyId + " " + targetJourney.DepartureAddress.AddressLine + " to "
-                    + targetJourney.DestinationAddress.AddressLine);*/
-
             return ResponseBuilder.Success(request);
         }
 
@@ -164,8 +185,6 @@ namespace FindNDriveServices2.Services
                 return ResponseBuilder.Unauthorised(new JourneyRequest());
             }
 
-            var errors = new List<string>();
-
             var newPassenger = this.findNDriveUnitOfWork.UserRepository.Find(journeyRequestDTO.UserId);
 
             var journey =
@@ -182,8 +201,7 @@ namespace FindNDriveServices2.Services
                     }
                     else
                     {
-                        errors.Add("This car share is full.");
-                        return ResponseBuilder.Failure<JourneyRequest>(errors);
+                        return ResponseBuilder.Failure<JourneyRequest>("This journey is full.");
                     } 
                 }
                 else
@@ -192,31 +210,28 @@ namespace FindNDriveServices2.Services
                 }
             }
 
-            //TODO fix message for journey
-            var decision = (journeyRequestDTO.Decision == JourneyRequestDecision.Accepted)
-                                         ? "accepted."
-                                         : "denied.";
-            var message = "Your request to join journey id: " + journey.JourneyId
-                          + " has been " + decision;
+            var decision = (journeyRequestDTO.Decision == JourneyRequestDecision.Accepted) ? "accepted." : "denied.";
 
-            if (newPassenger != null)
+           var message = "Your request to join journey id: " + journey.JourneyId + " from "
+                              + journey.GeoAddresses.First().AddressLine + " to " + journey.GeoAddresses.Last().AddressLine
+                              + " has been " + decision;
+            
+            this.findNDriveUnitOfWork.NotificationRepository.Add(new Notification
+                                                    {   
+                                                        UserId = newPassenger.UserId,
+                                                        NotificationBody = message,
+                                                        Read = false,
+                                                        Context = journeyRequestDTO.Decision == JourneyRequestDecision.Accepted ? NotificationContext.Positive : NotificationContext.Negative,
+                                                        ReceivedOnDate = DateTime.Now
+                                                    });
+
+            if (newPassenger.Status == Status.Online)
             {
-                this.findNDriveUnitOfWork.NotificationRepository.Add(new Notification
-                {   
-                    UserId = newPassenger.UserId,
-                    NotificationBody = message,
-                    Read = false,
-                    Context = journeyRequestDTO.Decision == JourneyRequestDecision.Accepted ? NotificationContext.Positive : NotificationContext.Negative,
-                    ReceivedOnDate = DateTime.Now
-                });
-
-                //TODO
-                /*this.gcmManager.SendMessage(
-                    new Collection<string> { newPassenger.GCMRegistrationID },
-                    1,
-                    0,
-                    "Journey request " + decision,
-                    message);*/
+                this.gcmManager.SendJourneyRequestNotification(new Collection<string> { newPassenger.GCMRegistrationID }, message);
+            }
+            else
+            {
+                this.findNDriveUnitOfWork.GCMNotificationsRepository.Add(new GCMNotification { ContentTitle = "Journey Request", Delivered = false, NotificationMessage = message, UserId = newPassenger.UserId, NotificationType = NotificationType.JourneyRequest });
             }
 
             var request = this.findNDriveUnitOfWork.JourneyRequestRepository.Find(
@@ -250,22 +265,22 @@ namespace FindNDriveServices2.Services
                 this.findNDriveUnitOfWork.JourneyRequestRepository.AsQueryable().IncludeAll()
                     .FirstOrDefault(_ => _.JourneyRequestId == id);
 
-            if (request != null)
+            if (request == null)
             {
-                var journey = this.findNDriveUnitOfWork.JourneyRepository.Find(request.JourneyId);
-
-                if (journey.UnreadRequestsCount > 0)
-                {
-                    journey.UnreadRequestsCount -= 1;
-                }    
-
-                request.Read = true;
-
-                this.findNDriveUnitOfWork.Commit();
-                return ResponseBuilder.Success(request);
+                return ResponseBuilder.Failure<JourneyRequest>("Invalid journey request!");
             }
 
-            return ResponseBuilder.Failure<JourneyRequest>("Invalid journey request!");
+            var journey = this.findNDriveUnitOfWork.JourneyRepository.Find(request.JourneyId);
+
+            if (journey.UnreadRequestsCount > 0)
+            {
+                journey.UnreadRequestsCount -= 1;
+            }    
+
+            request.Read = true;
+
+            this.findNDriveUnitOfWork.Commit();
+            return ResponseBuilder.Success(request);
         }
 
         /// <summary>

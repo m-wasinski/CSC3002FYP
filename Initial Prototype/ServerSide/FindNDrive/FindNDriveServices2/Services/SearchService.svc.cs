@@ -94,7 +94,7 @@ namespace FindNDriveServices2.Services
                             >= new Haversine().Distance(
                                 geoAddress,
                                 journeySearchDTO.Journey.GeoAddresses.First(),
-                                DistanceType.Miles) && matchDeparture == -1)
+                                DistanceType.Miles) && matchDeparture == -1 && matchDestination != geoAddress.Order)
                         {
                             matchDeparture = geoAddress.Order;
                         }
@@ -103,7 +103,7 @@ namespace FindNDriveServices2.Services
                             >= new Haversine().Distance(
                                 geoAddress,
                                 journeySearchDTO.Journey.GeoAddresses.Last(),
-                                DistanceType.Miles) && matchDestination == -1)
+                                DistanceType.Miles) && matchDestination == -1 && matchDeparture != geoAddress.Order)
                         {
                             matchDestination = geoAddress.Order;
                         }

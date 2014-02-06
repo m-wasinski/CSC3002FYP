@@ -17,7 +17,7 @@ namespace DomainObjects.Constants
     /// </summary>
     [DataContract]
     [Serializable]
-    public enum GCMNotificationType
+    public enum NotificationType
     {
         /// <summary>
         /// The refresh.

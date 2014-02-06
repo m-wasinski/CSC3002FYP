@@ -41,6 +41,16 @@
         <item name="android:textSize">18sp</item>
     </style>
 
+    <style name="JourneyDetailsButtons">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:paddingTop">10sp</item>
+        <item name="android:paddingLeft">10sp</item>
+        <item name="android:paddingRight">10sp</item>
+        <item name="android:layout_marginLeft">2sp</item>
+    </style>
+
     <style name="LoginFields">
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">#FFFFFF</item>

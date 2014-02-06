@@ -32,7 +32,7 @@ public class JourneyRequestsActivity extends BaseActivity implements WCFServiceC
 
         journey = gson.fromJson(getIntent().getExtras().getString("CurrentCarShare"), new TypeToken<Journey>() {}.getType());
         setContentView(R.layout.activity_journey_requests);
-        requestsListView = (ListView) findViewById(R.id.CarShareRequestsListView);
+        //requestsListView = (ListView) findViewById(R.id.CarShareRequestsListView);
     }
 
     @Override

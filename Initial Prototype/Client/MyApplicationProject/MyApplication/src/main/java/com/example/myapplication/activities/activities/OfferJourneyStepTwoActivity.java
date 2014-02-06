@@ -355,20 +355,31 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
 
     private boolean buildAndValidate()
     {
-        boolean isValid;
+        boolean isValid = true;
 
-        isValid = !this.journeyVehicleTypeTextView.getText().toString().equals(this.SELECT_VEHICLE);
-        this.journeyVehicleTypeTextView.setError(this.journeyVehicleTypeTextView.getText().toString().equals(this.SELECT_VEHICLE) ? "Please select vehicle type" : null);
+        if(this.journeyVehicleTypeTextView.getText().toString().equals(this.SELECT_VEHICLE))
+        {
+            this.journeyVehicleTypeTextView.setError(this.journeyVehicleTypeTextView.getText().toString().equals(this.SELECT_VEHICLE) ? "Please select vehicle type" : null);
+            isValid = false;
+        }
 
-        isValid = !this.journeyFeeTextView.getText().toString().equals(this.SELECT_FEE);
-        this.journeyFeeTextView.setError(this.journeyFeeTextView.getText().toString().equals(this.SELECT_FEE) ? "Please enter fee" : null);
+        if(this.journeyFeeTextView.getText().toString().equals(this.SELECT_FEE))
+        {
+            this.journeyFeeTextView.setError(this.journeyFeeTextView.getText().toString().equals(this.SELECT_FEE) ? "Please enter fee" : null);
+            isValid = false;
+        }
 
-        isValid = !this.journeyDateTextView.getText().toString().equals(this.SELECT_DATE);
-        this.journeyDateTextView.setError(this.journeyDateTextView.getText().toString().equals(this.SELECT_DATE) ? "Please select date" : null);
         if(this.journeyDateTextView.getText().toString().equals(this.SELECT_DATE))
+        {
+            this.journeyDateTextView.setError(this.journeyDateTextView.getText().toString().equals(this.SELECT_DATE) ? "Please select date" : null);
+            isValid = false;
+        }
 
-        isValid = !this.journeyTimeTextView.getText().toString().equals(this.SELECT_TIME);
-        this.journeyTimeTextView.setError(this.journeyTimeTextView.getText().toString().equals(this.SELECT_TIME) ? "Please select time" : null);
+        if(this.journeyTimeTextView.getText().toString().equals(this.SELECT_TIME))
+        {
+            this.journeyTimeTextView.setError(this.journeyTimeTextView.getText().toString().equals(this.SELECT_TIME) ? "Please select time" : null);
+            isValid = false;
+        }
 
         if(isValid)
         {

@@ -1,1 +1,10 @@
-{ "registration_ids":["APA91bHK3tHUL5Mc_JJGCi__ETzdyXjNcsFEYQaXZdQo9mFT3EyEPYLgA0PuYr7neD0CzfWS8CtVadkBrJ-rrKQTwH167S8_ToK5HeU2VC7Y0JBLErSekdnfp7mc_Z5x0svsmngolbDqG0DYsf-D1DSXKsDxUCA01OwrgXzAbFdYmNxF04M-UKY"], "data": {"tickerText":"", "contentTitle":"LOGOUT", "notificationType":"2", "message":""}}
+{ "registration_ids": ["APA91bHK3tHUL5Mc_JJGCi__ETzdyXjNcsFEYQaXZdQo9mFT3EyEPYLgA0PuYr7neD0CzfWS8CtVadkBrJ-rrKQTwH167S8_ToK5HeU2VC7Y0JBLErSekdnfp7mc_Z5x0svsmngolbDqG0DYsf-D1DSXKsDxUCA01OwrgXzAbFdYmNxF04M-UKY"] , "data": {"tickerText":"", "contentTitle":"Message", "notificationType": "10", "message": {
+  "ChatMessageId": 535,
+  "SenderId": 4,
+  "RecipientId": 2,
+  "MessageBody": "Hifffffffik",
+  "SentOnDate": "\/Date(1391683849143)\/",
+  "Read": false,
+  "RecipientUserName": "john",
+  "SenderUserName": "jess"
+} }}

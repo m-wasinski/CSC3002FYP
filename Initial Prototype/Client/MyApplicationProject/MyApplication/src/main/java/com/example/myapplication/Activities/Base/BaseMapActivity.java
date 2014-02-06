@@ -248,6 +248,14 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
                     }
 
                     polyline = map.addPolyline(rectLine);
+
+                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                    for(LatLng latLng : directionPoint)
+                    {
+                        builder.include(latLng);
+                    }
+                    LatLngBounds bounds = builder.build();
+                    map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 40));
                 }
             }
 

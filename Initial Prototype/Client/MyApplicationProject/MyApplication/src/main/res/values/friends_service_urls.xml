@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="GetFriendsURL">https://findndrive.no-ip.co.uk/Services/FriendsService.svc/get</string>
-    <string name="AddNewFriendURL">https://findndrive.no-ip.co.uk/Services/FriendsService.svc/add</string>
+    <string name="SendFriendRequestURL">https://findndrive.no-ip.co.uk/Services/FriendsService.svc/sendrequest</string>
+    <string name="ProcessFriendRequestDecisionURL">https://findndrive.no-ip.co.uk/Services/FriendsService.svc/processdecision</string>
+    <string name="MarkFriendRequestAsReadURL">https://findndrive.no-ip.co.uk/Services/FriendsService.svc/markasread</string>
 </resources>

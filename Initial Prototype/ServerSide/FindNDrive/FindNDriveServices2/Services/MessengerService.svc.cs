@@ -103,7 +103,6 @@ namespace FindNDriveServices2.Services
                                      RecipientUserName = chatMessageDTO.RecipientUserName
                                  };
             this.findNDriveUnitOfWork.ChatMessageRepository.Add(newMessage);
-            this.findNDriveUnitOfWork.Commit();
 
             chatMessageDTO.ChatMessageId = newMessage.ChatMessageId;
 
@@ -128,8 +127,9 @@ namespace FindNDriveServices2.Services
                             NotificationType = NotificationType.InstantMessenger,
                             NotificationMessage = message
                         });
-                this.findNDriveUnitOfWork.Commit();
             }
+
+            this.findNDriveUnitOfWork.Commit();
 
             return ResponseBuilder.Success(true);
         }

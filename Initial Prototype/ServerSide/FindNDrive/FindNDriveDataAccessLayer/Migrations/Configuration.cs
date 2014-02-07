@@ -169,17 +169,9 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Gender = Gender.Female,
                 UserName = "jess",
                 Role = Roles.User,
-                Friends = new Collection<User>{participant1, participant2},
                 UserId = 4
             };
 
-            participant2.Friends = new Collection<User>(){driver};
-            context.SaveChanges();
-            context.User.AddOrUpdate(_ => _.UserId, driver);
-            context.SaveChanges();
-
-            participant1.Friends = new Collection<User>(){driver};
-            context.User.AddOrUpdate(participant1);
             context.SaveChanges();
 
             WebSecurity.CreateUserAndAccount(driver.UserName, "p");

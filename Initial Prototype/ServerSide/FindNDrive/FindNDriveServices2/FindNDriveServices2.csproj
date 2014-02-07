@@ -120,6 +120,7 @@
     <Compile Include="CustomMessageInspector.cs" />
     <Compile Include="DTOs\ChatMessageDTO.cs" />
     <Compile Include="DTOs\ChatMessageRetrieverDTO.cs" />
+    <Compile Include="DTOs\FriendRequestDTO.cs" />
     <Compile Include="DTOs\JourneyDTO.cs" />
     <Compile Include="DTOs\JourneyMessageDTO.cs" />
     <Compile Include="DTOs\JourneyRequestDTO.cs" />

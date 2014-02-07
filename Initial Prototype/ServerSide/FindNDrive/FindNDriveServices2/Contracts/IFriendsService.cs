@@ -27,8 +27,8 @@ namespace FindNDriveServices2.Contracts
         /// <summary>
         /// The add travel buddy.
         /// </summary>
-        /// <param name="user">
-        /// The user.
+        /// <param name="friendRequestDTO">
+        /// The friend Request DTO.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
@@ -37,8 +37,36 @@ namespace FindNDriveServices2.Contracts
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/add")]
-        ServiceResponse<bool> AddFriend(FriendDTO user);
+            UriTemplate = "/processdecision")]
+        ServiceResponse<bool> ProcessDecision(FriendRequestDTO friendRequestDTO);
+
+        /// <summary>
+        /// The send request.
+        /// </summary>
+        /// <param name="friendRequestDTO">
+        /// The friend request dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/sendrequest")]
+        ServiceResponse<bool> SendRequest(FriendRequestDTO friendRequestDTO);
+
+        /// <summary>
+        /// The mark as read.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/markasread")]
+        ServiceResponse<bool> MarkAsRead(int id);
 
         /// <summary>
         /// The get travel buddies.

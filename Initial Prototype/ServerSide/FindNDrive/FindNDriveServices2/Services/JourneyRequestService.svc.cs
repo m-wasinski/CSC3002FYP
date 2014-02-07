@@ -12,7 +12,6 @@ namespace FindNDriveServices2.Services
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Data.Entity.Core.Metadata.Edm;
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
@@ -25,8 +24,6 @@ namespace FindNDriveServices2.Services
     using FindNDriveServices2.Contracts;
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
-
-    using Newtonsoft.Json;
 
     using ConcurrencyMode = System.ServiceModel.ConcurrencyMode;
 
@@ -148,9 +145,9 @@ namespace FindNDriveServices2.Services
             var senderMessage = "You sent a request to user: " + targetJourney.Driver.UserName + "asking to join journey no: " + targetJourney.JourneyId
             + " " + targetJourney.GeoAddresses.First().AddressLine + " to " + targetJourney.GeoAddresses.Last().AddressLine;
 
-            this.findNDriveUnitOfWork.NotificationRepository.Add(new Notification { UserId = targetUser.UserId, NotificationBody = receiverMessage, Read = false, Context = NotificationContext.Positive, ReceivedOnDate = DateTime.Now });
+            this.findNDriveUnitOfWork.NotificationRepository.Add(new Notification { UserId = targetUser.UserId, NotificationBody = receiverMessage, Read = false, Context = NotificationContext.Positive, ReceivedOnDate = DateTime.Now, NotificationType = NotificationType.JourneyRequestReceived});
 
-            this.findNDriveUnitOfWork.NotificationRepository.Add(new Notification { UserId = requestingUser.UserId, NotificationBody = senderMessage, Read = false, Context = NotificationContext.Neutral, ReceivedOnDate = DateTime.Now });
+            this.findNDriveUnitOfWork.NotificationRepository.Add(new Notification { UserId = requestingUser.UserId, NotificationBody = senderMessage, Read = false, Context = NotificationContext.Neutral, ReceivedOnDate = DateTime.Now, NotificationType = NotificationType.JourneyRequestSent});
 
             var request = new JourneyRequest { JourneyId = journeyRequestDTO.JourneyId, UserId = journeyRequestDTO.UserId, Decision = JourneyRequestDecision.Undecided, Read = false, Message = journeyRequestDTO.Message, SentOnDate = journeyRequestDTO.SentOnDate};
 
@@ -162,7 +159,7 @@ namespace FindNDriveServices2.Services
             }
             else
             {
-                this.findNDriveUnitOfWork.GCMNotificationsRepository.Add(new GCMNotification { UserId = targetUser.UserId, Delivered = false, ContentTitle = "Journey Request", NotificationType = NotificationType.JourneyRequest, NotificationMessage = receiverMessage });
+                this.findNDriveUnitOfWork.GCMNotificationsRepository.Add(new GCMNotification { UserId = targetUser.UserId, Delivered = false, ContentTitle = "Journey Request", NotificationType = NotificationType.JourneyRequestReceived, NotificationMessage = receiverMessage });
             }
 
             this.findNDriveUnitOfWork.Commit();
@@ -231,7 +228,7 @@ namespace FindNDriveServices2.Services
             }
             else
             {
-                this.findNDriveUnitOfWork.GCMNotificationsRepository.Add(new GCMNotification { ContentTitle = "Journey Request", Delivered = false, NotificationMessage = message, UserId = newPassenger.UserId, NotificationType = NotificationType.JourneyRequest });
+                this.findNDriveUnitOfWork.GCMNotificationsRepository.Add(new GCMNotification { ContentTitle = "Journey Request", Delivered = false, NotificationMessage = message, UserId = newPassenger.UserId, NotificationType = NotificationType.JourneyRequestReceived });
             }
 
             var request = this.findNDriveUnitOfWork.JourneyRequestRepository.Find(

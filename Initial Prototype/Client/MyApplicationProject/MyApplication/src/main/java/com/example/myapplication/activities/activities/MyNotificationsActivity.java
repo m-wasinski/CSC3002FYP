@@ -116,6 +116,7 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
 
                 final CharSequence options[] = new CharSequence[] {"Take action", "Archive"};
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
                 if(loadMoreData)
                 {
                     notifications.addAll(notifications.size() == 0 ? 0 : notifications.size(), serviceResponse.Result);

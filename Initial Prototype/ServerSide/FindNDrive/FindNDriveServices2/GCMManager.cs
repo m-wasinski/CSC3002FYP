@@ -117,17 +117,32 @@ namespace FindNDriveServices2
         /// <param name="registrationIds">
         /// The registration ids.
         /// </param>
-        /// <param name="journey">
-        /// The journey.
-        /// </param>
-        /// <param name="sender">
-        /// The sender.
+        /// <param name="message">
+        /// The message.
         /// </param>
         public void SendJourneyRequestNotification(Collection<string> registrationIds, string message)
         {
             var filteredGcms = registrationIds.Where(_ => !_.Equals("0"));
 
-            var gcmPostData = string.Format(GCMPostData, JsonConvert.SerializeObject(filteredGcms), string.Empty, "Journey Request", JsonConvert.SerializeObject(NotificationType.JourneyRequest), JsonConvert.SerializeObject(message));
+            var gcmPostData = string.Format(GCMPostData, JsonConvert.SerializeObject(filteredGcms), string.Empty, "Journey Request", JsonConvert.SerializeObject(NotificationType.JourneyRequestReceived), JsonConvert.SerializeObject(message));
+
+            this.SendNotification(gcmPostData);
+        }
+
+        /// <summary>
+        /// The send friend request.
+        /// </summary>
+        /// <param name="registrationIds">
+        /// The registration ids.
+        /// </param>
+        /// <param name="friendRequest">
+        /// The friend request.
+        /// </param>
+        public void SendFriendRequest(Collection<string> registrationIds, string friendRequest)
+        {
+            var filteredGcms = registrationIds.Where(_ => !_.Equals("0"));
+
+            var gcmPostData = string.Format(GCMPostData, JsonConvert.SerializeObject(filteredGcms), string.Empty, "Friend Request", JsonConvert.SerializeObject(NotificationType.FriendRequest), friendRequest);
 
             this.SendNotification(gcmPostData);
         }

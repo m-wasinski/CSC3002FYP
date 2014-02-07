@@ -1,8 +1,11 @@
 package com.example.myapplication.activities.activities;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -12,11 +15,14 @@ import android.widget.Toast;
 import com.example.myapplication.R;
 import com.example.myapplication.activities.base.BaseMapActivity;
 import com.example.myapplication.adapters.JourneyRequestAdapter;
+import com.example.myapplication.adapters.PassengersAdapter;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.domain_objects.JourneyRequest;
 import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.domain_objects.User;
+import com.example.myapplication.dtos.LoadRangeDTO;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.google.android.gms.maps.MapFragment;
@@ -63,7 +69,44 @@ public class JourneyDetailsActivity extends BaseMapActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.retrieveJourney();
+    }
+
+    private void retrieveJourney()
+    {
+        new WCFServiceTask<Integer>(this, getResources().getString(R.string.GetSingleJourneyURL), this.journey.JourneyId,
+                new TypeToken<ServiceResponse<Journey>>() {}.getType(),
+                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Journey, Void>() {
+            @Override
+            public void onServiceCallCompleted(ServiceResponse<Journey> serviceResponse, Void parameter) {
+                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
+                {
+                    if(serviceResponse.Result != null)
+                    {
+                        journeyRetrieved(serviceResponse.Result);
+                    }
+                    else
+                    {
+                        errorCouldNotRetrieveJourney();
+                    }
+                }
+            }
+        }).execute();
+    }
+
+    private void errorCouldNotRetrieveJourney()
+    {
+
+    }
+
+    private void journeyRetrieved(Journey journey)
+    {
+        this.journey = journey;
         super.drawDrivingDirectionsOnMap(googleMap, journey.GeoAddresses);
     }
 
@@ -128,7 +171,7 @@ public class JourneyDetailsActivity extends BaseMapActivity {
             requestsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    markRequestAsRead(requests.get(i).JourneyRequestId);
+                    markRequestAsRead(requests.get(i).JourneyRequestId, requestsDialog);
                 }
             });
         }
@@ -136,7 +179,7 @@ public class JourneyDetailsActivity extends BaseMapActivity {
         requestsDialog.show();
     }
 
-    private void markRequestAsRead(int id)
+    private void markRequestAsRead(int id, final Dialog requestDialog)
     {
         new WCFServiceTask<Integer>(this, getResources().getString(R.string.MarkRequestAsReadURL),
                 id,new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback() {
@@ -144,6 +187,7 @@ public class JourneyDetailsActivity extends BaseMapActivity {
             public void onServiceCallCompleted(ServiceResponse serviceResponse, Object parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {
+                    requestDialog.dismiss();
                     Intent intent = new Intent(getBaseContext(), JourneyRequestDetailsActivity.class);
                     intent.putExtra(IntentConstants.JOURNEY_REQUEST, gson.toJson(serviceResponse.Result));
                     startActivity(intent);
@@ -154,6 +198,38 @@ public class JourneyDetailsActivity extends BaseMapActivity {
 
     private void showPassengers()
     {
+        // Show the journey requests dialog.
+        final Dialog passengersDialog = new Dialog(this);
+        passengersDialog.setContentView(R.layout.alert_dialog_show_passengers);
+        passengersDialog.setTitle("Passengers");
+        ListView passengersListView = (ListView) passengersDialog.findViewById(R.id.AlertDialogShowPassengersListView);
 
+        final AlertDialog.Builder passengerOptionsDialogBuilder = new AlertDialog.Builder(this);
+
+        if(this.journey.Participants.size() > 0)
+        {
+            PassengersAdapter adapter = new PassengersAdapter(this, R.layout.alert_dialog_show_passengers_listview_row, this.journey.Participants);
+            passengersListView.setAdapter(adapter);
+            passengersListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+            {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
+                {
+                    passengerOptionsDialogBuilder.setTitle(journey.Participants.get(i).UserName);
+                    CharSequence userOptions[] = new CharSequence[] {"Show profile", "Send friend request"};
+                    passengerOptionsDialogBuilder.setItems(userOptions, new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+
+                        }
+                    });
+                    passengerOptionsDialogBuilder.show();
+                }
+            });
+        }
+
+        passengersDialog.show();
     }
 }

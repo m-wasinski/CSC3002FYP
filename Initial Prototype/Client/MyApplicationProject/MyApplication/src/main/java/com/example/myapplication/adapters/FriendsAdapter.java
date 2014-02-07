@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.constants.StatusConstants;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
@@ -74,7 +75,10 @@ public class FriendsAdapter extends ArrayAdapter<User> {
                 new TypeToken<ServiceResponse<Integer>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {
-                holder.unreadMessagesCountTextView.setText(serviceResponse.Result + " New messages");
+                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
+                {
+                    holder.unreadMessagesCountTextView.setText(serviceResponse.Result + " New messages");
+                }
             }
         }).execute();
 

@@ -55,6 +55,10 @@
     <string name="EnterChat">Enter chat</string>
     <string name="ShowPassengers">Passengers</string>
     <string name="ShowSummary">Summary</string>
+    <string name="SendFriendRequestTitle">You are sending a friend request to: </string>
+    <string name="Send">Send</string>
+    <string name="ProfileIcon">Profile icon</string>
+    <string name="EnterYourOwnMessage">Enter your own message</string>
     <string-array name="app_menu_options">
         <item>Home</item>
         <item>My Car Shares</item>

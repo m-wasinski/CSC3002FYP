@@ -146,6 +146,7 @@ namespace FindNDriveServices2
             var chatMessageRepository = new EntityFrameworkRepository<ChatMessage>(dbContext);
             var notificationRepository = new EntityFrameworkRepository<Notification>(dbContext);
             var gcmNotificationRepository = new EntityFrameworkRepository<GCMNotification>(dbContext);
+            var friendsRequestRepository = new EntityFrameworkRepository<FriendRequest>(dbContext);
 
             var findNDriveUnitOfWork = new FindNDriveUnitOfWork(
                 dbContext,
@@ -155,7 +156,8 @@ namespace FindNDriveServices2
                 journeyRequestRepository,
                 chatMessageRepository,
                 notificationRepository,
-                gcmNotificationRepository);
+                gcmNotificationRepository,
+                friendsRequestRepository);
 
             var sessionManager = new SessionManager(findNDriveUnitOfWork);
 

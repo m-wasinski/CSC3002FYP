@@ -63,7 +63,12 @@ namespace FindNDriveDataAccessLayer
         /// <summary>
         /// Gets or sets the gcm notifications repository.
         /// </summary>
-        public IRepository<GCMNotification> GCMNotificationsRepository { get; set; } 
+        public IRepository<GCMNotification> GCMNotificationsRepository { get; set; }
+
+        /// <summary>
+        /// Gets or sets the friend requests repository.
+        /// </summary>
+        public IRepository<FriendRequest> FriendRequestsRepository { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FindNDriveUnitOfWork"/> class.
@@ -92,6 +97,7 @@ namespace FindNDriveDataAccessLayer
         /// <param name="gcmNotificationsRepository">
         /// The gcm Notifications Repository.
         /// </param>
+        /// <param name="friendRequestsRepository"></param>
         public FindNDriveUnitOfWork(
             DbContext dbContext,
             IRepository<User> userRepository,
@@ -99,8 +105,9 @@ namespace FindNDriveDataAccessLayer
             IRepository<Session> sessionRepository,
             IRepository<JourneyRequest> journeyRequestRepository,
                                     IRepository<ChatMessage> chatMessageRepository,
-                                    IRepository<Notification> notificationRepository,
-                                    IRepository<GCMNotification> gcmNotificationsRepository)
+            IRepository<Notification> notificationRepository,
+            IRepository<GCMNotification> gcmNotificationsRepository,
+            IRepository<FriendRequest> friendRequestsRepository)
         {
             this._dbContext = dbContext;
             this.UserRepository = userRepository;
@@ -110,6 +117,7 @@ namespace FindNDriveDataAccessLayer
             this.ChatMessageRepository = chatMessageRepository;
             this.NotificationRepository = notificationRepository;
             this.GCMNotificationsRepository = gcmNotificationsRepository;
+            this.FriendRequestsRepository = friendRequestsRepository;
         }
 
         /// <summary>

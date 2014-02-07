@@ -32,7 +32,7 @@ namespace DomainObjects.Constants
         /// <summary>
         /// The journey request.
         /// </summary>
-        JourneyRequest = 3,
+        JourneyRequestReceived = 3,
 
         /// <summary>
         /// The journey request accepted.
@@ -67,6 +67,11 @@ namespace DomainObjects.Constants
         /// <summary>
         /// The instant messenger.
         /// </summary>
-        InstantMessenger = 10
+        InstantMessenger = 10,
+
+        /// <summary>
+        /// The journey request sent.
+        /// </summary>
+        JourneyRequestSent = 11
     }
 }

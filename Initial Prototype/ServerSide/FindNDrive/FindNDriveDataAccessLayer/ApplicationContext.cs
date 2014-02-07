@@ -55,7 +55,15 @@ namespace FindNDriveDataAccessLayer
         /// </summary>
         public DbSet<Notification> Notifications { get; set; }
 
+        /// <summary>
+        /// Gets or sets the gcm notifications.
+        /// </summary>
         public DbSet<GCMNotification> GCMNotifications { get; set; }
+
+        /// <summary>
+        /// Gets or sets the friend requests.
+        /// </summary>
+        public DbSet<FriendRequest> FriendRequests { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ApplicationContext"/> class.

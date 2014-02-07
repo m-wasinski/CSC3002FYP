@@ -27,36 +27,36 @@ public class JourneyRequestAdapter extends ArrayAdapter<JourneyRequest> implemen
 
     private ArrayList<JourneyRequest> journeyRequests;
     private Context context;
-    private int layoutResourceId;
+    private int resourceId;
 
     public JourneyRequestAdapter(Context context, int resource, ArrayList<JourneyRequest> requests) {
         super(context, resource, requests);
         this.journeyRequests = requests;
         this.context = context;
-        this.layoutResourceId = resource;
+        this.resourceId = resource;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View row = convertView;
-        CarShareRequestHolder holder = new CarShareRequestHolder();
+        View currentRow = convertView;
+        JourneyRequestHolder holder = new JourneyRequestHolder();
 
-        if(row == null)
+        if(currentRow == null)
         {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
-            row = inflater.inflate(layoutResourceId, parent, false);
-            holder.profilePicture = (ImageView) row.findViewById(R.id.CarShareRequestAdapterIcon);
-            holder.nameTextView = (TextView) row.findViewById(R.id.CarShareRequestAdapterNameTextView);
-            holder.parentLayout = (LinearLayout) row.findViewById(R.id.CarShareRequestAdapterParentLayout);
-            holder.newTextView =  (TextView) row.findViewById(R.id.CarShareRequestAdapterNewTextView);
-            holder.statusTextView = (TextView) row.findViewById(R.id.CarShareRequestAdapterStatusTextView);
-            holder.receivedOnTextView = (TextView) row.findViewById(R.id.CarShareRequestAdapterReceivedOnTextView);
-            holder.decidedOnTextView = (TextView) row.findViewById(R.id.CarShareRequestAdapterDecidedOnTextView);
-            row.setTag(holder);
+            currentRow = inflater.inflate(resourceId, parent, false);
+            holder.profilePicture = (ImageView) currentRow.findViewById(R.id.CarShareRequestAdapterIcon);
+            holder.nameTextView = (TextView) currentRow.findViewById(R.id.CarShareRequestAdapterNameTextView);
+            holder.parentLayout = (LinearLayout) currentRow.findViewById(R.id.CarShareRequestAdapterParentLayout);
+            holder.newTextView =  (TextView) currentRow.findViewById(R.id.CarShareRequestAdapterNewTextView);
+            holder.statusTextView = (TextView) currentRow.findViewById(R.id.CarShareRequestAdapterStatusTextView);
+            holder.receivedOnTextView = (TextView) currentRow.findViewById(R.id.CarShareRequestAdapterReceivedOnTextView);
+            holder.decidedOnTextView = (TextView) currentRow.findViewById(R.id.CarShareRequestAdapterDecidedOnTextView);
+            currentRow.setTag(holder);
         }
         else
         {
-            holder = (CarShareRequestHolder)row.getTag();
+            holder = (JourneyRequestHolder)currentRow.getTag();
         }
 
         JourneyRequest request = journeyRequests.get(position);
@@ -97,16 +97,16 @@ public class JourneyRequestAdapter extends ArrayAdapter<JourneyRequest> implemen
             }
         }
 
-        holder.nameTextView.setText("Request from: " + request.User.UserName);
+        holder.nameTextView.setText("From: " + request.User.FirstName + " " + request.User.LastName  + " ("+request.User.UserName+")");
         holder.receivedOnTextView.setText("Received: " + DateTimeHelper.getSimpleDate(request.SentOnDate) +  " " + DateTimeHelper.getSimpleTime(request.SentOnDate));
         holder.decidedOnTextView.setText("Replied: " + repliedOnDate);
         holder.profilePicture.setImageResource(R.drawable.user_man);
         holder.statusTextView.setText("Status: " + decisionStatus);
 
-        return row;
+        return currentRow;
     }
 
-     class CarShareRequestHolder
+    class JourneyRequestHolder
     {
         ImageView profilePicture;
         TextView nameTextView;

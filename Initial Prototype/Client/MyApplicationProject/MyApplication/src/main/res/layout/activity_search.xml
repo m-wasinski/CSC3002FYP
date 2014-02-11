@@ -40,9 +40,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/OfferJourneyStepTwoActivityFromLabel"
                 android:layout_toRightOf="@+id/SearchActivityStartImageView"
-                android:layout_marginLeft="10sp"
                 android:text="From:"
-                style="@style/MyCarSharesHeader"/>
+                style="@style/LargeBlueHeader"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -66,6 +65,11 @@
 
         </RelativeLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:background="#B7D8E8"></LinearLayout>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -87,9 +91,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/OfferJourneyStepOneActivityDestinationLabelTextView"
                 android:layout_toRightOf="@+id/SearchActivityFinishImageView"
-                android:layout_marginLeft="10sp"
                 android:text="To:"
-                style="@style/MyCarSharesHeader"/>
+                style="@style/LargeBlueHeader"/>
 
             <TextView
                 android:layout_width="wrap_content"

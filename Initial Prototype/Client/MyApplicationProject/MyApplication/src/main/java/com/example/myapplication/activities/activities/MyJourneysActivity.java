@@ -31,7 +31,6 @@ import com.example.myapplication.experimental.WakeLocker;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.example.myapplication.R;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -64,7 +63,7 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
 
         filterEditText = (EditText) findViewById(R.id.ActivityHomeFilterEditText);
         mainListView = (ListView) findViewById(R.id.MyCarSharesListView);
-        journeyAdapter = new JourneyAdapter(findNDriveManager.getUser().UserId, this, R.layout.my_journeys_listview_row, myJourneys);
+        journeyAdapter = new JourneyAdapter(findNDriveManager.getUser().UserId, this, R.layout.listview_row_my_journey, myJourneys);
         journeyAdapter.getFilter().filter(filterEditText.getText().toString());
         mainListView.setAdapter(journeyAdapter);
         loadMoreButton = (Button) findViewById(R.id.ActivityMyJourneysLoadMoreButton);

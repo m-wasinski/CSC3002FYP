@@ -50,4 +50,14 @@
         android:listSelector="#00000000" >
     </ListView>
 
+    <ProgressBar
+        android:id="@+id/ActivityInstantMessengerProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:indeterminateDrawable="@drawable/progress"
+        android:visibility="gone"/>
+
 </RelativeLayout>

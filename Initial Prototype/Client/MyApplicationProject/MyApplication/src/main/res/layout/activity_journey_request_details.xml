@@ -1,143 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical" android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/user_man"
+            android:id="@+id/JourneyRequestDetailsActivityUserImageView"/>
+
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="horizontal" android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/user_man"
-                android:id="@+id/CarShareRequestDetailsIcon"
-                android:layout_margin="10sp"/>
-
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:orientation="vertical" android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/CarShareRequestDetailsAddToTravelBuddiesLinearLayout">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="James would like to add you to the list of travel buddies."
-                    android:layout_margin="10sp"
-                    android:id="@+id/CarShareRequestDetailsQuestion" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:text="Add"
-                    android:layout_margin="10sp"
-                    android:id="@+id/CarShareRequestDetailsAddToTravelBuddiesButton"
-                    android:layout_weight="1"/>
-
-            </LinearLayout>
-        </LinearLayout>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Username: "
-            android:layout_margin="5sp"
-            android:id="@+id/CarShareRequestDetailsUserNameTextView" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="First Name: "
-            android:layout_margin="5sp"
-            android:id="@+id/CarShareRequestDetailsFirstNameTextView" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Last Name: "
-            android:layout_margin="5sp"
-            android:id="@+id/CarShareRequestDetailsLastNameTextView" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Gender: "
-            android:layout_margin="5sp"
-            android:id="@+id/CarShareRequestDetailsGenderTextView" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Email Address: "
-            android:layout_margin="5sp"
-            android:id="@+id/CarShareRequestDetailsEmailAddressTextView" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Date of Birth: "
-            android:layout_margin="5sp"
-            android:id="@+id/CarShareRequestDetailsDateOfBirthTextView" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Message: "
-            android:layout_margin="5sp"
-            android:id="@+id/CarShareRequestDetailsMessageTextView" />
-    </LinearLayout>
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical" android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center|bottom">
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center|bottom">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Message"
-                android:gravity="center|bottom"
-                android:id="@+id/CarShareRequestDecisionMessage" />
+                android:text="@string/UserInformation"
+                style="@style/LargeBlueHeader"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Username"
+                style="@style/AlertDialogTextView"
+                android:id="@+id/JourneyRequestDetailsActivityNameTextView" />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Gender"
+                style="@style/AlertDialogTextView"
+                android:id="@+id/JourneyRequestDetailsActivityGenderTextView" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/EmailAddress"
+                style="@style/AlertDialogTextView"
+                android:id="@+id/JourneyRequestDetailsActivityEmailAddressTextView" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/DateOfBirth"
+                style="@style/AlertDialogTextView"
+                android:id="@+id/JourneyRequestDetailsActivityDateOfBirthTextView" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Message"
+                style="@style/AlertDialogTextView"
+                android:id="@+id/JourneyRequestDetailsActivityMessageTextView" />
 
         </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/AlertDialogTextView"
+            android:text="@string/Message"
+            android:gravity="center"
+            android:id="@+id/JourneyRequestDetailsActivityCanMakeDecisionTextView" />
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center|bottom">
+            android:layout_height="wrap_content">
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Accept"
-                android:id="@+id/CarShareRequestDetailsAcceptButton"
-                android:layout_weight="1"/>
+                android:text="@string/Accept"
+                android:id="@+id/JourneyRequestDetailsActivityAcceptButton"
+                android:layout_weight="1"
+                android:enabled="false"
+                style="style"/>
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Deny"
-                android:id="@+id/CarShareRequestDetailsDenyButton"
-                android:layout_weight="1"/>
+                android:text="@string/Deny"
+                android:id="@+id/JourneyRequestDetailsActivityDenyButton"
+                android:layout_weight="1"
+                android:enabled="false"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

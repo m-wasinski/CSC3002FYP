@@ -40,7 +40,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.home_activity);
+        setContentView(R.layout.activity_home);
         actionBar.setTitle(" Hi " + findNDriveManager.getUser().UserName);
         myJourneysLayout = (LinearLayout) findViewById(R.id.ActivityHomeMyJourneysLayout);
         searchLayout = (LinearLayout) findViewById(R.id.ActivityHomeSearchLayout);

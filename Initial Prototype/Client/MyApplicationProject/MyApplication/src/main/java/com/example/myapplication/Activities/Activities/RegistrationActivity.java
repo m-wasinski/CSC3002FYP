@@ -41,7 +41,7 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.registration_activity);
+        setContentView(R.layout.activity_registration);
         progressBar = (ProgressBar) findViewById(R.id.RegistrationActivityProgressBar);
         userNameEditText = (EditText) findViewById(R.id.UserNameTextField);
         userNameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {

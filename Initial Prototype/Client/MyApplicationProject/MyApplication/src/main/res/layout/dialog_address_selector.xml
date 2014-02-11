@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Address:"
-        style="@style/MyCarSharesHeader"/>
+        style="@style/LargeBlueHeader"/>
 
     <EditText
         android:id="@+id/AddressDialogAddressEditText"
@@ -38,7 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Include journeys within:"
-        style="@style/MyCarSharesHeader"/>
+        style="@style/LargeBlueHeader"/>
 
     <LinearLayout
         android:layout_width="match_parent"

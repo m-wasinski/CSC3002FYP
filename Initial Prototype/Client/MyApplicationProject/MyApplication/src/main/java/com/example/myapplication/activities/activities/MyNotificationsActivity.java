@@ -1,7 +1,7 @@
 package com.example.myapplication.activities.activities;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AbsListView;
@@ -13,7 +13,9 @@ import android.widget.TextView;
 
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.adapters.NotificationsAdapter;
+import com.example.myapplication.constants.GcmConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
+import com.example.myapplication.domain_objects.FriendRequest;
 import com.example.myapplication.dtos.LoadRangeDTO;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
@@ -74,7 +76,7 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
             }
         });
         notifications = new ArrayList<Notification>();
-        notificationsAdapter = new NotificationsAdapter(this, R.layout.activity_notifications, notifications);
+        notificationsAdapter = new NotificationsAdapter(this, R.layout.listview_row_notification, notifications);
         mainListView.setAdapter(notificationsAdapter);
     }
 
@@ -134,14 +136,11 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                         markNotificationAsRead(notifications.get(i).NotificationId);
-                        builder.setTitle("Selected notification");
-                        builder.setItems(options, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
 
-                            }
-                        });
-                        builder.show();
+                        if(notifications.get(i).NotificationType == GcmConstants.NOTIFICATION_FRIEND_REQUEST)
+                        {
+                                showFriendRequest(notifications.get(i));
+                        }
                     }
                 });
             }
@@ -175,6 +174,35 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
                 }
             }).execute();*/
         }
+    }
+
+    private void showFriendRequest(Notification notification)
+    {
+        Dialog friendRequestDialog = new Dialog(this);
+        friendRequestDialog.setContentView(R.layout.activity_friend_request_received);
+        Button acceptButton = (Button) friendRequestDialog.findViewById(R.id.FriendRequestReceivedActivityAcceptButton);
+        acceptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                FriendRequest friendRequest = new FriendRequest();
+                friendRequest.RequestingUserId = 4;
+                friendRequest.TargetUserId = 2;
+                friendRequest.FriendRequestDecision = 1;
+                friendRequest.FriendRequestId = 2;
+
+                new WCFServiceTask<FriendRequest>(getApplicationContext(),
+                        getResources().getString(R.string.ProcessFriendRequestDecisionURL), friendRequest,
+                        new TypeToken<ServiceResponse<Boolean>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+                    @Override
+                    public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+
+                    }
+                }).execute();
+            }
+        });
+        Button denyButton = (Button) friendRequestDialog.findViewById(R.id.FriendRequestReceivedActivityDenyButton);
+        friendRequestDialog.show();
     }
 
     private void markNotificationAsRead(int id)

@@ -1,4 +1,4 @@
-package com.example.myapplication.experimental;
+package com.example.myapplication.broadcast_receivers;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -21,21 +21,22 @@ import com.google.gson.reflect.TypeToken;
  * Created by Michal on 28/01/14.
  */
 public class InstantMessengerReceiver extends BroadcastReceiver {
-    @Override
+
+    public final String TAG = this.getClass().getSimpleName();
+
     public void onReceive(Context context, Intent intent) {
 
         NotificationManager mNotificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         ChatMessage chatMessage = new Gson().fromJson(intent.getStringExtra(IntentConstants.MESSAGE), new TypeToken<ChatMessage>() {}.getType());
-        Log.i("Received Message: ", intent.getStringExtra(IntentConstants.MESSAGE));
-        int notificationId =  (int) System.currentTimeMillis();
+        Log.i(TAG, intent.getStringExtra(IntentConstants.MESSAGE));
 
         Bundle extras = new Bundle();
         extras.putString(IntentConstants.RECIPIENT_USERNAME, chatMessage.SenderUserName);
         extras.putInt(IntentConstants.RECIPIENT_ID, chatMessage.SenderId);
 
-        PendingIntent contentIntent = PendingIntent.getActivity(context, notificationId,
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, InstantMessengerActivity.class)
                         .putExtras(extras).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), 0);
 
@@ -50,6 +51,6 @@ public class InstantMessengerReceiver extends BroadcastReceiver {
         Notification notification = mBuilder.build();
         notification.flags = Notification.DEFAULT_LIGHTS | Notification.FLAG_AUTO_CANCEL;
 
-        mNotificationManager.notify(notificationId, notification);
+        mNotificationManager.notify(0, notification);
     }
 }

@@ -59,6 +59,17 @@
     <string name="Send">Send</string>
     <string name="ProfileIcon">Profile icon</string>
     <string name="EnterYourOwnMessage">Enter your own message</string>
+    <string name="Username">Username:</string>
+    <string name="UserInformation">User information:</string>
+    <string name="Gender">Gender: </string>
+    <string name="DateOfBirth">Date of Birth: </string>
+    <string name="Message">Message: </string>
+    <string name="Accept">Accept</string>
+    <string name="Deny">Deny</string>
+    <string name="EmailAddress">Email Address:</string>
+    <string name="SendFriendRequest">Send a friend request</string>
+    <string name="ShowProfile">Show Profile</string>
+    <string name="FriendRequestFrom">Friend request from: </string>
     <string-array name="app_menu_options">
         <item>Home</item>
         <item>My Car Shares</item>

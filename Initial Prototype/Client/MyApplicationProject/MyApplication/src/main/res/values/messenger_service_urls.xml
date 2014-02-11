@@ -4,5 +4,5 @@
     <string name="GetMessagesURL">https://findndrive.no-ip.co.uk/Services/MessengerService.svc/getall</string>
     <string name="SendMessageURL">https://findndrive.no-ip.co.uk/Services/MessengerService.svc/send</string>
     <string name="GetUnreadMessagesCountForFriendURL">https://findndrive.no-ip.co.uk/Services/MessengerService.svc/getunreadcountforfriend</string>
-    <string name="MarkMessagesAsReadURL">https://findndrive.no-ip.co.uk/Services/MessengerService.svc/markasreadforfriend</string>
+    <string name="GetUnreadMessages">https://findndrive.no-ip.co.uk/Services/MessengerService.svc/getunread</string>
 </resources>

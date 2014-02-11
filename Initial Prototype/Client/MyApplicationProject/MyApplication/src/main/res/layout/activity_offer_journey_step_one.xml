@@ -38,9 +38,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/OfferJourneyStepTwoActivityFromLabel"
                 android:layout_toRightOf="@+id/OfferJourneyStepOneActivityDepartureIconImageView"
-                android:layout_marginLeft="10sp"
                 android:text="@string/From"
-                style="@style/MyCarSharesHeader"/>
+                style="@style/LargeBlueHeader"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -64,12 +63,16 @@
 
         </RelativeLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:background="#B7D8E8"></LinearLayout>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:clickable="true"
-            android:layout_marginTop="2sp"
             android:id="@+id/OfferJourneyStepOneActivityViaRelativeLayout"
             android:background="@drawable/home_navigation_selector">
 
@@ -87,8 +90,7 @@
                 android:id="@+id/OfferJourneyStepOneActivityViaLabelTextView"
                 android:layout_toRightOf="@+id/OfferJourneyStepOneActivityViaIconImageView"
                 android:text="@string/Via"
-                android:layout_marginLeft="10sp"
-                style="@style/MyCarSharesHeader"/>
+                style="@style/LargeBlueHeader"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -102,12 +104,16 @@
 
         </RelativeLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:background="#B7D8E8"></LinearLayout>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:clickable="true"
-            android:layout_marginTop="2sp"
             android:id="@+id/OfferJourneyStepOneActivityDestinationRelativeLayout"
             android:background="@drawable/home_navigation_selector">
 
@@ -124,9 +130,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/OfferJourneyStepOneActivityDestinationLabelTextView"
                 android:layout_toRightOf="@+id/OfferJourneyStepOneActivityDestinationFlagImageView"
-                android:layout_marginLeft="10sp"
                 android:text="@string/To"
-                style="@style/MyCarSharesHeader"/>
+                style="@style/LargeBlueHeader"/>
 
             <TextView
                 android:layout_width="wrap_content"

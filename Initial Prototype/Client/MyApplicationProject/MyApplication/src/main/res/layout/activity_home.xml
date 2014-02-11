@@ -66,7 +66,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Search"
+                android:text="Find Journeys"
                 android:gravity="bottom"
                 android:layout_gravity="center"
                 style="@style/LoginFields"
@@ -106,7 +106,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="New Journey"
+                android:text="Offer Journey"
                 style="@style/LoginFields"
                 android:focusable="false"/>
         </LinearLayout>

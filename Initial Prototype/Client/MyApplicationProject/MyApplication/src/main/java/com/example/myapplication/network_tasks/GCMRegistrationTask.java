@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.example.myapplication.constants.GcmConstants;
 import com.example.myapplication.interfaces.GCMRegistrationCallback;
+import com.example.myapplication.utilities.Utilities;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import java.io.IOException;
@@ -24,6 +25,17 @@ public class GCMRegistrationTask extends AsyncTask<TextView, String, Boolean> {
     private GCMRegistrationCallback listener;
     private Random random;
     private String registrationId;
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+
+        if(!Utilities.isNetworkAvailable(this.context))
+        {
+            this.cancel(true);
+            this.listener.onGCMRegistrationCompleted("0");
+        }
+    }
 
     public GCMRegistrationTask(GCMRegistrationCallback l, Context context)
     {
@@ -61,16 +73,6 @@ public class GCMRegistrationTask extends AsyncTask<TextView, String, Boolean> {
 
                 if(i == MAX_ATTEMPTS)
                 {
-                    AlertDialog alertDialog = new AlertDialog.Builder(this.context).create();
-                    alertDialog.setCancelable(false);
-                    alertDialog.setMessage("Could not register your phone with GCM. You will not be able to receive notifications.");
-                    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    alertDialog.show();
                     this.registrationId = "0";
                     break;
                 }

@@ -65,30 +65,7 @@ namespace FindNDriveServices2
         /// </summary>
         private readonly Type serviceType;
 
-        /// <summary>
-        /// The _user service.
-        /// </summary>
-        private readonly UserService userService;
-
-        /// <summary>
-        /// The _car share service.
-        /// </summary>
-        private readonly JourneyService journeyService;
-
-        /// <summary>
-        /// The _request service.
-        /// </summary>
-        private readonly JourneyRequestService requestService;
-
-        /// <summary>
-        /// The _search service.
-        /// </summary>
-        private readonly SearchService searchService;
-
-        /// <summary>
-        /// The _notification service.
-        /// </summary>
-        private readonly NotificationService notificationService;
+       
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MyInstanceProvider"/> class.
@@ -101,11 +78,6 @@ namespace FindNDriveServices2
         public MyInstanceProvider(Type serviceType)
         {
             this.serviceType = serviceType;
-            this.userService = new UserService();
-            this.journeyService = new JourneyService();
-            this.searchService = new SearchService();
-            this.requestService = new JourneyRequestService();
-            this.notificationService = new NotificationService();
         }
 
         #region IInstanceProvider Members
@@ -161,8 +133,8 @@ namespace FindNDriveServices2
 
             var sessionManager = new SessionManager(findNDriveUnitOfWork);
 
-            var service = this.serviceType.GetConstructor(new[] { typeof(FindNDriveUnitOfWork), typeof(SessionManager), typeof(GCMManager) });
-            return service.Invoke(new object[] { findNDriveUnitOfWork, sessionManager, new GCMManager() });
+            var service = this.serviceType.GetConstructor(new[] { typeof(FindNDriveUnitOfWork), typeof(SessionManager), typeof(NotificationManager) });
+            return service.Invoke(new object[] { findNDriveUnitOfWork, sessionManager, new NotificationManager(findNDriveUnitOfWork) });
         }
 
         /// <summary>

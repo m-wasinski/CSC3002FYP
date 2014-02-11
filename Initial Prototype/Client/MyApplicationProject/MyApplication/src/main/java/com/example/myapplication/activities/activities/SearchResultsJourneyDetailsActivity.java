@@ -3,8 +3,6 @@ package com.example.myapplication.activities.activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -17,36 +15,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myapplication.R;
-import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.activities.base.BaseMapActivity;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.RequestDecision;
 import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.domain_objects.GeoAddress;
 import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.domain_objects.JourneyRequest;
 import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.experimental.DateTimeHelper;
-import com.example.myapplication.experimental.GMapV2Direction;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;
-import com.example.myapplication.utilities.Helpers;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
+import com.example.myapplication.utilities.Utilities;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.reflect.TypeToken;
 
-import org.w3c.dom.Document;
-
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -136,13 +120,13 @@ public class SearchResultsJourneyDetailsActivity extends BaseMapActivity impleme
         String[] vehicleTypes = getResources().getStringArray(R.array.vehicle_types);
         String[] paymentOptions = getResources().getStringArray(R.array.payment_options);
 
-        this.journeyHeaderTextView.setText(Helpers.getJourneyHeader(this.journey.GeoAddresses));
+        this.journeyHeaderTextView.setText(Utilities.getJourneyHeader(this.journey.GeoAddresses));
         this.journeyIdTextView.setText(String.valueOf(this.journey.JourneyId));
         this.journeyDriverTextView.setText(this.journey.Driver.FirstName + " " + this.journey.Driver.LastName);
         this.journeyDateTextView.setText(DateTimeHelper.getSimpleDate(this.journey.DateAndTimeOfDeparture));
         this.journeyTimeTextView.setText(DateTimeHelper.getSimpleTime(this.journey.DateAndTimeOfDeparture));
-        this.journeySmokersTextView.setText(Helpers.translateBoolean(this.journey.SmokersAllowed));
-        this.journeyPetsTextView.setText(Helpers.translateBoolean(this.journey.PetsAllowed));
+        this.journeySmokersTextView.setText(Utilities.translateBoolean(this.journey.SmokersAllowed));
+        this.journeyPetsTextView.setText(Utilities.translateBoolean(this.journey.PetsAllowed));
         this.journeyVehicleTypeTextView.setText(vehicleTypes[this.journey.VehicleType]);
         this.journeySeatsAvailableTextView.setText(String.valueOf(this.journey.AvailableSeats));
         this.journeyFeeTextView.setText("£"+new DecimalFormat("0.00").format(this.journey.Fee)+" "+paymentOptions[this.journey.PaymentOption]);

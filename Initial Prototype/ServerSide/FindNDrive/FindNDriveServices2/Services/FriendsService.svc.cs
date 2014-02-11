@@ -48,9 +48,9 @@ namespace FindNDriveServices2.Services
         private readonly SessionManager sessionManager;
 
         /// <summary>
-        /// The _gcm manager.
+        /// The notification manager.
         /// </summary>
-        private readonly GCMManager gcmManager;
+        private readonly NotificationManager notificationManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FriendsService"/> class.
@@ -72,11 +72,11 @@ namespace FindNDriveServices2.Services
         /// <param name="gcmManager">
         /// The gcm manager.
         /// </param>
-        public FriendsService(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager, GCMManager gcmManager)
+        public FriendsService(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager, NotificationManager notificationManager)
         {
             this.findNDriveUnitOfWork = findNDriveUnitOfWork;
             this.sessionManager = sessionManager;
-            this.gcmManager = gcmManager;
+            this.notificationManager = notificationManager;
         }
 
         /// <summary>
@@ -112,6 +112,7 @@ namespace FindNDriveServices2.Services
                 friendRequestDTO.FriendRequestId);
 
             targetRequest.DecidedOnDate = DateTime.Now;
+            targetRequest.Read = true;
             targetRequest.FriendRequestDecision = friendRequestDTO.FriendRequestDecision;
 
             if (friendRequestDTO.FriendRequestDecision == FriendRequestDecision.Accepted)
@@ -171,16 +172,28 @@ namespace FindNDriveServices2.Services
                 return ResponseBuilder.Failure<bool>("This user is already in your list of friends.");
             }
 
-            this.findNDriveUnitOfWork.FriendRequestsRepository.Add(
-                new FriendRequest
-                    {
-                        FriendRequestDecision = FriendRequestDecision.Undecided,
-                        SentOnDate = DateTime.Now,
-                        Read = false,
-                        RequestingUserId = friendRequestDTO.RequestingUserId,
-                        TargetUserId = friendRequestDTO.TargetUserId,
-                        Message = friendRequestDTO.Message
-                    });
+            if (friendRequestDTO.TargetUserId == friendRequestDTO.RequestingUserId)
+            {
+                return ResponseBuilder.Failure<bool>("You cannot invite yourself to your friends list.");
+            }
+
+            var friendRequest = new FriendRequest
+                                    {
+                                        FriendRequestDecision = FriendRequestDecision.Undecided,
+                                        SentOnDate = DateTime.Now,
+                                        Read = false,
+                                        RequestingUserId = friendRequestDTO.RequestingUserId,
+                                        TargetUserId = friendRequestDTO.TargetUserId,
+                                        Message = friendRequestDTO.Message,
+                                        TargetUserName =
+                                            targetUser.FirstName + " " + targetUser.LastName + " ("
+                                            + targetUser.UserName + ")",
+                                        RequestingUserName =
+                                            requestingUser.FirstName + " " + requestingUser.LastName + " ("
+                                            + requestingUser.UserName + ")"
+                                    };
+
+            this.findNDriveUnitOfWork.FriendRequestsRepository.Add(friendRequest);
 
             var receiverMessage = "You received a friend request from user: {0} {1} ({2})";
             var senderMessage = "You sent a friend request to user: {0} {1} ({2})";
@@ -197,7 +210,7 @@ namespace FindNDriveServices2.Services
                                                  Read = false,
                                                  Context = NotificationContext.Positive,
                                                  ReceivedOnDate = DateTime.Now,
-                                                 NotificationType = NotificationType.JourneyRequestReceived
+                                                 NotificationType = NotificationType.FriendRequest
                                              };
 
             this.findNDriveUnitOfWork.NotificationRepository.Add(targetUserNotification);
@@ -215,60 +228,17 @@ namespace FindNDriveServices2.Services
                     Read = false,
                     Context = NotificationContext.Positive,
                     ReceivedOnDate = DateTime.Now,
-                    NotificationType = NotificationType.JourneyRequestReceived
+                    NotificationType = NotificationType.FriendRequest
                 });
 
-            var message = JsonConvert.SerializeObject(
-                targetUserNotification,
-                typeof(FriendRequest),
-                Formatting.Indented,
-                new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.MicrosoftDateFormat });
-
-            if (targetUser.Status == Status.Online)
-            {
-                this.gcmManager.SendFriendRequest(new Collection<string> { targetUser.GCMRegistrationID }, message);
-            }
-            else
-            {
-                this.findNDriveUnitOfWork.GCMNotificationsRepository.Add(new GCMNotification
-                {
-                    UserId = targetUser.UserId,
-                    Delivered = false,
-                    ContentTitle = "Friend Request",
-                    NotificationType = NotificationType.FriendRequest,
-                    NotificationMessage = message
-                });
-            }
-
             this.findNDriveUnitOfWork.Commit();
-            return ResponseBuilder.Success(true);
-        }
 
-        /// <summary>
-        /// The mark as read.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        public ServiceResponse<bool> MarkAsRead(int id)
-        {
-            if (!this.sessionManager.ValidateSession())
-            {
-                return ResponseBuilder.Unauthorised(false);
-            }
 
-            var request = this.findNDriveUnitOfWork.FriendRequestsRepository.Find(id);
-
-            if (request == null)
-            {
-                return ResponseBuilder.Failure<bool>("Invalid friend request id");
-            }
-
-            request.Read = true;
-            this.findNDriveUnitOfWork.Commit();
+            this.notificationManager.SendNotification(
+                new Collection<User> { targetUser },
+                "New friend request",
+                NotificationType.FriendRequest,
+                friendRequest);
 
             return ResponseBuilder.Success(true);
         }

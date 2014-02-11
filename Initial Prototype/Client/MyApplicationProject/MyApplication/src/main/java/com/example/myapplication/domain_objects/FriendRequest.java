@@ -13,4 +13,6 @@ public class FriendRequest {
     public Boolean Read;
     public String SentOnDate;
     public String DecidedOnDate;
+    public String RequestingUserName;
+    public String TargetUserName;
 }

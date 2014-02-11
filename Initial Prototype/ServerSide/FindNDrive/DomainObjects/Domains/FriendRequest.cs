@@ -35,10 +35,22 @@ namespace DomainObjects.Domains
         public int TargetUserId { get; set; }
 
         /// <summary>
+        /// Gets or sets the target user name.
+        /// </summary>
+        [DataMember]
+        public string TargetUserName { get; set; }
+
+        /// <summary>
         /// Gets or sets the requesting user id.
         /// </summary>
         [DataMember]
         public int RequestingUserId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the requesting user name.
+        /// </summary>
+        [DataMember]
+        public string RequestingUserName { get; set; }
 
         /// <summary>
         /// Gets or sets the message.

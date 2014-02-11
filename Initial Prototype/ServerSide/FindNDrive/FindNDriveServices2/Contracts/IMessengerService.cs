@@ -95,18 +95,15 @@ namespace FindNDriveServices2.Contracts
         /// <summary>
         /// The mark messages as read for friend.
         /// </summary>
-        /// <param name="chatMessageDtos">
-        /// The chat Message Dtos.
+        /// <param name="chatMessageRetrieverDTO">
+        /// The chat Message Retriever DTO.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        [WebInvoke(Method = "POST",
-            ResponseFormat = WebMessageFormat.Json,
-            RequestFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/markasreadforfriend")]
-        ServiceResponse<bool> MarkMessagesAsRead(List<ChatMessageDTO> chatMessageDtos);
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/getunread")]
+        ServiceResponse<List<ChatMessage>> GetUnreadMessages(ChatMessageRetrieverDTO chatMessageRetrieverDTO);
     }
 }

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 
 import com.example.myapplication.R;
@@ -36,6 +37,13 @@ public class FindNDriveManager extends Application {
     private String registrationId;
     private String uniqueDeviceId;
     private SharedPreferences sharedPreferences;
+    private WifiManager wifiManager;
+    private WifiManager.WifiLock wifiLock;
+
+    public Boolean hasAppBeenKilled()
+    {
+        return this.user == null && this.getSessionId().endsWith("0");
+    }
 
     public void setSessionId(String sessionId)
     {
@@ -48,6 +56,27 @@ public class FindNDriveManager extends Application {
 
         SharedPreferences.Editor editor = this.sharedPreferences.edit();
         editor.putString(SharedPreferencesConstants.PROPERTY_SESSION_ID, sessionId);
+        editor.commit();
+    }
+
+    public void login(User u)
+    {
+        if(this.wifiLock == null)
+        {
+            this.retrieveWifiLock();
+        }
+
+        this.wifiLock.acquire();
+
+        this.user = u;
+
+        if(this.sharedPreferences == null)
+        {
+            this.sharedPreferences = this.retrieveSharedPreferences();
+        }
+
+        SharedPreferences.Editor editor = this.sharedPreferences.edit();
+        editor.putString(SharedPreferencesConstants.PROPERTY_USER, u == null ? "" : new Gson().toJson(user));
         editor.commit();
     }
 
@@ -201,6 +230,13 @@ public class FindNDriveManager extends Application {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
+
+            if(this.wifiLock== null)
+            {
+                this.retrieveWifiLock();
+            }
+
+            this.wifiLock.release();
         }
     }
 
@@ -211,6 +247,8 @@ public class FindNDriveManager extends Application {
         this.registrationId = this.retrieveRegistrationId();
         this.sessionId = this.retrieveSessionId();
         this.uniqueDeviceId = this.retrieveUniqueDeviceId();
+        this.wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        this.wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "LockTag");
     }
 
     private String retrieveUniqueDeviceId()
@@ -255,5 +293,11 @@ public class FindNDriveManager extends Application {
     private SharedPreferences retrieveSharedPreferences()
     {
         return getSharedPreferences(SharedPreferencesConstants.GLOBAL_APP_DATA, Context.MODE_PRIVATE);
+    }
+
+    private void retrieveWifiLock()
+    {
+        this.wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        this.wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "LockTag");
     }
 }

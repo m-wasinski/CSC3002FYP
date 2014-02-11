@@ -1,14 +1,19 @@
 package com.example.myapplication.network_tasks;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.MarkerType;
+import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.experimental.GeocoderParams;
 import com.example.myapplication.interfaces.GeoCoderFinishedCallBack;
+import com.example.myapplication.utilities.Utilities;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -85,8 +90,34 @@ public class GeocoderTask extends AsyncTask<GeocoderParams, Void, MarkerOptions>
     }
 
     @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        if(!Utilities.isNetworkAvailable(this.context))
+        {
+            cancel(true);
+            this.displayErrorDialog("Network unavailable, please check your internet connection and try again.");
+        }
+    }
+
+    @Override
     protected void onPostExecute(MarkerOptions s) {
         super.onPostExecute(s);
         this.listener.onGeoCoderFinished(this.markerOptions, this.markerType, this.perimeter);
+    }
+
+    private void displayErrorDialog(String message)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
+        builder.setMessage(message)
+                .setCancelable(false)
+                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                        listener.onGeoCoderFinished(null, null, 0);
+                    }
+                });
+
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }

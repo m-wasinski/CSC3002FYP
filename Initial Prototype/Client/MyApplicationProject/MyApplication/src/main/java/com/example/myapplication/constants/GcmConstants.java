@@ -16,7 +16,11 @@ public class GcmConstants {
     public static final int NOTIFICATION_FRIEND_OFFERED_NEW_JOURNEY = 9;
     public static final int NOTIFICATION_INSTANT_MESSENGER = 10;
     public static final int NOTIFICATION_JOURNEY_REQUEST_SENT = 11;
+
     public static final String BROADCAST_ACTION_REFRESH = "BROADCAST_ACTION_REFRESH";
     public static final String BROADCAST_INSTANT_MESSENGER = "BROADCAST_INSTANT_MESSENGER";
+    public static final String BROADCAST_JOURNEY_REQUEST = "BROADCAST_JOURNEY_REQUEST";
+    public static final String BROADCAST_FRIEND_REQUEST = "BROADCAST_FRIEND_REQUEST";
     public static final String BROADCAST_ACTION_LOGOUT = "BROADCAST_ACTION_LOGOUT";
+    public static final String BROADCAST_JOURNEY_REQUEST_REPLY = "BROADCAST_JOURNEY_REQUEST_REPLY";
 }

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="2sp"
+    android:background="#80151515"
+    android:descendantFocusability="blocksDescendants">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/MyCarSharesTitleLayout"
+        android:layout_marginBottom="5dip">
+
+        <TextView android:id="@+id/MyCarSharesFromToTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5sp"
+            android:text="From City A to city B"
+            style="@style/RegularEditText"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/MyCarSharesTitleLayout"
+        android:id="@+id/MyCarSharesStatusIconLayout">
+
+        <TextView android:id="@+id/MyCarSharesNumberOfUnreadRequestsTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:layout_marginLeft="4sp"
+            style="@style/ContentBody"/>
+
+        <ImageView android:id="@+id/MyCarSharesNewRequestIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/notification_myjourney"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/MyCarSharesStatusIconLayout"
+        android:layout_marginTop="5dip">
+
+        <TextView android:id="@+id/MyCarSharesNumberOfUnreadMessagesTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:layout_marginLeft="4sp"
+            style="@style/ContentBody"/>
+
+        <ImageView android:id="@+id/MyCarSharesNewMessagesIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/envelope_blue"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_toRightOf="@+id/MyCarSharesStatusIconLayout"
+        android:layout_below="@+id/MyCarSharesTitleLayout"
+        android:id="@+id/MyCarSharesContentLayout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="5sp"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#32B4E4"
+                android:text="Journey Id: "/>
+
+            <TextView android:id="@+id/MyCarSharesJourneyIdTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/ContentBody"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#32B4E4"
+                android:text="Date: "/>
+
+            <TextView android:id="@+id/MyCarSharesDepartureDateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/ContentBody"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#32B4E4"
+                android:text="Time: "/>
+
+            <TextView android:id="@+id/MyCarSharesDepartureTimeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/ContentBody"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#32B4E4"
+                android:text="Available Seats: "/>
+
+            <TextView android:id="@+id/MyCarSharesAvailableSeatsTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/ContentBody"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/MyCarSharesContentLayout"
+        android:id="@+id/MyCarSharesStatusIconsLayout">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Status: "
+                android:textColor="#32B4E4"/>
+
+            <TextView android:id="@+id/MyCarSharesStatusTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/ContentBody"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip"
+            android:layout_marginLeft="15dip">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="As: "
+                android:textColor="#32B4E4"/>
+
+            <TextView android:id="@+id/MyCarSharesModeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/ContentBody"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Created: "
+                android:textColor="#32B4E4"
+                android:layout_marginLeft="15dip"/>
+
+            <TextView android:id="@+id/InstantMessengerRowDateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/ContentBody"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:background="#B7D8E8"
+        android:layout_below="@+id/MyCarSharesStatusIconsLayout"></LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/right_arrow"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dip"/>
+</RelativeLayout>

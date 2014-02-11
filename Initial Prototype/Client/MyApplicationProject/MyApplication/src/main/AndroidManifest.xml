@@ -66,25 +66,12 @@
             android:windowSoftInputMode="adjustPan"
             android:label="Register"
             android:screenOrientation="portrait"/>
-        <activity
-            android:name=".activities.activities.CreateNewJourneyActivity"
-            android:label="New journey"
-            android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".activities.activities.ContactDriverActivity"
-            android:label="Contact driver"
-            android:screenOrientation="portrait"/>
-
-        <activity
-            android:name=".activities.activities.JourneyRequestsActivity"
-            android:label="Journey requests"
-            android:screenOrientation="portrait"/>
-
-        <activity
-            android:name=".activities.activities.JourneyRequestDetailsActivity"
+            android:name=".activities.activities.JourneyRequestDialogActivity"
             android:label="Journey request details"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Dialog"/>
 
         <activity
             android:name=".activities.activities.FriendsListActivity"
@@ -141,6 +128,18 @@
             android:label="Journey Details"
             android:screenOrientation="portrait"/>
 
+        <activity
+            android:name=".activities.activities.SendFriendRequestDialogActivity"
+            android:label="Send friend request."
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Dialog"/>
+
+        <activity
+            android:name=".activities.activities.ReceivedFriendRequestDialogActivity"
+            android:label="Send friend request."
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Dialog"/>
+
         <receiver
             android:name=".gcm.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
@@ -150,9 +149,27 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".experimental.InstantMessengerReceiver">
+        <receiver android:name=".broadcast_receivers.InstantMessengerReceiver">
             <intent-filter>
                 <action android:name="BROADCAST_INSTANT_MESSENGER" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".broadcast_receivers.JourneyRequestReceiver">
+            <intent-filter>
+                <action android:name="BROADCAST_JOURNEY_REQUEST" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".broadcast_receivers.FriendRequestReceiver">
+            <intent-filter>
+                <action android:name="BROADCAST_FRIEND_REQUEST" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".broadcast_receivers.JourneyRequestReplyReceiver">
+            <intent-filter>
+                <action android:name="BROADCAST_JOURNEY_REQUEST_REPLY" />
             </intent-filter>
         </receiver>
 

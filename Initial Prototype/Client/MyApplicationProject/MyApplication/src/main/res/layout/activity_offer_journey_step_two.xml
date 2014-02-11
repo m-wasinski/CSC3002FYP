@@ -48,7 +48,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="From:"
-                        style="@style/MyCarSharesHeader"/>
+                        style="@style/LargeBlueHeader"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
                         android:layout_height="wrap_content"
                         android:text="via:"
                         android:layout_marginLeft="20dp"
-                        style="@style/MyCarSharesHeader"
+                        style="@style/LargeBlueHeader"
                         android:id="@+id/OfferJourneyStepTwoActivityViaTextView"
                         android:visibility="gone"/>
 
@@ -75,7 +75,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="To:"
-                        style="@style/MyCarSharesHeader"/>
+                        style="@style/LargeBlueHeader"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -126,8 +126,7 @@
                         android:id="@+id/OfferJourneyStepTwoActivityJourneyTypeLabel"
                         android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityRepeatImageView"
                         android:text="Regular/One time:"
-                        android:layout_marginLeft="10sp"
-                        style="@style/MyCarSharesHeader"/>
+                        style="@style/LargeBlueHeader"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -170,11 +169,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10sp"
                         android:id="@+id/OfferJourneyStepTwoActivityJourneyDateLabel"
                         android:text="Date:"
                         android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityCalendarImageView"
-                        style="@style/MyCarSharesHeader"/>
+                        style="@style/LargeBlueHeader"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -220,8 +218,7 @@
                         android:id="@+id/OfferJourneyStepTwoActivityJourneyTimeLabel"
                         android:text="Time:"
                         android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityClockImageView"
-                        android:layout_marginLeft="10sp"
-                        style="@style/MyCarSharesHeader"/>
+                        style="@style/LargeBlueHeader"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -267,9 +264,8 @@
                         android:layout_height="wrap_content"
                         android:text="Private:"
                         android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityLockImageView"
-                        android:layout_marginLeft="10sp"
                         android:id="@+id/OfferJourneyStepTwoActivityPrivateLabel"
-                        style="@style/MyCarSharesHeader"/>
+                        style="@style/LargeBlueHeader"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -315,9 +311,8 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/OfferJourneyStepTwoActivitySmokersLabel"
                         android:text="Smokers:"
-                        android:layout_marginLeft="10sp"
                         android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityCigaretteImageView"
-                        style="@style/MyCarSharesHeader"/>
+                        style="@style/LargeBlueHeader"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -363,9 +358,8 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/OfferJourneyStepTwoActivityPetsLabel"
                         android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityPetImageView"
-                        android:layout_marginLeft="10sp"
                         android:text="Pets:"
-                        style="@style/MyCarSharesHeader"/>
+                        style="@style/LargeBlueHeader"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -408,9 +402,8 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/OfferJourneyStepTwoActivityVehicleTypeLabel"
                         android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityVehicleImageView"
-                        android:layout_marginLeft="10sp"
                         android:text="Vehicle type:"
-                        style="@style/MyCarSharesHeader"/>
+                        style="@style/LargeBlueHeader"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -454,9 +447,8 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/OfferJourneyStepTwoActivityAvailableSeatsLabel"
                         android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityAvailableSeatsImageView"
-                        android:layout_marginLeft="10sp"
                         android:text="Available seats:"
-                        style="@style/MyCarSharesHeader"/>
+                        style="@style/LargeBlueHeader"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -500,9 +492,8 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/OfferJourneyStepTwoActivityFeeLabel"
                         android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityFeeImageView"
-                        android:layout_marginLeft="10sp"
                         android:text="Fee:"
-                        style="@style/MyCarSharesHeader"/>
+                        style="@style/LargeBlueHeader"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -537,9 +528,8 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/OfferJourneyStepTwoActivityCommentsLabel"
                         android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityCommentsImageView"
-                        android:layout_marginLeft="10sp"
                         android:text="Comments:"
-                        style="@style/MyCarSharesHeader"/>
+                        style="@style/LargeBlueHeader"/>
 
                     <EditText
                         android:layout_width="match_parent"

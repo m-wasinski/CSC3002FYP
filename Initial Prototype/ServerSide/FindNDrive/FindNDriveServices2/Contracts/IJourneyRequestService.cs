@@ -59,23 +59,6 @@ namespace FindNDriveServices2.Contracts
         ServiceResponse<JourneyRequest> ProcessDecision(JourneyRequestDTO journeyRequestDTO);
 
         /// <summary>
-        /// The mark as read.
-        /// </summary>
-        /// <param name="carShareRequestDTO">
-        /// The car share request dto.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        [OperationContract]
-        [WebInvoke(Method = "POST",
-            ResponseFormat = WebMessageFormat.Json,
-            RequestFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/markasread")]
-        ServiceResponse<JourneyRequest> MarkAsRead(int id);
-
-        /// <summary>
         /// The get all requests for journey.
         /// </summary>
         /// <param name="id">

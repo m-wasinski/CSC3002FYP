@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="OR"
-            style="@style/MyCarSharesHeader"/>
+            style="@style/LargeBlueHeader"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -58,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Select preferred payment method"
-        style="@style/MyCarSharesHeader"/>
+        style="@style/LargeBlueHeader"/>
 
     <RadioGroup
         android:layout_width="wrap_content"

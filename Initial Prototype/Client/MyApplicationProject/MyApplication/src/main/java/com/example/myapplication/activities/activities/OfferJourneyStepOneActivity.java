@@ -77,9 +77,6 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        if(googleMap != null)
-            centerMapOnMyLocation();
     }
 
     private void initialiseMap() {
@@ -159,7 +156,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
     {
         final Dialog wayPointDialog = new Dialog(this);
         wayPointDialog.setCanceledOnTouchOutside(true);
-        wayPointDialog.setContentView(R.layout.alert_dialog_waypoint_selector);
+        wayPointDialog.setContentView(R.layout.dialog_waypoint_selector);
         wayPointDialog.setTitle("Journey waypoints");
 
         final EditText firstWayPointEditText  = (EditText) wayPointDialog.findViewById(R.id.AlertDialogWaypointSelectorFirstWaypointEditText);
@@ -269,7 +266,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
     {
         final Dialog addressSelectorDialog = new Dialog(this);
         addressSelectorDialog.setCanceledOnTouchOutside(true);
-        addressSelectorDialog.setContentView(R.layout.alert_dialog_offer_journey_address_selector);
+        addressSelectorDialog.setContentView(R.layout.dialog_offer_journey_address_selector);
         addressSelectorDialog.setTitle(markerType == MarkerType.Departure ? "Enter departure address" : "Enter destination address");
         final  EditText addressEditText = (EditText) addressSelectorDialog.findViewById(R.id.AlertDialogOfferJourneyAddressSelectorAddressEditText);
         addressEditText.setText(marker == null ? "" : marker.getTitle());

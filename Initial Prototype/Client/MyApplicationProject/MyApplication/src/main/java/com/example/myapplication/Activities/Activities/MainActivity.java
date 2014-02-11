@@ -60,7 +60,7 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
      */
     @Override
     public void onServiceCallCompleted(ServiceResponse<User> serviceResponse, String param) {
-        findNDriveManager.setUser(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS ? serviceResponse.Result : null);
+        findNDriveManager.login(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS ? serviceResponse.Result : null);
         Intent intent = new Intent(this, serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS ? HomeActivity.class : LoginActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
@@ -77,22 +77,20 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
         // Check device for Play Services APK.
         if (!checkPlayServices()) {
             // If this check succeeds, proceed with normal processing.
-            Log.i(TAG, "Google Play is not available on this device.");
-            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-            alertDialog.setCancelable(false);
-            alertDialog.setTitle("Google Play is not available on this device.");
-            alertDialog.setMessage("For optimal experience, please ensure that Google Play is installed and that your google account is set up on your device. You will not be able to receive notifications and instant messages in real time until Google Play is installed.");
-            alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                    findNDriveManager.setRegistrationId("0");
-                    initialisationStepTwo();
-                }
-            });
-            alertDialog.show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                    .setMessage("For optimal experience, please ensure that Google Play is installed and that your google account is set up on your device. You will not be able to receive notifications and instant messages in real time until Google Play is installed.")
+                    .setCancelable(false)
+                    .setTitle("Google Play is not available on this device.")
+                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                            findNDriveManager.setRegistrationId("0");
+                            initialisationStepTwo();
+                        }
+                    });
 
-
+            AlertDialog alert = builder.create();
+            alert.show();
         }
         else
         {
@@ -101,7 +99,29 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
                 Log.i(TAG, "GCM Registration Id is empty, attempting to register device.");
                 GCMRegistrationTask registerGCMTask = new GCMRegistrationTask(new GCMRegistrationCallback() {
                     @Override
-                    public void onGCMRegistrationCompleted(String registrationId) {
+                    public void onGCMRegistrationCompleted(String registrationId)
+                    {
+                        if(registrationId.equals("0"))
+                        {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext())
+                                    .setMessage("Could not register with Google Cloud Messaging. Please try-again in a few minutes. The app will not exit.")
+                                    .setCancelable(false)
+                                    .setTitle("GCM unavailable.")
+                                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.dismiss();
+                                            findNDriveManager.setRegistrationId("0");
+                                            initialisationStepTwo();
+                                        }
+                                    });
+
+                            AlertDialog alert = builder.create();
+                            alert.show();
+
+                            finish();
+                            return;
+                        }
+
                         Log.i(TAG, "GCM Registration completed, the new registration id is: " + registrationId);
                         findNDriveManager.setRegistrationId(registrationId);
                         initialisationStepTwo();
@@ -123,18 +143,7 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
         findNDriveManager.setUUID(UUID.randomUUID().toString());
         Log.i(TAG, "New UUID generated, " + findNDriveManager.getUUID());
 
-        //If session exists, attempt auto-login.
-        if (!findNDriveManager.getSessionId().isEmpty())
-        {
-            new WCFServiceTask<String>(this, getResources().getString(R.string.UserAutoLoginURL), "", new TypeToken<ServiceResponse<User>>() {}.getType(),
-                    findNDriveManager.getAuthorisationHeaders(), this).execute();
-        }
-        else
-        {
-            //If auto-login fails, start login activity and ask user to log in manually.
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        }
+        new WCFServiceTask<String>(this, getResources().getString(R.string.UserAutoLoginURL), "", new TypeToken<ServiceResponse<User>>() {}.getType(),
+                findNDriveManager.getAuthorisationHeaders(), this).execute();
     }
 }

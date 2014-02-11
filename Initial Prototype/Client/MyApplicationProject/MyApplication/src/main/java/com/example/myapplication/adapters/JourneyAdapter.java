@@ -2,7 +2,6 @@ package com.example.myapplication.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,13 +11,11 @@ import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.myapplication.activities.activities.JourneyChatActivity;
-import com.example.myapplication.activities.activities.JourneyRequestsActivity;
 import com.example.myapplication.constants.JourneyStatus;
 import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.R;
-import com.google.gson.Gson;
+import com.example.myapplication.utilities.Utilities;
 
 import java.util.ArrayList;
 
@@ -32,7 +29,6 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
     private int userId;
     private ArrayList<Journey> originalCarShares;
     private ArrayList<Journey> displayedCarShares;
-    private Mode mode;
 
     @Override
     public int getCount() {
@@ -46,20 +42,18 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
         this.originalCarShares = carShares;
         this.displayedCarShares = this.originalCarShares;
         userId = user;
-        mode = mode.Passenger;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
-        CarShareHolder holder = null;
+        JourneyHolder holder = null;
 
         if(row == null)
         {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
-            holder = new CarShareHolder();
-            holder.modeIcon = (ImageView) row.findViewById(R.id.imgIcon);
+            holder = new JourneyHolder();
             holder.fromTo = (TextView) row.findViewById(R.id.MyCarSharesFromToTextView);
             holder.departureDate = (TextView)row.findViewById(R.id.MyCarSharesDepartureDateTextView);
             holder.departureTime = (TextView) row.findViewById(R.id.MyCarSharesDepartureTimeTextView);
@@ -68,7 +62,6 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
             holder.unreadRequests = (TextView) row.findViewById(R.id.MyCarSharesNumberOfUnreadRequestsTextView);
             holder.modeTextView = (TextView) row.findViewById(R.id.MyCarSharesModeTextView);
             holder.statusTextView = (TextView) row.findViewById(R.id.MyCarSharesStatusTextView);
-            holder.statusIcon = (ImageView) row.findViewById(R.id.MyCarSharesStatusIcon);
             holder.journeyId = (TextView) row.findViewById(R.id.MyCarSharesJourneyIdTextView);
             holder.unreadMessages = (TextView) row.findViewById(R.id.MyCarSharesNumberOfUnreadMessagesTextView);
             holder.newMessagesIconView = (ImageView) row.findViewById(R.id.MyCarSharesNewMessagesIcon);
@@ -77,63 +70,36 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
         }
         else
         {
-            holder = (CarShareHolder)row.getTag();
+            holder = (JourneyHolder)row.getTag();
         }
 
         final Journey journey = displayedCarShares.get(position);
-        int statusIconResource = 0;
         String statusText = "";
 
         switch(journey.JourneyStatus)
         {
             case JourneyStatus.Upcoming:
-                statusIconResource = R.drawable.upcoming;
                 statusText = "Upcoming";
                 break;
             case JourneyStatus.Cancelled:
-                statusIconResource = R.drawable.cancelled;
                 statusText = "Cancelled";
                 break;
             case JourneyStatus.Past:
-                statusIconResource = R.drawable.past;
                 statusText = "Expired";
                 break;
         }
 
-        holder.journeyId.setText("Journey id: " + journey.JourneyId);
-        holder.fromTo.setText(journey.GeoAddresses.get(0).AddressLine + " -> " + journey.GeoAddresses.get(journey.GeoAddresses.size()-1).AddressLine);
-        holder.departureDate.setText("Date: " + DateTimeHelper.getSimpleDate(journey.DateAndTimeOfDeparture));
-        holder.departureTime.setText("Time: " + DateTimeHelper.getSimpleTime(journey.DateAndTimeOfDeparture));
-        holder.availableSeats.setText("Available seats: " + journey.AvailableSeats);
-        holder.modeIcon.setImageResource(R.drawable.taxi);
-        holder.statusIcon.setImageResource(statusIconResource);
+        holder.journeyId.setText(String.valueOf(journey.JourneyId));
+        holder.fromTo.setText(Utilities.getJourneyHeader(journey.GeoAddresses));
+        holder.departureDate.setText(DateTimeHelper.getSimpleDate(journey.DateAndTimeOfDeparture));
+        holder.departureTime.setText(DateTimeHelper.getSimpleTime(journey.DateAndTimeOfDeparture));
+        holder.availableSeats.setText(String.valueOf(journey.AvailableSeats));
         holder.statusTextView.setText(statusText);
         holder.creationDateTextView.setText(DateTimeHelper.getSimpleDate(journey.CreationDate));
-
-        if(journey.DriverId == userId)
-        {
-            holder.modeIcon.setImageResource(R.drawable.steering_wheel);
-            holder.modeTextView.setText("Driver");
-            mode = mode.Driver;
-        }
-        else
-        {
-            holder.modeTextView.setText("Passenger");
-        }
-
-        if(journey.UnreadRequestsCount > 0)
-        {
-            holder.newRequestIcon.setImageResource(R.drawable.new_request);
-            holder.unreadRequests.setTypeface(null, Typeface.BOLD);
-            //holder.fromTo.setTextColor(Color.rgb(45, 142, 28));
-            holder.unreadRequests.setText("("+journey.UnreadRequestsCount+")");
-        }
-        else
-        {
-            holder.newRequestIcon.setImageResource(R.drawable.no_new_requests);
-            holder.unreadRequests.setTypeface(null, Typeface.NORMAL);
-            //holder.fromTo.setTextColor(Color.rgb(0, 134, 201));
-        }
+        holder.modeTextView.setText(journey.DriverId == userId ? "Driver" : "Passenger");
+        holder.newRequestIcon.setImageResource(journey.UnreadRequestsCount > 0 ? R.drawable.new_notification_myjourney : R.drawable.notification_myjourney);
+        holder.unreadRequests.setTypeface(null, journey.UnreadRequestsCount > 0 ? (Typeface.BOLD) : (Typeface.NORMAL));
+        holder.unreadRequests.setText(""+journey.UnreadRequestsCount);
 
         return row;
     }
@@ -159,12 +125,6 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
                     originalCarShares = displayedCarShares; // saves the original data in mOriginalValues
                 }
 
-                /********
-                 *
-                 *  If constraint(CharSequence that is received) is null returns the mOriginalValues(Original) values
-                 *  else does the Filtering and returns FilteredArrList(Filtered)
-                 *
-                 ********/
                 if (constraint == null || constraint.length() == 0) {
 
                     // set the Original result to return
@@ -188,25 +148,8 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
         return filter;
     }
 
-    private void startRequestsActivity(Journey carShare)
+    class JourneyHolder
     {
-        Gson gson = new Gson();
-        Intent intent = new Intent(this.context, JourneyRequestsActivity.class);
-        intent.putExtra("CurrentCarShare", gson.toJson(carShare));
-        this.context.startActivity(intent);
-    }
-
-    private void startChatActivity(Journey carShare)
-    {
-        Gson gson = new Gson();
-        Intent intent = new Intent(this.context, JourneyChatActivity.class);
-        intent.putExtra("CurrentCarShare", gson.toJson(carShare));
-        this.context.startActivity(intent);
-    }
-    class CarShareHolder
-    {
-        ImageView modeIcon;
-        ImageView statusIcon;
         ImageView newRequestIcon;
         ImageView newMessagesIconView;
         TextView journeyId;
@@ -219,10 +162,5 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
         TextView modeTextView;
         TextView unreadMessages;
         TextView creationDateTextView;
-    }
-
-    enum Mode{
-        Driver,
-        Passenger
     }
 }

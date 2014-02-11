@@ -55,20 +55,6 @@ namespace FindNDriveServices2.Contracts
         ServiceResponse<bool> SendRequest(FriendRequestDTO friendRequestDTO);
 
         /// <summary>
-        /// The mark as read.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        [OperationContract]
-        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/markasread")]
-        ServiceResponse<bool> MarkAsRead(int id);
-
-        /// <summary>
         /// The get travel buddies.
         /// </summary>
         /// <param name="userId">

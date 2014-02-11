@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.R;
-import com.example.myapplication.utilities.Helpers;
+import com.example.myapplication.utilities.Utilities;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public class SearchResultsAdapter extends ArrayAdapter<Journey> {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
             currentRow = inflater.inflate(layoutResourceId, parent, false);
             holder = new SearchResultHolder();
-            holder.fromToTextView = (TextView) currentRow.findViewById(R.id.FragmentSearchFromToTextView);
+            holder.fromToTextView = (TextView) currentRow.findViewById(R.id.ListViewRowSearchResultHeaderTextView);
             holder.dateTextView = (TextView) currentRow.findViewById(R.id.FragmentSearchDateTextView);
             holder.timeTextView = (TextView)currentRow.findViewById(R.id.FragmentSearchTimeTextView);
             holder.seatsLeftTextView = (TextView) currentRow.findViewById(R.id.FragmentSearchSeatsLeftTextView);
@@ -58,11 +58,11 @@ public class SearchResultsAdapter extends ArrayAdapter<Journey> {
 
         Journey journey = journeys.get(position);
 
-        holder.fromToTextView.setText(Helpers.getJourneyHeader(journey.GeoAddresses));
-        holder.dateTextView.setText("Date: " + DateTimeHelper.getSimpleDate(journey.DateAndTimeOfDeparture));
-        holder.timeTextView.setText("Time: " + DateTimeHelper.getSimpleTime(journey.DateAndTimeOfDeparture));
-        holder.seatsLeftTextView.setText("Seats left: " + journey.AvailableSeats);
-        holder.feeTextView.setText("Fee: £"+decimalFormat.format(journey.Fee));
+        holder.fromToTextView.setText(Utilities.getJourneyHeader(journey.GeoAddresses));
+        holder.dateTextView.setText(DateTimeHelper.getSimpleDate(journey.DateAndTimeOfDeparture));
+        holder.timeTextView.setText(DateTimeHelper.getSimpleTime(journey.DateAndTimeOfDeparture));
+        holder.seatsLeftTextView.setText(""+journey.AvailableSeats);
+        holder.feeTextView.setText("£" + decimalFormat.format(journey.Fee));
         return currentRow;
     }
 

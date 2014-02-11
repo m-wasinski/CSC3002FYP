@@ -13,6 +13,7 @@ import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.experimental.SSLSocketFactory;
 import com.example.myapplication.interfaces.WCFServiceCallback;
+import com.example.myapplication.utilities.Utilities;
 import com.example.myapplication.utilities.Pair;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -32,6 +33,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -52,6 +54,16 @@ public class WCFServiceTask<T> extends AsyncTask<TextView, String, Boolean> {
     private final int HTTPSocketTimeout = 15000;
     private Context context;
 
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        if(!Utilities.isNetworkAvailable(this.context))
+        {
+            cancel(true);
+            this.displayErrorDialog("Network unavailable, please check your internet connection and try again.");
+        }
+    }
+
     public WCFServiceTask(Context context, String url, T objectToSerialise, Type type, List<Pair> httpHeaders, WCFServiceCallback wcfServiceCallback)
     {
         this.objectToSerialise = objectToSerialise;
@@ -69,49 +81,29 @@ public class WCFServiceTask<T> extends AsyncTask<TextView, String, Boolean> {
         if(this.serviceResponse.ServiceResponseCode == ServiceResponseCode.UNAUTHORISED)
         {
             FindNDriveManager findNDriveManager = ((FindNDriveManager)this.context.getApplicationContext());
-            assert findNDriveManager != null;
             findNDriveManager.logout(true, true);
             return;
         }
 
         if(this.serviceResponse.ServiceResponseCode == ServiceResponseCode.SERVER_ERROR)
         {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
-            builder.setMessage("Server error has occurred, please try again later.")
-                    .setCancelable(false)
-                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.dismiss();
-                        }
-                    });
-
-            AlertDialog alert = builder.create();
-            alert.show();
+            this.displayErrorDialog("Server error has occurred, please try again later.");
+            return;
         }
 
         if(this.serviceResponse.ServiceResponseCode == ServiceResponseCode.FAILURE)
         {
-            String errors = serviceResponse.ErrorMessages.toString();
-            AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
-            builder.setMessage(errors)
-                    .setCancelable(false)
-                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.dismiss();
-                        }
-                    });
-
-            AlertDialog alert = builder.create();
-            alert.show();
+            if(!serviceResponse.ErrorMessages.toString().contains("MANUAL LOGIN"))
+            {
+                this.displayErrorDialog(serviceResponse.ErrorMessages.toString());
+            }
         }
-
         this.wcfServiceCallback.onServiceCallCompleted(serviceResponse, this.sessionInformation);
     }
 
     @Override
     protected Boolean doInBackground(TextView... textViews) {
         try {
-
             HttpParams httpParameters = new BasicHttpParams();
             // Set the timeout in milliseconds until a connection is established.
             // The default value is zero, that means the timeout is not used.
@@ -154,23 +146,40 @@ public class WCFServiceTask<T> extends AsyncTask<TextView, String, Boolean> {
 
         } catch (URISyntaxException e) {
             e.printStackTrace();
-            this.serviceResponse = new ServiceResponse(null, ServiceResponseCode.SERVER_ERROR, null);
+            this.serviceResponse = new ServiceResponse(null, ServiceResponseCode.SERVER_ERROR, Arrays.asList(e));
         } catch (ClientProtocolException e) {
             e.printStackTrace();
-            this.serviceResponse = new ServiceResponse(null, ServiceResponseCode.SERVER_ERROR, null);
+            this.serviceResponse = new ServiceResponse(null, ServiceResponseCode.SERVER_ERROR,  Arrays.asList(e));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            this.serviceResponse = new ServiceResponse(null, ServiceResponseCode.SERVER_ERROR, null);
+            this.serviceResponse = new ServiceResponse(null, ServiceResponseCode.SERVER_ERROR,  Arrays.asList(e));
         } catch (IOException e) {
             e.printStackTrace();
-            this.serviceResponse = new ServiceResponse(null, ServiceResponseCode.SERVER_ERROR, null);
+            this.serviceResponse = new ServiceResponse(null, ServiceResponseCode.SERVER_ERROR,  Arrays.asList(e));
         } catch (JsonSyntaxException e){
             e.printStackTrace();
-            this.serviceResponse = new ServiceResponse(null, ServiceResponseCode.SERVER_ERROR, null);
+            this.serviceResponse = new ServiceResponse(null, ServiceResponseCode.SERVER_ERROR,  Arrays.asList(e));
         } catch (NullPointerException e){
             e.printStackTrace();
-            this.serviceResponse = new ServiceResponse(null, ServiceResponseCode.SERVER_ERROR, null);
+            this.serviceResponse = new ServiceResponse(null, ServiceResponseCode.SERVER_ERROR,  Arrays.asList(e));
         }
+
         return null;
+    }
+
+    private void displayErrorDialog(String message)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
+        builder.setMessage(message)
+                .setCancelable(false)
+                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                        wcfServiceCallback.onServiceCallCompleted(new ServiceResponse(null, ServiceResponseCode.FAILURE, null), sessionInformation);
+                    }
+                });
+
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }

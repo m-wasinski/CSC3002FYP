@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:padding="10sp"
         android:text="Body"
-        style="@style/MyCarSharesHeader"/>
+        style="@style/LargeBlueHeader"/>
 
     <TextView android:id="@+id/InstantMessengerRowDateTextView"
         android:layout_width="wrap_content"

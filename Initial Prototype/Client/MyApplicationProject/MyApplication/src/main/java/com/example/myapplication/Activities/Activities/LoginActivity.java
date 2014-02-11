@@ -34,14 +34,15 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
     private ProgressBar progressBar;
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void onCreate(Bundle savedInstanceState) {
-        requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+        this.requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_activity);
-        progressBar = (ProgressBar) findViewById(R.id.LoginActivityProgressBar);
-        setupUIEvents();
+        this.setContentView(R.layout.activity_login);
+        this.progressBar = (ProgressBar) findViewById(R.id.LoginActivityProgressBar);
+
+        this.setupEventHandlers();
     }
 
-    private void setupUIEvents()
+    private void setupEventHandlers()
     {
         Button loginButton = (Button) findViewById(R.id.LoginUserButton);
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -129,17 +130,11 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
         if (serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             findNDriveManager.setSessionId(session);
-            findNDriveManager.setUser(serviceResponse.Result);
+            findNDriveManager.login(serviceResponse.Result);
             Intent intent = new Intent(this, HomeActivity.class)
                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
             finish();
-        }
-
-        if (serviceResponse.ServiceResponseCode == ServiceResponseCode.FAILURE)
-        {
-            Toast toast = Toast.makeText(this, "Incorrect username or password.", Toast.LENGTH_LONG);
-            toast.show();
         }
     }
 }

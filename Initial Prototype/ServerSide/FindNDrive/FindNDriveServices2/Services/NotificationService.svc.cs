@@ -42,9 +42,9 @@ namespace FindNDriveServices2.Services
         private readonly SessionManager sessionManager;
 
         /// <summary>
-        /// The _gcm manager.
+        /// The notification manager.
         /// </summary>
-        private readonly GCMManager gcmManager;
+        private readonly NotificationManager notificationManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NotificationService"/> class.
@@ -62,16 +62,25 @@ namespace FindNDriveServices2.Services
         /// <param name="sessionManager">
         /// The session Manager.
         /// </param>
-        /// <param name="gcmManager">
-        /// The gcm Manager.
+        /// <param name="notificationManager">
+        /// The notification Manager.
         /// </param>
-        public NotificationService(FindNDriveUnitOfWork findNDriveUnitOfwork, SessionManager sessionManager, GCMManager gcmManager)
+        public NotificationService(FindNDriveUnitOfWork findNDriveUnitOfwork, SessionManager sessionManager, NotificationManager notificationManager)
         {
             this.findNDriveUnitOfworkWork = findNDriveUnitOfwork;
             this.sessionManager = sessionManager;
-            this.gcmManager = gcmManager;
+            this.notificationManager = notificationManager;
         }
 
+        /// <summary>
+        /// The mark as read.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         public ServiceResponse<bool> MarkAsRead(int id)
         {
             if (!this.sessionManager.ValidateSession())
@@ -80,22 +89,33 @@ namespace FindNDriveServices2.Services
             }
 
             var notification =
-                this.findNDriveUnitOfworkWork.NotificationRepository.AsQueryable()
-                    .FirstOrDefault(_ => _.NotificationId == id);
-            if (notification != null)
+                this.findNDriveUnitOfworkWork.NotificationRepository.Find(id);
+
+            if (notification == null)
             {
-                if (!notification.Read)
-                {
-                    notification.Read = true;
-                    this.findNDriveUnitOfworkWork.Commit();
-                    return ResponseBuilder.Success(true);
-                }
-                
+                return ResponseBuilder.Failure<bool>("Invalid notification Id");
             }
 
-            return ResponseBuilder.Failure<Boolean>("Invalid notification Id");
+            if (notification.Read)
+            {
+                return ResponseBuilder.Success(true);
+            }
+
+            notification.Read = true;
+            this.findNDriveUnitOfworkWork.Commit();
+
+            return ResponseBuilder.Success(true);
         }
 
+        /// <summary>
+        /// The retrieve notifications.
+        /// </summary>
+        /// <param name="loadRangeDTO">
+        /// The load range dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         public ServiceResponse<List<Notification>> RetrieveNotifications(LoadRangeDTO loadRangeDTO)
         {
             if (!this.sessionManager.ValidateSession())
@@ -110,6 +130,15 @@ namespace FindNDriveServices2.Services
             return ResponseBuilder.Success(notifications);
         }
 
+        /// <summary>
+        /// The get unread notifications count.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         public ServiceResponse<int> GetUnreadNotificationsCount(int userId)
         {
             if (!this.sessionManager.ValidateSession())
@@ -117,7 +146,7 @@ namespace FindNDriveServices2.Services
                 return ResponseBuilder.Unauthorised(0);
             }
 
-            var count = this.findNDriveUnitOfworkWork.NotificationRepository.AsQueryable().Where(_ => _.UserId == userId && !_.Read).Count();
+            var count = this.findNDriveUnitOfworkWork.NotificationRepository.AsQueryable().Count(_ => _.UserId == userId && !_.Read);
 
             return ResponseBuilder.Success(count);
         }

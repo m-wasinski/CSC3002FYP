@@ -9,6 +9,7 @@
 
 namespace FindNDriveServices2.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
@@ -41,9 +42,9 @@ namespace FindNDriveServices2.Services
         private readonly SessionManager sessionManager;
 
         /// <summary>
-        /// The _gcm manager.
+        /// The notification manager.
         /// </summary>
-        private readonly GCMManager gcmManager;
+        private readonly NotificationManager notificationManager;
 
         public MessengerService()
         {
@@ -58,14 +59,13 @@ namespace FindNDriveServices2.Services
         /// <param name="sessionManager">
         /// The session manager.
         /// </param>
-        /// <param name="gcmManager">
-        /// The gcm manager.
+        /// <param name="notificationManager">
         /// </param>
-        public MessengerService(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager, GCMManager gcmManager)
+        public MessengerService(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager, NotificationManager notificationManager)
         {
             this.findNDriveUnitOfWork = findNDriveUnitOfWork;
             this.sessionManager = sessionManager;
-            this.gcmManager = gcmManager;
+            this.notificationManager = notificationManager;
         }
 
         /// <summary>
@@ -102,34 +102,16 @@ namespace FindNDriveServices2.Services
                                      SenderUserName = chatMessageDTO.SenderUserName,
                                      RecipientUserName = chatMessageDTO.RecipientUserName
                                  };
+
             this.findNDriveUnitOfWork.ChatMessageRepository.Add(newMessage);
-
-            chatMessageDTO.ChatMessageId = newMessage.ChatMessageId;
-
-            var message = JsonConvert.SerializeObject(
-                chatMessageDTO,
-                typeof(ChatMessageDTO),
-                Formatting.Indented,
-                new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.MicrosoftDateFormat });
-
-            if (targetUser.Status == Status.Online)
-            {
-                this.gcmManager.SendInstantMessageNotification(new Collection<string> { targetUser.GCMRegistrationID }, message);
-            }
-            else
-            {
-                this.findNDriveUnitOfWork.GCMNotificationsRepository.Add(
-                    new GCMNotification
-                        {
-                            UserId = targetUser.UserId,
-                            Delivered = false,
-                            ContentTitle = "Message",
-                            NotificationType = NotificationType.InstantMessenger,
-                            NotificationMessage = message
-                        });
-            }
-
             this.findNDriveUnitOfWork.Commit();
+
+            this.notificationManager.SendNotification(
+                new Collection<User> { targetUser },
+                "Message",
+                NotificationType.InstantMessenger,
+                newMessage);
+                
 
             return ResponseBuilder.Success(true);
         }
@@ -158,6 +140,48 @@ namespace FindNDriveServices2.Services
                         && _.RecipientId == chatMessageRetrieverDTO.RecipientId) || (_.SenderId == chatMessageRetrieverDTO.RecipientId && _.RecipientId == chatMessageRetrieverDTO.SenderId))
                     .ToList();
 
+            messages.ForEach(
+                delegate(ChatMessage chatMessage)
+                    {
+                        if (!chatMessage.Read && chatMessage.RecipientId == chatMessageRetrieverDTO.SenderId)
+                        {
+                            chatMessage.Read = true;
+                        }
+                    });
+
+            this.findNDriveUnitOfWork.Commit();
+
+            return ResponseBuilder.Success(messages);
+        }
+
+        /// <summary>
+        /// The get unread messages.
+        /// </summary>
+        /// <param name="chatMessageRetrieverDTO">
+        /// The chat message retriever dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<List<ChatMessage>> GetUnreadMessages(ChatMessageRetrieverDTO chatMessageRetrieverDTO)
+        {
+            if (!this.sessionManager.ValidateSession())
+            {
+                return ResponseBuilder.Unauthorised(new List<ChatMessage>());
+            }
+
+            var messages =
+                this.findNDriveUnitOfWork.ChatMessageRepository.AsQueryable()
+                    .Where(
+                        _ => _.RecipientId == chatMessageRetrieverDTO.RecipientId && !_.Read).ToList();
+
+            messages.ForEach(
+                delegate(ChatMessage chatMessage)
+                {
+                    chatMessage.Read = true;
+                });
+
+            this.findNDriveUnitOfWork.Commit();
             return ResponseBuilder.Success(messages);
         }
 
@@ -203,35 +227,6 @@ namespace FindNDriveServices2.Services
                 this.findNDriveUnitOfWork.ChatMessageRepository.AsQueryable().Count(_ => _.RecipientId == chatMessageRetrieverDTO.RecipientId && _.SenderId == chatMessageRetrieverDTO.SenderId && !_.Read);
 
             return ResponseBuilder.Success(unreadMessages);
-        }
-
-        /// <summary>
-        /// The mark messages as read.
-        /// </summary>
-        /// <param name="chatMessageDtos">
-        /// The chat message dtos.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        public ServiceResponse<bool> MarkMessagesAsRead(List<ChatMessageDTO> chatMessageDtos)
-        {
-            if (!this.sessionManager.ValidateSession())
-            {
-                return ResponseBuilder.Unauthorised(false);
-            }
-
-            var messages = chatMessageDtos.Select(chatmessagedto => this.findNDriveUnitOfWork.ChatMessageRepository.Find(chatmessagedto.ChatMessageId)).ToList();
-
-            messages.ForEach(
-                delegate(ChatMessage chatMessage)
-                    {
-                        chatMessage.Read = true;
-                    });
-
-            this.findNDriveUnitOfWork.Commit();
-
-            return ResponseBuilder.Success(true);
         }
     }
 }

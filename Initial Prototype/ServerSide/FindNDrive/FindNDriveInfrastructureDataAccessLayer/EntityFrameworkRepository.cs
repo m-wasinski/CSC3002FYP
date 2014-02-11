@@ -22,7 +22,7 @@ namespace FindNDriveInfrastructureDataAccessLayer
         /// <summary>
         /// The _db set.
         /// </summary>
-        private readonly DbSet<T> _dbSet;
+        private readonly DbSet<T> dbSet;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EntityFrameworkRepository{T}"/> class.
@@ -32,7 +32,7 @@ namespace FindNDriveInfrastructureDataAccessLayer
         /// </param>
         public EntityFrameworkRepository(DbContext dbContext)
         {
-            _dbSet = dbContext.Set<T>();
+            this.dbSet = dbContext.Set<T>();
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace FindNDriveInfrastructureDataAccessLayer
         /// </param>
         public void Add(T entity)
         {
-            _dbSet.Add(entity);
+            this.dbSet.Add(entity);
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace FindNDriveInfrastructureDataAccessLayer
         /// </param>
         public void Remove(T entity)
         {
-            _dbSet.Remove(entity);
+            this.dbSet.Remove(entity);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace FindNDriveInfrastructureDataAccessLayer
         /// </returns>
         public T Find(int id)
         {
-            return _dbSet.Find(id);
+            return this.dbSet.Find(id);
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace FindNDriveInfrastructureDataAccessLayer
         /// </returns>
         public IQueryable<T> AsQueryable()
         {   
-            return _dbSet;
+            return this.dbSet;
         }
     }
 }

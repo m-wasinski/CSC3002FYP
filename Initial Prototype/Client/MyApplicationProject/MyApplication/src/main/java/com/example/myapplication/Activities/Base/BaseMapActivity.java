@@ -208,18 +208,7 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
     }
 
     protected void centerMapOnMyLocation() {
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        myLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        if (myLocation != null) {
-            LatLng latLng = new LatLng(myLocation.getLatitude(),
-                    myLocation.getLongitude());
-
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
-        }
-        else
-        {
-            locationManager.requestLocationUpdates(locationManager.getBestProvider(new Criteria(), false), 1000, 10, locationListener);
-        }
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(locationClient.getLastLocation().getLatitude(), locationClient.getLastLocation().getLongitude()), 14));
     }
 
     protected void drawDrivingDirectionsOnMap(final GoogleMap map, final ArrayList<GeoAddress> geoAddresses)
@@ -275,7 +264,7 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
 
     @Override
     public void onConnected(Bundle bundle) {
-
+        centerMapOnMyLocation();
     }
 
     @Override

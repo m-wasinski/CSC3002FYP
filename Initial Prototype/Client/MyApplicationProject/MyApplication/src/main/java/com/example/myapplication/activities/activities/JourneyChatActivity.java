@@ -7,7 +7,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.myapplication.activities.base.BaseActivity;
-import com.example.myapplication.activities.fragments.MessagesFragment;
 import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.dtos.JourneyMessageDTO;
 import com.example.myapplication.domain_objects.ServiceResponse;
@@ -19,7 +18,7 @@ import com.google.gson.reflect.TypeToken;
 /**
  * Created by Michal on 07/01/14.
  */
-public class JourneyChatActivity extends BaseActivity implements MessagesFragment.OnFragmentInteractionListener {
+public class JourneyChatActivity extends BaseActivity{
 
     private Journey carShare;
     private Button sendButton;
@@ -28,7 +27,7 @@ public class JourneyChatActivity extends BaseActivity implements MessagesFragmen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.instant_messenger_activity);
+        setContentView(R.layout.activity_instant_messenger);
 
         carShare = gson.fromJson(getIntent().getExtras().getString("CurrentCarShare"), new TypeToken<Journey>() {}.getType());
         //messageEditText = (EditText) findViewById(R.id.InstantMessengerMessageEditText);
@@ -47,11 +46,6 @@ public class JourneyChatActivity extends BaseActivity implements MessagesFragmen
     @Override
     protected void onResume() {
         super.onResume();
-    }
-
-    @Override
-    public String getProfileEmail() {
-        return null;
     }
 
     private void send(String message)

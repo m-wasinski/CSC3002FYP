@@ -5,12 +5,10 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -66,16 +64,6 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
     private int numOfSearchResults;
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_search);
@@ -104,9 +92,6 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        if(googleMap != null)
-            centerMapOnMyLocation();
     }
 
     private void showAddressDialog(final MarkerType markerType, Marker marker, Circle radius)
@@ -115,7 +100,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         // Show the address dialog.
         final Dialog addressDialog = new Dialog(this);
 
-        addressDialog.setContentView(R.layout.alert_dialog_address_selector);
+        addressDialog.setContentView(R.layout.dialog_address_selector);
         addressDialog.setTitle(markerType == MarkerType.Departure ? "Enter departure point" : "Enter destination point");
 
         final EditText addressEditText = (EditText) addressDialog.findViewById(R.id.AddressDialogAddressEditText);
@@ -255,6 +240,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
             alert.show();
             return;
         }
+
         this.progressBar.setVisibility(View.VISIBLE);
         JourneySearchDTO journeySearchDTO = new JourneySearchDTO();
         journeySearchDTO.Journey = new Journey();
@@ -298,20 +284,10 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
                 searchResultsButton.setText("Show search results ("+ numOfSearchResults +")");
             }
         });
-        searchResultsDialog.setContentView(R.layout.search_results_dialog);
+        searchResultsDialog.setContentView(R.layout.dialog_search_results);
         ListView resultsListView = (ListView) searchResultsDialog.findViewById(R.id.SearchResultsDialogResultsListView);
-        SearchResultsAdapter adapter = new SearchResultsAdapter(this, R.layout.fragment_search_results_listview_row, this.searchResults);
+        SearchResultsAdapter adapter = new SearchResultsAdapter(this, R.layout.listview_row_search_result, this.searchResults);
         resultsListView.setAdapter(adapter);
-
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int halfScreen = metrics.heightPixels/2;
-
-        if(this.getTotalHeightOfListView(resultsListView) > halfScreen)
-        {
-            LinearLayout.LayoutParams layout_description = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, halfScreen);
-            resultsListView.setLayoutParams(layout_description);
-        }
 
         resultsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -357,7 +333,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         else
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Could not retrieve current location. Please enter it manually.")
+            builder.setMessage("Could not retrieve current location.")
                     .setCancelable(false)
                     .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {

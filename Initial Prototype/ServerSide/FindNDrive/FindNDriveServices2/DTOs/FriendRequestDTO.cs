@@ -35,10 +35,22 @@ namespace FindNDriveServices2.DTOs
         public int TargetUserId { get; set; }
 
         /// <summary>
+        /// Gets or sets the target user name.
+        /// </summary>
+        [DataMember]
+        public string TargetUserName { get; set; }
+
+        /// <summary>
         /// Gets or sets the requesting user id.
         /// </summary>
         [DataMember]
         public int RequestingUserId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the requesting user name.
+        /// </summary>
+        [DataMember]
+        public string RequestingUserName { get; set; }
 
         /// <summary>
         /// Gets or sets the message.
@@ -51,27 +63,5 @@ namespace FindNDriveServices2.DTOs
         /// </summary>
         [DataMember]
         public FriendRequestDecision FriendRequestDecision { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether read.
-        /// </summary>
-        [DataMember]
-        public bool Read { get; set; }
-
-        /// <summary>
-        /// Gets or sets the sent on date.
-        /// </summary>
-        [DataMember]
-        [DataType(DataType.Date)]
-        [Column(TypeName = "DateTime2")]
-        public DateTime SentOnDate { get; set; }
-
-        /// <summary>
-        /// Gets or sets the decided on date.
-        /// </summary>
-        [DataMember]
-        [DataType(DataType.Date)]
-        [Column(TypeName = "DateTime2")]
-        public DateTime DecidedOnDate { get; set; }
     }
 }

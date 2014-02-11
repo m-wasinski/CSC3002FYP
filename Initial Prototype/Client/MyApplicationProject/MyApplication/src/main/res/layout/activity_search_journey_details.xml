@@ -44,7 +44,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/driver_small"
+                    android:src="@drawable/hashtag"
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="10sp"/>
 
@@ -56,7 +56,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Journey ID:"
-                            style="@style/MyCarSharesHeader"/>
+                            style="@style/LargeBlueHeader"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -92,7 +92,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Driver:"
-                                style="@style/MyCarSharesHeader"/>
+                                style="@style/LargeBlueHeader"/>
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -132,7 +132,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Date:"
-                            style="@style/MyCarSharesHeader"/>
+                            style="@style/LargeBlueHeader"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -164,7 +164,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Time:"
-                            style="@style/MyCarSharesHeader"/>
+                            style="@style/LargeBlueHeader"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -197,7 +197,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Smokers:"
-                            style="@style/MyCarSharesHeader"/>
+                            style="@style/LargeBlueHeader"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -230,7 +230,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Pets:"
-                            style="@style/MyCarSharesHeader"/>
+                            style="@style/LargeBlueHeader"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -262,7 +262,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Vehicle type:"
-                            style="@style/MyCarSharesHeader"/>
+                            style="@style/LargeBlueHeader"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -296,7 +296,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Seats left:"
-                            style="@style/MyCarSharesHeader"/>
+                            style="@style/LargeBlueHeader"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -330,7 +330,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Fee:"
-                            style="@style/MyCarSharesHeader"/>
+                            style="@style/LargeBlueHeader"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -362,7 +362,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Message to driver:"
-                            style="@style/MyCarSharesHeader"/>
+                            style="@style/LargeBlueHeader"/>
 
                         <EditText
                             android:layout_width="match_parent"

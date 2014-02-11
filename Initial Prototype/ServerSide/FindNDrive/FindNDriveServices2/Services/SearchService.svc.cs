@@ -16,6 +16,8 @@ namespace FindNDriveServices2.Services
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
+
+    using DomainObjects.Constants;
     using DomainObjects.Domains;
     using FindNDriveDataAccessLayer;
     using FindNDriveServices2.Contracts;
@@ -36,8 +38,9 @@ namespace FindNDriveServices2.Services
         /// <summary>
         /// Initializes a new instance of the <see cref="SearchService"/> class.
         /// </summary>
-        public SearchService()
+        public SearchService(SessionManager sessionManager)
         {
+            this.sessionManager = sessionManager;
         }
 
         /// <summary>
@@ -45,10 +48,12 @@ namespace FindNDriveServices2.Services
         /// </summary>
         private readonly FindNDriveUnitOfWork findNDriveUnitOfWork;
 
+        private readonly SessionManager sessionManager;
+
         /// <summary>
         /// The session manager.
         /// </summary>
-        private readonly SessionManager sessionManager;
+        private readonly NotificationManager notificationManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SearchService"/> class. 
@@ -59,12 +64,12 @@ namespace FindNDriveServices2.Services
         /// <param name="sessionManager">
         /// The session Manager.
         /// </param>
-        /// <param name="gcmManager">
-        /// The gcm Manager.
+        /// <param name="notificationManager">
         /// </param>
-        public SearchService(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager, GCMManager gcmManager)
+        public SearchService(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager, NotificationManager notificationManager)
         {
             this.findNDriveUnitOfWork = findNDriveUnitOfWork;
+            this.notificationManager = notificationManager;
             this.sessionManager = sessionManager;
         }
 
@@ -88,8 +93,13 @@ namespace FindNDriveServices2.Services
                     var matchDeparture = -1;
                     var matchDestination = -1;
 
-                    foreach (var geoAddress in x.GeoAddresses)
+                    if (x.JourneyStatus == JourneyStatus.Past || x.DateAndTimeOfDeparture < DateTime.Now)
                     {
+                        return false;
+                    }
+
+                    foreach (var geoAddress in x.GeoAddresses)
+                    {   
                         if (journeySearchDTO.DepartureRadius
                             >= new Haversine().Distance(
                                 geoAddress,
@@ -108,6 +118,7 @@ namespace FindNDriveServices2.Services
                             matchDestination = geoAddress.Order;
                         }
                     }
+
                     return matchDeparture < matchDestination && matchDeparture != -1 && matchDestination != -1;
                 };
 

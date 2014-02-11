@@ -59,9 +59,9 @@ namespace FindNDriveServices2.Services
         private readonly SessionManager sessionManager;
 
         /// <summary>
-        /// The gcm manager.
+        /// The notification manager.
         /// </summary>
-        private readonly GCMManager gcmManager;
+        private readonly NotificationManager notificationManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserService"/> class.
@@ -72,12 +72,14 @@ namespace FindNDriveServices2.Services
         /// <param name="sessionManager">
         /// The session manager.
         /// </param>
-        /// <param name="gcmManager"></param>
-        public UserService(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager, GCMManager gcmManager)
+        /// <param name="notificationManager">
+        /// The notification Manager.
+        /// </param>
+        public UserService(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager, NotificationManager notificationManager)
         {
             this.findNDriveUnitOfWork = findNDriveUnitOfWork;
             this.sessionManager = sessionManager;
-            this.gcmManager = gcmManager;
+            this.notificationManager = notificationManager;
         }
 
         public UserService()
@@ -108,14 +110,15 @@ namespace FindNDriveServices2.Services
             }
 
             // Check if this user is currently logged onto another device, if yes, log them out.
-            if (loggedInUser.GCMRegistrationID != null)
+            if (loggedInUser.GCMRegistrationID != null && !loggedInUser.GCMRegistrationID.Equals("0") 
+                && loggedInUser.Status == Status.Online && !loggedInUser.GCMRegistrationID.Equals(login.GCMRegistrationID))
             {
-                if (!loggedInUser.GCMRegistrationID.Equals(login.GCMRegistrationID) && loggedInUser.Status == Status.Online && !loggedInUser.GCMRegistrationID.Equals("0"))
-                {
-                    this.gcmManager.SendLogoutNotification(new Collection<string> { loggedInUser.GCMRegistrationID });
-                }
+                this.notificationManager.SendNotification(
+                    new Collection<User> { loggedInUser },
+                    "LOGOUT",
+                    NotificationType.Logout,
+                    "LOGOUT");
             }
-            
 
             // Check if another user has been logged on on the same device before.
             var userToReset =
@@ -138,23 +141,7 @@ namespace FindNDriveServices2.Services
 
             this.findNDriveUnitOfWork.Commit();
 
-            // Gather all unread offline GCM notifications.
-            var gcmNotifications =
-                this.findNDriveUnitOfWork.GCMNotificationsRepository.AsQueryable().Where(_ => _.UserId == userId && !_.Delivered).ToList();
-
-            // And forward them to the user.
-            gcmNotifications.ForEach(
-                delegate(GCMNotification gcmNotification)
-                    {
-                        this.gcmManager.SendOfflineNotification(
-                            new Collection<string> { loggedInUser.GCMRegistrationID },
-                            gcmNotification.NotificationType,
-                            gcmNotification.ContentTitle,
-                            gcmNotification.NotificationMessage);
-                        gcmNotification.Delivered = true;
-                    });
-
-            this.findNDriveUnitOfWork.Commit();
+            this.notificationManager.SendOfflineGCMNotification(loggedInUser);
 
             return ResponseBuilder.Success(loggedInUser);
         }
@@ -162,9 +149,6 @@ namespace FindNDriveServices2.Services
         /// <summary>
         /// The auto user login.
         /// </summary>
-        /// <param name="sessionDTO">
-        /// The session DTO.
-        /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
@@ -176,7 +160,7 @@ namespace FindNDriveServices2.Services
 
                 if (userId == -1)
                 {
-                    return ResponseBuilder.Failure<User>("Unauthorised");
+                    return ResponseBuilder.Failure<User>("MANUAL LOGIN");
                 }
 
                 var loggedInUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.UserId == userId);
@@ -188,8 +172,10 @@ namespace FindNDriveServices2.Services
                 this.findNDriveUnitOfWork.Commit();
                 return ResponseBuilder.Success(loggedInUser);
             }
-            return ResponseBuilder.Failure<User>("Unauthorised");
+
+            return ResponseBuilder.Failure<User>("MANUAL LOGIN");
         }
+
         /// <summary>
         /// Registers a new user.
         /// </summary>

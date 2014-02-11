@@ -1,14 +1,9 @@
 package com.example.myapplication.gcm;
 
 import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 
-import com.example.myapplication.R;
 import com.example.myapplication.constants.GcmConstants;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.experimental.FindNDriveManager;
@@ -28,28 +23,32 @@ public class GcmIntentService extends IntentService {
 
         FindNDriveManager findNDriveManager = ((FindNDriveManager)getApplication());
 
+        if(findNDriveManager.hasAppBeenKilled())
+        {
+            findNDriveManager.logout(false, false);
+            //TODO tell user they have a new notification and ask them to log in.
+            return;
+        }
+
         Bundle extras = intent.getExtras();
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
         // The getMessageType() intent parameter must be the intent you received
         // in your BroadcastReceiver.
         String messageType = gcm.getMessageType(intent);
 
-        if (!extras.isEmpty()) {  // has effect of unparcelling Bundle
-            /*
-             * Filter messages based on message type. Since it is likely that GCM
-             * will be extended in the future with new message types, just ignore
-             * any message types you're not interested in, or that you don't
-             * recognize.
-             */
-            if (GoogleCloudMessaging.
-                    MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
+        if (!extras.isEmpty())
+        {
+            if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType))
+            {
                // sendNotification("Send error: " + intent.getExtras().getString("contentTitle"), intent.getExtras().getString("message"));
-            } else if (GoogleCloudMessaging.
-                    MESSAGE_TYPE_DELETED.equals(messageType)) {
+            }
+            else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType))
+            {
                 //sendNotification("Deleted messages on server: " +
                 //        intent.getExtras().getString("contentTitle"), intent.getExtras().getString("message"));
                 // If it's a regular GCM message, do some work.
-            } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType))
+            }
+            else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType))
             {
                 int requestType = Integer.parseInt(intent.getExtras().getString(IntentConstants.NOTIFICATION_TYPE));
 
@@ -70,7 +69,16 @@ public class GcmIntentService extends IntentService {
                         break;
                     case GcmConstants.NOTIFICATION_JOURNEY_REQUEST_RECEIVED:
                         sendBroadcast(broadcastIntent);
-                        journeyRequestReceived(getApplicationContext(), intent);
+                        journeyRequestReceived(intent.getExtras().getString(IntentConstants.CONTENT_TITLE), intent.getExtras().getString(IntentConstants.MESSAGE));
+                        break;
+                    case GcmConstants.NOTIFICATION_FRIEND_REQUEST:
+                        friendRequestReceived(intent.getExtras().getString(IntentConstants.CONTENT_TITLE), intent.getExtras().getString(IntentConstants.MESSAGE));
+                        break;
+                    case GcmConstants.NOTIFICATION_JOURNEY_REQUEST_ACCEPTED:
+                        journeyRequestReplyReceived(intent.getExtras().getString(IntentConstants.CONTENT_TITLE), intent.getExtras().getString(IntentConstants.MESSAGE));
+                        break;
+                    case GcmConstants.NOTIFICATION_JOURNEY_REQUEST_DENIED:
+                        journeyRequestReplyReceived(intent.getExtras().getString(IntentConstants.CONTENT_TITLE), intent.getExtras().getString(IntentConstants.MESSAGE));
                         break;
                 }
             }
@@ -80,40 +88,48 @@ public class GcmIntentService extends IntentService {
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
+    /*
+    * Notifies the Instant Message Broadcast receiver about a new message.
+    */
     private void instantMessageReceived(String message)
     {
         Intent orderedBroadcastIntent = new Intent(GcmConstants.BROADCAST_INSTANT_MESSENGER);
         sendOrderedBroadcast(orderedBroadcastIntent.putExtra(IntentConstants.MESSAGE, message), null);
     }
 
-    private void journeyRequestReceived(Context context, Intent intent)
+    /*
+    * Notifies the Journey Request Receiver about a new journey request.
+    */
+    private void journeyRequestReceived(String header, String message)
     {
-        NotificationManager mNotificationManager = (NotificationManager)
-                context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        /*ChatMessage chatMessage = new Gson().fromJson(intent.getStringExtra(IntentConstants.MESSAGE), new TypeToken<ChatMessage>() {}.getType());
-        Log.i("Received Message: ", intent.getStringExtra(IntentConstants.MESSAGE));
-        int notificationId =  (int) System.currentTimeMillis();
-
         Bundle extras = new Bundle();
-        extras.putString(IntentConstants.RECIPIENT_USERNAME, chatMessage.SenderUserName);
-        extras.putInt(IntentConstants.RECIPIENT_ID, chatMessage.SenderId);
+        extras.putString(IntentConstants.MESSAGE, message);
+        extras.putString(IntentConstants.CONTENT_TITLE, header);
 
-        PendingIntent contentIntent = PendingIntent.getActivity(context, notificationId,
-                new Intent(context, InstantMessengerActivity.class)
-                        .putExtras(extras).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), 0);*/
+        Intent broadcastIntent = new Intent(GcmConstants.BROADCAST_JOURNEY_REQUEST);
+        sendBroadcast(broadcastIntent.putExtras(extras), null);
+    }
 
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(context)
-                        .setSmallIcon(R.drawable.logo)
-                        .setContentTitle("New journey request.")
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(intent.getStringExtra(IntentConstants.MESSAGE)))
-                        .setContentText(intent.getStringExtra(IntentConstants.MESSAGE));
+    /*
+    * Notifies the Journey Request Receiver about a new journey request.
+    */
+    private void friendRequestReceived(String header, String message)
+    {
+        Bundle extras = new Bundle();
+        extras.putString(IntentConstants.MESSAGE, message);
+        extras.putString(IntentConstants.CONTENT_TITLE, header);
 
-        //mBuilder.setContentIntent(contentIntent);
-        Notification notification = mBuilder.build();
-        notification.flags = Notification.DEFAULT_LIGHTS | Notification.FLAG_AUTO_CANCEL;
+        Intent broadcastIntent = new Intent(GcmConstants.BROADCAST_FRIEND_REQUEST);
+        sendBroadcast(broadcastIntent.putExtras(extras), null);
+    }
 
-        mNotificationManager.notify(0,notification);
+    private void journeyRequestReplyReceived(String header, String message)
+    {
+        Bundle extras = new Bundle();
+        extras.putString(IntentConstants.MESSAGE, message);
+        extras.putString(IntentConstants.CONTENT_TITLE, header);
+
+        Intent broadcastIntent = new Intent(GcmConstants.BROADCAST_JOURNEY_REQUEST_REPLY);
+        sendBroadcast(broadcastIntent.putExtras(extras), null);
     }
 }

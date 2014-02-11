@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -22,7 +21,6 @@ import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.domain_objects.JourneyRequest;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
-import com.example.myapplication.dtos.LoadRangeDTO;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.google.android.gms.maps.MapFragment;
@@ -166,12 +164,13 @@ public class JourneyDetailsActivity extends BaseMapActivity {
 
         if(requests.size() > 0)
         {
-            JourneyRequestAdapter adapter = new JourneyRequestAdapter(this, R.layout.journey_request_listview_row, requests);
+            JourneyRequestAdapter adapter = new JourneyRequestAdapter(this, R.layout.listview_row_journey_request, requests);
             requestsListView.setAdapter(adapter);
             requestsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    markRequestAsRead(requests.get(i).JourneyRequestId, requestsDialog);
+                    showRequestDialog(requests.get(i));
+                    requestsDialog.dismiss();
                 }
             });
         }
@@ -179,28 +178,16 @@ public class JourneyDetailsActivity extends BaseMapActivity {
         requestsDialog.show();
     }
 
-    private void markRequestAsRead(int id, final Dialog requestDialog)
+    private void showRequestDialog(JourneyRequest journeyRequest)
     {
-        new WCFServiceTask<Integer>(this, getResources().getString(R.string.MarkRequestAsReadURL),
-                id,new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback() {
-            @Override
-            public void onServiceCallCompleted(ServiceResponse serviceResponse, Object parameter) {
-                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
-                {
-                    requestDialog.dismiss();
-                    Intent intent = new Intent(getBaseContext(), JourneyRequestDetailsActivity.class);
-                    intent.putExtra(IntentConstants.JOURNEY_REQUEST, gson.toJson(serviceResponse.Result));
-                    startActivity(intent);
-                }
-            }
-        }).execute();
+        startActivity(new Intent(this, JourneyRequestDialogActivity.class).putExtra(IntentConstants.JOURNEY_REQUEST, gson.toJson(journeyRequest)));
     }
 
     private void showPassengers()
     {
         // Show the journey requests dialog.
         final Dialog passengersDialog = new Dialog(this);
-        passengersDialog.setContentView(R.layout.alert_dialog_show_passengers);
+        passengersDialog.setContentView(R.layout.dialog_show_passengers);
         passengersDialog.setTitle("Passengers");
         ListView passengersListView = (ListView) passengersDialog.findViewById(R.id.AlertDialogShowPassengersListView);
 
@@ -208,12 +195,12 @@ public class JourneyDetailsActivity extends BaseMapActivity {
 
         if(this.journey.Participants.size() > 0)
         {
-            PassengersAdapter adapter = new PassengersAdapter(this, R.layout.alert_dialog_show_passengers_listview_row, this.journey.Participants);
+            PassengersAdapter adapter = new PassengersAdapter(this, R.layout.listview_row_journey_passengers, this.journey.Participants);
             passengersListView.setAdapter(adapter);
             passengersListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
             {
                 @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
+                public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l)
                 {
                     passengerOptionsDialogBuilder.setTitle(journey.Participants.get(i).UserName);
                     CharSequence userOptions[] = new CharSequence[] {"Show profile", "Send friend request"};
@@ -222,7 +209,10 @@ public class JourneyDetailsActivity extends BaseMapActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which)
                         {
-
+                            if(which == 1)
+                            {
+                                showFriendRequestDialog(journey.Participants.get(i));
+                            }
                         }
                     });
                     passengerOptionsDialogBuilder.show();
@@ -231,5 +221,10 @@ public class JourneyDetailsActivity extends BaseMapActivity {
         }
 
         passengersDialog.show();
+    }
+
+    private void showFriendRequestDialog(final User user)
+    {
+        this.startActivity(new Intent(this, SendFriendRequestDialogActivity.class).putExtra(IntentConstants.USER, gson.toJson(user)));
     }
 }

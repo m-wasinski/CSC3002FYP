@@ -1,10 +1,1 @@
-{ "registration_ids": ["APA91bHK3tHUL5Mc_JJGCi__ETzdyXjNcsFEYQaXZdQo9mFT3EyEPYLgA0PuYr7neD0CzfWS8CtVadkBrJ-rrKQTwH167S8_ToK5HeU2VC7Y0JBLErSekdnfp7mc_Z5x0svsmngolbDqG0DYsf-D1DSXKsDxUCA01OwrgXzAbFdYmNxF04M-UKY"] , "data": {"tickerText":"", "contentTitle":"Message", "notificationType": "10", "message": {
-  "ChatMessageId": 535,
-  "SenderId": 4,
-  "RecipientId": 2,
-  "MessageBody": "Hifffffffik",
-  "SentOnDate": "\/Date(1391683849143)\/",
-  "Read": false,
-  "RecipientUserName": "john",
-  "SenderUserName": "jess"
-} }}
+{"JourneyRequestId":3,"JourneyId":60,"UserId":2,"User":{"UserId":2,"UserName":"john","EmailAddress":"participant1@domain.com","FirstName":"John","LastName":"Doe","DateOfBirth":"1992-11-15T00:00:00","Gender":1,"Role":0,"GCMRegistrationID":"APA91bFXg2BjFeBn7qKYEkCPsEHZ_Kn78TtGNnCIlt6xjBcx7EYCUvmMd7uJGT2QI_FDL5WpD4Qcgwj3XDAHorN5-rlsFQnoWG9SXFGANOiTFWBWZgqvDCyEDEtPgl38yWGtVONRL9ydwNFJMCVCU2f1Q8HIPpiBv6r1JDoNOhLR4Us4Q_engJk","Status":1,"Rating":0},"Message":"","Read":false,"Decision":0,"SentOnDate":"2014-02-10T18:06:27.984Z","DecidedOnDate":"0001-01-01T00:00:00"}

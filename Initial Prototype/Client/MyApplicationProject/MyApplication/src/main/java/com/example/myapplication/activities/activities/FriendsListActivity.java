@@ -34,7 +34,7 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.friend_list_activity);
+        setContentView(R.layout.activity_friends_list);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(GcmConstants.BROADCAST_ACTION_REFRESH);
         registerReceiver(GCMReceiver, intentFilter);
@@ -57,7 +57,7 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
     public void onServiceCallCompleted(final ServiceResponse<ArrayList<User>> serviceResponse, String parameter) {
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
-            friendsAdapter = new FriendsAdapter(this,  R.layout.friend_list_listview_row, findNDriveManager, serviceResponse.Result);
+            friendsAdapter = new FriendsAdapter(this,  R.layout.listview_row_friend, findNDriveManager, serviceResponse.Result);
             travelBuddiesListView.setAdapter(friendsAdapter);
 
             travelBuddiesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

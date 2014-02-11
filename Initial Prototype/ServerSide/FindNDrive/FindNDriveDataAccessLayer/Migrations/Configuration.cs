@@ -13,7 +13,6 @@ namespace FindNDriveDataAccessLayer.Migrations
     using System.Collections.ObjectModel;
     using System.Data.Entity.Migrations;
     using System.Globalization;
-    using System.Runtime.Remoting.Metadata.W3cXsd2001;
     using System.Security.Cryptography;
     using System.Text;
 
@@ -197,9 +196,9 @@ namespace FindNDriveDataAccessLayer.Migrations
              
             context.SaveChanges();
 
-            var geoAddress1 = new GeoAddress { AddressLine = "Dublin", Latitude = 53.3478, Longitude = -6.2597, Order = 1};
-            var geoAddress2 = new GeoAddress { AddressLine = "Warrenpoint", Latitude = 54.09900, Longitude = -6.24900, Order = 2 };
-            var geoAddress3 = new GeoAddress { AddressLine = "Belfast", Latitude = 54.5970, Longitude = -5.9300, Order = 3};
+            var geoAddress1 = new GeoAddress { AddressLine = "Dublin City Centre", Latitude = 53.3478, Longitude = -6.2597, Order = 1};
+            var geoAddress2 = new GeoAddress { AddressLine = "Warrenpoint City Centre", Latitude = 54.09900, Longitude = -6.24900, Order = 2 };
+            var geoAddress3 = new GeoAddress { AddressLine = "Belfast City Centre", Latitude = 54.5970, Longitude = -5.9300, Order = 3};
 
             for(int i = 0; i < 20; i++)
             {
@@ -207,7 +206,7 @@ namespace FindNDriveDataAccessLayer.Migrations
                     new Journey
                         {
                             AvailableSeats = 4,
-                            DateAndTimeOfDeparture = new DateTime(2014, 2, 1, 20, 15, 0, cal),
+                            DateAndTimeOfDeparture = DateTime.Now.AddDays(i + 1),
                             GeoAddresses = new Collection<GeoAddress> { geoAddress1, geoAddress2, geoAddress3 },
                             Description = "Free ride to Dublin!",
                             Fee = 0.00,
@@ -215,12 +214,12 @@ namespace FindNDriveDataAccessLayer.Migrations
                             Driver = driver,
                             SmokersAllowed = false,
                             JourneyStatus = JourneyStatus.Upcoming,
-                            CreationDate = new DateTime(2014, 1, 1, 20, 15, 0, cal),
+                            CreationDate = DateTime.Now,
                         });
             }
 
-            var geoAddress4 = new GeoAddress { AddressLine = "London", Latitude = 51.5072, Longitude = 0.12755, Order = 4 };
-            var geoAddress5 = new GeoAddress { AddressLine = "Manchester", Latitude = 53.4667, Longitude = -2.247926, Order = 5 };
+            var geoAddress4 = new GeoAddress { AddressLine = "London City Centre", Latitude = 51.5072, Longitude = 0.12755, Order = 4 };
+            var geoAddress5 = new GeoAddress { AddressLine = "Manchester City Centre", Latitude = 53.4667, Longitude = -2.247926, Order = 5 };
 
             for (int i = 0; i < 20; i++)
             {
@@ -228,7 +227,7 @@ namespace FindNDriveDataAccessLayer.Migrations
                     new Journey
                     {
                         AvailableSeats = 4,
-                        DateAndTimeOfDeparture = new DateTime(2014, 2, 1, 20, 15, 0, cal),
+                        DateAndTimeOfDeparture = DateTime.Now.AddDays(i + 1),
                         GeoAddresses = new Collection<GeoAddress> { geoAddress4, geoAddress5},
                         Description = "London to Manchester",
                         Fee = 0.00,
@@ -236,7 +235,7 @@ namespace FindNDriveDataAccessLayer.Migrations
                         Driver = driver,
                         SmokersAllowed = false,
                         JourneyStatus = JourneyStatus.Upcoming,
-                        CreationDate = new DateTime(2014, 1, 1, 20, 15, 0, cal),
+                        CreationDate = DateTime.Now,
                     });
             }
 
@@ -265,7 +264,7 @@ namespace FindNDriveDataAccessLayer.Migrations
 
         private void AddMessages(ApplicationContext context)
         {
-            for (int i = 1; i <= 500; i++)
+            /*for (int i = 1; i <= 500; i++)
             {
                 context.ChatMessages.Add(
                     new ChatMessage()
@@ -281,7 +280,7 @@ namespace FindNDriveDataAccessLayer.Migrations
                         });
             }
 
-            context.SaveChanges(); 
+            context.SaveChanges(); */
         }
 
         /// <summary>
@@ -292,7 +291,7 @@ namespace FindNDriveDataAccessLayer.Migrations
         /// </param>
         private void AddNotifications(ApplicationContext context)
         {
-            for (int i = 0; i < 100; i++)
+            /*for (int i = 0; i < 100; i++)
             {
                 context.Notifications.AddOrUpdate(
                     new Notification()
@@ -305,7 +304,7 @@ namespace FindNDriveDataAccessLayer.Migrations
                         });
             }
 
-            context.SaveChanges();
+            context.SaveChanges();*/
         }
     }
 }

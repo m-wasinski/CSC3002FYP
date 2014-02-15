@@ -2,86 +2,120 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
     <fragment
         android:id="@+id/FragmentJourneyDetailsMap"
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
-    <HorizontalScrollView
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/ControlPanel"
+            android:gravity="center"
+            style="@style/LargeBlueHeader"/>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/JourneyDetailsActivityHorizontalScrollView"
+            android:fadingEdge="vertical|horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/home_navigation_selector"
+                    android:drawableTop="@drawable/summary"
+                    android:id="@+id/MyJourneyDetailsActivityShowSummaryButton"
+                    style="@style/JourneyDetailsButtons"
+                    android:text="@string/ShowSummary"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:id="@+id/MyJourneyDetailsActivityShowRequestsButton"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/home_navigation_selector"
+                    android:drawableTop="@drawable/home_activity_notification"
+                    style="@style/JourneyDetailsButtons"
+                    android:text="@string/ShowRequests"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/home_navigation_selector"
+                    android:drawableTop="@drawable/home_activity_friends"
+                    android:text="@string/ShowPassengers"
+                    style="@style/JourneyDetailsButtons"
+                    android:id="@+id/MyJourneyDetailsActivityShowPassengersButton"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/home_navigation_selector"
+                    android:drawableTop="@drawable/journey_chat"
+                    android:id="@+id/MyJourneyDetailsActivityEnterChatButton"
+                    android:text="@string/EnterChat"
+                    style="@style/JourneyDetailsButtons"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/home_navigation_selector"
+                    android:drawableTop="@drawable/change"
+                    style="@style/JourneyDetailsButtons"
+                    android:id="@+id/MyJourneyDetailsActivityMakeChangeButton"
+                    android:text="@string/MakeChange"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/home_navigation_selector"
+                    android:drawableTop="@drawable/cancel"
+                    android:id="@+id/MyJourneyDetailsActivityCancelJourneyButton"
+                    style="@style/JourneyDetailsButtons"
+                    android:text="@string/CancelJourney"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/home_navigation_selector"
+                    android:drawableTop="@drawable/cancel"
+                    android:id="@+id/MyJourneyDetailsActivityWithdrawFromJourneyButton"
+                    style="@style/JourneyDetailsButtons"
+                    android:text="@string/WithdrawFromJourney"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+    </LinearLayout>
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:fadingEdge="vertical|horizontal">
+        android:id="@+id/JourneyDetailsActivityHeaderTextView"
+        android:background="#CC151515"
+        style="@style/RegularEditText"
+        android:padding="5dip"/>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="#80151515">
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/home_navigation_selector"
-                android:drawableTop="@drawable/summary"
-                android:id="@+id/MyJourneyDetailsActivityShowSummaryButton"
-                style="@style/JourneyDetailsButtons"
-                android:text="@string/ShowSummary"
-                android:layout_weight="1"/>
-
-            <Button
-                android:layout_width="match_parent"
-                android:id="@+id/MyJourneyDetailsActivityShowRequestsButton"
-                android:layout_height="match_parent"
-                android:background="@drawable/home_navigation_selector"
-                android:drawableTop="@drawable/notification"
-                style="@style/JourneyDetailsButtons"
-                android:text="@string/ShowRequests"
-                android:layout_weight="1"/>
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/home_navigation_selector"
-                android:drawableTop="@drawable/friends"
-                android:text="@string/ShowPassengers"
-                style="@style/JourneyDetailsButtons"
-                android:id="@+id/MyJourneyDetailsActivityShowPassengersButton"
-                android:layout_weight="1"/>
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/home_navigation_selector"
-                android:drawableTop="@drawable/chat"
-                android:id="@+id/MyJourneyDetailsActivityEnterChatButton"
-                android:text="@string/EnterChat"
-                style="@style/JourneyDetailsButtons"
-                android:layout_weight="1"/>
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/home_navigation_selector"
-                android:drawableTop="@drawable/change"
-                style="@style/JourneyDetailsButtons"
-                android:id="@+id/MyJourneyDetailsActivityMakeChangeButton"
-                android:text="@string/MakeChange"
-                android:layout_weight="1"/>
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/home_navigation_selector"
-                android:drawableTop="@drawable/cancel"
-                android:id="@+id/MyJourneyDetailsActivityCancelJourneyButton"
-                style="@style/JourneyDetailsButtons"
-                android:text="@string/CancelJourney"
-                android:layout_weight="1"/>
-
-        </LinearLayout>
-    </HorizontalScrollView>
 </RelativeLayout>

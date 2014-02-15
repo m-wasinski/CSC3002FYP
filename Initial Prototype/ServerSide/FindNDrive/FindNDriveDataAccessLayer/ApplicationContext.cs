@@ -56,14 +56,19 @@ namespace FindNDriveDataAccessLayer
         public DbSet<Notification> Notifications { get; set; }
 
         /// <summary>
-        /// Gets or sets the gcm notifications.
-        /// </summary>
-        public DbSet<GCMNotification> GCMNotifications { get; set; }
-
-        /// <summary>
         /// Gets or sets the friend requests.
         /// </summary>
         public DbSet<FriendRequest> FriendRequests { get; set; }
+
+        /// <summary>
+        /// Gets or sets the journey messages.
+        /// </summary>
+        public DbSet<JourneyMessage> JourneyMessages { get; set; }
+
+        /// <summary>
+        /// Gets or sets the geo addresses.
+        /// </summary>
+        public DbSet<GeoAddress> GeoAddresses { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ApplicationContext"/> class.
@@ -108,16 +113,6 @@ namespace FindNDriveDataAccessLayer
                 });
 
             modelBuilder.Entity<Journey>()
-                .HasMany(_ => _.Messages)
-                .WithMany()
-                .Map(map =>
-                {
-                    map.MapLeftKey("JourneyId");
-                    map.MapRightKey("JourneyMessageId");
-                    map.ToTable("Journey_Message");
-                });
-
-            modelBuilder.Entity<Journey>()
                 .HasMany(_ => _.Requests)
                 .WithMany()
                 .Map(map =>
@@ -140,6 +135,14 @@ namespace FindNDriveDataAccessLayer
                    map.MapLeftKey("JourneyId");
                    map.MapRightKey("GeoAddressId");
                    map.ToTable("Journey_GeoAddress");
+               });
+
+            modelBuilder.Entity<JourneyMessage>()
+               .HasMany(_ => _.SeenBy).WithMany().Map(map =>
+               {
+                   map.MapLeftKey("JourneyMessageId");
+                   map.MapRightKey("UserId");
+                   map.ToTable("JourneyMessage_UserId");
                });
 
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();   

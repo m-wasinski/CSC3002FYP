@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="GCM_SENDER_ID">505647745249</string>
     <string name="app_name">FindNDrive</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -52,7 +52,7 @@
     <string name="ShowRequests">Requests</string>
     <string name="CancelJourney">Cancel journey</string>
     <string name="MakeChange">Make a change</string>
-    <string name="EnterChat">Enter chat</string>
+    <string name="EnterChat">Enter chat room</string>
     <string name="ShowPassengers">Passengers</string>
     <string name="ShowSummary">Summary</string>
     <string name="SendFriendRequestTitle">You are sending a friend request to: </string>
@@ -70,6 +70,10 @@
     <string name="SendFriendRequest">Send a friend request</string>
     <string name="ShowProfile">Show Profile</string>
     <string name="FriendRequestFrom">Friend request from: </string>
+    <string name="ControlPanel">Control Panel</string>
+    <string name="TypeYourMessage">Type your message</string>
+    <string name="Login">Login</string>
+    <string name="WithdrawFromJourney">Withdraw from journey</string>
     <string-array name="app_menu_options">
         <item>Home</item>
         <item>My Car Shares</item>

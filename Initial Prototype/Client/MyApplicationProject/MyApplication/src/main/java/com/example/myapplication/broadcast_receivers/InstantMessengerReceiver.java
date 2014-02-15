@@ -29,8 +29,8 @@ public class InstantMessengerReceiver extends BroadcastReceiver {
         NotificationManager mNotificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        ChatMessage chatMessage = new Gson().fromJson(intent.getStringExtra(IntentConstants.MESSAGE), new TypeToken<ChatMessage>() {}.getType());
-        Log.i(TAG, intent.getStringExtra(IntentConstants.MESSAGE));
+        ChatMessage chatMessage = new Gson().fromJson(intent.getStringExtra(IntentConstants.PAYLOAD), new TypeToken<ChatMessage>() {}.getType());
+        Log.i(TAG, intent.getStringExtra(IntentConstants.PAYLOAD));
 
         Bundle extras = new Bundle();
         extras.putString(IntentConstants.RECIPIENT_USERNAME, chatMessage.SenderUserName);
@@ -38,7 +38,7 @@ public class InstantMessengerReceiver extends BroadcastReceiver {
 
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, InstantMessengerActivity.class)
-                        .putExtras(extras).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), 0);
+                        .putExtras(extras).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), PendingIntent.FLAG_CANCEL_CURRENT);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)

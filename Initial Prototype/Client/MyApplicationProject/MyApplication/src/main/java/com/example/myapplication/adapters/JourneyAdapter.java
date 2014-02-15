@@ -12,10 +12,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.myapplication.constants.JourneyStatus;
+import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.Journey;
+import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.dtos.JourneyMessageRetrieverDTO;
 import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.R;
+import com.example.myapplication.experimental.FindNDriveManager;
+import com.example.myapplication.interfaces.WCFServiceCallback;
+import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.example.myapplication.utilities.Utilities;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 
@@ -26,28 +33,27 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
 
     private Context context;
     private int layoutResourceId;
-    private int userId;
     private ArrayList<Journey> originalCarShares;
     private ArrayList<Journey> displayedCarShares;
-
+    private FindNDriveManager findNDriveManager;
     @Override
     public int getCount() {
         return displayedCarShares.size();
     }
 
-    public JourneyAdapter(int user, Context context, int resource, ArrayList<Journey> carShares) {
+    public JourneyAdapter(Context context, int resource, ArrayList<Journey> carShares, FindNDriveManager findNDriveManager) {
         super(context, resource, carShares);
         this.layoutResourceId = resource;
         this.context = context;
         this.originalCarShares = carShares;
         this.displayedCarShares = this.originalCarShares;
-        userId = user;
+        this.findNDriveManager = findNDriveManager;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
-        JourneyHolder holder = null;
+        final JourneyHolder holder;
 
         if(row == null)
         {
@@ -74,29 +80,44 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
         }
 
         final Journey journey = displayedCarShares.get(position);
+
+        new WCFServiceTask<JourneyMessageRetrieverDTO>(this.context, this.context.getResources().getString(R.string.RetrieveUnreadJourneyMessagesCountURL),
+                new JourneyMessageRetrieverDTO(journey.getJourneyId(), this.findNDriveManager.getUser().UserId, null),
+                new TypeToken<ServiceResponse<Integer>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
+                    @Override
+                    public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {
+                        if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
+                        {
+                            holder.unreadMessages.setText(String.valueOf(serviceResponse.Result));
+                            holder.newMessagesIconView.setImageResource(serviceResponse.Result > 0 ? R.drawable.new_journey_message : R.drawable.envelope_blue);
+                        }
+
+                    }
+        }).execute();
+
         String statusText = "";
 
         switch(journey.JourneyStatus)
         {
-            case JourneyStatus.Upcoming:
-                statusText = "Upcoming";
+            case JourneyStatus.OK:
+                statusText = "OK";
                 break;
             case JourneyStatus.Cancelled:
                 statusText = "Cancelled";
                 break;
-            case JourneyStatus.Past:
+            case JourneyStatus.Expired:
                 statusText = "Expired";
                 break;
         }
 
-        holder.journeyId.setText(String.valueOf(journey.JourneyId));
+        holder.journeyId.setText(String.valueOf(journey.getJourneyId()));
         holder.fromTo.setText(Utilities.getJourneyHeader(journey.GeoAddresses));
         holder.departureDate.setText(DateTimeHelper.getSimpleDate(journey.DateAndTimeOfDeparture));
         holder.departureTime.setText(DateTimeHelper.getSimpleTime(journey.DateAndTimeOfDeparture));
         holder.availableSeats.setText(String.valueOf(journey.AvailableSeats));
         holder.statusTextView.setText(statusText);
         holder.creationDateTextView.setText(DateTimeHelper.getSimpleDate(journey.CreationDate));
-        holder.modeTextView.setText(journey.DriverId == userId ? "Driver" : "Passenger");
+        holder.modeTextView.setText(journey.DriverId == this.findNDriveManager.getUser().UserId ? "Driver" : "Passenger");
         holder.newRequestIcon.setImageResource(journey.UnreadRequestsCount > 0 ? R.drawable.new_notification_myjourney : R.drawable.notification_myjourney);
         holder.unreadRequests.setTypeface(null, journey.UnreadRequestsCount > 0 ? (Typeface.BOLD) : (Typeface.NORMAL));
         holder.unreadRequests.setText(""+journey.UnreadRequestsCount);

@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="#80151515"
-    android:layout_marginTop="2sp">
+    android:layout_marginTop="2dip"
+    android:paddingTop="10dip"
+    android:paddingBottom="10dip"
+    android:id="@+id/FriendListViewRowParentLayout">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/FriendListViewRowStatusIcon"
-        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
         android:layout_marginLeft="20sp"
         android:src="@drawable/available"/>
 
@@ -18,32 +22,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/FriendListViewRowImage"
-        android:layout_toRightOf="@+id/FriendListViewRowStatusIcon"
         android:src="@drawable/user_man"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Friend"
         android:id="@+id/TravelBuddyListRowNameTextView"
-        android:layout_gravity="center_horizontal"
-        android:layout_toRightOf="@+id/FriendListViewRowImage"
-        android:layout_centerInParent="true"
+        android:layout_gravity="center_vertical"
         style="@style/LoginFields"/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Messages"
-        android:id="@+id/FriendsListRowUnreadMessagesTextView"
-        android:layout_gravity="center_horizontal"
-        android:layout_toRightOf="@+id/TravelBuddyListRowNameTextView"
-        android:layout_margin="10sp"
-        android:textAppearance="@android:style/TextAppearance.Small.Inverse"/>
-
-    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="1sp"
-        android:background="#B7D8E8"
-        android:layout_below="@+id/MyCarSharesStatusIconsLayout"></LinearLayout>
-</RelativeLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dip"
+        android:id="@+id/FriendsListRowUnreadMessagesTextView"
+        android:layout_gravity="center_vertical"
+        android:gravity="right"
+        style="@style/LoginFields"
+        android:visibility="gone"/>
+
+</LinearLayout>

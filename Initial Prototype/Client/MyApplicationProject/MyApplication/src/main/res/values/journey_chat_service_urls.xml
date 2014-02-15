@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="SendJourneyChatMessageURL">https://findndrive.no-ip.co.uk/Services/JourneyChatService.svc/send</string>
+    <string name="RetrieveJourneyChatMessagesURL">https://findndrive.no-ip.co.uk/Services/JourneyChatService.svc/getall</string>
+    <string name="RetrieveUnreadJourneyMessagesCountURL">https://findndrive.no-ip.co.uk/Services/JourneyChatService.svc/getunreadcount</string>
+    <string name="RetrieveUnreadJourneyMessagesURL">https://findndrive.no-ip.co.uk/Services/JourneyChatService.svc/getunread</string>
+    <string name="MarkJourneyMessageAsReadURL">https://findndrive.no-ip.co.uk/Services/JourneyChatService.svc/markread</string>
+</resources>

@@ -26,8 +26,6 @@ namespace FindNDriveServices2.Services
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
 
-    using Microsoft.Practices.ObjectBuilder2;
-
     /// <summary>
     /// The car share service.
     /// </summary>
@@ -38,7 +36,9 @@ namespace FindNDriveServices2.Services
         /// <summary>
         /// Initializes a new instance of the <see cref="JourneyService"/> class.
         /// </summary>
-        public JourneyService(){}
+        public JourneyService()
+        {
+        }
 
         /// <summary>
         /// The _find n drive unit of work.
@@ -66,7 +66,10 @@ namespace FindNDriveServices2.Services
         /// </param>
         /// <param name="notificationManager">
         /// </param>
-        public JourneyService(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager, NotificationManager notificationManager)
+        public JourneyService(
+            FindNDriveUnitOfWork findNDriveUnitOfWork,
+            SessionManager sessionManager,
+            NotificationManager notificationManager)
         {
             this.findNDriveUnitOfWork = findNDriveUnitOfWork;
             this.sessionManager = sessionManager;
@@ -96,15 +99,21 @@ namespace FindNDriveServices2.Services
                     .OrderByDescending(x => x.CreationDate)
                     .ToList();
 
-            journeys.ForEach(delegate(Journey journey)
-            {
-                if (journey.DateAndTimeOfDeparture < DateTime.Now && journey.JourneyStatus != JourneyStatus.Past)
-                {
-                    journey.JourneyStatus = JourneyStatus.Past;
-                }
-            });
+            journeys.ForEach(
+                delegate(Journey journey)
+                    {
+                        if (journey.DateAndTimeOfDeparture < DateTime.Now
+                            && journey.JourneyStatus != JourneyStatus.Expired)
+                        {
+                            journey.JourneyStatus = JourneyStatus.Expired;
+                        }
+                    });
 
-            journeys = LoadRangeHelper<Journey>.GetValidRange(journeys, loadRangeDTO.Index, loadRangeDTO.Count, loadRangeDTO.LoadMoreData);
+            journeys = LoadRangeHelper<Journey>.GetValidRange(
+                journeys,
+                loadRangeDTO.Index,
+                loadRangeDTO.Count,
+                loadRangeDTO.LoadMoreData);
 
             this.findNDriveUnitOfWork.Commit();
 
@@ -146,9 +155,10 @@ namespace FindNDriveServices2.Services
                                  SmokersAllowed = journeyDTO.SmokersAllowed,
                                  VehicleType = journeyDTO.VehicleType,
                                  PetsAllowed = journeyDTO.PetsAllowed,
-                                 JourneyStatus = JourneyStatus.Upcoming,
+                                 JourneyStatus = JourneyStatus.OK,
                                  GeoAddresses = journeyDTO.GeoAddresses,
-                                 CreationDate = journeyDTO.CreationDate
+                                 CreationDate = DateTime.Now,
+                                 PreferredPaymentMethod = journeyDTO.PreferredPaymentMethod
                              };
 
             this.findNDriveUnitOfWork.JourneyRepository.Add(newJourney);
@@ -196,10 +206,10 @@ namespace FindNDriveServices2.Services
             }
 
             var journeys =
-               this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
-                   .IncludeAll()
-                   .Where(_ => ids.Contains(_.JourneyId))
-                   .ToList();
+                this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
+                    .IncludeAll()
+                    .Where(_ => ids.Contains(_.JourneyId))
+                    .ToList();
             return ResponseBuilder.Success(journeys);
         }
 
@@ -224,24 +234,90 @@ namespace FindNDriveServices2.Services
                     .IncludeAll()
                     .FirstOrDefault(_ => _.JourneyId == journeyDTO.JourneyId);
 
-            if (journey != null)
+            if (journey == null)
             {
-                journey.AvailableSeats = journeyDTO.AvailableSeats;
-                journey.DateAndTimeOfDeparture = journeyDTO.DateAndTimeOfDeparture;
-                journey.GeoAddresses = journeyDTO.GeoAddresses;
-                journey.Description = journeyDTO.Description;
-                journey.DriverId = journeyDTO.DriverId;
-                journey.Fee = journeyDTO.Fee;
-                journey.Private = journeyDTO.Private;
-                journey.WomenOnly = journeyDTO.WomenOnly;
-                journey.SmokersAllowed = journeyDTO.SmokersAllowed;
-                journey.VehicleType = journeyDTO.VehicleType;
-                journey.PetsAllowed = journeyDTO.PetsAllowed;
-                journey.JourneyStatus = journeyDTO.JourneyStatus;
+                return ResponseBuilder.Failure<Journey>("Invalid journey id");
             }
 
+            this.findNDriveUnitOfWork.GeoAddressRepository.RemoveRange(journey.GeoAddresses);
+
+            journey.GeoAddresses = journeyDTO.GeoAddresses;
+            journey.AvailableSeats = journeyDTO.AvailableSeats;
+            journey.DateAndTimeOfDeparture = journeyDTO.DateAndTimeOfDeparture;
+            journey.Description = journeyDTO.Description;
+            journey.Fee = journeyDTO.Fee;
+            journey.Private = journeyDTO.Private;
+            journey.SmokersAllowed = journeyDTO.SmokersAllowed;
+            journey.VehicleType = journeyDTO.VehicleType;
+            journey.PetsAllowed = journeyDTO.PetsAllowed;
+            journey.JourneyStatus = journeyDTO.JourneyStatus;
+            journey.PreferredPaymentMethod = journeyDTO.PreferredPaymentMethod;
+
             this.findNDriveUnitOfWork.Commit();
+
+            this.notificationManager.SendAppNotification(
+                journey.Participants,
+                "Journey modified",
+                "Change has been made lol",
+                NotificationContext.Neutral,
+                NotificationType.Both,
+                NotificationContentType.JourneyModified,
+                journey);
+            this.notificationManager.SendGcmNotification(
+                journey.Participants,
+                "Journey modified",
+                GcmNotificationType.NotificationTickle,
+                string.Empty);
+
             return ResponseBuilder.Success(journey);
+        }
+
+        public ServiceResponse<bool> CancelJourney(int id)
+        {
+            var journey =
+                this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
+                    .IncludeAll()
+                    .FirstOrDefault(_ => _.JourneyId == id);
+
+            if (journey == null)
+            {
+                return ResponseBuilder.Failure<bool>("Invalid journey id");
+            }
+
+            journey.JourneyStatus = JourneyStatus.Cancelled;
+            this.findNDriveUnitOfWork.Commit();
+
+            return ResponseBuilder.Success(true);
+        }
+
+        public ServiceResponse<bool> WithdrawFromJourney(JourneyPassengerWithdrawDTO journeyPassengerWithdrawDTO)
+        {
+            var journey =
+                this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
+                    .IncludeAll()
+                    .FirstOrDefault(_ => _.JourneyId == journeyPassengerWithdrawDTO.JourneyId);
+
+            if (journey == null)
+            {
+                return ResponseBuilder.Failure<bool>("Invalid journey id");
+            }
+
+            var passenger = this.findNDriveUnitOfWork.UserRepository.Find(journeyPassengerWithdrawDTO.UserId);
+
+            if (passenger == null)
+            {
+                return ResponseBuilder.Failure<bool>("Invalid passenger id");
+            }
+
+            if (passenger.UserId == journey.DriverId)
+            {
+                return ResponseBuilder.Failure<bool>("As driver, you cannot withdraw from this journey.");
+            }
+
+            journey.Participants.Remove(passenger);
+            this.findNDriveUnitOfWork.Commit();
+
+            return ResponseBuilder.Success(true);
         }
     }
 }

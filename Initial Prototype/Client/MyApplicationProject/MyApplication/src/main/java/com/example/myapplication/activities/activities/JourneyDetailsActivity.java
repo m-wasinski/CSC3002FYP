@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myapplication.R;
@@ -23,6 +24,7 @@ import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;
+import com.example.myapplication.utilities.Utilities;
 import com.google.android.gms.maps.MapFragment;
 import com.google.gson.reflect.TypeToken;
 
@@ -35,28 +37,53 @@ public class JourneyDetailsActivity extends BaseMapActivity {
 
     private Journey journey;
 
+    private int newMessagesCount;
+    private int newRequestsCount;
+
     private Button showRequestsButton;
     private Button showPassengersButton;
     private Button enterChatButton;
     private Button makeChangeButton;
     private Button cancelJourneyButton;
     private Button summaryButton;
+    private Button withdrawFromJourneyButton;
+
+    private TextView headerTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        actionBar.hide();
-        setContentView(R.layout.activity_journey_details);
+        this.setContentView(R.layout.activity_journey_details);
 
-        // Initialise local private variables.
-        this.journey = gson.fromJson(getIntent().getExtras().getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
+        // Initialise local variables.
+        Bundle bundle = getIntent().getExtras();
+
+        this.journey = gson.fromJson(bundle.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
+        this.newMessagesCount = bundle.getInt(IntentConstants.NEW_JOURNEY_MESSAGES);
+        this.newRequestsCount = bundle.getInt(IntentConstants.NEW_JOURNEY_REQUESTS);
 
         this.showRequestsButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityShowRequestsButton);
+        this.showRequestsButton.setEnabled(this.journey.Driver.UserId == this.findNDriveManager.getUser().UserId);
+        this.showRequestsButton.setVisibility(this.journey.Driver.UserId == this.findNDriveManager.getUser().UserId ? View.VISIBLE : View.GONE);
+
         this.showPassengersButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityShowPassengersButton);
         this.enterChatButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityEnterChatButton);
+
         this.makeChangeButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityMakeChangeButton);
+        this.makeChangeButton.setEnabled(this.journey.Driver.UserId == this.findNDriveManager.getUser().UserId);
+        this.makeChangeButton.setVisibility(this.journey.Driver.UserId == this.findNDriveManager.getUser().UserId ? View.VISIBLE : View.GONE);
+
         this.cancelJourneyButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityCancelJourneyButton);
+        this.cancelJourneyButton.setEnabled(this.journey.Driver.UserId == this.findNDriveManager.getUser().UserId);
+        this.cancelJourneyButton.setVisibility(this.journey.Driver.UserId == this.findNDriveManager.getUser().UserId ? View.VISIBLE : View.GONE);
+
+        this.withdrawFromJourneyButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityWithdrawFromJourneyButton);
+        this.withdrawFromJourneyButton.setEnabled(this.journey.Driver.UserId != this.findNDriveManager.getUser().UserId);
+        this.withdrawFromJourneyButton.setVisibility(this.journey.Driver.UserId != this.findNDriveManager.getUser().UserId ? View.VISIBLE : View.GONE);
+
         this.summaryButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityShowSummaryButton);
+        this.headerTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityHeaderTextView);
+        this.headerTextView.setText(Utilities.getJourneyHeader(this.journey.GeoAddresses));
 
         // Setup event handlers.
         this.setupEventHandlers();
@@ -73,11 +100,20 @@ public class JourneyDetailsActivity extends BaseMapActivity {
     protected void onResume() {
         super.onResume();
         this.retrieveJourney();
+
+        // Are there any new messages/requests? if so, make sure we mark them.
+        this.showRequestsButton.setCompoundDrawablesWithIntrinsicBounds(null,
+                this.newRequestsCount == 0 ? getResources().getDrawable(R.drawable.home_activity_notification) :
+                        getResources().getDrawable(R.drawable.home_activity_notification_new), null, null);
+
+        this.enterChatButton.setCompoundDrawablesWithIntrinsicBounds(null,
+                this.newMessagesCount == 0 ? getResources().getDrawable(R.drawable.journey_chat) :
+                        getResources().getDrawable(R.drawable.journey_chat_new_message), null, null);
     }
 
     private void retrieveJourney()
     {
-        new WCFServiceTask<Integer>(this, getResources().getString(R.string.GetSingleJourneyURL), this.journey.JourneyId,
+        new WCFServiceTask<Integer>(this, getResources().getString(R.string.GetSingleJourneyURL), this.journey.getJourneyId(),
                 new TypeToken<ServiceResponse<Journey>>() {}.getType(),
                 findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Journey, Void>() {
             @Override
@@ -99,7 +135,18 @@ public class JourneyDetailsActivity extends BaseMapActivity {
 
     private void errorCouldNotRetrieveJourney()
     {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Error while retrieving current journey. Please try again later.")
+                .setCancelable(false)
+                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                });
 
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     private void journeyRetrieved(Journey journey)
@@ -136,12 +183,46 @@ public class JourneyDetailsActivity extends BaseMapActivity {
                 showPassengers();
             }
         });
+
+        this.enterChatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                enterChatRoom();
+            }
+        });
+
+        this.makeChangeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putInt(IntentConstants.JOURNEY_CREATOR_MODE, IntentConstants.JOURNEY_CREATOR_MODE_EDITING);
+                bundle.putString(IntentConstants.JOURNEY ,gson.toJson(journey));
+
+                Intent intent = new Intent(getApplicationContext(), OfferJourneyStepOneActivity.class);
+                intent.putExtras(bundle);
+
+                startActivity(intent);
+            }
+        });
+
+        this.cancelJourneyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
+
+    private void enterChatRoom() {
+        this.startActivity(new Intent(this, JourneyChatActivity.class).putExtra(IntentConstants.JOURNEY, this.journey.getJourneyId()));
+        this.newMessagesCount = 0;
+    }
+
 
     private void retrieveJourneyRequests()
     {
         new WCFServiceTask<Integer>(this, getResources().getString(R.string.GetRequestsForJourneyURL),
-                this.journey.JourneyId,
+                this.journey.getJourneyId(),
                 new TypeToken<ServiceResponse<ArrayList<JourneyRequest>>>() {}.getType(),
                 findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyRequest>, Void>() {
             @Override
@@ -169,6 +250,7 @@ public class JourneyDetailsActivity extends BaseMapActivity {
             requestsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    newRequestsCount = 0;
                     showRequestDialog(requests.get(i));
                     requestsDialog.dismiss();
                 }

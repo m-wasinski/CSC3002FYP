@@ -61,14 +61,19 @@ namespace FindNDriveDataAccessLayer
         public IRepository<Notification> NotificationRepository { get; set; }
 
         /// <summary>
-        /// Gets or sets the gcm notifications repository.
-        /// </summary>
-        public IRepository<GCMNotification> GCMNotificationsRepository { get; set; }
-
-        /// <summary>
         /// Gets or sets the friend requests repository.
         /// </summary>
         public IRepository<FriendRequest> FriendRequestsRepository { get; set; }
+
+        /// <summary>
+        /// Gets or sets the journey message repository.
+        /// </summary>
+        public IRepository<JourneyMessage> JourneyMessageRepository { get; set; }
+
+        /// <summary>
+        /// Gets or sets the geo address repository.
+        /// </summary>
+        public IRepository<GeoAddress> GeoAddressRepository { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FindNDriveUnitOfWork"/> class.
@@ -97,7 +102,12 @@ namespace FindNDriveDataAccessLayer
         /// <param name="gcmNotificationsRepository">
         /// The gcm Notifications Repository.
         /// </param>
-        /// <param name="friendRequestsRepository"></param>
+        /// <param name="friendRequestsRepository">
+        /// </param>
+        /// <param name="journeyMessageRepository">
+        /// The journey Message Repository.
+        /// </param>
+        /// <param name="geoAddressRepository"></param>
         public FindNDriveUnitOfWork(
             DbContext dbContext,
             IRepository<User> userRepository,
@@ -106,8 +116,9 @@ namespace FindNDriveDataAccessLayer
             IRepository<JourneyRequest> journeyRequestRepository,
                                     IRepository<ChatMessage> chatMessageRepository,
             IRepository<Notification> notificationRepository,
-            IRepository<GCMNotification> gcmNotificationsRepository,
-            IRepository<FriendRequest> friendRequestsRepository)
+            IRepository<FriendRequest> friendRequestsRepository,
+            IRepository<JourneyMessage> journeyMessageRepository,
+            IRepository<GeoAddress> geoAddressRepository )
         {
             this._dbContext = dbContext;
             this.UserRepository = userRepository;
@@ -116,8 +127,9 @@ namespace FindNDriveDataAccessLayer
             this.JourneyRequestRepository = journeyRequestRepository;
             this.ChatMessageRepository = chatMessageRepository;
             this.NotificationRepository = notificationRepository;
-            this.GCMNotificationsRepository = gcmNotificationsRepository;
             this.FriendRequestsRepository = friendRequestsRepository;
+            this.JourneyMessageRepository = journeyMessageRepository;
+            this.GeoAddressRepository = geoAddressRepository;
         }
 
         /// <summary>
@@ -125,7 +137,17 @@ namespace FindNDriveDataAccessLayer
         /// </summary>
         public void Commit()
         {
-            this._dbContext.SaveChanges();
+            try
+            {
+                this._dbContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                var file = new System.IO.StreamWriter("c:\\CSC3002FYP\\db_context_error.txt");
+                file.WriteLine(e);
+                file.Close();
+            }
+            
         }
 
         /// <summary>

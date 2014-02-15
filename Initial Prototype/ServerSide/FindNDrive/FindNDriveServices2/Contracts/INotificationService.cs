@@ -25,28 +25,72 @@ namespace FindNDriveServices2.Contracts
     [ServiceContract]
     public interface INotificationService
     {
+        /// <summary>
+        /// The get in app notifications.
+        /// </summary>
+        /// <param name="loadRangeDTO">
+        /// The load range dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         [OperationContract]
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/markasread")]
-        ServiceResponse<bool> MarkAsRead(int id);
+            UriTemplate = "/getappnotifications")]
+        ServiceResponse<List<Notification>> GetAppNotifications(LoadRangeDTO loadRangeDTO);
 
+        /// <summary>
+        /// The get device notifications.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         [OperationContract]
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/getall")]
-        ServiceResponse<List<Notification>> RetrieveNotifications(LoadRangeDTO loadRangeDTO);
+            UriTemplate = "/getdevicenotifications")]
+        ServiceResponse<List<Notification>> GetDeviceNotifications(int userId);
 
+        /// <summary>
+        /// The get unread in app notifications count.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         [OperationContract]
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/getunreadcount")]
-        ServiceResponse<int> GetUnreadNotificationsCount(int userId);
+            UriTemplate = "/getcount")]
+        ServiceResponse<int> GetUnreadAppNotificationsCount(int userId);
+
+        /// <summary>
+        /// The mark as delivered.
+        /// </summary>
+        /// <param name="notificationId">
+        /// The notification id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/markdelivered")]
+        ServiceResponse<bool> MarkAsDelivered(int notificationId);
     }
 }

@@ -10,6 +10,7 @@
 namespace FindNDriveDataAccessLayer.Migrations
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Data.Entity.Migrations;
     using System.Globalization;
@@ -196,27 +197,29 @@ namespace FindNDriveDataAccessLayer.Migrations
              
             context.SaveChanges();
 
-            var geoAddress1 = new GeoAddress { AddressLine = "Dublin City Centre", Latitude = 53.3478, Longitude = -6.2597, Order = 1};
-            var geoAddress2 = new GeoAddress { AddressLine = "Warrenpoint City Centre", Latitude = 54.09900, Longitude = -6.24900, Order = 2 };
-            var geoAddress3 = new GeoAddress { AddressLine = "Belfast City Centre", Latitude = 54.5970, Longitude = -5.9300, Order = 3};
+            var geoAddress1 = new GeoAddress { AddressLine = "Dublin City Centre", Latitude = 53.3478, Longitude = -6.2597, Order = 0};
+            var geoAddress2 = new GeoAddress { AddressLine = "Warrenpoint City Centre", Latitude = 54.09900, Longitude = -6.24900, Order = 1 };
+            var geoAddress3 = new GeoAddress { AddressLine = "Belfast City Centre", Latitude = 54.5970, Longitude = -5.9300, Order = 2};
 
-            for(int i = 0; i < 20; i++)
+            for(int i = 0; i < 1; i++)
             {
                 context.Journeys.AddOrUpdate(
                     new Journey
                         {
                             AvailableSeats = 4,
                             DateAndTimeOfDeparture = DateTime.Now.AddDays(i + 1),
-                            GeoAddresses = new Collection<GeoAddress> { geoAddress1, geoAddress2, geoAddress3 },
+                            GeoAddresses = new List<GeoAddress> { geoAddress1, geoAddress3 },
                             Description = "Free ride to Dublin!",
                             Fee = 0.00,
-                            WomenOnly = false,
                             Driver = driver,
                             SmokersAllowed = false,
-                            JourneyStatus = JourneyStatus.Upcoming,
+                            JourneyStatus = JourneyStatus.OK,
                             CreationDate = DateTime.Now,
+                            Participants = new Collection<User> { participant1, participant2 }
                         });
             }
+
+            return; 
 
             var geoAddress4 = new GeoAddress { AddressLine = "London City Centre", Latitude = 51.5072, Longitude = 0.12755, Order = 4 };
             var geoAddress5 = new GeoAddress { AddressLine = "Manchester City Centre", Latitude = 53.4667, Longitude = -2.247926, Order = 5 };
@@ -228,14 +231,14 @@ namespace FindNDriveDataAccessLayer.Migrations
                     {
                         AvailableSeats = 4,
                         DateAndTimeOfDeparture = DateTime.Now.AddDays(i + 1),
-                        GeoAddresses = new Collection<GeoAddress> { geoAddress4, geoAddress5},
+                        GeoAddresses = new List<GeoAddress> { geoAddress4, geoAddress5},
                         Description = "London to Manchester",
                         Fee = 0.00,
-                        WomenOnly = false,
                         Driver = driver,
                         SmokersAllowed = false,
-                        JourneyStatus = JourneyStatus.Upcoming,
+                        JourneyStatus = JourneyStatus.OK,
                         CreationDate = DateTime.Now,
+                        Participants = new Collection<User> { participant1, participant2 }
                     });
             }
 
@@ -248,14 +251,14 @@ namespace FindNDriveDataAccessLayer.Migrations
                     {
                         AvailableSeats = 4,
                         DateAndTimeOfDeparture = new DateTime(2014, 2, 1, 20, 15, 0, cal),
-                        GeoAddresses = new Collection<GeoAddress> { geoAddress1, geoAddress2, geoAddress3, geoAddress4, geoAddress5 },
+                        GeoAddresses = new List<GeoAddress> { geoAddress1, geoAddress2, geoAddress3, geoAddress4, geoAddress5 },
                         Description = "Ultimate trip!",
                         Fee = 0.00,
-                        WomenOnly = false,
                         Driver = driver,
                         SmokersAllowed = false,
-                        JourneyStatus = JourneyStatus.Upcoming,
+                        JourneyStatus = JourneyStatus.OK,
                         CreationDate = new DateTime(2014, 1, 1, 20, 15, 0, cal),
+                        Participants = new Collection<User> { participant1, participant2 }
                     });
             }
 

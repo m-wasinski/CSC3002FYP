@@ -49,16 +49,34 @@ namespace DomainObjects.Domains
         public NotificationType NotificationType { get; set; }
 
         /// <summary>
-        /// Gets or sets the notification body.
+        /// Gets or sets the notification content type.
         /// </summary>
         [DataMember]
-        public string NotificationBody { get; set; }
+        public NotificationContentType NotificationContentType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the notification title.
+        /// </summary>
+        [DataMember]
+        public string NotificationTitle { get; set; }
+
+        /// <summary>
+        /// Gets or sets the notification message.
+        /// </summary>
+        [DataMember]
+        public string NotificationMessage { get; set; }
+
+        /// <summary>
+        /// Gets or sets the notification payload.
+        /// </summary>
+        [DataMember]
+        public string NotificationPayload { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether read.
         /// </summary>
         [DataMember]
-        public bool Read { get; set; }
+        public bool Delivered { get; set; }
 
         /// <summary>
         /// Gets or sets the context.

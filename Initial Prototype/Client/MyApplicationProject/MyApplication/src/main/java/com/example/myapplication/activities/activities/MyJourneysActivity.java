@@ -7,9 +7,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -21,7 +18,7 @@ import android.widget.TextView;
 
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.adapters.JourneyAdapter;
-import com.example.myapplication.constants.GcmConstants;
+import com.example.myapplication.constants.BroadcastTypes;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.Journey;
@@ -63,7 +60,7 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
 
         filterEditText = (EditText) findViewById(R.id.ActivityHomeFilterEditText);
         mainListView = (ListView) findViewById(R.id.MyCarSharesListView);
-        journeyAdapter = new JourneyAdapter(findNDriveManager.getUser().UserId, this, R.layout.listview_row_my_journey, myJourneys);
+        journeyAdapter = new JourneyAdapter(this, R.layout.listview_row_my_journey, myJourneys, this.findNDriveManager);
         journeyAdapter.getFilter().filter(filterEditText.getText().toString());
         mainListView.setAdapter(journeyAdapter);
         loadMoreButton = (Button) findViewById(R.id.ActivityMyJourneysLoadMoreButton);
@@ -99,7 +96,7 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
         });
         progressBar = (ProgressBar) findViewById(R.id.ActivityMyJourneysProgressBar);
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(GcmConstants.BROADCAST_ACTION_REFRESH);
+        intentFilter.addAction(BroadcastTypes.BROADCAST_ACTION_REFRESH);
         registerReceiver(GCMReceiver, intentFilter);
         filterEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -165,8 +162,12 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
                 mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        Bundle extras = new Bundle();
+                        extras.putInt(IntentConstants.NEW_JOURNEY_MESSAGES,Integer.parseInt(((TextView)view.findViewById(R.id.MyCarSharesNumberOfUnreadMessagesTextView)).getText().toString()));
+                        extras.putInt(IntentConstants.NEW_JOURNEY_REQUESTS,Integer.parseInt(((TextView)view.findViewById(R.id.MyCarSharesNumberOfUnreadRequestsTextView)).getText().toString()));
+                        extras.putString(IntentConstants.JOURNEY, gson.toJson(myJourneys.get(i)));
                         Intent intent = new Intent(getApplicationContext(), JourneyDetailsActivity.class);
-                        intent.putExtra(IntentConstants.JOURNEY, gson.toJson(myJourneys.get(i)));
+                        intent.putExtras(extras);
                         startActivity(intent);
                     }
                 });
@@ -180,31 +181,6 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
     @Override
     protected void onStop() {
         super.onStop();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.other_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
-        switch (item.getItemId()) {
-            case R.id.action_home:
-                intent = new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-                break;
-            case R.id.logout_menu_option:
-                findNDriveManager.logout(true, false);
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private void retrieveJourneys()

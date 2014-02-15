@@ -10,11 +10,14 @@ import android.widget.TextView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.activities.base.BaseActivity;
+import com.example.myapplication.constants.FriendRequestDecisions;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.constants.TokenTypes;
 import com.example.myapplication.domain_objects.FriendRequest;
+import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.notification_management.NotificationProcessor;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.google.gson.reflect.TypeToken;
@@ -27,6 +30,7 @@ public class ReceivedFriendRequestDialogActivity extends BaseActivity {
     private Button acceptButton;
     private Button denyButton;
 
+    private Notification notification;
     private FriendRequest friendRequest;
 
     private TextView headerTextView;
@@ -37,10 +41,18 @@ public class ReceivedFriendRequestDialogActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_friend_request_received);
 
-        Log.i(this.getClass().getSimpleName(), "" + getIntent().getExtras().getString(IntentConstants.FRIEND_REQUEST));
-
         // Initialise local variables.
-        this.friendRequest =  gson.fromJson(getIntent().getExtras().getString(IntentConstants.FRIEND_REQUEST), TokenTypes.getFriendRequestToken());
+        Bundle bundle = getIntent().getExtras();
+
+        this.notification =  gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),  new TypeToken<Notification>() {}.getType());
+        this.friendRequest =  gson.fromJson(notification.NotificationPayload, TokenTypes.getFriendRequestToken());
+
+        NotificationProcessor.MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+            @Override
+            public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+                Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
+            }
+        });
 
         // Initialise UI elements.
         this.acceptButton = (Button) this.findViewById(R.id.FriendRequestReceivedActivityAcceptButton);
@@ -64,7 +76,14 @@ public class ReceivedFriendRequestDialogActivity extends BaseActivity {
         this.acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                submitDecision(1);
+                submitDecision(FriendRequestDecisions.Accepted);
+            }
+        });
+
+        this.denyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                submitDecision(FriendRequestDecisions.Denied);
             }
         });
     }
@@ -73,7 +92,7 @@ public class ReceivedFriendRequestDialogActivity extends BaseActivity {
     {
         this.friendRequest.FriendRequestDecision = decision;
 
-        new WCFServiceTask<FriendRequest>(getApplicationContext(),
+        new WCFServiceTask<FriendRequest>(this,
                 getResources().getString(R.string.ProcessFriendRequestDecisionURL), friendRequest,
                 new TypeToken<ServiceResponse<Boolean>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
             @Override

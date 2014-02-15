@@ -11,6 +11,7 @@ import android.util.Log;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.MarkerType;
 import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.experimental.BackupGeocoder;
 import com.example.myapplication.experimental.GeocoderParams;
 import com.example.myapplication.interfaces.GeoCoderFinishedCallBack;
 import com.example.myapplication.utilities.Utilities;
@@ -18,7 +19,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -27,6 +31,7 @@ import java.util.Locale;
  */
 public class GeocoderTask extends AsyncTask<GeocoderParams, Void, MarkerOptions> {
 
+    private final String TAG = this.getClass().getSimpleName();
     private Context context;
     private GeoCoderFinishedCallBack listener;
     private MarkerOptions markerOptions;
@@ -42,7 +47,7 @@ public class GeocoderTask extends AsyncTask<GeocoderParams, Void, MarkerOptions>
         this.perimeter = perimeter;
     }
     @Override
-    protected MarkerOptions doInBackground(GeocoderParams... geocoderParamses) {
+    protected MarkerOptions doInBackground(GeocoderParams... geocoderParams) {
         Geocoder geocoder = new Geocoder(this.context, Locale.getDefault());
 
         // Create a list to contain the result address
@@ -50,8 +55,29 @@ public class GeocoderTask extends AsyncTask<GeocoderParams, Void, MarkerOptions>
         try {
             if(Geocoder.isPresent())
             {
-                addresses = geocoderParamses[0].getLocation() != null ? geocoder.getFromLocation(geocoderParamses[0].getLocation().getLatitude(), geocoderParamses[0].getLocation().getLongitude(), 1)
-                        : geocoder.getFromLocationName(geocoderParamses[0].getAddress(), 1);
+                addresses = geocoderParams[0].getLocation() != null ? geocoder.getFromLocation(geocoderParams[0].getLocation().getLatitude(), geocoderParams[0].getLocation().getLongitude(), 1)
+                        : geocoder.getFromLocationName(geocoderParams[0].getAddress(), 1);
+            }
+            else
+            {
+                Log.e(TAG, "Geocoder not present, attempting to retrieve address using Google Maps API.");
+
+                if(geocoderParams[0].getAddress() != null)
+                {
+                    BackupGeocoder backupGeocoder = new BackupGeocoder();
+                    JSONObject jsonAddress =  backupGeocoder.getJson(geocoderParams[0].getAddress());
+
+                    if(jsonAddress != null)
+                    {
+                        Address address = backupGeocoder.getAddress(jsonAddress);
+
+                        if(address != null)
+                        {
+                            addresses = new ArrayList<Address>();
+                            addresses.add(address);
+                        }
+                    }
+                }
             }
         } catch (IOException e1) {
             Log.e("LocationSampleActivity",
@@ -68,10 +94,7 @@ public class GeocoderTask extends AsyncTask<GeocoderParams, Void, MarkerOptions>
         {
             // Get the first address
             Address address = addresses.get(0);
-                /*
-                 * Format the first line of address (if available),
-                 * city, and country name.
-                 */
+
             String addressText = String.format(
                     "%s, %s, %s",
                     // If there's a street address, add it
@@ -81,6 +104,9 @@ public class GeocoderTask extends AsyncTask<GeocoderParams, Void, MarkerOptions>
                     address.getLocality(),
                     // The country of the address
                     address.getCountryName());
+
+            addressText = addressText.replace(",null", "").replace("null", "").replace(" , ", "");
+
             // Return the text
             this.markerOptions =  new MarkerOptions().position(new LatLng(address.getLatitude(), address.getLongitude()))
                     .title(addressText).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));

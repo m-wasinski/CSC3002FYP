@@ -16,6 +16,7 @@ namespace FindNDriveServices2.Services
     using System.ServiceModel;
     using System.ServiceModel.Activation;
 
+    using DomainObjects.Constants;
     using DomainObjects.Domains;
 
     using FindNDriveDataAccessLayer;
@@ -73,41 +74,6 @@ namespace FindNDriveServices2.Services
         }
 
         /// <summary>
-        /// The mark as read.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        public ServiceResponse<bool> MarkAsRead(int id)
-        {
-            if (!this.sessionManager.ValidateSession())
-            {
-                return ResponseBuilder.Unauthorised(false);
-            }
-
-            var notification =
-                this.findNDriveUnitOfworkWork.NotificationRepository.Find(id);
-
-            if (notification == null)
-            {
-                return ResponseBuilder.Failure<bool>("Invalid notification Id");
-            }
-
-            if (notification.Read)
-            {
-                return ResponseBuilder.Success(true);
-            }
-
-            notification.Read = true;
-            this.findNDriveUnitOfworkWork.Commit();
-
-            return ResponseBuilder.Success(true);
-        }
-
-        /// <summary>
         /// The retrieve notifications.
         /// </summary>
         /// <param name="loadRangeDTO">
@@ -116,16 +82,39 @@ namespace FindNDriveServices2.Services
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<List<Notification>> RetrieveNotifications(LoadRangeDTO loadRangeDTO)
+        public ServiceResponse<List<Notification>> GetAppNotifications(LoadRangeDTO loadRangeDTO)
         {
             if (!this.sessionManager.ValidateSession())
             {
                 return ResponseBuilder.Unauthorised(new List<Notification>());
             }
 
-            var notifications = this.findNDriveUnitOfworkWork.NotificationRepository.AsQueryable().Where(_ => _.UserId == loadRangeDTO.Id).OrderByDescending(x => x.ReceivedOnDate).ToList();
+            var notifications = this.findNDriveUnitOfworkWork.NotificationRepository.AsQueryable().Where(_ => _.UserId == loadRangeDTO.Id)
+                .OrderByDescending(x => x.ReceivedOnDate).ToList();
 
             notifications = LoadRangeHelper<Notification>.GetValidRange(notifications, loadRangeDTO.Index, loadRangeDTO.Count, loadRangeDTO.LoadMoreData);
+           
+            return ResponseBuilder.Success(notifications);
+        }
+
+        /// <summary>
+        /// The get device notifications.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<List<Notification>> GetDeviceNotifications(int userId)
+        {
+            if (!this.sessionManager.ValidateSession())
+            {
+                return ResponseBuilder.Unauthorised(new List<Notification>());
+            }
+
+            var notifications = this.findNDriveUnitOfworkWork.NotificationRepository.AsQueryable().Where(_ => _.UserId == userId &&
+                !_.Delivered && (_.NotificationType == NotificationType.Device || _.NotificationType == NotificationType.Both)).ToList();
 
             return ResponseBuilder.Success(notifications);
         }
@@ -139,16 +128,50 @@ namespace FindNDriveServices2.Services
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<int> GetUnreadNotificationsCount(int userId)
+        public ServiceResponse<int> GetUnreadAppNotificationsCount(int userId)
         {
             if (!this.sessionManager.ValidateSession())
             {
                 return ResponseBuilder.Unauthorised(0);
             }
 
-            var count = this.findNDriveUnitOfworkWork.NotificationRepository.AsQueryable().Count(_ => _.UserId == userId && !_.Read);
+            var count = this.findNDriveUnitOfworkWork.NotificationRepository.AsQueryable().Count(_ => _.UserId == userId && !_.Delivered && (_.NotificationType == NotificationType.App || _.NotificationType == NotificationType.Both));
 
             return ResponseBuilder.Success(count);
+        }
+
+        /// <summary>
+        /// The get unread notifications count.
+        /// </summary>
+        /// <param name="notificationId">
+        /// The notification Id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<bool> MarkAsDelivered(int notificationId)
+        {
+            if (!this.sessionManager.ValidateSession())
+            {
+                return ResponseBuilder.Unauthorised(false);
+            }
+
+            var notification = this.findNDriveUnitOfworkWork.NotificationRepository.Find(notificationId);
+
+            if (notification == null)
+            {
+                return ResponseBuilder.Failure<bool>("Invalid notification id.");
+            }
+
+            if (notification.Delivered)
+            {
+                return ResponseBuilder.Success(true);
+            }
+
+            notification.Delivered = true;
+            this.findNDriveUnitOfworkWork.Commit();
+
+            return ResponseBuilder.Success(true);
         }
     }
 }

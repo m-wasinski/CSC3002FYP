@@ -20,16 +20,16 @@ namespace DomainObjects.Constants
     public enum JourneyStatus
     {
         /// <summary>
-        /// The upcoming.
+        /// The OK.
         /// </summary>
-        [EnumMember(Value = "Upcoming")]
-        Upcoming = 1,
+        [EnumMember(Value = "OK")]
+        OK = 1,
 
         /// <summary>
         /// The past.
         /// </summary>
         [EnumMember(Value = "Past")]
-        Past = 2,
+        Expired = 2,
 
         /// <summary>
         /// The cancelled.

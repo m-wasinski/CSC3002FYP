@@ -3,16 +3,30 @@ package com.example.myapplication.gcm;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
-import com.example.myapplication.constants.GcmConstants;
+import com.example.myapplication.R;
+import com.example.myapplication.constants.BroadcastTypes;
+import com.example.myapplication.constants.GcmNotificationTypes;
 import com.example.myapplication.constants.IntentConstants;
+import com.example.myapplication.constants.ServiceResponseCode;
+import com.example.myapplication.domain_objects.Notification;
+import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.experimental.FindNDriveManager;
+import com.example.myapplication.notification_management.NotificationProcessor;
+import com.example.myapplication.interfaces.WCFServiceCallback;
+import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
 
 /**
  * Created by Michal on 30/12/13.
  */
 public class GcmIntentService extends IntentService {
+
+    private final String TAG = this.getClass().getSimpleName();
 
     public GcmIntentService() {
         super("GcmIntentService");
@@ -21,12 +35,14 @@ public class GcmIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
+        Log.d(TAG, "GCM Intent Service called.");
+
         FindNDriveManager findNDriveManager = ((FindNDriveManager)getApplication());
 
         if(findNDriveManager.hasAppBeenKilled())
         {
             findNDriveManager.logout(false, false);
-            //TODO tell user they have a new notification and ask them to log in.
+            //TODO tell user they have a new home_activity_notification and ask them to log in.
             return;
         }
 
@@ -50,35 +66,24 @@ public class GcmIntentService extends IntentService {
             }
             else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType))
             {
-                int requestType = Integer.parseInt(intent.getExtras().getString(IntentConstants.NOTIFICATION_TYPE));
+                int requestType = Integer.parseInt(intent.getExtras().getString(IntentConstants.GCM_NOTIFICATION_TYPE));
 
-                Intent broadcastIntent = new Intent();
-                broadcastIntent.setAction(GcmConstants.BROADCAST_ACTION_REFRESH);
-
+                Intent refreshBroadcastIntent = new Intent();
+                refreshBroadcastIntent.setAction(BroadcastTypes.BROADCAST_ACTION_REFRESH);
+                Log.d(TAG, "GCM Notification Type: " + requestType);
                 switch (requestType)
                 {
-                    case GcmConstants.NOTIFICATION_REFRESH:
-                        sendBroadcast(broadcastIntent);
+                    case GcmNotificationTypes.NOTIFICATION_TICKLE:
+                        sendBroadcast(refreshBroadcastIntent);
+                        this.retrieveDeviceNotifications(findNDriveManager);
                         break;
-                    case GcmConstants.NOTIFICATION_INSTANT_MESSENGER: //Chat instant message.
-                        sendBroadcast(broadcastIntent);
-                        instantMessageReceived(intent.getExtras().getString(IntentConstants.MESSAGE));
+                    case GcmNotificationTypes.CHAT_MESSAGE: //Chat instant message.
+                        sendBroadcast(refreshBroadcastIntent);
+                        instantMessageReceived(intent.getExtras().getString(IntentConstants.PAYLOAD));
                         break;
-                    case GcmConstants.NOTIFICATION_LOGOUT: //Force logout, user must have logged on somewhere using a different device.
-                        findNDriveManager.logout(true, true);
-                        break;
-                    case GcmConstants.NOTIFICATION_JOURNEY_REQUEST_RECEIVED:
-                        sendBroadcast(broadcastIntent);
-                        journeyRequestReceived(intent.getExtras().getString(IntentConstants.CONTENT_TITLE), intent.getExtras().getString(IntentConstants.MESSAGE));
-                        break;
-                    case GcmConstants.NOTIFICATION_FRIEND_REQUEST:
-                        friendRequestReceived(intent.getExtras().getString(IntentConstants.CONTENT_TITLE), intent.getExtras().getString(IntentConstants.MESSAGE));
-                        break;
-                    case GcmConstants.NOTIFICATION_JOURNEY_REQUEST_ACCEPTED:
-                        journeyRequestReplyReceived(intent.getExtras().getString(IntentConstants.CONTENT_TITLE), intent.getExtras().getString(IntentConstants.MESSAGE));
-                        break;
-                    case GcmConstants.NOTIFICATION_JOURNEY_REQUEST_DENIED:
-                        journeyRequestReplyReceived(intent.getExtras().getString(IntentConstants.CONTENT_TITLE), intent.getExtras().getString(IntentConstants.MESSAGE));
+                    case GcmNotificationTypes.JOURNEY_CHAT_MESSAGE:
+                        sendBroadcast(refreshBroadcastIntent);
+                        journeyChatMessageReceived(intent.getExtras().getString(IntentConstants.PAYLOAD));
                         break;
                 }
             }
@@ -93,8 +98,8 @@ public class GcmIntentService extends IntentService {
     */
     private void instantMessageReceived(String message)
     {
-        Intent orderedBroadcastIntent = new Intent(GcmConstants.BROADCAST_INSTANT_MESSENGER);
-        sendOrderedBroadcast(orderedBroadcastIntent.putExtra(IntentConstants.MESSAGE, message), null);
+        Intent orderedBroadcastIntent = new Intent(BroadcastTypes.BROADCAST_INSTANT_MESSENGER);
+        sendOrderedBroadcast(orderedBroadcastIntent.putExtra(IntentConstants.PAYLOAD, message), null);
     }
 
     /*
@@ -103,33 +108,47 @@ public class GcmIntentService extends IntentService {
     private void journeyRequestReceived(String header, String message)
     {
         Bundle extras = new Bundle();
-        extras.putString(IntentConstants.MESSAGE, message);
+        extras.putString(IntentConstants.PAYLOAD, message);
         extras.putString(IntentConstants.CONTENT_TITLE, header);
 
-        Intent broadcastIntent = new Intent(GcmConstants.BROADCAST_JOURNEY_REQUEST);
-        sendBroadcast(broadcastIntent.putExtras(extras), null);
-    }
-
-    /*
-    * Notifies the Journey Request Receiver about a new journey request.
-    */
-    private void friendRequestReceived(String header, String message)
-    {
-        Bundle extras = new Bundle();
-        extras.putString(IntentConstants.MESSAGE, message);
-        extras.putString(IntentConstants.CONTENT_TITLE, header);
-
-        Intent broadcastIntent = new Intent(GcmConstants.BROADCAST_FRIEND_REQUEST);
+        Intent broadcastIntent = new Intent(BroadcastTypes.BROADCAST_JOURNEY_REQUEST);
         sendBroadcast(broadcastIntent.putExtras(extras), null);
     }
 
     private void journeyRequestReplyReceived(String header, String message)
     {
         Bundle extras = new Bundle();
-        extras.putString(IntentConstants.MESSAGE, message);
+        extras.putString(IntentConstants.PAYLOAD, message);
         extras.putString(IntentConstants.CONTENT_TITLE, header);
 
-        Intent broadcastIntent = new Intent(GcmConstants.BROADCAST_JOURNEY_REQUEST_REPLY);
+        Intent broadcastIntent = new Intent(BroadcastTypes.BROADCAST_JOURNEY_REQUEST_REPLY);
         sendBroadcast(broadcastIntent.putExtras(extras), null);
+    }
+
+    private void journeyChatMessageReceived(String message)
+    {
+        Intent orderedBroadcastIntent = new Intent(BroadcastTypes.BROADCAST_JOURNEY_MESSAGE);
+        sendOrderedBroadcast(orderedBroadcastIntent.putExtra(IntentConstants.PAYLOAD, message), null);
+    }
+
+    private void retrieveDeviceNotifications(FindNDriveManager findNDriveManager)
+    {
+        new WCFServiceTask<Integer>(this, getResources().getString(R.string.GetDeviceNotificationsURL), findNDriveManager.getUser().UserId,
+                new TypeToken<ServiceResponse<ArrayList<Notification>>>() {}.getType(),
+                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<Notification>, Void>() {
+            @Override
+            public void onServiceCallCompleted(ServiceResponse<ArrayList<Notification>> serviceResponse, Void parameter) {
+                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
+                {
+                    deviceNotificationsRetrieved(serviceResponse.Result);
+                }
+            }
+        }).execute();
+    }
+
+    private void deviceNotificationsRetrieved(ArrayList<Notification> notifications)
+    {
+        Log.d(TAG, "Retrieved: "+notifications.size() + " new notifications.");
+        NotificationProcessor.DisplayNotification(this, notifications);
     }
 }

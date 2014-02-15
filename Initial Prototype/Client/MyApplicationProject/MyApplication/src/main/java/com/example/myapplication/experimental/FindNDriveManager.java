@@ -285,7 +285,7 @@ public class FindNDriveManager extends Application {
 
         String registrationId = sharedPreferences.getString(SharedPreferencesConstants.PROPERTY_REG_ID, "");
 
-        this.registrationId = registrationId == null ? "0" : registrationId;
+        this.registrationId = registrationId == null ? "" : registrationId;
 
         return this.registrationId;
     }

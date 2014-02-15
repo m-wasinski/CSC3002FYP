@@ -47,7 +47,7 @@ namespace FindNDriveServices2.DTOs
         /// Gets or sets the travel locations.
         /// </summary>
         [DataMember]
-        public virtual ICollection<GeoAddress> GeoAddresses { get; set; }
+        public virtual List<GeoAddress> GeoAddresses { get; set; }
 
         /// <summary>
         /// Gets or sets the time of departure.
@@ -92,12 +92,6 @@ namespace FindNDriveServices2.DTOs
         /// </summary>
         [DataMember]
         public bool SmokersAllowed { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether women only.
-        /// </summary>
-        [DataMember]
-        public bool WomenOnly { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether private.
@@ -148,12 +142,6 @@ namespace FindNDriveServices2.DTOs
         public ICollection<JourneyRequest> Requests { get; set; }
 
         /// <summary>
-        /// Gets or sets the messages.
-        /// </summary>
-        [DataMember]
-        public virtual ICollection<JourneyMessage> Messages { get; set; }
-
-        /// <summary>
         /// Gets or sets the creation date.
         /// </summary>
         [DataMember]
@@ -161,6 +149,15 @@ namespace FindNDriveServices2.DTOs
         [Column(TypeName = "DateTime2")]
         public DateTime CreationDate { get; set; }
 
+        /// <summary>
+        /// Gets or sets the preferred payment method.
+        /// </summary>
+        [DataMember]
+        public string PreferredPaymentMethod { get; set; }
+
+        /// <summary>
+        /// Gets or sets the load range.
+        /// </summary>
         public int LoadRange { get; set; }
     }
 }

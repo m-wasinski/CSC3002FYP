@@ -45,7 +45,7 @@ public class ChatAdapter extends BaseAdapter {
         if(convertView == null)
         {
             holder = new ViewHolder();
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.listview_row_chat_bubble, parent, false);
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.listview_row_instant_message, parent, false);
             holder.message = (TextView) convertView.findViewById(R.id.InstantMessengerRowMessageTextView);
             holder.date = (TextView) convertView.findViewById(R.id.InstantMessengerRowDateTextView);
             convertView.setTag(holder);

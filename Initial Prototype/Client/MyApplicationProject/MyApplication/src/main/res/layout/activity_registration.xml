@@ -3,7 +3,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="?android:attr/actionBarSize"
     android:background="@drawable/background"
     android:orientation="vertical"
     android:focusable="true"
@@ -38,7 +37,8 @@
             android:id="@+id/UserNameTextField"
             android:hint="@string/UserNameHint"
             android:singleLine="true"
-            style="@style/LoginFields"/>
+            style="@style/LoginFields"
+            android:maxLength="25"/>
 
         <EditText
             android:layout_width="match_parent"
@@ -47,7 +47,8 @@
             android:layout_marginTop="10sp"
             android:hint="@string/EmailHint"
             android:singleLine="true"
-            style="@style/LoginFields"/>
+            style="@style/LoginFields"
+            android:maxLength="50"/>
 
         <EditText
             android:layout_width="match_parent"
@@ -58,7 +59,8 @@
             android:hint="@string/PasswordHint"
             android:layout_marginTop="10sp"
             android:singleLine="true"
-            style="@style/LoginFields"/>
+            style="@style/LoginFields"
+            android:maxLength="50"/>
 
         <EditText
             android:layout_width="match_parent"
@@ -69,7 +71,8 @@
             android:hint="@string/ConfirmPasswordHint"
             android:layout_marginTop="10sp"
             android:singleLine="true"
-            style="@style/LoginFields"/>
+            style="@style/LoginFields"
+            android:maxLength="50"/>
 
         <TextView
             android:id="@+id/infoTxtCredits"
@@ -102,7 +105,8 @@
             android:layout_height="wrap_content"
             android:text="@string/CreateAccount"
             android:id="@+id/RegisterNewUserButton"
-            android:background="@drawable/button_selector"/>
+            android:background="@drawable/button_selector"
+            style="@style/UniversalButtonStyle"/>
 
     </LinearLayout>
 </RelativeLayout>

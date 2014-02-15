@@ -3,6 +3,7 @@
 namespace FindNDriveUnitTests
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.IO;
     using System.Net;
@@ -36,13 +37,12 @@ namespace FindNDriveUnitTests
                         {
                             AvailableSeats = 4,
                             DateAndTimeOfDeparture = new DateTime(2014, 2, 1, 20, 15, 0),
-                            GeoAddresses = new Collection<GeoAddress> { geoAddress1, geoAddress2, geoAddress3 },
+                            GeoAddresses = new List<GeoAddress> { geoAddress1, geoAddress2, geoAddress3 },
                             Description = "Free ride to Dublin!",
-                            Fee = 0.00,
-                            WomenOnly = false,
+                          
                             DriverId = 4,
                             SmokersAllowed = false,
-                            JourneyStatus = JourneyStatus.Upcoming,
+                            JourneyStatus = JourneyStatus.OK,
                             CreationDate = DateTime.Now,
                         };
 

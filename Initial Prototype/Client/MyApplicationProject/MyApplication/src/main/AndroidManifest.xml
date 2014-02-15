@@ -79,7 +79,7 @@
 
         <activity
             android:name=".activities.activities.JourneyChatActivity"
-            android:label="Chat"
+            android:label="Journey chat room"
             android:screenOrientation="portrait"/>
 
         <activity
@@ -89,7 +89,7 @@
 
         <activity
             android:name=".activities.activities.SearchActivity"
-            android:label="Search"
+            android:label="Find Journeys"
             android:screenOrientation="portrait"/>
 
         <activity
@@ -136,7 +136,7 @@
 
         <activity
             android:name=".activities.activities.ReceivedFriendRequestDialogActivity"
-            android:label="Send friend request."
+            android:label="Received friend request."
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Dialog"/>
 
@@ -173,7 +173,15 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".broadcast_receivers.JourneyChatMessageReceiver">
+            <intent-filter>
+                <action android:name="BROADCAST_JOURNEY_MESSAGE" />
+            </intent-filter>
+        </receiver>
+
         <service android:name=".gcm.GcmIntentService" />
+        <service android:name=".experimental.FindNDriveService" />
+
         <!-- Goolge API Key -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"

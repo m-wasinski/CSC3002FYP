@@ -1,7 +1,7 @@
 package com.example.myapplication.activities.activities;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AbsListView;
@@ -13,15 +13,14 @@ import android.widget.TextView;
 
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.adapters.NotificationsAdapter;
-import com.example.myapplication.constants.GcmConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.domain_objects.FriendRequest;
 import com.example.myapplication.dtos.LoadRangeDTO;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.example.myapplication.R;
+import com.example.myapplication.notification_management.NotificationProcessor;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -89,7 +88,7 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
     private void getNotifications()
     {
         progressBar.setVisibility(View.VISIBLE);
-        new WCFServiceTask<LoadRangeDTO>(this, getResources().getString(R.string.GetAllNotificationsURL),
+        new WCFServiceTask<LoadRangeDTO>(this, getResources().getString(R.string.GetAppNotificationsURL),
                 new LoadRangeDTO(findNDriveManager.getUser().UserId, mainListView.getCount(), findNDriveManager.getItemsPerCall(), loadMoreData),
                 new TypeToken<ServiceResponse<ArrayList<Notification>>>() {}.getType(),
                 findNDriveManager.getAuthorisationHeaders(), this).execute();
@@ -107,6 +106,8 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
             }
             else
             {
+
+
                 if(serviceResponse.Result.size() < findNDriveManager.getItemsPerCall())
                 {
                     loadMoreButton.setText("No more data to load");
@@ -115,9 +116,6 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
 
                 noRequestsTextView.setVisibility(View.GONE);
                 mainListView.setVisibility(View.VISIBLE);
-
-                final CharSequence options[] = new CharSequence[] {"Take action", "Archive"};
-                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
                 if(loadMoreData)
                 {
@@ -134,87 +132,23 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
                 mainListView.setSelectionFromTop(currentScrollPosition, 0);
                 mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        markNotificationAsRead(notifications.get(i).NotificationId);
+                    public void onItemClick(AdapterView<?> adapterView, final View view, int i, long l) {
 
-                        if(notifications.get(i).NotificationType == GcmConstants.NOTIFICATION_FRIEND_REQUEST)
+                        NotificationProcessor.MarkDelivered(getApplicationContext(), findNDriveManager, notifications.get(i), new WCFServiceCallback<Boolean, Void>() {
+                            public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+                                view.findViewById(R.id.NotificationListViewRowParentRelativeLayout).setBackgroundColor(Color.parseColor("#80151515"));
+                            }
+                        });
+
+                        Intent intent = NotificationProcessor.getIntent(getApplicationContext(), notifications.get(i));
+                        if(intent != null)
                         {
-                                showFriendRequest(notifications.get(i));
+                            startActivity(intent);
                         }
+
                     }
                 });
             }
-
-            /*ArrayList<Integer> ids = new ArrayList<Integer>();
-
-            for (JourneyRequest request : serviceResponse.Result)
-            {
-                ids.add(request.JourneyId);
-            }
-
-            new WCFServiceTask<ArrayList<Integer>, ArrayList<Journey>>(getResources().getString(R.string.GetManyJourneysURL), ids,
-                    new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(),
-                    findNDriveManager.getAuthorisationHeaders(),null, new WCFServiceCallback<ArrayList<Journey>, String>() {
-
-                @Override
-                public void onServiceCallCompleted(ServiceResponse<ArrayList<Journey>> filteredJourneys, String parameter) {
-                    for(JourneyRequest request : serviceResponse.Result)
-                    {
-                        for(Journey journey : filteredJourneys.Result)
-                        {
-                            if(request.JourneyId == journey.JourneyId)
-                            {
-                                request.Journey = journey;
-                            }
-                        }
-                    }
-
-
-
-                }
-            }).execute();*/
         }
-    }
-
-    private void showFriendRequest(Notification notification)
-    {
-        Dialog friendRequestDialog = new Dialog(this);
-        friendRequestDialog.setContentView(R.layout.activity_friend_request_received);
-        Button acceptButton = (Button) friendRequestDialog.findViewById(R.id.FriendRequestReceivedActivityAcceptButton);
-        acceptButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                FriendRequest friendRequest = new FriendRequest();
-                friendRequest.RequestingUserId = 4;
-                friendRequest.TargetUserId = 2;
-                friendRequest.FriendRequestDecision = 1;
-                friendRequest.FriendRequestId = 2;
-
-                new WCFServiceTask<FriendRequest>(getApplicationContext(),
-                        getResources().getString(R.string.ProcessFriendRequestDecisionURL), friendRequest,
-                        new TypeToken<ServiceResponse<Boolean>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
-                    @Override
-                    public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
-
-                    }
-                }).execute();
-            }
-        });
-        Button denyButton = (Button) friendRequestDialog.findViewById(R.id.FriendRequestReceivedActivityDenyButton);
-        friendRequestDialog.show();
-    }
-
-    private void markNotificationAsRead(int id)
-    {
-        new WCFServiceTask<Integer>(this, getResources().getString(R.string.MarkNotificationAsReadURL),
-                id,
-                new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
-                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
-            @Override
-            public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
-
-            }
-        }).execute();
     }
 }

@@ -10,15 +10,12 @@
 namespace FindNDriveServices2.Services
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Data.SqlClient;
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
 
     using DomainObjects.Constants;
-    using DomainObjects.Domains;
 
     using FindNDriveDataAccessLayer;
 
@@ -27,10 +24,6 @@ namespace FindNDriveServices2.Services
     using FindNDriveServices2.Contracts;
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
-
-    using Microsoft.Practices.ObjectBuilder2;
-
-    using Newtonsoft.Json;
 
     using WebMatrix.WebData;
 
@@ -62,6 +55,11 @@ namespace FindNDriveServices2.Services
         /// The notification manager.
         /// </summary>
         private readonly NotificationManager notificationManager;
+
+        /// <summary>
+        /// The invalid gcm registration id.
+        /// </summary>
+        private const string InvalidGCMRegistrationId = "0";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserService"/> class.
@@ -113,11 +111,8 @@ namespace FindNDriveServices2.Services
             if (loggedInUser.GCMRegistrationID != null && !loggedInUser.GCMRegistrationID.Equals("0") 
                 && loggedInUser.Status == Status.Online && !loggedInUser.GCMRegistrationID.Equals(login.GCMRegistrationID))
             {
-                this.notificationManager.SendNotification(
-                    new Collection<User> { loggedInUser },
-                    "LOGOUT",
-                    NotificationType.Logout,
-                    "LOGOUT");
+                this.notificationManager.SendGcmNotification(
+                    new Collection<User> { loggedInUser }, "LOGOUT", GcmNotificationType.Logout, "LOGOUT");
             }
 
             // Check if another user has been logged on on the same device before.
@@ -131,7 +126,7 @@ namespace FindNDriveServices2.Services
             // If yes, reset this user's GCM registration ID to 0 to prevent GCM notifications from being sent to the wrong device.
             if (userToReset != null)
             {
-                userToReset.GCMRegistrationID = "0";
+                userToReset.GCMRegistrationID = "InvalidGCMRegistrationId";
                 userToReset.Status = Status.Offline;
             }
 
@@ -140,8 +135,6 @@ namespace FindNDriveServices2.Services
             loggedInUser.Status = Status.Online;
 
             this.findNDriveUnitOfWork.Commit();
-
-            this.notificationManager.SendOfflineGCMNotification(loggedInUser);
 
             return ResponseBuilder.Success(loggedInUser);
         }
@@ -239,6 +232,11 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<bool> LogoutUser(bool forceInvalidate)
         {
+            if (!this.sessionManager.ValidateSession())
+            {
+                return ResponseBuilder.Unauthorised(false);
+            }
+
             var success = this.sessionManager.InvalidateSession(forceInvalidate);
             return ResponseBuilder.Success(success);
         }

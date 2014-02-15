@@ -7,6 +7,7 @@ public class GeoAddress {
     public double Latitude;
     public double Longitude;
     public int Order;
+    public int JourneyId;
     public String AddressLine;
 
     public GeoAddress(double Latitude, double Longitude, String AddressLine, int order)

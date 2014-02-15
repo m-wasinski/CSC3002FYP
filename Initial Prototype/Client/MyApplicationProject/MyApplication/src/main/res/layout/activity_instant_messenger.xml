@@ -4,7 +4,6 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingTop="?android:attr/actionBarSize"
     android:background="@drawable/background"
     android:focusable="true"
     android:focusableInTouchMode="true">
@@ -16,19 +15,20 @@
         android:layout_alignParentBottom="true">
 
         <EditText
-            android:id="@+id/text"
-            android:layout_width="match_parent"
+            android:id="@+id/InstantMessengerActivityMessageEditText"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_margin="5sp"
             android:layout_weight="1"
-            android:hint="Type your message"
+            android:hint="@string/TypeYourMessage"
             android:padding="5sp"
-            style="@style/LoginFields"/>
+            style="@style/LoginFields"
+            android:maxLength="250"/>
 
         <Button
             android:id="@+id/InstantMessengerActivityButton"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="5sp"
             android:onClick="sendMessage"
             android:paddingBottom="5sp"
@@ -36,7 +36,8 @@
             android:paddingRight="15sp"
             android:paddingTop="5sp"
             android:text="Send"
-            android:background="@drawable/button_selector"/>
+            android:background="@drawable/button_selector"
+            style="@style/UniversalButtonStyle"/>
     </LinearLayout>
 
     <ListView
@@ -58,6 +59,16 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:indeterminateDrawable="@drawable/progress"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/InstantMessengerActivityLoadMoreButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/ShowMore"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/button_selector"
+        style="@style/UniversalButtonStyle"
         android:visibility="gone"/>
 
 </RelativeLayout>

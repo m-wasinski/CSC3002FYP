@@ -25,8 +25,8 @@ public class JourneyRequestReplyReceiver extends BroadcastReceiver {
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.logo)
                         .setContentTitle("Request " + extras.getString(IntentConstants.CONTENT_TITLE))
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(extras.getString(IntentConstants.MESSAGE)))
-                        .setContentText(intent.getStringExtra(extras.getString(IntentConstants.MESSAGE)));
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(extras.getString(IntentConstants.PAYLOAD)))
+                        .setContentText(intent.getStringExtra(extras.getString(IntentConstants.PAYLOAD)));
 
         Notification notification = mBuilder.build();
         notification.flags = Notification.DEFAULT_LIGHTS | Notification.FLAG_AUTO_CANCEL;

@@ -97,6 +97,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Services\FriendsService.svc" />
+    <Content Include="Services\JourneyChatService.svc" />
     <Content Include="Services\JourneyService.svc" />
     <Content Include="Services\JourneyRequestService.svc" />
     <Content Include="Services\MessengerService.svc" />
@@ -123,6 +124,9 @@
     <Compile Include="DTOs\FriendRequestDTO.cs" />
     <Compile Include="DTOs\JourneyDTO.cs" />
     <Compile Include="DTOs\JourneyMessageDTO.cs" />
+    <Compile Include="DTOs\JourneyMessageMarkerDTO.cs" />
+    <Compile Include="DTOs\JourneyMessageRetrieverDTO.cs" />
+    <Compile Include="DTOs\JourneyPassengerWithdrawDTO.cs" />
     <Compile Include="DTOs\JourneyRequestDTO.cs" />
     <Compile Include="DTOs\JourneySearchDTO.cs" />
     <Compile Include="DTOs\LoadRangeDTO.cs" />
@@ -141,6 +145,9 @@
     <Compile Include="ServiceResponses\ServiceResponseCode.cs" />
     <Compile Include="Services\FriendsService.svc.cs">
       <DependentUpon>FriendsService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\JourneyChatService.svc.cs">
+      <DependentUpon>JourneyChatService.svc</DependentUpon>
     </Compile>
     <Compile Include="Services\JourneyService.svc.cs">
       <DependentUpon>JourneyService.svc</DependentUpon>

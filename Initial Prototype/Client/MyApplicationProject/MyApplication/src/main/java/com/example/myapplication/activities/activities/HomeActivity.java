@@ -1,28 +1,37 @@
 package com.example.myapplication.activities.activities;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 
 import com.example.myapplication.activities.base.BaseActivity;
-import com.example.myapplication.constants.GcmConstants;
+import com.example.myapplication.constants.BroadcastTypes;
+import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
+import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
+import com.example.myapplication.experimental.FindNDriveService;
+import com.example.myapplication.notification_management.NotificationProcessor;
 import com.example.myapplication.experimental.WakeLocker;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.example.myapplication.R;
 import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by Michal on 14/01/14.
@@ -35,37 +44,60 @@ public class HomeActivity extends BaseActivity {
     private LinearLayout friendsLayout;
     private LinearLayout addNewJourneyLayout;
 
-    private TextView generalNotificationsCountTextView;
-    private TextView unreadMessagesCountTextView;
+    private ImageView notificationsImageView;
+    private ImageView friendsImageView;
+
+    private ProgressBar progressBar;
+
+    private int refreshedItems;
+
+    private AlarmManager alarmManager;
+
+    private long FIVE_MINUTES = 300000;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-        actionBar.setTitle(" Hi " + findNDriveManager.getUser().UserName);
-        myJourneysLayout = (LinearLayout) findViewById(R.id.ActivityHomeMyJourneysLayout);
-        searchLayout = (LinearLayout) findViewById(R.id.ActivityHomeSearchLayout);
-        notificationsLayout = (LinearLayout) findViewById(R.id.ActivityHomeNotificationsLayout);
-        friendsLayout = (LinearLayout) findViewById(R.id.ActivityHomeFriendsLayout);
-        addNewJourneyLayout = (LinearLayout) findViewById(R.id.ActivityHomeMyOfferJourneyLayout);
-        generalNotificationsCountTextView = (TextView) findViewById(R.id.ActivityHomeNotificationCountTextView);
-        unreadMessagesCountTextView =(TextView) findViewById(R.id.HomeActivityUnreadMessagesCountTextView);
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(GcmConstants.BROADCAST_ACTION_REFRESH);
-        registerReceiver(GCMReceiver, intentFilter);
-        setupUIEvents();
+        this.setContentView(R.layout.activity_home);
+
+        //Initialise local variables.
+        this.actionBar.setTitle(" Hi " + findNDriveManager.getUser().UserName);
+
+        /*
+         * Alarm manager is used to trigger a task every 5 minutes.
+         * In this case, it's sending the heartbeat to the GCM service to keep the socket between the device and the GCM servers open.
+         * This ensures GCM notifications arrive instantaneously.
+         */
+        this.alarmManager = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
+        this.alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+                Calendar.getInstance().getTimeInMillis(),
+                FIVE_MINUTES, PendingIntent.getService(this, 0, new Intent(this, FindNDriveService.class), 0));
+
+        // Initialise UI elements.
+        this.myJourneysLayout = (LinearLayout) this.findViewById(R.id.ActivityHomeMyJourneysLayout);
+        this.searchLayout = (LinearLayout) this.findViewById(R.id.ActivityHomeSearchLayout);
+        this.notificationsLayout = (LinearLayout) this.findViewById(R.id.ActivityHomeNotificationsLayout);
+        this.friendsLayout = (LinearLayout) this.findViewById(R.id.ActivityHomeFriendsLayout);
+        this.addNewJourneyLayout = (LinearLayout) this.findViewById(R.id.ActivityHomeMyOfferJourneyLayout);
+        this.notificationsImageView = (ImageView) this.findViewById(R.id.HomeActivityNotificationsImageView);
+        this.friendsImageView =(ImageView) this.findViewById(R.id.HomeActivityFriendsImageView);
+        this.progressBar = (ProgressBar) this.findViewById(R.id.HomeActivityProgressBar);
+
+        // Setup event handlers for UI elements.
+        this.setupEventHandlers();
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        findNDriveManager.logout(false, false);
+        this.findNDriveManager.logout(false, false);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     @Override
@@ -74,21 +106,37 @@ public class HomeActivity extends BaseActivity {
             case R.id.logout_menu_option:
                 findNDriveManager.logout(true, false);
                 break;
+            case R.id.action_refresh:
+                this.refreshInformation();
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
-        return super.onOptionsItemSelected(item);
+        return true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.unregisterReceiver(GCMReceiver);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        refreshInformation();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BroadcastTypes.BROADCAST_ACTION_REFRESH);
+        this.registerReceiver(GCMReceiver, intentFilter);
+        this.refreshInformation();
+        this.retrieveDeviceNotifications();
     }
 
     private void refreshInformation()
     {
+        this.progressBar.setVisibility(View.VISIBLE);
+        this.refreshedItems = 0;
+
         new WCFServiceTask<Integer>(this, getResources().getString(R.string.RefreshUserURL), findNDriveManager.getUser().UserId,
                 new TypeToken<ServiceResponse<User>>() {}.getType(),
                 findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<User, Void>() {
@@ -101,7 +149,7 @@ public class HomeActivity extends BaseActivity {
             }
         }).execute();
 
-        new WCFServiceTask<Integer>(this, getResources().getString(R.string.GetUnreadNotificationsCountURL), findNDriveManager.getUser().UserId,
+        new WCFServiceTask<Integer>(this, getResources().getString(R.string.GetUnreadAppNotificationsCountURL), findNDriveManager.getUser().UserId,
                 new TypeToken<ServiceResponse<Integer>>() {}.getType(),
                 findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
             @Override
@@ -126,9 +174,24 @@ public class HomeActivity extends BaseActivity {
         }).execute();
     }
 
-    private void setupUIEvents()
+    private void retrieveDeviceNotifications()
     {
-        myJourneysLayout.setOnClickListener(new View.OnClickListener() {
+        new WCFServiceTask<Integer>(this, getResources().getString(R.string.GetDeviceNotificationsURL), findNDriveManager.getUser().UserId,
+                new TypeToken<ServiceResponse<ArrayList<Notification>>>() {}.getType(),
+                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<Notification>, Void>() {
+            @Override
+            public void onServiceCallCompleted(ServiceResponse<ArrayList<Notification>> serviceResponse, Void parameter) {
+                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
+                {
+                    deviceNotificationsRetrieved(serviceResponse.Result);
+                }
+            }
+        }).execute();
+    }
+
+    private void setupEventHandlers()
+    {
+        this.myJourneysLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), MyJourneysActivity.class);
@@ -136,7 +199,7 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
-        searchLayout.setOnClickListener(new View.OnClickListener() {
+        this.searchLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
@@ -144,7 +207,7 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
-        notificationsLayout.setOnClickListener(new View.OnClickListener() {
+        this.notificationsLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), MyNotificationsActivity.class);
@@ -152,7 +215,7 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
-        friendsLayout.setOnClickListener(new View.OnClickListener() {
+        this.friendsLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), FriendsListActivity.class);
@@ -160,10 +223,15 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
-        addNewJourneyLayout.setOnClickListener(new View.OnClickListener() {
+        this.addNewJourneyLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putInt(IntentConstants.JOURNEY_CREATOR_MODE, IntentConstants.JOURNEY_CREATOR_MODE_CREATING);
+
                 Intent intent = new Intent(getApplicationContext(), OfferJourneyStepOneActivity.class);
+                intent.putExtras(bundle);
+
                 startActivity(intent);
             }
         });
@@ -173,25 +241,34 @@ public class HomeActivity extends BaseActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             WakeLocker.acquire(getApplicationContext());
-            onResume();
+            refreshInformation();
             WakeLocker.release();
         }
     };
 
     private void notificationCountRetrieved(int count)
     {
-        generalNotificationsCountTextView.setText(count + " " + getResources().getString(R.string.New) + (count == 0 ? "" : "!"));
-        generalNotificationsCountTextView.setTypeface(null, count == 0 ? Typeface.NORMAL : Typeface.BOLD);
+        this.refreshedItems += 1;
+        this.progressBar.setVisibility(this.refreshedItems >= 3 ? View.GONE : View.VISIBLE);
+        this.notificationsImageView.setImageResource(count == 0 ? R.drawable.home_activity_notification : R.drawable.home_activity_notification_new);
     }
 
     private void userRefreshed(User user)
     {
-        findNDriveManager.setUser(user);
+        this.refreshedItems += 1;
+        this.progressBar.setVisibility(this.refreshedItems >= 3 ? View.GONE : View.VISIBLE);
+        this.findNDriveManager.setUser(user);
     }
 
     private void unreadMessagesCountRetrieved(int count)
     {
-        unreadMessagesCountTextView.setText(count + " Messages");
-        unreadMessagesCountTextView.setTypeface(null, count == 0 ? Typeface.NORMAL : Typeface.BOLD);
+        this.refreshedItems += 1;
+        this.progressBar.setVisibility(this.refreshedItems >= 3 ? View.GONE : View.VISIBLE);
+        this.friendsImageView.setImageResource(count == 0 ? R.drawable.home_activity_friends : R.drawable.home_activity_friends_new_message);
+    }
+
+    private void deviceNotificationsRetrieved(ArrayList<Notification> notifications)
+    {
+        NotificationProcessor.DisplayNotification(this, notifications);
     }
 }

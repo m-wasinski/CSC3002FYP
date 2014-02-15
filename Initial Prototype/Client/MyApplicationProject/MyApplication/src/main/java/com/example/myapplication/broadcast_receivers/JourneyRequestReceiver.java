@@ -13,9 +13,6 @@ import android.util.Log;
 import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.JourneyRequestDialogActivity;
 import com.example.myapplication.constants.IntentConstants;
-import com.example.myapplication.constants.TokenTypes;
-import com.example.myapplication.domain_objects.JourneyRequest;
-import com.google.gson.Gson;
 
 /**
  * Created by Michal on 09/02/14.
@@ -28,9 +25,9 @@ public class JourneyRequestReceiver extends BroadcastReceiver {
 
         Bundle extras = intent.getExtras();
 
-        Log.i(this.getClass().getSimpleName(), ""+extras.getString(IntentConstants.MESSAGE));
+        Log.i(this.getClass().getSimpleName(), ""+extras.getString(IntentConstants.PAYLOAD));
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, new Intent(context, JourneyRequestDialogActivity.class)
-                .putExtra(IntentConstants.JOURNEY_REQUEST, extras.getString(IntentConstants.MESSAGE)), PendingIntent.FLAG_CANCEL_CURRENT);
+                .putExtra(IntentConstants.JOURNEY_REQUEST, extras.getString(IntentConstants.PAYLOAD)), PendingIntent.FLAG_CANCEL_CURRENT);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)

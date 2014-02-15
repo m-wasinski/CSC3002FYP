@@ -54,6 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\FriendRequestDecision.cs" />
+    <Compile Include="Constants\GcmNotificationType.cs" />
+    <Compile Include="Constants\NotificationContentType.cs" />
     <Compile Include="Constants\NotificationType.cs" />
     <Compile Include="Constants\JourneyRequestDecision.cs" />
     <Compile Include="Constants\JourneyStatus.cs" />
@@ -63,7 +65,6 @@
     <Compile Include="Constants\Status.cs" />
     <Compile Include="Domains\ChatMessage.cs" />
     <Compile Include="Domains\FriendRequest.cs" />
-    <Compile Include="Domains\GCMNotification.cs" />
     <Compile Include="Domains\Journey.cs" />
     <Compile Include="Constants\Gender.cs" />
     <Compile Include="Constants\Roles.cs" />

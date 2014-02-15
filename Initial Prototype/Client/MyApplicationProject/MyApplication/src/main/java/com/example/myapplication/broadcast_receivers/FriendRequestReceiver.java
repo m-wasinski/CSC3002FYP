@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.ReceivedFriendRequestDialogActivity;
@@ -27,16 +28,18 @@ public class FriendRequestReceiver extends BroadcastReceiver {
 
         Bundle extras = intent.getExtras();
 
+        Log.d(TAG, extras.getString(IntentConstants.FRIEND_REQUEST));
+
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, ReceivedFriendRequestDialogActivity.class)
-                        .putExtra(IntentConstants.FRIEND_REQUEST, extras.getString(IntentConstants.MESSAGE)), PendingIntent.FLAG_CANCEL_CURRENT);
+                        .putExtras(extras), PendingIntent.FLAG_CANCEL_CURRENT);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.logo)
                         .setContentTitle("New friend request.")
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(extras.getString(IntentConstants.CONTENT_TITLE)))
-                        .setContentText(intent.getStringExtra(extras.getString(IntentConstants.CONTENT_TITLE)));
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(extras.getString(IntentConstants.NOTIFICATION_TITLE)))
+                        .setContentText(intent.getStringExtra(extras.getString(IntentConstants.NOTIFICATION_TITLE)));
 
 
         mBuilder.setContentIntent(contentIntent);

@@ -2,14 +2,16 @@ package com.example.myapplication.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.myapplication.constants.NotificationContext;
+import com.example.myapplication.constants.NotificationContextTypes;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.R;
@@ -36,16 +38,19 @@ public class NotificationsAdapter extends ArrayAdapter<Notification> {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         View row = convertView;
-        NotificationsHolder holder = null;
+        NotificationsHolder holder;
 
         if(row == null)
         {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
             holder = new NotificationsHolder();
-            holder.ContextIconView = (ImageView) row.findViewById(R.id.NotificationsActivityContextImageView);
-            holder.DateTextView = (TextView) row.findViewById(R.id.NotificationsActivityDateReceivedTextView);
-            holder.MessageTextView = (TextView)row.findViewById(R.id.NotificationsActivityMessageContentTextView);
+            holder.contextImageView = (ImageView) row.findViewById(R.id.NotificationsActivityContextImageView);
+            holder.dateTextView = (TextView) row.findViewById(R.id.NotificationsActivityDateReceivedTextView);
+            holder.messageTextView = (TextView)row.findViewById(R.id.NotificationsActivityMessageContentTextView);
+            holder.hasActionImageView = (ImageView) row.findViewById(R.id.NotificationListViewRightArrowImageView);
+            holder.parentRelativeLayout = (RelativeLayout) row.findViewById(R.id.NotificationListViewRowParentRelativeLayout);
+            holder.notificationHeaderTextView = (TextView) row.findViewById(R.id.NotificationListViewRowHeaderTextView);
             row.setTag(holder);
         }
         else
@@ -55,32 +60,39 @@ public class NotificationsAdapter extends ArrayAdapter<Notification> {
 
         Notification notification = notifications.get(position);
 
-        holder.DateTextView.setText(DateTimeHelper.getSimpleDate(notification.ReceivedOnDate) + " " + DateTimeHelper.getSimpleTime(notification.ReceivedOnDate));
-        holder.MessageTextView.setText(notification.NotificationBody);
+        holder.parentRelativeLayout.setBackgroundColor(notification.Delivered ?  Color.parseColor("#80151515") : Color.parseColor("#80dea516"));
+        holder.hasActionImageView.setVisibility(notification.NotificationPayload.isEmpty() ? View.GONE : View.VISIBLE);
+        holder.dateTextView.setText(DateTimeHelper.getSimpleDate(notification.ReceivedOnDate) + " " + DateTimeHelper.getSimpleTime(notification.ReceivedOnDate));
+        holder.notificationHeaderTextView.setText(notification.NotificationTitle);
+        holder.messageTextView.setText(notification.NotificationMessage);
+
         int image;
 
         switch(notification.Context)
         {
-            case NotificationContext.Negative:
-                image = R.drawable.denied;
+            case NotificationContextTypes.Negative:
+                image = R.drawable.negative;
                 break;
-            case NotificationContext.Positive:
-                image = R.drawable.accepted;
+            case NotificationContextTypes.Positive:
+                image = R.drawable.positive;
                 break;
              default:
                 image = R.drawable.neutral;
                 break;
         }
 
-        holder.ContextIconView.setImageResource(image);
+        holder.contextImageView.setImageResource(image);
 
         return row;
     }
 
     class NotificationsHolder
     {
-        ImageView ContextIconView;
-        TextView MessageTextView;
-        TextView DateTextView;
+        ImageView contextImageView;
+        ImageView hasActionImageView;
+        TextView messageTextView;
+        TextView dateTextView;
+        TextView notificationHeaderTextView;
+        RelativeLayout parentRelativeLayout;
     }
 }

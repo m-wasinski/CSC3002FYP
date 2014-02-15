@@ -61,5 +61,26 @@ namespace FindNDriveServices2
 
             return list.GetRange(start, length);
         }
+
+
+        public static List<T> GetConversations(List<T> list, int index, int count, bool loadMoreData)
+        {
+            if (list.Count - 1 <= count)
+            {
+                return list;
+            }
+
+            if (!loadMoreData)
+            {
+                return list.GetRange(list.Count - count - index > 0 ? list.Count - count - index : 0, list.Count - count > 0 ? count : list.Count - count);
+            }
+
+            var start = (list.Count - index - count) <= 0 ? 0 : list.Count - index - count;
+
+            var length = (index + count > list.Count - 1) ? list.Count - index : count;
+
+
+            return list.GetRange(start, length);
+        }
     }
 }

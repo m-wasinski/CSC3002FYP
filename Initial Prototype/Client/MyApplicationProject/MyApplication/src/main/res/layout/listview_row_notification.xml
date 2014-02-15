@@ -1,36 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="2sp"
     android:orientation="vertical"
-    android:background="#80151515">
+    android:background="#80151515"
+    android:id="@+id/NotificationListViewRowParentRelativeLayout">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:id="@+id/NotificationListViewRowContentLinearLayout"
+        android:layout_toLeftOf="@+id/NotificationListViewRightArrowImageView"
+        android:layout_alignParentLeft="true">
 
         <ImageView android:id="@+id/NotificationsActivityContextImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/no_new_requests"
             android:layout_gravity="center"
             android:layout_margin="5sp"/>
 
-        <TextView android:id="@+id/NotificationsActivityMessageContentTextView"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Content"
-            style="@style/RegularEditText"/>
+            android:orientation="vertical"
+            android:layout_marginLeft="5dip">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notification: "
+                android:id="@+id/NotificationListViewRowHeaderTextView"
+                android:textColor="#32B4E4"/>
+
+            <TextView android:id="@+id/NotificationsActivityMessageContentTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Content"
+                style="@style/ContentBody"/>
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right">
+        android:layout_gravity="right"
+        android:layout_below="@+id/NotificationListViewRowContentLinearLayout"
+        android:layout_alignParentRight="true"
+        android:id="@+id/NotificationListViewRowDateLinearLayout">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Received: "
+            android:textColor="#32B4E4"
+            android:layout_marginLeft="15dip"/>
 
         <TextView android:id="@+id/NotificationsActivityDateReceivedTextView"
             android:layout_width="wrap_content"
@@ -42,8 +68,18 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="1sp"
+        android:layout_height="1dip"
         android:background="#B7D8E8"
-        android:layout_below="@+id/MyCarSharesStatusIconsLayout"></LinearLayout>
+        android:layout_below="@+id/NotificationListViewRowDateLinearLayout"/>
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/NotificationListViewRightArrowImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/right_arrow"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dip"
+        android:paddingLeft="15dip"/>
+
+</RelativeLayout>

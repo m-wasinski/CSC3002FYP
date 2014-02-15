@@ -46,7 +46,7 @@ namespace DomainObjects.Domains
         /// Gets or sets the travel locations.
         /// </summary>
         [DataMember]
-        public virtual ICollection<GeoAddress> GeoAddresses { get; set; }
+        public virtual List<GeoAddress> GeoAddresses { get; set; }
 
         /// <summary>
         /// Gets or sets the time of departure.
@@ -99,12 +99,6 @@ namespace DomainObjects.Domains
         public bool Private { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether women only.
-        /// </summary>
-        [DataMember]
-        public bool WomenOnly { get; set; }
-
-        /// <summary>
         /// Gets or sets the vehicle type.
         /// </summary>
         [DataMember]
@@ -128,17 +122,17 @@ namespace DomainObjects.Domains
         public virtual ICollection<JourneyRequest> Requests { get; set; }
 
         /// <summary>
-        /// Gets or sets the messages.
-        /// </summary>
-        [DataMember]
-        public virtual ICollection<JourneyMessage> Messages { get; set; }
-
-        /// <summary>
         /// Gets or sets the creation date.
         /// </summary>
         [DataMember]
         [DataType(DataType.Date)]
         [Column(TypeName = "DateTime2")]
         public DateTime CreationDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the preferred payment method.
+        /// </summary>
+        [DataMember]
+        public string PreferredPaymentMethod { get; set; }
     }
 }

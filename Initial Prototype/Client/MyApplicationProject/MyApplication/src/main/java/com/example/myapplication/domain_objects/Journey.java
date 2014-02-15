@@ -7,7 +7,13 @@ import java.util.ArrayList;
  */
 public class Journey {
 
-    public int JourneyId;
+    private int JourneyId;
+
+    public int getJourneyId()
+    {
+        return this.JourneyId;
+    }
+
     public int DriverId;
     public User Driver;
     public ArrayList<GeoAddress> GeoAddresses;
@@ -17,16 +23,14 @@ public class Journey {
     public int AvailableSeats;
     public ArrayList<User> Participants;
     public boolean SmokersAllowed;
-    public boolean WomenOnly;
     public boolean PetsAllowed;
     public int VehicleType;
     public boolean Private;
-    public ArrayList<JourneyRequest> Requests;
     public int UnreadRequestsCount;
     public int JourneyStatus;
-    public ArrayList<JourneyMessage> Messages;
     public String CreationDate;
     public int PaymentOption;
+    public String PreferredPaymentMethod;
 
     public Journey()
     {

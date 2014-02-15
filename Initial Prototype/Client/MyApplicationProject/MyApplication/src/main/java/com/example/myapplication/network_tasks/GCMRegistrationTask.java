@@ -1,13 +1,11 @@
 package com.example.myapplication.network_tasks;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.example.myapplication.constants.GcmConstants;
+import com.example.myapplication.R;
 import com.example.myapplication.interfaces.GCMRegistrationCallback;
 import com.example.myapplication.utilities.Utilities;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -58,7 +56,7 @@ public class GCMRegistrationTask extends AsyncTask<TextView, String, Boolean> {
         for (int i = 1; i <= MAX_ATTEMPTS; i++) {
 
             try {
-                registrationId = gcm.register(GcmConstants.SENDER_ID);
+                registrationId = gcm.register(this.context.getResources().getString(R.string.GCM_SENDER_ID));
 
                 Log.e("ACQUIRED REGISTRATION ID", registrationId);
                 break;

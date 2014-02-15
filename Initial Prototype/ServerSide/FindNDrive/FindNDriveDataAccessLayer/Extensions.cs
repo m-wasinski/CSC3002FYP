@@ -34,7 +34,6 @@ namespace FindNDriveDataAccessLayer
                 queryable.Include("Driver")
                     .Include("Participants")
                     .Include("Requests")
-                    .Include("Messages")
                     .Include("GeoAddresses");
         }
 
@@ -75,9 +74,9 @@ namespace FindNDriveDataAccessLayer
         /// <returns>
         /// The <see cref="IQueryable"/>.
         /// </returns>
-        public static IQueryable<GCMNotification> IncludeAll(this IQueryable<GCMNotification> queryable)
+        public static IQueryable<JourneyMessage> IncludeAll(this IQueryable<JourneyMessage> queryable)
         {
-            return queryable.Include("RegistrationIds");
+            return queryable.Include("SeenBy");
         }
     }
 }

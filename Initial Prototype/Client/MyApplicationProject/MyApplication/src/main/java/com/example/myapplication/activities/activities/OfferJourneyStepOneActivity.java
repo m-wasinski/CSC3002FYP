@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.domain_objects.GeoAddress;
 import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.domain_objects.MarkerType;
+import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.experimental.GeocoderParams;
 import com.example.myapplication.experimental.WaypointHolder;
 import com.example.myapplication.network_tasks.GeocoderTask;
@@ -28,9 +30,11 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by Michal on 22/01/14.
@@ -49,13 +53,22 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
     private TextView destinationTextView;
     private TextView viaTextView;
 
+    private int mode;
+
+    private Journey journey;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_offer_journey_step_one);
+        this.setContentView(R.layout.activity_offer_journey_step_one);
+
+        Bundle bundle = getIntent().getExtras();
+        this.mode = bundle.getInt(IntentConstants.JOURNEY_CREATOR_MODE);
+
+        this.journey = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ?
+                (Journey)gson.fromJson(bundle.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType()) : new Journey();
 
         // Initialise variables.
-        actionBar.hide();
         this.wayPoints = new ArrayList<WaypointHolder>();
 
         //Initialise UI elements.
@@ -68,8 +81,29 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
         this.departureTextView = (TextView) this.findViewById(R.id.OfferJourneyStepOneActivityDepartureTextView);
         this.destinationTextView = (TextView) this.findViewById(R.id.OfferJourneyStepOneActivityDestinationTextView);
         this.viaTextView = (TextView) this.findViewById(R.id.OfferJourneyStepOneActivityViaTextView);
+        this.actionBar.setTitle(this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? "Editing journey, step 1" : "Offering journey, step 1");
+
         // Setting up event handlers.
         this.setupEventHandlers();
+
+        if(this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING)
+        {
+            Location startingLocation = new Location("");
+            startingLocation.setLatitude(this.journey.GeoAddresses.get(0).Latitude);
+            startingLocation.setLongitude(this.journey.GeoAddresses.get(0).Longitude);
+
+            new GeocoderTask(this, this, MarkerType.Departure, 0).execute(new GeocoderParams(this.journey.GeoAddresses.get(0).AddressLine, null));
+            new GeocoderTask(this, this, MarkerType.Destination, 0).execute(new GeocoderParams(this.journey.GeoAddresses.get(this.journey.GeoAddresses.size()-1).AddressLine, null));
+
+            if(this.journey.GeoAddresses.size() > 2)
+            {
+                this.viaTextView.setText("");
+                for(int i = 1; i < this.journey.GeoAddresses.size()-1; i++)
+                {
+                    new GeocoderTask(this, this, MarkerType.Waypoint, i).execute(new GeocoderParams(this.journey.GeoAddresses.get(i).AddressLine, null));
+                }
+            }
+        }
 
         try {
             // Loading map
@@ -112,7 +146,8 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
         this.stepTwoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                buildJourneyAndProceed();
+                stepTwoButton.setEnabled(false);
+                buildJourney();
             }
         });
 
@@ -170,7 +205,6 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
         {
             if(waypointHolder.geoAddress.Order == 1 && waypointHolder.googleMapMarker != null)
             {
-
                 firstWayPointEditText.setText(waypointHolder.googleMapMarker.getTitle());
             }
 
@@ -292,7 +326,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
         new GeocoderTask(this, this, markerType, order).execute(new GeocoderParams(address, null));
     }
 
-    private void buildJourneyAndProceed()
+    private void buildJourney()
     {
         if(this.departureMarker == null || this.destinationMarker == null)
         {
@@ -305,34 +339,47 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
                         }
                     });
 
+            this.stepTwoButton.setEnabled(true);
             AlertDialog alert = builder.create();
             alert.show();
             return;
         }
 
-        final Journey journey = new Journey();
-        journey.GeoAddresses = new ArrayList<GeoAddress>();
-        journey.GeoAddresses.add(new GeoAddress(departureMarker.getPosition().latitude, departureMarker.getPosition().longitude, departureMarker.getTitle(), 0));
+        this.journey.GeoAddresses = new ArrayList<GeoAddress>();
+        this.journey.GeoAddresses.add(new GeoAddress(departureMarker.getPosition().latitude, departureMarker.getPosition().longitude, departureMarker.getTitle(), 0));
 
         for(WaypointHolder waypointHolder : this.wayPoints)
         {
             if(waypointHolder.googleMapMarker != null)
             {
-                journey.GeoAddresses.add(waypointHolder.geoAddress);
+                this.journey.GeoAddresses.add(waypointHolder.geoAddress);
             }
         }
 
-        journey.GeoAddresses.add(new GeoAddress(destinationMarker.getPosition().latitude, destinationMarker.getPosition().longitude, destinationMarker.getTitle(), this.wayPoints.size()+1));
+        this.journey.GeoAddresses.add(new GeoAddress(destinationMarker.getPosition().latitude, destinationMarker.getPosition().longitude, destinationMarker.getTitle(), this.wayPoints.size()+1));
         Log.i("This journey has the following geoaddresses", "\n");
         for(GeoAddress geoAddress : journey.GeoAddresses)
         {
             Log.i("GeoAddress " + geoAddress.Order, " "+geoAddress.Latitude + " " + geoAddress.Longitude + " " + geoAddress.AddressLine);
         }
 
-        this.alrightImDone(journey);
+        this.journey.AvailableSeats  = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.journey.AvailableSeats : 1;
+        this.journey.PetsAllowed = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING && this.journey.PetsAllowed;
+        this.journey.SmokersAllowed = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING && this.journey.SmokersAllowed;
+        this.journey.Private = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING && this.journey.Private;
+        this.journey.VehicleType = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.journey.VehicleType : -1;
+        this.journey.Fee = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.journey.Fee : -1;
+        this.journey.PreferredPaymentMethod =  this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.journey.PreferredPaymentMethod : "";
+        this.journey.PaymentOption = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.journey.PaymentOption : -1;
+        this.journey.Description = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.journey.Description : "";
+        this.journey.DateAndTimeOfDeparture = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ?
+                this.journey.DateAndTimeOfDeparture : DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime());
+        this.journey.DriverId = this.findNDriveManager.getUser().UserId;
+
+        this.proceedToStepTwo();
     }
 
-    private void alrightImDone(final Journey journey)
+    private void proceedToStepTwo()
     {
         googleMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
             @Override
@@ -345,6 +392,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
                 bitmap.compress(Bitmap.CompressFormat.PNG, 50, bs);
                 Bundle bundle = new Bundle();
                 bundle.putString(IntentConstants.JOURNEY, gson.toJson(journey));
+                bundle.putInt(IntentConstants.JOURNEY_CREATOR_MODE, mode);
                 Intent intent = new Intent(getApplicationContext(), OfferJourneyStepTwoActivity.class);
                 intent.putExtras(bundle);
                 intent.putExtra(IntentConstants.MINIMAP, bs.toByteArray());
@@ -420,5 +468,11 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
             }
             drawDrivingDirectionsOnMap(googleMap, geoAddresses);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.stepTwoButton.setEnabled(true);
     }
 }

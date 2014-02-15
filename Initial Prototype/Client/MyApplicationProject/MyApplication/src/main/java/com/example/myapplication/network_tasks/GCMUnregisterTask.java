@@ -5,8 +5,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.example.myapplication.constants.GcmConstants;
-import com.example.myapplication.interfaces.GCMRegistrationCallback;
 import com.example.myapplication.interfaces.GCMUnregistrationCallback;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 

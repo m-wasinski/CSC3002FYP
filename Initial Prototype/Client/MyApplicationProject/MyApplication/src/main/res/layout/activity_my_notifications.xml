@@ -4,18 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:background="@drawable/background"
-    android:paddingTop="?android:attr/actionBarSize">
+    android:background="@drawable/background">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="1sp"
-            android:background="#151515"
-            android:layout_below="@+id/MyCarSharesStatusIconsLayout"></LinearLayout>
 
         <ListView
             android:layout_width="match_parent"
@@ -29,6 +22,7 @@
             android:text="@string/ShowMore"
             android:layout_alignParentBottom="true"
             android:background="@drawable/button_selector"
+            style="@style/UniversalButtonStyle"
             android:visibility="gone"/>
 
         <TextView

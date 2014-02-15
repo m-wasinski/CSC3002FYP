@@ -101,9 +101,8 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
 
     private void openRegistrationActivity()
     {
-        Intent intent = new Intent(this, RegistrationActivity.class);
-        startActivity(intent);
-        finish();
+        this.startActivity(new Intent(this, RegistrationActivity.class));
+        this.finish();
     }
 
 
@@ -111,7 +110,7 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.login, menu);
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     @Override
@@ -120,7 +119,7 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
             case R.id.register_menu_option:
                 openRegistrationActivity();
             default:
-                return super.onOptionsItemSelected(item);
+                return true;
         }
     }
 

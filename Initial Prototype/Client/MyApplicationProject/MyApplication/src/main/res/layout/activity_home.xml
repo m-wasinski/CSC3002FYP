@@ -1,221 +1,221 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    android:orientation="vertical"
-    android:paddingTop="?android:attr/actionBarSize"
-    android:gravity="center">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:gravity="center"
-            android:layout_margin="10sp"
-            android:padding="15sp"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:background="@drawable/home_navigation_selector"
-            android:id="@+id/ActivityHomeMyJourneysLayout">
+            android:layout_weight="1">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/car"
-                android:layout_gravity="center"
-                style="@style/TransparentButton"
-                android:focusable="false"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="My Journeys"
-                style="@style/LoginFields"
-                android:focusable="false"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/ActivityHomeSearchLayout"
-            android:orientation="vertical"
-            android:layout_margin="10sp"
-            android:gravity="center"
-            android:padding="15sp"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:background="@drawable/home_navigation_selector">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/search"
-                android:layout_gravity="center"
-                style="@style/TransparentButton"
-                android:focusable="false"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Find Journeys"
-                android:gravity="bottom"
-                android:layout_gravity="center"
-                style="@style/LoginFields"
-                android:focusable="false"/>
-        </LinearLayout>
-
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_weight="1">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_margin="10sp"
-            android:padding="15sp"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:background="@drawable/home_navigation_selector"
-            android:id="@+id/ActivityHomeMyOfferJourneyLayout">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/plus"
-                android:layout_gravity="center"
-                style="@style/TransparentButton"
-                android:focusable="false"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Offer Journey"
-                style="@style/LoginFields"
-                android:focusable="false"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ActivityHomeNotificationsLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_margin="10sp"
-            android:padding="15sp"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:background="@drawable/home_navigation_selector">
-
-            <TextView
-                android:id="@+id/ActivityHomeNotificationCountTextView"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/New"
-                style="@style/RegularEditText"
-                android:focusable="false"/>
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_margin="10sp"
+                android:padding="15sp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:background="@drawable/home_navigation_selector"
+                android:id="@+id/ActivityHomeMyJourneysLayout">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/notification"
-                android:layout_gravity="center"
-                style="@style/TransparentButton"
-                android:focusable="false"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/car"
+                    android:layout_gravity="center"
+                    style="@style/TransparentButton"
+                    android:focusable="false"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Notifications"
-                android:layout_gravity="center"
-                style="@style/LoginFields"
-                android:focusable="false"/>
-        </LinearLayout>
-    </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="My Journeys"
+                    style="@style/LoginFields"
+                    android:focusable="false"/>
+            </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_weight="1">
-
-        <LinearLayout
-            android:id="@+id/ActivityHomeFriendsLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_margin="10sp"
-            android:padding="15sp"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:background="@drawable/home_navigation_selector">
-
-            <TextView
-                android:id="@+id/HomeActivityUnreadMessagesCountTextView"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/NewMessages"
-                style="@style/RegularEditText"
-                android:focusable="false"/>
+                android:layout_height="match_parent"
+                android:id="@+id/ActivityHomeSearchLayout"
+                android:orientation="vertical"
+                android:layout_margin="10sp"
+                android:gravity="center"
+                android:padding="15sp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:background="@drawable/home_navigation_selector">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/friends"
-                android:layout_gravity="center"
-                style="@style/TransparentButton"
-                android:focusable="false"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/search"
+                    android:layout_gravity="center"
+                    style="@style/TransparentButton"
+                    android:focusable="false"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/Friends"
-                android:layout_gravity="center"
-                style="@style/LoginFields"
-                android:focusable="false"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Find Journeys"
+                    android:gravity="bottom"
+                    android:layout_gravity="center"
+                    style="@style/LoginFields"
+                    android:focusable="false"/>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_margin="10sp"
+                android:padding="15sp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:background="@drawable/home_navigation_selector"
+                android:id="@+id/ActivityHomeMyOfferJourneyLayout">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/plus"
+                    android:layout_gravity="center"
+                    style="@style/TransparentButton"
+                    android:focusable="false"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Offer Journey"
+                    style="@style/LoginFields"
+                    android:focusable="false"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ActivityHomeNotificationsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_margin="10sp"
+                android:padding="15sp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/home_activity_notification"
+                    android:layout_gravity="center"
+                    style="@style/TransparentButton"
+                    android:id="@+id/HomeActivityNotificationsImageView"
+                    android:focusable="false"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Notifications"
+                    android:layout_gravity="center"
+                    style="@style/LoginFields"
+                    android:focusable="false"/>
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/ActivityHomeMyProfileLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:background="@drawable/home_navigation_selector"
-            android:layout_margin="10sp"
-            android:padding="15sp"
-            android:layout_weight="1"
-            android:gravity="center">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
 
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/profile"
-                android:layout_gravity="center"
-                style="@style/TransparentButton"/>
+            <LinearLayout
+                android:id="@+id/ActivityHomeFriendsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_margin="10sp"
+                android:padding="15sp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:background="@drawable/home_navigation_selector">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/MyProfile"
-                android:layout_gravity="center"
-                style="@style/LoginFields"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/home_activity_friends"
+                    android:layout_gravity="center"
+                    style="@style/TransparentButton"
+                    android:id="@+id/HomeActivityFriendsImageView"
+                    android:focusable="false"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Friends"
+                    android:layout_gravity="center"
+                    style="@style/LoginFields"
+                    android:focusable="false"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ActivityHomeMyProfileLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="@drawable/home_navigation_selector"
+                android:layout_margin="10sp"
+                android:padding="15sp"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/profile"
+                    android:layout_gravity="center"
+                    style="@style/TransparentButton"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/MyProfile"
+                    android:layout_gravity="center"
+                    style="@style/LoginFields"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/HomeActivityProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:indeterminateDrawable="@drawable/progress"/>
+
+</RelativeLayout>

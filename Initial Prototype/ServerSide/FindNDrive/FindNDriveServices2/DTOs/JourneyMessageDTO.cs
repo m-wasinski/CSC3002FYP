@@ -9,8 +9,13 @@
 
 namespace FindNDriveServices2.DTOs
 {
+    using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
     using System.Runtime.Serialization;
+
+    using DomainObjects.Domains;
 
     /// <summary>
     /// The car share message.
@@ -31,15 +36,34 @@ namespace FindNDriveServices2.DTOs
         public int JourneyId { get; set; }
 
         /// <summary>
+        /// Gets or sets the sender id.
+        /// </summary>
+        [DataMember]
+        public int SenderId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the sender username.
+        /// </summary>
+        [DataMember]
+        public string SenderUsername { get; set; }
+
+        /// <summary>
         /// Gets or sets the message body.
         /// </summary>
         [DataMember]
         public string MessageBody { get; set; }
 
         /// <summary>
-        /// Gets or sets the read by users.
+        /// Gets or sets the sent on date.
         /// </summary>
         [DataMember]
-        public List<int> ReadByUsers { get; set; } 
+        [DataType(DataType.Date)]
+        [Column(TypeName = "DateTime2")]
+        public DateTime SentOnDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the seen by.
+        /// </summary>
+        public virtual ICollection<User> SeenBy { get; set; }  
     }
 }

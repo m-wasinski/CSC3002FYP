@@ -28,5 +28,11 @@ namespace FindNDriveServices2.DTOs
         /// </summary>
         [DataMember]
         public int RecipientId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the load range dto.
+        /// </summary>
+        [DataMember]
+        public LoadRangeDTO LoadRangeDTO { get; set; }
     }
 }

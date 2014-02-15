@@ -11,6 +11,9 @@ using System.Linq;
 
 namespace FindNDriveInfrastructureDataAccessLayer
 {
+    using System.Collections;
+    using System.Collections.Generic;
+
     /// <summary>
     /// The Repository interface.
     /// </summary>
@@ -33,6 +36,14 @@ namespace FindNDriveInfrastructureDataAccessLayer
         /// The entity.
         /// </param>
         void Remove(T entity);
+
+        /// <summary>
+        /// The remove range.
+        /// </summary>
+        /// <param name="entity">
+        /// The entity.
+        /// </param>
+        void RemoveRange(IEnumerable<T> entity);
 
         /// <summary>
         /// The find.

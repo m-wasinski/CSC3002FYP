@@ -9,6 +9,8 @@
 
 namespace FindNDriveInfrastructureDataAccessLayer
 {
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Data.Entity;
     using System.Linq;
 
@@ -55,6 +57,17 @@ namespace FindNDriveInfrastructureDataAccessLayer
         public void Remove(T entity)
         {
             this.dbSet.Remove(entity);
+        }
+
+        /// <summary>
+        /// The remove range.
+        /// </summary>
+        /// <param name="entity">
+        /// The entity.
+        /// </param>
+        public void RemoveRange(IEnumerable<T> entity)
+        {
+            this.dbSet.RemoveRange(entity);
         }
 
         /// <summary>

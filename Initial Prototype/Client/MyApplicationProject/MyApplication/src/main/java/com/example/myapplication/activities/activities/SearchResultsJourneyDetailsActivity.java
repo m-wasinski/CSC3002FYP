@@ -69,7 +69,7 @@ public class SearchResultsJourneyDetailsActivity extends BaseMapActivity impleme
         Bundle extras = getIntent().getExtras();
         this.journey = gson.fromJson(extras.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
         DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int halfScreen = (int) (metrics.heightPixels/2.5f);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, halfScreen);
         layoutParams.setMargins(10, 0, 0, 10);
@@ -121,7 +121,7 @@ public class SearchResultsJourneyDetailsActivity extends BaseMapActivity impleme
         String[] paymentOptions = getResources().getStringArray(R.array.payment_options);
 
         this.journeyHeaderTextView.setText(Utilities.getJourneyHeader(this.journey.GeoAddresses));
-        this.journeyIdTextView.setText(String.valueOf(this.journey.JourneyId));
+        this.journeyIdTextView.setText(String.valueOf(this.journey.getJourneyId()));
         this.journeyDriverTextView.setText(this.journey.Driver.FirstName + " " + this.journey.Driver.LastName);
         this.journeyDateTextView.setText(DateTimeHelper.getSimpleDate(this.journey.DateAndTimeOfDeparture));
         this.journeyTimeTextView.setText(DateTimeHelper.getSimpleTime(this.journey.DateAndTimeOfDeparture));
@@ -167,7 +167,7 @@ public class SearchResultsJourneyDetailsActivity extends BaseMapActivity impleme
         JourneyRequest journeyRequest = new JourneyRequest();
         journeyRequest.UserId = this.findNDriveManager.getUser().UserId;
         journeyRequest.User = this.findNDriveManager.getUser();
-        journeyRequest.JourneyId = this.journey.JourneyId;
+        journeyRequest.JourneyId = this.journey.getJourneyId();
         journeyRequest.Message = this.journeyMessageToDriverEditText.getText().toString();
         journeyRequest.Read = false;
         journeyRequest.Decision = RequestDecision.UNDECIDED;

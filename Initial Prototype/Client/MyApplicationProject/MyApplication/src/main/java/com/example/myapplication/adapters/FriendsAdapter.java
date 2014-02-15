@@ -2,11 +2,13 @@ package com.example.myapplication.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.myapplication.constants.ServiceResponseCode;
@@ -47,7 +49,9 @@ public class FriendsAdapter extends ArrayAdapter<User> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
         View row = convertView;
+
         final FriendHolder holder;
 
         if(row == null)
@@ -59,6 +63,7 @@ public class FriendsAdapter extends ArrayAdapter<User> {
             holder.userNameTextView = (TextView) row.findViewById(R.id.TravelBuddyListRowNameTextView);
             holder.unreadMessagesCountTextView = (TextView) row.findViewById(R.id.FriendsListRowUnreadMessagesTextView);
             holder.currentOnlineStatus = (ImageView) row.findViewById(R.id.FriendListViewRowStatusIcon);
+            holder.parentLayout = (LinearLayout) row.findViewById(R.id.FriendListViewRowParentLayout);
             row.setTag(holder);
         }
         else
@@ -71,13 +76,15 @@ public class FriendsAdapter extends ArrayAdapter<User> {
         holder.userNameTextView.setText(friend.UserName);
         holder.currentOnlineStatus.setImageResource(friend.Status == StatusConstants.Online ? R.drawable.available : R.drawable.unavailable);
         new WCFServiceTask<ChatMessageRetrieverDTO>(this.context, getContext().getResources().getString(R.string.GetUnreadMessagesCountForFriendURL),
-                new ChatMessageRetrieverDTO(friends.get(position).UserId, findNDriveManager.getUser().UserId),
+                new ChatMessageRetrieverDTO(friends.get(position).UserId, findNDriveManager.getUser().UserId, null),
                 new TypeToken<ServiceResponse<Integer>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {
-                    holder.unreadMessagesCountTextView.setText(serviceResponse.Result + " New messages");
+                    holder.unreadMessagesCountTextView.setText(String.valueOf(serviceResponse.Result));
+                    holder.unreadMessagesCountTextView.setVisibility(serviceResponse.Result > 0 ? View.VISIBLE : View.GONE);
+                    holder.parentLayout.setBackgroundColor(serviceResponse.Result > 0 ? Color.parseColor("#80dea516") : Color.parseColor("#80151515"));
                 }
             }
         }).execute();
@@ -91,5 +98,6 @@ public class FriendsAdapter extends ArrayAdapter<User> {
         ImageView currentOnlineStatus;
         TextView userNameTextView;
         TextView unreadMessagesCountTextView;
+        LinearLayout parentLayout;
     }
 }

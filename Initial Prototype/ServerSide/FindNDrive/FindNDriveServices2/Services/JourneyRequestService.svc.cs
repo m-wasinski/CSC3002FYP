@@ -140,22 +140,22 @@ namespace FindNDriveServices2.Services
                 return ResponseBuilder.Failure<JourneyRequest>("Could not find user");
             }
 
+            var request = new JourneyRequest { JourneyId = journeyRequestDTO.JourneyId, UserId = journeyRequestDTO.UserId, Decision = JourneyRequestDecision.Undecided, Read = false, Message = journeyRequestDTO.Message, SentOnDate = journeyRequestDTO.SentOnDate};
+
+            targetJourney.Requests.Add(request);
+            this.findNDriveUnitOfWork.Commit();
+
             var receiverMessage = "You received a request from user: " + targetUser.UserName + " asking to join journey no: " + targetJourney.JourneyId
             + " " + targetJourney.GeoAddresses.First().AddressLine + " to " + targetJourney.GeoAddresses.Last().AddressLine;
 
             var senderMessage = "You sent a request to user: " + targetJourney.Driver.UserName + " asking to join journey no: " + targetJourney.JourneyId
             + " " + targetJourney.GeoAddresses.First().AddressLine + " to " + targetJourney.GeoAddresses.Last().AddressLine;
 
-            this.findNDriveUnitOfWork.NotificationRepository.Add(new Notification { UserId = targetUser.UserId, NotificationBody = receiverMessage, Read = false, Context = NotificationContext.Positive, ReceivedOnDate = DateTime.Now, NotificationType = NotificationType.JourneyRequestReceived});
+            this.notificationManager.SendAppNotification(new List<User> { targetUser }, "You have received a new journey request.", receiverMessage, NotificationContext.Positive, NotificationType.Both, NotificationContentType.JourneyRequestReceived, request);
 
-            this.findNDriveUnitOfWork.NotificationRepository.Add(new Notification { UserId = requestingUser.UserId, NotificationBody = senderMessage, Read = false, Context = NotificationContext.Neutral, ReceivedOnDate = DateTime.Now, NotificationType = NotificationType.JourneyRequestSent});
+            this.notificationManager.SendAppNotification(new List<User> { requestingUser }, "You have sent a new journey request.", senderMessage, NotificationContext.Positive, NotificationType.App, NotificationContentType.JourneyRequestSent, string.Empty);
 
-            var request = new JourneyRequest { JourneyId = journeyRequestDTO.JourneyId, UserId = journeyRequestDTO.UserId, Decision = JourneyRequestDecision.Undecided, Read = false, Message = journeyRequestDTO.Message, SentOnDate = journeyRequestDTO.SentOnDate};
-
-            targetJourney.Requests.Add(request);
-            this.findNDriveUnitOfWork.Commit();
-
-            this.notificationManager.SendNotification(new Collection<User> { targetUser }, receiverMessage, NotificationType.JourneyRequestReceived, this.findNDriveUnitOfWork.JourneyRequestRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.JourneyRequestId == request.JourneyRequestId));
+            this.notificationManager.SendGcmNotification(new List<User> { targetUser }, "You have received a new journey request.", GcmNotificationType.NotificationTickle, string.Empty);
 
             return ResponseBuilder.Success(request);
         }
@@ -219,15 +219,6 @@ namespace FindNDriveServices2.Services
            var message = "Your request to join journey id: " + journey.JourneyId + " from "
                               + journey.GeoAddresses.First().AddressLine + " to " + journey.GeoAddresses.Last().AddressLine
                               + " has been " + decision;
-            
-            this.findNDriveUnitOfWork.NotificationRepository.Add(new Notification
-                                                    {   
-                                                        UserId = newPassenger.UserId,
-                                                        NotificationBody = message,
-                                                        Read = false,
-                                                        Context = journeyRequestDTO.Decision == JourneyRequestDecision.Accepted ? NotificationContext.Positive : NotificationContext.Negative,
-                                                        ReceivedOnDate = DateTime.Now
-                                                    });
 
             request.Decision = journeyRequestDTO.Decision;
             request.DecidedOnDate = journeyRequestDTO.DecidedOnDate;
@@ -240,7 +231,25 @@ namespace FindNDriveServices2.Services
 
             this.findNDriveUnitOfWork.Commit();
 
-            this.notificationManager.SendNotification(new Collection<User> { newPassenger }, journeyRequestDTO.Decision == JourneyRequestDecision.Accepted ? "Accepted" : "Denied", journeyRequestDTO.Decision == JourneyRequestDecision.Accepted ? NotificationType.JourneyRequestAccepted : NotificationType.JourneyRequestDenied, message);
+            this.notificationManager.SendAppNotification(
+                new List<User> { newPassenger }, 
+                journeyRequestDTO.Decision == JourneyRequestDecision.Accepted ? "Journey request accepted" : "Journey request denied",
+                message,
+                journeyRequestDTO.Decision == JourneyRequestDecision.Accepted
+                    ? NotificationContext.Positive
+                    : NotificationContext.Negative,
+                NotificationType.Both,
+                journeyRequestDTO.Decision == JourneyRequestDecision.Accepted
+                    ? NotificationContentType.JourneyRequestAccepted
+                    : NotificationContentType.JourneyRequestDenied,
+                string.Empty);
+
+            this.notificationManager.SendGcmNotification(
+                new List<User> { newPassenger },
+                "Journey request reply",
+                GcmNotificationType.NotificationTickle,
+                string.Empty);
+            
             return ResponseBuilder.Success(request);
         }
 

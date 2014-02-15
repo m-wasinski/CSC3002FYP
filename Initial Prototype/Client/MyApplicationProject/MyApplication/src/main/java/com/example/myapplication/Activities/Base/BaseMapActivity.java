@@ -2,6 +2,7 @@ package com.example.myapplication.activities.base;
 
 import android.app.ActionBar;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Criteria;
@@ -13,9 +14,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Display;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.example.myapplication.R;
+import com.example.myapplication.activities.activities.HomeActivity;
 import com.example.myapplication.domain_objects.GeoAddress;
 import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.domain_objects.MarkerType;
@@ -25,6 +31,7 @@ import com.example.myapplication.experimental.GeocoderParams;
 import com.example.myapplication.experimental.WaypointHolder;
 import com.example.myapplication.interfaces.GeoCoderFinishedCallBack;
 import com.example.myapplication.network_tasks.GeocoderTask;
+import com.example.myapplication.notification_management.DeviceNotificationManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
@@ -66,25 +73,52 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
     protected FindNDriveManager findNDriveManager;
     protected Gson gson;
     protected ActionBar actionBar;
-    protected EditText departureAddressEditText;
-    protected EditText destinationAddressEditText;
     protected InputMethodManager inputMethodManager;
     protected ArrayList<WaypointHolder> wayPoints;
     protected LocationClient locationClient;
+    protected DeviceNotificationManager deviceNotificationManager;
+
     private Polyline polyline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Initialise variables.
-        inputMethodManager = (InputMethodManager) this.getSystemService(INPUT_METHOD_SERVICE);
-        findNDriveManager = ((FindNDriveManager)getApplication());
-        gson = new Gson();
-        actionBar = getActionBar();
-        gMapV2Direction = new GMapV2Direction();
+        // Initialise local variables.
+        this.deviceNotificationManager = new DeviceNotificationManager();
+        this.inputMethodManager = (InputMethodManager) this.getSystemService(INPUT_METHOD_SERVICE);
+        this.findNDriveManager = ((FindNDriveManager)getApplication());
+        this.gson = new Gson();
+        this.actionBar = getActionBar();
+        this.gMapV2Direction = new GMapV2Direction();
         this.locationClient = new LocationClient(this, this, this);
-        geocoder = new Geocoder(this);
+        this.geocoder = new Geocoder(this);
+        this.deviceNotificationManager = new DeviceNotificationManager();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.other_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.action_home:
+                intent = new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                break;
+            case R.id.logout_menu_option:
+                findNDriveManager.logout(true, false);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     protected void showDeparturePoint(MarkerOptions markerOptions, double perimeter)
@@ -208,7 +242,10 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
     }
 
     protected void centerMapOnMyLocation() {
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(locationClient.getLastLocation().getLatitude(), locationClient.getLastLocation().getLongitude()), 14));
+        if(this.locationClient.getLastLocation() != null)
+        {
+            this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(locationClient.getLastLocation().getLatitude(), locationClient.getLastLocation().getLongitude()), 14));
+        }
     }
 
     protected void drawDrivingDirectionsOnMap(final GoogleMap map, final ArrayList<GeoAddress> geoAddresses)

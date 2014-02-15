@@ -93,7 +93,7 @@ namespace FindNDriveServices2.Services
                     var matchDeparture = -1;
                     var matchDestination = -1;
 
-                    if (x.JourneyStatus == JourneyStatus.Past || x.DateAndTimeOfDeparture < DateTime.Now)
+                    if (x.JourneyStatus == JourneyStatus.Expired || x.DateAndTimeOfDeparture < DateTime.Now)
                     {
                         return false;
                     }

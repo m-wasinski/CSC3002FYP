@@ -21,8 +21,6 @@ namespace FindNDriveServices2
     using DomainObjects.Domains;
     using FindNDriveDataAccessLayer;
 
-    using FindNDriveServices2.DTOs;
-
     using Newtonsoft.Json;
 
     /// <summary>
@@ -44,7 +42,7 @@ namespace FindNDriveServices2
         /// <summary>
         /// The gcm post data.
         /// </summary>
-        private const string GCMPostData = "{{ \"registration_ids\": {0} , \"data\": {{\"tickerText\":\"{1}\", \"contentTitle\":\"{2}\", \"notificationType\": \"{3}\", \"message\": {4} }}}}";
+        private const string GCMPostData = "{{ \"registration_ids\": {0} , \"data\": {{\"tickerText\":\"{1}\", \"contentTitle\":\"{2}\", \"notificationType\": {3}, \"payload\": {4} }}}}";
 
         /// <summary>
         /// The content type.
@@ -67,6 +65,11 @@ namespace FindNDriveServices2
         private readonly FindNDriveUnitOfWork findNDriveUnitOfWork;
 
         /// <summary>
+        /// The invalid gcm registration id.
+        /// </summary>
+        private const string InvalidGcmRegistrationId = "0";
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="NotificationManager"/> class.
         /// </summary>
         /// <param name="findNDriveUnitOfWork">
@@ -80,113 +83,106 @@ namespace FindNDriveServices2
         /// <summary>
         /// Send appropriate type of notification based on current status of the user.
         /// </summary>
+        /// <typeparam name="T">
+        /// </typeparam>
         /// <param name="users">
         /// The users.
         /// </param>
         /// <param name="contentTitle">
         /// The content Title.
         /// </param>
-        /// <param name="notificationType">
-        /// The notification Type.
+        /// <param name="gcmNotificationType">
+        /// The gcm Notification Type.
         /// </param>
-        /// <param name="message">
+        /// <param name="payload">
+        /// The payload.
         /// </param>
-        public void SendNotification<T>(Collection<User> users, String contentTitle, NotificationType notificationType, T message)
+        public void SendGcmNotification<T>(ICollection<User> users, string contentTitle, GcmNotificationType gcmNotificationType, T payload)
         {
             // Determine which users are online.
-            var onlineUsers = users.Where(_ => _.Status == Status.Online && !_.GCMRegistrationID.Equals("0")).ToList();
+            var onlineUsers = users.Where(_ => _.Status == Status.Online && !_.GCMRegistrationID.Equals(InvalidGcmRegistrationId)).ToList();
 
             // Serialise the message using the provided type.
-            var serialisedMessage = JsonConvert.SerializeObject(
-                message,
+            var serialisedPayload = JsonConvert.SerializeObject(
+                payload,
                 typeof(T),
                 Formatting.Indented,
                 new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.MicrosoftDateFormat });
 
-            if (onlineUsers.Count > 0)
-            {
-                this.BuildGCMNotification(onlineUsers.Select(_ => _.GCMRegistrationID).ToList(), notificationType, contentTitle, serialisedMessage);
-            }
-            
-            // Determine which users are offline.
-            var offlineUsers = users.Where(_ => _.Status == Status.Offline || _.GCMRegistrationID.Equals("0")).ToList();
-
-            // If none of the users are currently offline, no need to go any further.
-            if (!offlineUsers.Any())
+            if (onlineUsers.Count == 0)
             {
                 return;
             }
 
-            foreach (var user in offlineUsers)
-            {
-                // User is offline, create an offline GCM notification to be received next time they log in.
-                var gcmNotification = new GCMNotification
-                                          {
-                                              UserId = user.UserId,
-                                              Delivered = false,
-                                              NotificationMessage = serialisedMessage,
-                                              ContentTitle = contentTitle,
-                                              NotificationType = notificationType
-                                          };
+            var gcmPostData = string.Format(
+                    GCMPostData,
+                    JsonConvert.SerializeObject(onlineUsers.Select(_ => _.GCMRegistrationID).ToList()),
+                    string.Empty,
+                    contentTitle,
+                    JsonConvert.SerializeObject(gcmNotificationType),
+                    serialisedPayload);
 
-                this.findNDriveUnitOfWork.GCMNotificationsRepository.Add(gcmNotification);
-            }
-
-            this.findNDriveUnitOfWork.Commit();
+            this.ForwardGCMNotification(gcmPostData);
         }
 
         /// <summary>
-        /// The send offline gcm notification.
+        /// The send app notification.
         /// </summary>
-        /// <param name="user">
-        /// The user.
+        /// <param name="userId">
+        /// The user id.
         /// </param>
-        public void SendOfflineGCMNotification(User user)
-        {
-            // Gather all unread offline GCM notifications.
-            var gcmNotifications =
-                this.findNDriveUnitOfWork.GCMNotificationsRepository.AsQueryable().Where(_ => _.UserId == user.UserId && !_.Delivered).ToList();
-
-            // And forward them to the user.
-            gcmNotifications.ForEach(
-                delegate(GCMNotification gcmNotification)
-                    {
-                        gcmNotification.Delivered = true;
-                        this.BuildGCMNotification(new List<string> {user.GCMRegistrationID}, gcmNotification.NotificationType, gcmNotification.ContentTitle, gcmNotification.NotificationMessage);
-                    });
-
-            this.findNDriveUnitOfWork.Commit();
-        }
-
-        /// <summary>
-        /// The build gcm notification.
-        /// </summary>
-        /// <param name="registrationIds">
-        /// The registration ids.
+        /// <param name="notificationTitle">
+        /// The notification title.
+        /// </param>
+        /// <param name="notificationMessage">
+        /// The notification message.
+        /// </param>
+        /// <param name="context">
+        /// The context.
         /// </param>
         /// <param name="notificationType">
         /// The notification type.
         /// </param>
-        /// <param name="contentTitle">
-        /// The content title.
+        /// <param name="notificationContentType">
+        /// The notification content type.
         /// </param>
-        /// <param name="message">
-        /// The message.
+        /// <param name="payload">
+        /// The payload.
         /// </param>
-        /// <param name="type">
-        /// The type.
-        /// </param>
-        private void BuildGCMNotification(List<string> registrationIds, NotificationType notificationType, string contentTitle, string message)
+        /// <typeparam name="T">
+        /// </typeparam>
+        public void SendAppNotification<T>(ICollection<User> users, string notificationTitle, string notificationMessage, NotificationContext context, NotificationType notificationType, NotificationContentType notificationContentType, T payload)
         {
-            var gcmPostData = string.Format(
-                GCMPostData,
-                JsonConvert.SerializeObject(registrationIds),
-                string.Empty,
-                contentTitle,
-                JsonConvert.SerializeObject(notificationType),
-                message);
-            
-            this.SendGCMNotification(gcmPostData);
+            var serialisedPayload = string.Empty;
+
+            if(payload.GetType() != typeof(String))
+            {
+                // Serialise the message using the provided type.
+                serialisedPayload = JsonConvert.SerializeObject(
+                    payload,
+                    typeof(T),
+                    Formatting.Indented,
+                    new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.MicrosoftDateFormat });
+            }
+
+            foreach (var user in users)
+            {
+                this.findNDriveUnitOfWork.NotificationRepository.Add(
+                new Notification
+                {
+                    UserId = user.UserId,
+                    NotificationTitle = notificationTitle,
+                    NotificationMessage = notificationMessage,
+                    NotificationContentType = notificationContentType,
+                    Delivered = false,
+                    Context = context,
+                    ReceivedOnDate = DateTime.Now,
+                    NotificationType = notificationType,
+                    NotificationPayload = serialisedPayload
+                });
+            }
+
+            this.findNDriveUnitOfWork.Commit();
         }
 
         /// <summary>
@@ -195,7 +191,7 @@ namespace FindNDriveServices2
         /// <param name="gcmPostData">
         /// The gcm post data.
         /// </param>
-        private void SendGCMNotification(string gcmPostData)
+        private void ForwardGCMNotification(string gcmPostData)
         {
             var gcmRequest = (HttpWebRequest)WebRequest.Create(GCMUrl);
             gcmRequest.KeepAlive = true;

@@ -99,7 +99,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/home_navigation_selector"
-                    android:drawableTop="@drawable/cancel"
+                    android:drawableTop="@drawable/rating"
+                    android:id="@+id/MyJourneyDetailsActivityRateDriverButton"
+                    style="@style/JourneyDetailsButtons"
+                    android:text="@string/RateDriver"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/home_navigation_selector"
+                    android:drawableTop="@drawable/withdraw"
                     android:id="@+id/MyJourneyDetailsActivityWithdrawFromJourneyButton"
                     style="@style/JourneyDetailsButtons"
                     android:text="@string/WithdrawFromJourney"
@@ -110,12 +119,56 @@
 
     </LinearLayout>
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/JourneyDetailsActivityHeaderTextView"
+        android:orientation="horizontal"
         android:background="#CC151515"
-        style="@style/RegularEditText"
-        android:padding="5dip"/>
+        android:baselineAligned="false"
+        android:weightSum="2">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="0.5">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/JourneyRouteSummary"
+                android:textColor="#32B4E4"
+                android:paddingLeft="10dip"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/JourneyDetailsActivityHeaderTextView"
+                android:textColor="#FFFFFF"
+                android:paddingLeft="10dip"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1.5">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Status"
+                android:textColor="#32B4E4"
+                android:paddingLeft="10dip"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/JourneyDetailsActivityStatusTextView"
+                android:textColor="#FFFFFF"
+                android:paddingLeft="10dip"/>
+
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>

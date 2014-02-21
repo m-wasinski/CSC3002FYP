@@ -190,21 +190,24 @@
                 android:layout_margin="10sp"
                 android:padding="15sp"
                 android:layout_weight="1"
-                android:gravity="center">
+                android:gravity="center"
+                android:clickable="true">
 
-                <ImageButton
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/profile"
                     android:layout_gravity="center"
-                    style="@style/TransparentButton"/>
+                    style="@style/TransparentButton"
+                    android:focusable="false"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/MyProfile"
                     android:layout_gravity="center"
-                    style="@style/LoginFields"/>
+                    style="@style/LoginFields"
+                    android:focusable="false"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

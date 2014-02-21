@@ -28,8 +28,8 @@ namespace FindNDriveServices2.DTOs
         /// Gets or sets the id.
         /// </summary>
         [ConcurrencyCheck]
-        [ScaffoldColumn(false)]
-        public int Id { get; set; }
+        [DataMember]
+        public int UserId { get; set; }
 
         /// <summary>
         /// Gets or sets the user name.
@@ -100,6 +100,34 @@ namespace FindNDriveServices2.DTOs
         /// Gets or sets the rating.
         /// </summary>
         [DataMember]
-        public int Rating { get; set; }
+        public virtual List<Rating> Rating { get; set; }
+
+        /// <summary>
+        /// Gets or sets the last logon.
+        /// </summary>
+        [DataMember]
+        [DataType(DataType.Date)]
+        [Column(TypeName = "DateTime2")]
+        public DateTime LastLogon { get; set; }
+
+        /// <summary>
+        /// Gets or sets the member since.
+        /// </summary>
+        [DataMember]
+        [DataType(DataType.Date)]
+        [Column(TypeName = "DateTime2")]
+        public DateTime MemberSince { get; set; }
+
+        /// <summary>
+        /// Gets or sets the phone number.
+        /// </summary>
+        [DataMember]
+        public string PhoneNumber { get; set; }
+
+        /// <summary>
+        /// Gets or sets the average rating.
+        /// </summary>
+        [DataMember]
+        public double AverageRating { get; set; }
     }
 }

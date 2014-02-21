@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@drawable/background"
+    android:layout_height="wrap_content">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:requiresFadingEdge="vertical">
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/hashtag"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Journey ID:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/JourneySummaryJourneyIdTextView"
+                        android:paddingLeft="10dip"
+                        style="@style/RegularEditText"/>
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:background="@drawable/home_navigation_selector"
+                android:id="@+id/JourneySummaryActivityJourneyDriverTableRow"
+                android:clickable="true">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/driver_small"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Driver:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/JourneySummaryJourneyDriverTextView"
+                        android:paddingLeft="10dip"
+                        style="@style/RegularEditText"/>
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/downarrow"
+                    android:layout_marginRight="10sp"
+                    android:layout_gravity="center_vertical"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/calendar"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Date:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/JourneySummaryJourneyDateTextView"
+                        android:paddingLeft="10dip"
+                        style="@style/RegularEditText"/>
+
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/clock"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Time:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/JourneySummaryJourneyTimeTextView"
+                        android:paddingLeft="10dip"
+                        style="@style/RegularEditText"/>
+
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/OfferJourneyStepTwoActivityCigaretteImageView"
+                    android:src="@drawable/cigarette"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Smokers:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/JourneySummaryJourneySmokersTextView"
+                        android:paddingLeft="10dip"
+                        style="@style/RegularEditText"/>
+
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/OfferJourneyStepTwoActivityPetImageView"
+                    android:src="@drawable/pet"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pets:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/JourneySummaryJourneyPetsTextView"
+                        android:paddingLeft="10dip"
+                        style="@style/RegularEditText"/>
+
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/small_car"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Vehicle type:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/JourneySummaryJourneyVehicleTypeTextView"
+                        android:paddingLeft="10dip"
+                        style="@style/RegularEditText"/>
+
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/OfferJourneyStepTwoActivityAvailableSeatsImageView"
+                    android:src="@drawable/car_chair"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Seats left:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/JourneySummaryJourneySeatsTextView"
+                        android:paddingLeft="10dip"
+                        style="@style/RegularEditText"/>
+
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/OfferJourneyStepTwoActivityFeeImageView"
+                    android:src="@drawable/pound"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fee:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/JourneySummaryJourneyFeeTextView"
+                        android:paddingLeft="10dip"
+                        style="@style/RegularEditText"/>
+
+                </LinearLayout>
+            </TableRow>
+        </TableLayout>
+    </ScrollView>
+</LinearLayout>

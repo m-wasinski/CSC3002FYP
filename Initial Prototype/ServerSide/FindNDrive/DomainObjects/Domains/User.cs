@@ -31,6 +31,11 @@ namespace DomainObjects.Domains
         public int UserId { get; set; }
 
         /// <summary>
+        /// Gets or sets the profile image.
+        /// </summary>
+        public byte[] ProfileImage { get; set; }
+
+        /// <summary>
         /// Gets or sets the user name.
         /// </summary>
         [Required]
@@ -63,7 +68,7 @@ namespace DomainObjects.Domains
         [DataMember]
         [DataType(DataType.Date)]
         [Column(TypeName = "DateTime2")]
-        public virtual DateTime DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
 
         /// <summary>
         /// Gets or sets the gender.
@@ -97,7 +102,34 @@ namespace DomainObjects.Domains
         /// <summary>
         /// Gets or sets the rating.
         /// </summary>
+        public virtual List<Rating> Rating { get; set; }
+
+        /// <summary>
+        /// Gets or sets the last logon.
+        /// </summary>
         [DataMember]
-        public int Rating { get; set; }
+        [DataType(DataType.Date)]
+        [Column(TypeName = "DateTime2")]
+        public DateTime LastLogon { get; set; }
+
+        /// <summary>
+        /// Gets or sets the member since.
+        /// </summary>
+        [DataMember]
+        [DataType(DataType.Date)]
+        [Column(TypeName = "DateTime2")]
+        public DateTime MemberSince { get; set; }
+
+        /// <summary>
+        /// Gets or sets the phone number.
+        /// </summary>
+        [DataMember]
+        public string PhoneNumber { get; set; }
+
+        /// <summary>
+        /// Gets or sets the average rating.
+        /// </summary>
+        [DataMember]
+        public double AverageRating { get; set; }
     }
 }

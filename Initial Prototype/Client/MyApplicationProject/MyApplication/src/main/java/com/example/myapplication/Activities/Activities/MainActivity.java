@@ -14,11 +14,15 @@ import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.interfaces.GCMRegistrationCallback;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.GCMRegistrationTask;
-import com.example.myapplication.network_tasks.WCFServiceTask;
+import com.example.myapplication.network_tasks.WcfGetServiceTask;
+import com.example.myapplication.network_tasks.WcfPostServiceTask;
+import com.example.myapplication.utilities.Pair;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.gson.reflect.TypeToken;
 import java.util.UUID;
+
+import static java.util.Arrays.asList;
 
 public class MainActivity extends BaseActivity implements WCFServiceCallback<User, String> {
 
@@ -52,7 +56,7 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
     }
 
     /**
-     * WCFServiceTask callback function invoked when a response from the WCF service is retrieved.
+     * WcfPostServiceTask callback function invoked when a response from the WCF service is retrieved.
      * If auto-login was successful, transfer the current user directly to their home page,
      * otherwise display the login page and ask the user to log in manually.
      */
@@ -141,7 +145,7 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
         findNDriveManager.setUUID(UUID.randomUUID().toString());
         Log.i(TAG, "New UUID generated, " + findNDriveManager.getUUID());
 
-        new WCFServiceTask<String>(this, getResources().getString(R.string.UserAutoLoginURL), "", new TypeToken<ServiceResponse<User>>() {}.getType(),
+        new WcfPostServiceTask<String>(this, getResources().getString(R.string.UserAutoLoginURL), "", new TypeToken<ServiceResponse<User>>() {}.getType(),
                 findNDriveManager.getAuthorisationHeaders(), this).execute();
     }
 }

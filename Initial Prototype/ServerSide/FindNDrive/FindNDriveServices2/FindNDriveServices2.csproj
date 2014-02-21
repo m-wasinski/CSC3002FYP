@@ -102,6 +102,7 @@
     <Content Include="Services\JourneyRequestService.svc" />
     <Content Include="Services\MessengerService.svc" />
     <Content Include="Services\NotificationService.svc" />
+    <Content Include="Services\RatingService.svc" />
     <Content Include="Services\SearchService.svc" />
     <Content Include="Services\UserService.svc" />
     <Content Include="Web.config">
@@ -115,6 +116,7 @@
     <Compile Include="Contracts\IMessengerService.cs" />
     <Compile Include="Contracts\INotificationService.cs" />
     <Compile Include="Contracts\IJourneyRequestService.cs" />
+    <Compile Include="Contracts\IRatingService.cs" />
     <Compile Include="Contracts\ISearchService.cs" />
     <Compile Include="Contracts\IUserService.cs" />
     <Compile Include="CustomEndpointBehaviour.cs" />
@@ -126,12 +128,15 @@
     <Compile Include="DTOs\JourneyMessageDTO.cs" />
     <Compile Include="DTOs\JourneyMessageMarkerDTO.cs" />
     <Compile Include="DTOs\JourneyMessageRetrieverDTO.cs" />
-    <Compile Include="DTOs\JourneyPassengerWithdrawDTO.cs" />
+    <Compile Include="DTOs\JourneyUserDTO.cs" />
     <Compile Include="DTOs\JourneyRequestDTO.cs" />
     <Compile Include="DTOs\JourneySearchDTO.cs" />
     <Compile Include="DTOs\LoadRangeDTO.cs" />
     <Compile Include="DTOs\LoginDTO.cs" />
     <Compile Include="DTOs\NotificationDTO.cs" />
+    <Compile Include="DTOs\NotificationMarkerDTO.cs" />
+    <Compile Include="DTOs\ProfilePictureUpdaterDTO.cs" />
+    <Compile Include="DTOs\RatingDTO.cs" />
     <Compile Include="DTOs\RegisterDTO.cs" />
     <Compile Include="DTOs\FriendDTO.cs" />
     <Compile Include="DTOs\UserDTO.cs" />
@@ -155,12 +160,15 @@
     <Compile Include="Services\JourneyRequestService.svc.cs">
       <DependentUpon>JourneyRequestService.svc</DependentUpon>
     </Compile>
-    <Compile Include="ResponseBuilder.cs" />
+    <Compile Include="ServiceResponseBuilder.cs" />
     <Compile Include="Services\MessengerService.svc.cs">
       <DependentUpon>MessengerService.svc</DependentUpon>
     </Compile>
     <Compile Include="Services\NotificationService.svc.cs">
       <DependentUpon>NotificationService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\RatingService.svc.cs">
+      <DependentUpon>RatingService.svc</DependentUpon>
     </Compile>
     <Compile Include="Services\SearchService.svc.cs">
       <DependentUpon>SearchService.svc</DependentUpon>

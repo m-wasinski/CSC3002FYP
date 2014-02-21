@@ -10,10 +10,11 @@
 namespace FindNDriveServices2.Services
 {
     using System;
-    using System.Collections.ObjectModel;
+    using System.IO;
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
+    using System.ServiceModel.Web;
 
     using DomainObjects.Constants;
 
@@ -80,11 +81,6 @@ namespace FindNDriveServices2.Services
             this.notificationManager = notificationManager;
         }
 
-        public UserService()
-        {
-           
-        }
-
         /// <summary>
         /// Logs a user in.
         /// </summary>
@@ -96,7 +92,7 @@ namespace FindNDriveServices2.Services
        
             if (!validatedUser.IsValid || !WebSecurity.Login(login.UserName, login.Password))
             {   
-                return ResponseBuilder.Failure<User>("Invalid Username or Password.");
+                return ServiceResponseBuilder.Failure<User>("Invalid Username or Password.");
             }
 
             var userId = WebSecurity.GetUserId(login.UserName);
@@ -104,15 +100,7 @@ namespace FindNDriveServices2.Services
 
             if (loggedInUser == null)
             {
-                return ResponseBuilder.Failure<User>("User does not exist!");
-            }
-
-            // Check if this user is currently logged onto another device, if yes, log them out.
-            if (loggedInUser.GCMRegistrationID != null && !loggedInUser.GCMRegistrationID.Equals("0") 
-                && loggedInUser.Status == Status.Online && !loggedInUser.GCMRegistrationID.Equals(login.GCMRegistrationID))
-            {
-                this.notificationManager.SendGcmNotification(
-                    new Collection<User> { loggedInUser }, "LOGOUT", GcmNotificationType.Logout, "LOGOUT");
+                return ServiceResponseBuilder.Failure<User>("User does not exist!");
             }
 
             // Check if another user has been logged on on the same device before.
@@ -126,17 +114,18 @@ namespace FindNDriveServices2.Services
             // If yes, reset this user's GCM registration ID to 0 to prevent GCM notifications from being sent to the wrong device.
             if (userToReset != null)
             {
-                userToReset.GCMRegistrationID = "InvalidGCMRegistrationId";
+                userToReset.GCMRegistrationID = InvalidGCMRegistrationId;
                 userToReset.Status = Status.Offline;
             }
 
             this.sessionManager.GenerateNewSession(loggedInUser.UserId);
             loggedInUser.GCMRegistrationID = login.GCMRegistrationID;
             loggedInUser.Status = Status.Online;
+            loggedInUser.LastLogon = DateTime.Now;
 
             this.findNDriveUnitOfWork.Commit();
 
-            return ResponseBuilder.Success(loggedInUser);
+            return ServiceResponseBuilder.Success(loggedInUser);
         }
 
         /// <summary>
@@ -147,26 +136,27 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<User> AutoUserLogin()
         {
-            if (this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                var userId = this.sessionManager.GetUserId();
-
-                if (userId == -1)
-                {
-                    return ResponseBuilder.Failure<User>("MANUAL LOGIN");
-                }
-
-                var loggedInUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.UserId == userId);
-                if (loggedInUser != null)
-                {
-                    loggedInUser.Status = Status.Online;
-                }
-
-                this.findNDriveUnitOfWork.Commit();
-                return ResponseBuilder.Success(loggedInUser);
+                return ServiceResponseBuilder.Failure<User>("MANUAL LOGIN");
             }
 
-            return ResponseBuilder.Failure<User>("MANUAL LOGIN");
+            var userId = this.sessionManager.GetUserId();
+
+            if (userId == -1)
+            {
+                return ServiceResponseBuilder.Failure<User>("MANUAL LOGIN");
+            }
+
+            var loggedInUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.UserId == userId);
+            if (loggedInUser != null)
+            {
+                loggedInUser.Status = Status.Online;
+                loggedInUser.LastLogon = DateTime.Now;
+            }
+
+            this.findNDriveUnitOfWork.Commit();
+            return ServiceResponseBuilder.Success(loggedInUser);
         }
 
         /// <summary>
@@ -176,25 +166,20 @@ namespace FindNDriveServices2.Services
         /// <returns></returns>
         public ServiceResponse<User> RegisterUser(RegisterDTO register)
         {
-            var validatedRegisterDTO = ValidationHelper.Validate(register);
-            //Check if an account with the same username already exists.
+            // Check if an account with the same username already exists.
             if (
                 this.findNDriveUnitOfWork.UserRepository.AsQueryable()
                     .Any(_ => _.UserName.Equals(register.User.UserName)))
             {
-                return ResponseBuilder.Failure<User>("Account with this username already exists.");
+                return ServiceResponseBuilder.Failure<User>("Account with this username already exists.");
             }
-            //Check if an account with the same username already exists.
+
+            // Check if an account with the same username already exists.
             if (
                 this.findNDriveUnitOfWork.UserRepository.AsQueryable()
                     .Any(_ => _.EmailAddress.Equals(register.User.EmailAddress)))
             {
-                return ResponseBuilder.Failure<User>("Account with this email address already exists.");
-            }
-
-            if (!validatedRegisterDTO.IsValid)
-            {
-                return ResponseBuilder.Failure<User>("Failed to register");
+                return ServiceResponseBuilder.Failure<User>("Account with this email address already exists.");
             }
 
             try
@@ -207,17 +192,38 @@ namespace FindNDriveServices2.Services
                     EmailAddress = register.User.EmailAddress,
                     Role = Roles.User,
                     UserName = register.User.UserName,
-                    UserId = register.User.UserId
+                    UserId = register.User.UserId,
+                    FirstName = string.Empty,
+                    LastName = string.Empty,
+                    GCMRegistrationID = register.User.GCMRegistrationID,
+                    MemberSince = DateTime.Now,
+                    AverageRating = 0
                 };
 
-                this.sessionManager.GenerateNewSession(newUser.UserId);
+                // Check if another user has been logged on on the same device before.
+                var userToReset =
+                    this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+                        .FirstOrDefault(
+                            _ =>
+                            _.GCMRegistrationID == register.User.GCMRegistrationID);
+
+                // If yes, reset this user's GCM registration ID to 0 to prevent GCM notifications from being sent to the wrong device.
+                if (userToReset != null)
+                {
+                    userToReset.GCMRegistrationID = "0";
+                    userToReset.Status = Status.Offline;
+                }
+
                 this.findNDriveUnitOfWork.UserRepository.Add(newUser);
                 this.findNDriveUnitOfWork.Commit();
-                return ResponseBuilder.Success(newUser);
+
+                this.sessionManager.GenerateNewSession(newUser.UserId);
+
+                return ServiceResponseBuilder.Success(newUser);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return ResponseBuilder.Failure<User>("Account with this username already exists.");
+                return ServiceResponseBuilder.Failure<User>("Account with this username already exists.");
             }     
         }
 
@@ -232,13 +238,13 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<bool> LogoutUser(bool forceInvalidate)
         {
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(false);
+                return ServiceResponseBuilder.Unauthorised(false);
             }
 
             var success = this.sessionManager.InvalidateSession(forceInvalidate);
-            return ResponseBuilder.Success(success);
+            return ServiceResponseBuilder.Success(success);
         }
 
         /// <summary>
@@ -252,17 +258,115 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<User> RefreshUser(int userId)
         {
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(new User());
+                return ServiceResponseBuilder.Unauthorised(new User());
             }
 
             var user = this.findNDriveUnitOfWork.UserRepository.AsQueryable()
                     .IncludeAll()
                     .FirstOrDefault(_ => _.UserId == userId);
 
-            return user != null ? ResponseBuilder.Success(user) : ResponseBuilder.Unauthorised(new User());
+            return user != null ? ServiceResponseBuilder.Success(user) : ServiceResponseBuilder.Unauthorised(new User());
+        }
+
+        public ServiceResponse<User> UpdateUser(UserDTO userDTO)
+        {
+            if (!this.sessionManager.IsSessionValid())
+            {
+                return ServiceResponseBuilder.Unauthorised(new User());
+            }
+
+            var user = this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+                   .IncludeAll()
+                   .FirstOrDefault(_ => _.UserId == userDTO.UserId);
+
+            if (user == null)
+            {
+                return ServiceResponseBuilder.Failure<User>("Invalid user id.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(userDTO.FirstName) && !string.Equals(user.FirstName, userDTO.FirstName))
+            {
+                user.FirstName = userDTO.FirstName;
+            }
+
+            if (!string.IsNullOrWhiteSpace(userDTO.LastName) && !string.Equals(user.LastName, userDTO.LastName))
+            {
+                user.LastName = userDTO.LastName;
+            }
+
+            if (!string.IsNullOrWhiteSpace(userDTO.EmailAddress) && !string.Equals(user.EmailAddress, userDTO.EmailAddress))
+            {
+                user.EmailAddress = userDTO.EmailAddress;
+            }
+
+            if ((userDTO.Gender == Gender.Female || userDTO.Gender == Gender.Male) && userDTO.Gender != user.Gender)
+            {
+                user.Gender = userDTO.Gender;
+            }
+
+            if (userDTO.DateOfBirth != DateTime.MinValue)
+            {   
+                user.DateOfBirth = userDTO.DateOfBirth;
+            }
+
+            if (!string.IsNullOrWhiteSpace(userDTO.PhoneNumber)
+                && !string.Equals(user.PhoneNumber, userDTO.PhoneNumber))
+            {
+                user.PhoneNumber = userDTO.PhoneNumber;
+            }
+            
+            this.findNDriveUnitOfWork.Commit();
+
+            return ServiceResponseBuilder.Success(user);
+        }
+
+        public Stream GetUserProfilePicture(int id)
+        {
+            if (!this.sessionManager.IsSessionValid())
+            {
+                return new MemoryStream(0);
+            }
+
+            var user =
+                this.findNDriveUnitOfWork.UserRepository.Find(id);
+
+            if (user == null)
+            {
+                return new MemoryStream(0);
+            }
+
+            if (WebOperationContext.Current != null)
+            {
+                WebOperationContext.Current.OutgoingResponse.ContentType = "image/png";
+            }
+
+            return new MemoryStream(user.ProfileImage);
+        }
+
+        public ServiceResponse<string> UpdateProfilePicture(ProfilePictureUpdaterDTO profilePictureUpdaterDTO)
+        {
+            if (!this.sessionManager.IsSessionValid())
+            {
+                return ServiceResponseBuilder.Unauthorised(string.Empty);
+            }
+
+            var user = this.findNDriveUnitOfWork.UserRepository.Find(profilePictureUpdaterDTO.UserId);
+
+            if (user == null)
+            {
+                return ServiceResponseBuilder.Failure<string>("Invalid user id.");
+            }
+
+            var imageBytes = Convert.FromBase64String(profilePictureUpdaterDTO.Picture);
+            user.ProfileImage = imageBytes;
+
+            this.findNDriveUnitOfWork.Commit();
+
+            return ServiceResponseBuilder.Success(profilePictureUpdaterDTO.Picture);
         }
     }
+
 }
 

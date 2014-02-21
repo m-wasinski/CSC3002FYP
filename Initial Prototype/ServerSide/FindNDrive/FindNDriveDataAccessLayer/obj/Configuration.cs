@@ -13,7 +13,9 @@ namespace FindNDriveDataAccessLayer.Migrations
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Data.Entity.Migrations;
+    using System.Drawing;
     using System.Globalization;
+    using System.IO;
     using System.Security.Cryptography;
     using System.Text;
 
@@ -74,6 +76,8 @@ namespace FindNDriveDataAccessLayer.Migrations
                 LastName = "Wasinski",
                 Gender = Gender.Male,
                 UserName = "Admin",
+                GCMRegistrationID = "0",
+                Status = Status.Offline,
                 Role = Roles.Administrator,
                 UserId = 1
             };
@@ -113,8 +117,12 @@ namespace FindNDriveDataAccessLayer.Migrations
                 LastName = "Doe",
                 Gender = Gender.Male,
                 UserName = "john",
+                GCMRegistrationID = "0",
+                Status = Status.Offline,
                 Role = Roles.User,
-                UserId = 2            
+                UserId = 2,
+                MemberSince = DateTime.Now,
+                AverageRating = 0
             };
 
             context.User.AddOrUpdate(_ => _.UserId, participant1);
@@ -131,8 +139,13 @@ namespace FindNDriveDataAccessLayer.Migrations
 
             context.Sessions.AddOrUpdate(_ => _.UserId, session1);
             context.SaveChanges();
-
-
+            Image img = Image.FromFile(@"C:\\CSC3002FYP\\user.png");
+            byte[] arr;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                img.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+                arr =  ms.ToArray();
+            }
             var participant2 = new User
             {
                 DateOfBirth = new DateTime(1985, 3, 2),
@@ -141,8 +154,11 @@ namespace FindNDriveDataAccessLayer.Migrations
                 LastName = "McDonald",
                 Gender = Gender.Female,
                 UserName = "laura",
+                GCMRegistrationID = "0",
+                Status = Status.Offline,
                 Role = Roles.User,
-                UserId = 3
+                UserId = 3,
+                ProfileImage = arr
             };
 
             context.User.AddOrUpdate(_ => _.UserId, participant2);
@@ -163,18 +179,20 @@ namespace FindNDriveDataAccessLayer.Migrations
             var driver = new User
             {
                 DateOfBirth = new DateTime(1970, 5, 4),
-                EmailAddress = "jessica@domain.com",
-                FirstName = "Jessica",
-                LastName = "Patterson",
+                EmailAddress = "alex@domain.com",
+                FirstName = "Alex",
+                LastName = "Johnson",
+                GCMRegistrationID = "0",
+                Status = Status.Offline,
                 Gender = Gender.Female,
-                UserName = "jess",
+                UserName = "alex",
                 Role = Roles.User,
                 UserId = 4
             };
 
             context.SaveChanges();
 
-            WebSecurity.CreateUserAndAccount(driver.UserName, "p");
+            WebSecurity.CreateUserAndAccount(driver.UserName, "password");
 
             var encoding = new UTF8Encoding();
             var bytes = encoding.GetBytes("Test1");
@@ -215,6 +233,7 @@ namespace FindNDriveDataAccessLayer.Migrations
                             SmokersAllowed = false,
                             JourneyStatus = JourneyStatus.OK,
                             CreationDate = DateTime.Now,
+                            PreferredPaymentMethod = string.Empty,
                             Participants = new Collection<User> { participant1, participant2 }
                         });
             }

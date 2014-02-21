@@ -1,19 +1,13 @@
 package com.example.myapplication.network_tasks;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.constants.SessionConstants;
 import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.experimental.SSLSocketFactory;
 import com.example.myapplication.interfaces.WCFServiceCallback;
-import com.example.myapplication.utilities.Utilities;
 import com.example.myapplication.utilities.Pair;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -40,69 +34,30 @@ import java.util.List;
  * Created by Michal on 05/01/14.
  */
 @SuppressWarnings("unchecked")
-public class WCFServiceTask<T> extends AsyncTask<TextView, String, Boolean> {
+public class WcfPostServiceTask<T> extends WcfBaseServiceTask {
 
-    private ServiceResponse serviceResponse;
-    private String url;
     private T objectToSerialise;
-    private Type type;
-    private final String TAG = this.getClass().getSimpleName();
-    private WCFServiceCallback wcfServiceCallback;
-    private List<Pair> httpHeaders;
     private String sessionInformation;
-    private final int HTTPConnectionTimeout = 10000;
-    private final int HTTPSocketTimeout = 15000;
-    private Context context;
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if(!Utilities.isNetworkAvailable(this.context))
-        {
-            cancel(true);
-            this.displayErrorDialog("Network unavailable, please check your internet connection and try again.");
-        }
     }
 
-    public WCFServiceTask(Context context, String url, T objectToSerialise, Type type, List<Pair> httpHeaders, WCFServiceCallback wcfServiceCallback)
+    public WcfPostServiceTask(Context context, String url, T objectToSerialise, Type type, List<Pair> httpHeaders, WCFServiceCallback wcfServiceCallback)
     {
+        super(context, url, httpHeaders, wcfServiceCallback, type);
         this.objectToSerialise = objectToSerialise;
-        this.url = url;
-        this.type = type;
-        this.wcfServiceCallback = wcfServiceCallback;
-        this.httpHeaders = httpHeaders;
-        this.context = context;
     }
 
     @Override
-    protected void onPostExecute(Boolean aBoolean) {
-        super.onPostExecute(aBoolean);
-
-        if(this.serviceResponse.ServiceResponseCode == ServiceResponseCode.UNAUTHORISED)
-        {
-            FindNDriveManager findNDriveManager = ((FindNDriveManager)this.context.getApplicationContext());
-            findNDriveManager.logout(true, true);
-            return;
-        }
-
-        if(this.serviceResponse.ServiceResponseCode == ServiceResponseCode.SERVER_ERROR)
-        {
-            this.displayErrorDialog("Server error has occurred, please try again later.");
-            return;
-        }
-
-        if(this.serviceResponse.ServiceResponseCode == ServiceResponseCode.FAILURE)
-        {
-            if(!serviceResponse.ErrorMessages.toString().contains("MANUAL LOGIN"))
-            {
-                this.displayErrorDialog(serviceResponse.ErrorMessages.toString());
-            }
-        }
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
         this.wcfServiceCallback.onServiceCallCompleted(serviceResponse, this.sessionInformation);
     }
 
     @Override
-    protected Boolean doInBackground(TextView... textViews) {
+    protected Void doInBackground(Void... voids) {
         try {
             HttpParams httpParameters = new BasicHttpParams();
             // Set the timeout in milliseconds until a connection is established.
@@ -165,21 +120,5 @@ public class WCFServiceTask<T> extends AsyncTask<TextView, String, Boolean> {
         }
 
         return null;
-    }
-
-    private void displayErrorDialog(String message)
-    {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
-        builder.setMessage(message)
-                .setCancelable(false)
-                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                        wcfServiceCallback.onServiceCallCompleted(new ServiceResponse(null, ServiceResponseCode.FAILURE, null), sessionInformation);
-                    }
-                });
-
-        AlertDialog alert = builder.create();
-        alert.show();
     }
 }

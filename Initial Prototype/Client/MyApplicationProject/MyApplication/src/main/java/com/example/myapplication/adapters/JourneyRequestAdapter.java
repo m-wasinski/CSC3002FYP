@@ -79,7 +79,7 @@ public class JourneyRequestAdapter extends ArrayAdapter<JourneyRequest> implemen
                 break;
         }
 
-        holder.nameTextView.setText(request.User.FirstName + " " + request.User.LastName  + " ("+request.User.UserName+")");
+        holder.nameTextView.setText(request.User.getFirstName() + " " + request.User.getLastName()  + " ("+request.User.getUserName()+")");
         holder.receivedOnTextView.setText(DateTimeHelper.getSimpleDate(request.SentOnDate) +  " " + DateTimeHelper.getSimpleTime(request.SentOnDate));
         holder.decidedOnTextView.setText(repliedOnDate);
         holder.profilePicture.setImageResource(R.drawable.user_man);

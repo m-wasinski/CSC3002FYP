@@ -49,26 +49,41 @@
                 android:layout_below="@+id/OfferJourneyStepTwoActivityFromLabel"
                 android:id="@+id/SearchActivityDepartureTextView"
                 android:layout_toRightOf="@+id/SearchActivityStartImageView"
-                android:layout_toLeftOf="@+id/SearchActivityDepartureGpsButton"
+                android:layout_toLeftOf="@+id/SearchActivityDepartreGPSButtonLayout"
                 android:layout_marginLeft="10sp"
                 android:text="Select departure point"
-                style="@style/RegularEditText"/>
+                style="@style/RegularEditText"
+                android:singleLine="true"/>
 
-            <Button
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/SearchActivityDepartureGpsButton"
-                android:background="@drawable/transparent_button_selector"
-                android:drawableLeft="@drawable/my_location"
                 android:layout_alignParentRight="true"
-                android:paddingLeft="2sp"/>
+                android:id="@+id/SearchActivityDepartreGPSButtonLayout"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="1dip"
+                    android:layout_marginTop="1dip"
+                    android:layout_marginBottom="1dip"
+                    android:layout_height="match_parent"
+                    android:background="#B7D8E8"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/SearchActivityDepartureGpsButton"
+                    android:background="@drawable/transparent_button_selector"
+                    android:drawableLeft="@drawable/my_location"
+                    android:paddingLeft="10dip"/>
+            </LinearLayout>
 
         </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dip"
-            android:background="#B7D8E8"></LinearLayout>
+            android:background="#B7D8E8"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -76,7 +91,8 @@
             android:orientation="vertical"
             android:clickable="true"
             android:id="@+id/SearchActivityDestinationRelativeLayout"
-            android:background="@drawable/home_navigation_selector">
+            android:background="@drawable/home_navigation_selector"
+            android:paddingTop="2dip">
 
             <ImageView
                 android:id="@+id/SearchActivityFinishImageView"
@@ -100,21 +116,35 @@
                 android:layout_below="@+id/OfferJourneyStepOneActivityDestinationLabelTextView"
                 android:id="@+id/SearchActivityDestinationTextView"
                 android:layout_toRightOf="@+id/SearchActivityFinishImageView"
-                android:layout_toLeftOf="@+id/SearchActivityDestinationGpsButton"
+                android:layout_toLeftOf="@+id/SearchActivityDestinationGPSButtonLayout"
                 android:layout_marginLeft="10sp"
                 android:text="Select destination point"
                 style="@style/RegularEditText"
                 android:singleLine="true"/>
 
-            <Button
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/SearchActivityDestinationGpsButton"
-                android:background="@drawable/transparent_button_selector"
-                android:drawableLeft="@drawable/my_location"
                 android:layout_alignParentRight="true"
-                android:paddingLeft="2sp"/>
+                android:id="@+id/SearchActivityDestinationGPSButtonLayout"
+                android:orientation="horizontal">
 
+                <LinearLayout
+                    android:layout_width="1dip"
+                    android:layout_marginTop="1dip"
+                    android:layout_marginBottom="1dip"
+                    android:layout_height="match_parent"
+                    android:background="#B7D8E8"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/SearchActivityDestinationGpsButton"
+                    android:background="@drawable/transparent_button_selector"
+                    android:drawableLeft="@drawable/my_location"
+                    android:layout_alignParentRight="true"
+                    android:paddingLeft="10dip"/>
+            </LinearLayout>
         </RelativeLayout>
 
         <Button

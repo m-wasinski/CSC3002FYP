@@ -62,6 +62,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/JourneyDetailsActivityJourneyIdTextView"
+                            android:paddingLeft="10dip"
                             style="@style/RegularEditText"/>
                     </LinearLayout>
                 </TableRow>
@@ -98,6 +99,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:id="@+id/JourneyDetailsActivityJourneyDriverTextView"
+                                android:paddingLeft="10dip"
                                 style="@style/RegularEditText"/>
                         </LinearLayout>
 
@@ -114,8 +116,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2sp"
-                    android:background="@drawable/home_navigation_selector"
-                    android:clickable="true">
+                    android:background="@drawable/home_navigation_selector">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -138,6 +139,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/JourneyDetailsActivityJourneyDateTextView"
+                            android:paddingLeft="10dip"
                             style="@style/RegularEditText"/>
 
                     </LinearLayout>
@@ -170,6 +172,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/JourneyDetailsActivityJourneyTimeTextView"
+                            android:paddingLeft="10dip"
                             style="@style/RegularEditText"/>
 
                     </LinearLayout>
@@ -203,6 +206,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/JourneyDetailsActivityJourneySmokersTextView"
+                            android:paddingLeft="10dip"
                             style="@style/RegularEditText"/>
 
                     </LinearLayout>
@@ -236,6 +240,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/JourneyDetailsActivityJourneyPetsTextView"
+                            android:paddingLeft="10dip"
                             style="@style/RegularEditText"/>
 
                     </LinearLayout>
@@ -268,6 +273,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/JourneyDetailsActivityJourneyVehicleTypeTextView"
+                            android:paddingLeft="10dip"
                             style="@style/RegularEditText"/>
 
                     </LinearLayout>
@@ -302,6 +308,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/JourneyDetailsActivityJourneySeatsTextView"
+                            android:paddingLeft="10dip"
                             style="@style/RegularEditText"/>
 
                     </LinearLayout>
@@ -336,6 +343,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/JourneyDetailsActivityJourneyFeeTextView"
+                            android:paddingLeft="10dip"
                             style="@style/RegularEditText"/>
 
                     </LinearLayout>
@@ -370,6 +378,7 @@
                             android:id="@+id/JourneyDetailsActivityMessageToDriverEditText"
                             android:hint="Enter your message"
                             style="@style/RegularEditText"
+                            android:paddingLeft="10dip"
                             android:singleLine="true"/>
 
                     </LinearLayout>

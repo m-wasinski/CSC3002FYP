@@ -5,8 +5,14 @@
         android:title="@string/LogoutMenuTitle"
         app:showAsAction="never" />
 
+    <item android:id="@+id/action_show_leaderboard"
+        android:icon="@drawable/leaderboard"
+        android:title="@string/ShowLeaderboard"
+        android:showAsAction="always"/>
+
     <item android:id="@+id/action_refresh"
         android:icon="@drawable/refresh"
         android:title="@string/Refresh"
         android:showAsAction="always"/>
+
 </menu>

@@ -1,11 +1,9 @@
 package com.example.myapplication.activities.base;
 
 import android.app.ActionBar;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
@@ -18,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 
 import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.HomeActivity;
@@ -31,14 +28,13 @@ import com.example.myapplication.experimental.GeocoderParams;
 import com.example.myapplication.experimental.WaypointHolder;
 import com.example.myapplication.interfaces.GeoCoderFinishedCallBack;
 import com.example.myapplication.network_tasks.GeocoderTask;
-import com.example.myapplication.notification_management.DeviceNotificationManager;
+import com.example.myapplication.notification_management.NotificationDisplayManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -76,7 +72,7 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
     protected InputMethodManager inputMethodManager;
     protected ArrayList<WaypointHolder> wayPoints;
     protected LocationClient locationClient;
-    protected DeviceNotificationManager deviceNotificationManager;
+    protected NotificationDisplayManager notificationDisplayManager;
 
     private Polyline polyline;
 
@@ -85,7 +81,7 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
         super.onCreate(savedInstanceState);
 
         // Initialise local variables.
-        this.deviceNotificationManager = new DeviceNotificationManager();
+        this.notificationDisplayManager = new NotificationDisplayManager();
         this.inputMethodManager = (InputMethodManager) this.getSystemService(INPUT_METHOD_SERVICE);
         this.findNDriveManager = ((FindNDriveManager)getApplication());
         this.gson = new Gson();
@@ -93,7 +89,7 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
         this.gMapV2Direction = new GMapV2Direction();
         this.locationClient = new LocationClient(this, this, this);
         this.geocoder = new Geocoder(this);
-        this.deviceNotificationManager = new DeviceNotificationManager();
+        this.notificationDisplayManager = new NotificationDisplayManager();
     }
 
     @Override
@@ -112,7 +108,7 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
                 startActivity(intent);
                 break;
             case R.id.logout_menu_option:
-                findNDriveManager.logout(true, false);
+                findNDriveManager.logout(true, true);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -294,9 +290,9 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
         }.execute(map);
     }
 
-    protected void getCurrentAddress(MarkerType markerType, Location location)
+    protected void getCurrentAddress(MarkerType markerType, Location location, double perimeter)
     {
-        new GeocoderTask(this, this, markerType, 0).execute(new GeocoderParams(null, location));
+        new GeocoderTask(this, this, markerType, perimeter).execute(new GeocoderParams(null, location));
     }
 
     @Override

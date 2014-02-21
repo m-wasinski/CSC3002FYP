@@ -7,10 +7,9 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
-
 namespace DomainObjects.Constants
 {
+    using System;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -35,7 +34,7 @@ namespace DomainObjects.Constants
         /// <summary>
         /// The rejected.
         /// </summary>
-         [EnumMember(Value = "Rejected")]
-        Rejected = 2
+        [EnumMember(Value = "Denied")]
+        Denied = 2
     }
 }

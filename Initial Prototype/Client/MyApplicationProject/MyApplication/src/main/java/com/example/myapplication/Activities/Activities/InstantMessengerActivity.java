@@ -28,7 +28,8 @@ import com.example.myapplication.R;
 import com.example.myapplication.dtos.LoadRangeDTO;
 import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.interfaces.WCFServiceCallback;
-import com.example.myapplication.network_tasks.WCFServiceTask;
+import com.example.myapplication.network_tasks.WcfPostServiceTask;
+import com.example.myapplication.notification_management.NotificationProcessor;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -86,9 +87,26 @@ public class InstantMessengerActivity extends BaseListActivity {
         // Extract data from the bundle.
         Bundle extras = getIntent().getExtras();
 
+        com.example.myapplication.domain_objects.Notification notification = gson.fromJson(extras.getString(IntentConstants.NOTIFICATION),
+                new TypeToken<com.example.myapplication.domain_objects.Notification>() {}.getType());
+
+        if(notification != null)
+        {
+            NotificationProcessor.MarkDelivered(this, findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+                @Override
+                public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+
+                }
+            });
+        }
+
+
+        ChatMessage chatMessage = this.gson.fromJson(extras.getString(IntentConstants.PAYLOAD) ,new TypeToken<ChatMessage>() {}.getType());
+
+        this.recipientId = chatMessage != null ? chatMessage.SenderId : extras.getInt(IntentConstants.RECIPIENT_ID);
+        this.recipientUserName = chatMessage != null ? chatMessage.SenderUserName : extras.getString(IntentConstants.RECIPIENT_USERNAME);
+
         // Initialise UI elements.
-        this.recipientId = extras.getInt(IntentConstants.RECIPIENT_ID);
-        this.recipientUserName = extras.getString(IntentConstants.RECIPIENT_USERNAME);
         this.actionBar.setTitle("Chat with " + this.recipientUserName);
         this.progressBar = (ProgressBar) this.findViewById(R.id.ActivityInstantMessengerProgressBar);
         this.sendButton = (Button) this.findViewById(R.id.InstantMessengerActivityButton);
@@ -99,7 +117,7 @@ public class InstantMessengerActivity extends BaseListActivity {
         this.setupEventHandlers();
 
         this.chatMessages = new ArrayList<ChatMessage>();
-        this.chatAdapter = new ChatAdapter(this, chatMessages, findNDriveManager.getUser().UserId);
+        this.chatAdapter = new ChatAdapter(this, chatMessages, findNDriveManager.getUser().getUserId());
         this.setListAdapter(chatAdapter);
         this.retrieveMessages();
 
@@ -134,16 +152,16 @@ public class InstantMessengerActivity extends BaseListActivity {
 
             @Override
             public void onScroll(AbsListView absListView,  int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                loadMoreButton.setVisibility(firstVisibleItem == 0 ? View.VISIBLE : View.GONE);
+                loadMoreButton.setVisibility(firstVisibleItem == 0 && getListView().getCount() >= findNDriveManager.getItemsPerCall() ? View.VISIBLE : View.GONE);
                 getListView().setPadding(0, loadMoreButton.getVisibility() == View.VISIBLE ? loadMoreButton.getHeight() : 0, 0, 0);
             }
         });
     }
 
     private void getUnreadMessages() {
-        new WCFServiceTask<ChatMessageRetrieverDTO>(this, getResources().getString(R.string.GetUnreadMessages),
-                new ChatMessageRetrieverDTO(recipientId, findNDriveManager.getUser().UserId,
-                        new LoadRangeDTO(findNDriveManager.getUser().UserId, getListView().getCount(), findNDriveManager.getItemsPerCall(), loadMoreData)),
+        new WcfPostServiceTask<ChatMessageRetrieverDTO>(this, getResources().getString(R.string.GetUnreadMessages),
+                new ChatMessageRetrieverDTO(recipientId, findNDriveManager.getUser().getUserId(),
+                        new LoadRangeDTO(findNDriveManager.getUser().getUserId(), getListView().getCount(), findNDriveManager.getItemsPerCall(), loadMoreData)),
                 new TypeToken<ServiceResponse<ArrayList<ChatMessage>>>() {}.getType(),
                 findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<ChatMessage>, Void>() {
             @Override
@@ -160,14 +178,14 @@ public class InstantMessengerActivity extends BaseListActivity {
     private void sendMessage()
     {
         this.progressBar.setVisibility(View.VISIBLE);
-        final ChatMessage newMessage = new ChatMessage(findNDriveManager.getUser().UserId, recipientId, messageEditText.getText().toString(),
-                DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime()), false, recipientUserName, findNDriveManager.getUser().UserName);
+        final ChatMessage newMessage = new ChatMessage(findNDriveManager.getUser().getUserId(), recipientId, messageEditText.getText().toString(),
+                DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime()), false, recipientUserName, findNDriveManager.getUser().getUserName());
 
         if(newMessage.MessageBody.length() > 0 )
         {
             this.sendButton.setEnabled(false);
 
-            new WCFServiceTask<ChatMessage>(this, getResources().getString(R.string.SendMessageURL), newMessage,
+            new WcfPostServiceTask<ChatMessage>(this, getResources().getString(R.string.SendMessageURL), newMessage,
                     new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
                     findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
                 @Override
@@ -193,8 +211,8 @@ public class InstantMessengerActivity extends BaseListActivity {
 
     private void retrieveMessages()
     {
-        new WCFServiceTask<ChatMessageRetrieverDTO>(this, getResources().getString(R.string.GetMessagesURL), new ChatMessageRetrieverDTO(findNDriveManager.getUser().UserId, recipientId,
-                new LoadRangeDTO(findNDriveManager.getUser().UserId, getListView().getCount(), findNDriveManager.getItemsPerCall(), loadMoreData)),
+        new WcfPostServiceTask<ChatMessageRetrieverDTO>(this, getResources().getString(R.string.GetMessagesURL), new ChatMessageRetrieverDTO(findNDriveManager.getUser().getUserId(), recipientId,
+                new LoadRangeDTO(findNDriveManager.getUser().getUserId(), getListView().getCount(), findNDriveManager.getItemsPerCall(), loadMoreData)),
                 new TypeToken<ServiceResponse<ArrayList<ChatMessage>>>() {}.getType(),
                 findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<ChatMessage>, Void>() {
             @Override
@@ -253,7 +271,9 @@ public class InstantMessengerActivity extends BaseListActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            ChatMessage chatMessage = gson.fromJson(intent.getExtras().getString(IntentConstants.PAYLOAD), new TypeToken<ChatMessage>() {}.getType());
+            Bundle bundle = intent.getExtras();
+
+            ChatMessage chatMessage = gson.fromJson(bundle.getString(IntentConstants.PAYLOAD), new TypeToken<ChatMessage>() {}.getType());
 
             for(ChatMessage message : chatMessages)
             {
@@ -262,7 +282,7 @@ public class InstantMessengerActivity extends BaseListActivity {
                     return;
                 }
             }
-            if(findNDriveManager.getUser().UserId == chatMessage.RecipientId && chatMessage.SenderId == recipientId)
+            if(findNDriveManager.getUser().getUserId() == chatMessage.RecipientId && chatMessage.SenderId == recipientId)
             {
                 addNewMessage(chatMessage);
                 markMessageAsRead(chatMessage);
@@ -278,7 +298,7 @@ public class InstantMessengerActivity extends BaseListActivity {
 
     private void markMessageAsRead(final ChatMessage chatMessage)
     {
-        new WCFServiceTask<Integer>(this, getResources().getString(R.string.MarkMessageAsReadURL),chatMessage.ChatMessageId,
+        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.MarkMessageAsReadURL),chatMessage.ChatMessageId,
                 new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
                 findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
             @Override

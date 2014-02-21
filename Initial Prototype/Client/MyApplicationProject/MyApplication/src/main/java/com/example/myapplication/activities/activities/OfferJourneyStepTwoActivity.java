@@ -31,14 +31,13 @@ import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.interfaces.WCFServiceCallback;
-import com.example.myapplication.network_tasks.WCFServiceTask;
+import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.utilities.Utilities;
 import com.google.gson.reflect.TypeToken;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -375,6 +374,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
                 journeyFeeTextView.setText("Free (£0.00)");
                 journeyFeeTextView.setError(null);
                 journey.Fee = 0.00;
+                journey.PreferredPaymentMethod = "";
                 feeDialog.dismiss();
             }
         });
@@ -468,7 +468,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
         {
             this.progressBar.setVisibility(View.VISIBLE);
 
-            new WCFServiceTask<Journey>(this, getResources().getString(this.mode ==
+            new WcfPostServiceTask<Journey>(this, getResources().getString(this.mode ==
                     IntentConstants.JOURNEY_CREATOR_MODE_CREATING ?
                     R.string.CreateNewJourneyURL : R.string.EditJourneyURL),
                     journey,

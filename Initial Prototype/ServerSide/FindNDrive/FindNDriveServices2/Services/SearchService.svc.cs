@@ -83,9 +83,9 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<List<Journey>> SearchForJourneys(JourneySearchDTO journeySearchDTO)
         {
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(new List<Journey>());
+                return ServiceResponseBuilder.Unauthorised(new List<Journey>());
             }
 
             Func<Journey, bool> filter = x => 
@@ -93,7 +93,7 @@ namespace FindNDriveServices2.Services
                     var matchDeparture = -1;
                     var matchDestination = -1;
 
-                    if (x.JourneyStatus == JourneyStatus.Expired || x.DateAndTimeOfDeparture < DateTime.Now)
+                    if (x.JourneyStatus == JourneyStatus.Expired || x.DateAndTimeOfDeparture < DateTime.Now || x.JourneyStatus != JourneyStatus.OK)
                     {
                         return false;
                     }

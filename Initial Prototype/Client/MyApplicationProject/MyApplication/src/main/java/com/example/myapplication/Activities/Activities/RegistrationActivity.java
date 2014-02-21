@@ -20,7 +20,7 @@ import com.example.myapplication.dtos.RegisterDTO;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.interfaces.WCFServiceCallback;
-import com.example.myapplication.network_tasks.WCFServiceTask;
+import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.utilities.Pair;
 import com.google.gson.reflect.TypeToken;
 
@@ -35,83 +35,83 @@ import static java.util.Arrays.asList;
 public class RegistrationActivity extends BaseActivity implements WCFServiceCallback<User, String>{
 
     private boolean valuesCorrect;
+
     private EditText userNameEditText;
     private EditText emailAddressEditText;
     private EditText passwordEditText;
     private EditText confirmedPasswordEditText;
     private TextView errorMessagesEditText;
+
+    private Button registerButton;
+
     private ProgressBar progressBar;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_registration);
-        progressBar = (ProgressBar) findViewById(R.id.RegistrationActivityProgressBar);
-        userNameEditText = (EditText) findViewById(R.id.UserNameTextField);
-        userNameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus)
-                    validateUserName();
-            }});
-
-        emailAddressEditText = (EditText) findViewById(R.id.EmailTextField);
-        emailAddressEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus)
-                    validateEmail();
-            }});
-
-        passwordEditText = (EditText) findViewById(R.id.RegistrationPasswordTextField);
-        passwordEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus)
-                    validatePasswords();
-            }});
+        this.setContentView(R.layout.activity_registration);
 
 
-        confirmedPasswordEditText = (EditText) findViewById(R.id.RegistrationConfirmPasswordTextField);
-        confirmedPasswordEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus)
-                    validatePasswords();
-            }});
+        // Initialise UI elements.
+        this.progressBar = (ProgressBar) this.findViewById(R.id.RegistrationActivityProgressBar);
+        this.userNameEditText = (EditText) this.findViewById(R.id.UserNameTextField);
+        this.emailAddressEditText = (EditText) this.findViewById(R.id.EmailTextField);
+        this.passwordEditText = (EditText) this.findViewById(R.id.RegistrationPasswordTextField);
+        this.confirmedPasswordEditText = (EditText) this.findViewById(R.id.RegistrationConfirmPasswordTextField);
+        this.errorMessagesEditText = (TextView) findViewById(R.id.RegisterActivityErrorMessages);
+        this.registerButton = (Button) this.findViewById(R.id.RegisterNewUserButton);
 
-        errorMessagesEditText = (TextView) findViewById(R.id.RegisterActivityErrorMessages);
-
-        SetupUIEvents();
-
+        // Setup all event handlers.
+        this.setupEventHandlers();
     }
 
-    void SetupUIEvents()
+    void setupEventHandlers()
     {
-        Button registerButton = (Button) findViewById(R.id.RegisterNewUserButton);
-        registerButton.setOnClickListener(new View.OnClickListener() {
+        this.registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AttemptToRegister();
             }
         });
+
+        this.confirmedPasswordEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus && !confirmedPasswordEditText.getText().toString().isEmpty())
+                    validatePasswords();
+            }});
+
+        this.emailAddressEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus && !emailAddressEditText.getText().toString().isEmpty())
+                    validateEmail();
+            }});
+
+        this.passwordEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus && !passwordEditText.getText().toString().isEmpty())
+                    validatePasswords();
+            }});
+
+        this.userNameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus && !userNameEditText.getText().toString().isEmpty())
+                    validateUserName();
+            }});
     }
 
     private void AttemptToRegister() {
 
-        validateUserName();
-        validateEmail();
-        validatePasswords();
+        this.validateUserName();
+        this.validateEmail();
+        this.validatePasswords();
 
         if(valuesCorrect)
         {
             errorMessagesEditText.setText("");
             progressBar.setVisibility(View.VISIBLE);
-            RegisterDTO registerDTO = new RegisterDTO();
-            registerDTO.Password = passwordEditText.getText().toString();
-            registerDTO.ConfirmedPassword = confirmedPasswordEditText.getText().toString();
-            registerDTO.User = new User();
-            registerDTO.User.UserName = userNameEditText.getText().toString();
-            registerDTO.User.EmailAddress = emailAddressEditText.getText().toString();
-            registerDTO.User.GCMRegistrationID = findNDriveManager.getRegistrationId();
 
-            new WCFServiceTask<RegisterDTO>(this, getResources().getString(R.string.UserRegisterURL),
-                    registerDTO,
+            new WcfPostServiceTask<RegisterDTO>(this, getResources().getString(R.string.UserRegisterURL),
+                    new RegisterDTO(passwordEditText.getText().toString(), confirmedPasswordEditText.getText().toString(),
+                            new User(userNameEditText.getText().toString(),emailAddressEditText.getText().toString(), this.findNDriveManager.getRegistrationId())),
                     new TypeToken<ServiceResponse<User>>() {}.getType(),
                     asList(new Pair(SessionConstants.REMEMBER_ME, ""+false),
                            new Pair(SessionConstants.DEVICE_ID, findNDriveManager.getUniqueDeviceId()),
@@ -191,8 +191,7 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
             findNDriveManager.setUser(serviceResponse.Result);
             toast = Toast.makeText(this, "Registered successfully!", Toast.LENGTH_LONG);
             toast.show();
-            Intent intent = new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);;
-            startActivity(intent);
+            startActivity(new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
             finish();
         }
         else

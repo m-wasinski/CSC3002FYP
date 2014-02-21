@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#FFFFFF">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/LargeBlueHeader"
+        android:paddingTop="20dip"
+        android:background="#FFFFFF"
+        android:text="Do you like it?"
+        android:id="@+id/PictureConfirmActivityHeaderTextView"/>
+
+    <LinearLayout
+        android:layout_marginTop="10dip"
+        android:layout_width="match_parent"
+        android:layout_height="2dip"
+        android:orientation="horizontal"
+        android:layout_below="@+id/PictureConfirmActivityHeaderTextView"
+        android:id="@+id/PictureConfirmActivityBorderLinearLayout"
+        android:background="#32B4E4"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/PictureConfirmActivityBorderLinearLayout"
+        android:id="@+id/PictureConfirmActivityPictureImageView"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/user_man"
+        android:layout_margin="15dip"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/PictureConfirmActivityPictureImageView"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/alert_button_selector"
+            android:text="OK"
+            android:id="@+id/PictureConfirmActivityOKButton"
+            android:minHeight="50dip"/>
+        
+        <LinearLayout
+            android:layout_width="1dip"
+            android:layout_height="match_parent"
+            android:background="#000000"/>
+        
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/alert_button_selector"
+            android:layout_weight="1"
+            android:text="Cancel"
+            android:id="@+id/PictureConfirmActivityCancelButton"
+            android:minHeight="50dip"/>
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/PictureConfirmActivityProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:indeterminateDrawable="@drawable/progress"
+        android:visibility="gone"/>
+
+</RelativeLayout>

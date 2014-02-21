@@ -3,18 +3,15 @@ package com.example.myapplication.activities.base;
 import android.app.ActionBar;
 import android.app.ListActivity;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.Window;
 
 import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.HomeActivity;
 import com.example.myapplication.experimental.FindNDriveManager;
-import com.example.myapplication.notification_management.DeviceNotificationManager;
+import com.example.myapplication.notification_management.NotificationDisplayManager;
 import com.google.gson.Gson;
 
 /**
@@ -25,7 +22,7 @@ public class BaseListActivity extends ListActivity
     protected FindNDriveManager findNDriveManager;
     protected Gson gson;
     protected ActionBar actionBar;
-    protected DeviceNotificationManager deviceNotificationManager;
+    protected NotificationDisplayManager notificationDisplayManager;
 
     @Override
     public void onBackPressed()
@@ -42,8 +39,7 @@ public class BaseListActivity extends ListActivity
         // Initialise local variables.
         this.findNDriveManager = ((FindNDriveManager)getApplication());
         this.gson = new Gson();
-        this.deviceNotificationManager = new DeviceNotificationManager();
-
+        this.notificationDisplayManager = new NotificationDisplayManager();
         //getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
         this.actionBar = getActionBar();
@@ -71,7 +67,7 @@ public class BaseListActivity extends ListActivity
                 startActivity(intent);
                 break;
             case R.id.logout_menu_option:
-                findNDriveManager.logout(true, false);
+                findNDriveManager.logout(true, true);
                 break;
             default:
                 return super.onOptionsItemSelected(item);

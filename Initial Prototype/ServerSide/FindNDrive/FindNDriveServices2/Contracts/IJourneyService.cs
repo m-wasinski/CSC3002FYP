@@ -111,7 +111,7 @@ namespace FindNDriveServices2.Contracts
         /// <summary>
         /// The withdraw from journey.
         /// </summary>
-        /// <param name="journeyPassengerWithdrawDTO">
+        /// <param name="journeyUserDTO">
         /// The journey passenger withdraw dto.
         /// </param>
         /// <returns>
@@ -123,14 +123,23 @@ namespace FindNDriveServices2.Contracts
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/withdraw")]
-        ServiceResponse<bool> WithdrawFromJourney(JourneyPassengerWithdrawDTO journeyPassengerWithdrawDTO);
+        ServiceResponse<bool> WithdrawFromJourney(JourneyUserDTO journeyUserDTO);
 
+        /// <summary>
+        /// The cancel journey.
+        /// </summary>
+        /// <param name="journeyUserDTO">
+        /// The journey user dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         [OperationContract]
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/cancel")]
-        ServiceResponse<bool> CancelJourney(int id);
+        ServiceResponse<bool> CancelJourney(JourneyUserDTO journeyUserDTO);
     }
 }

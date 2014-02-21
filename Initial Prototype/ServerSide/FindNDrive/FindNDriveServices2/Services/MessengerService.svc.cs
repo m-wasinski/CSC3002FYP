@@ -79,9 +79,9 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<bool> SendMessage(ChatMessageDTO chatMessageDTO)
         {
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(false);
+                return ServiceResponseBuilder.Unauthorised(false);
             }
 
             var targetUser = this.findNDriveUnitOfWork.UserRepository.Find(chatMessageDTO.RecipientId);
@@ -89,10 +89,10 @@ namespace FindNDriveServices2.Services
 
             if (targetUser == null || sendingUser == null)
             {
-                return ResponseBuilder.Failure<bool>("Invalid sender or recipient id");
+                return ServiceResponseBuilder.Failure<bool>("Invalid sender or recipient id");
             }
 
-            var newMessage = new ChatMessage()
+            var newMessage = new ChatMessage
                                  {
                                      MessageBody = chatMessageDTO.MessageBody,
                                      Read = false,
@@ -110,10 +110,10 @@ namespace FindNDriveServices2.Services
                 new Collection<User> { targetUser },
                 "Message",
                 GcmNotificationType.ChatMessage,
-                newMessage);
+                newMessage, sendingUser.UserId);
                 
 
-            return ResponseBuilder.Success(true);
+            return ServiceResponseBuilder.Success(true);
         }
 
         /// <summary>
@@ -127,9 +127,9 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<List<ChatMessage>> RetrieveMessages(ChatMessageRetrieverDTO chatMessageRetrieverDTO)
         {
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(new List<ChatMessage>());
+                return ServiceResponseBuilder.Unauthorised(new List<ChatMessage>());
             }
 
             var messages =
@@ -153,7 +153,7 @@ namespace FindNDriveServices2.Services
 
             this.findNDriveUnitOfWork.Commit();
 
-            return ResponseBuilder.Success(messages);
+            return ServiceResponseBuilder.Success(messages);
         }
 
         /// <summary>
@@ -167,15 +167,15 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<List<ChatMessage>> GetUnreadMessages(ChatMessageRetrieverDTO chatMessageRetrieverDTO)
         {
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(new List<ChatMessage>());
+                return ServiceResponseBuilder.Unauthorised(new List<ChatMessage>());
             }
 
             var messages =
                 this.findNDriveUnitOfWork.ChatMessageRepository.AsQueryable()
                     .Where(
-                        _ => _.RecipientId == chatMessageRetrieverDTO.RecipientId && !_.Read).OrderBy(x => x.SentOnDate).ToList();
+                        _ => _.RecipientId == chatMessageRetrieverDTO.RecipientId && !_.Read && _.SenderId == chatMessageRetrieverDTO.SenderId ).OrderBy(x => x.SentOnDate).ToList();
 
             messages = LoadRangeHelper<ChatMessage>.GetConversations(messages, chatMessageRetrieverDTO.LoadRangeDTO.Index, chatMessageRetrieverDTO.LoadRangeDTO.Count, chatMessageRetrieverDTO.LoadRangeDTO.LoadMoreData);
 
@@ -186,7 +186,7 @@ namespace FindNDriveServices2.Services
                 });
 
             this.findNDriveUnitOfWork.Commit();
-            return ResponseBuilder.Success(messages);
+            return ServiceResponseBuilder.Success(messages);
         }
 
         /// <summary>
@@ -200,15 +200,15 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<int> GetUnreadMessagesCount(int userId)
         {
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(0);
+                return ServiceResponseBuilder.Unauthorised(0);
             }
 
             var unreadMessages =
                 this.findNDriveUnitOfWork.ChatMessageRepository.AsQueryable().Count(_ => _.RecipientId == userId && !_.Read);
 
-            return ResponseBuilder.Success(unreadMessages);
+            return ServiceResponseBuilder.Success(unreadMessages);
         }
 
         /// <summary>
@@ -222,29 +222,29 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<int> GetUnreadMessagesCountForFriend(ChatMessageRetrieverDTO chatMessageRetrieverDTO)
         {
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(0);
+                return ServiceResponseBuilder.Unauthorised(0);
             }
 
             var unreadMessages =
                 this.findNDriveUnitOfWork.ChatMessageRepository.AsQueryable().Count(_ => _.RecipientId == chatMessageRetrieverDTO.RecipientId && _.SenderId == chatMessageRetrieverDTO.SenderId && !_.Read);
 
-            return ResponseBuilder.Success(unreadMessages);
+            return ServiceResponseBuilder.Success(unreadMessages);
         }
 
         public ServiceResponse<bool> MarkAsRead(int id)
         {
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(false);
+                return ServiceResponseBuilder.Unauthorised(false);
             }
 
             var unreadMessage = this.findNDriveUnitOfWork.ChatMessageRepository.Find(id);
 
             if (unreadMessage == null)
             {
-                return ResponseBuilder.Failure<bool>("Invalid message id");
+                return ServiceResponseBuilder.Failure<bool>("Invalid message id");
             }
 
             if (!unreadMessage.Read)
@@ -253,7 +253,7 @@ namespace FindNDriveServices2.Services
                 this.findNDriveUnitOfWork.Commit();
             }
 
-            return ResponseBuilder.Success(true);
+            return ServiceResponseBuilder.Success(true);
         }
     }
 }

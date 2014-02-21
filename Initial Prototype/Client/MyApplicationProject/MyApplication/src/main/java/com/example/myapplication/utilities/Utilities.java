@@ -3,6 +3,9 @@ package com.example.myapplication.utilities;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.view.View;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
 import com.example.myapplication.domain_objects.GeoAddress;
 
@@ -19,7 +22,17 @@ public class Utilities {
 
     public static String translateGender(int i)
     {
-        return i == 1 ? "Male" : "Female";
+        if(i == 1)
+        {
+            return "Male";
+        }
+
+        if(i == 2)
+        {
+            return "Female";
+        }
+
+        return "N/A";
     }
 
     public static String getJourneyHeader(ArrayList<GeoAddress> addresses)
@@ -62,5 +75,19 @@ public class Utilities {
             e.printStackTrace();
         }
         return false;
+    }
+
+    private static int getTotalHeightofListView(ListView listView) {
+
+        ListAdapter LvAdapter = listView.getAdapter();
+        int listviewElementsheight = 0;
+        for (int i = 0; i < LvAdapter.getCount(); i++) {
+            View mView = LvAdapter.getView(i, null, listView);
+            mView.measure(
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            listviewElementsheight += mView.getMeasuredHeight();
+        }
+        return listviewElementsheight;
     }
 }

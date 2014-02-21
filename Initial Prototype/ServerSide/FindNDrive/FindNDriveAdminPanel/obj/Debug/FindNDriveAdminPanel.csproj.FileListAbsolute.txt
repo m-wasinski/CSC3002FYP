@@ -1,0 +1,13 @@
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel\bin\Debug\FindNDriveAdminPanel.exe.config
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel\bin\Debug\FindNDriveAdminPanel.exe
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel\bin\Debug\FindNDriveAdminPanel.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel\obj\Debug\FindNDriveAdminPanel.csprojResolveAssemblyReference.cache
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel\obj\Debug\MainWindow.baml
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel\obj\Debug\MainWindow.g.cs
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel\obj\Debug\App.g.cs
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel\obj\Debug\FindNDriveAdminPanel_MarkupCompile.cache
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel\obj\Debug\FindNDriveAdminPanel.g.resources
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel\obj\Debug\FindNDriveAdminPanel.Properties.Resources.resources
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel\obj\Debug\FindNDriveAdminPanel.csproj.GenerateResource.Cache
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel\obj\Debug\FindNDriveAdminPanel.exe
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel\obj\Debug\FindNDriveAdminPanel.pdb

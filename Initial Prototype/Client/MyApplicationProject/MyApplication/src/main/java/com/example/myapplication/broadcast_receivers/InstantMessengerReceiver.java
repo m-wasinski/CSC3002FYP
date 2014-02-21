@@ -8,12 +8,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.InstantMessengerActivity;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.domain_objects.ChatMessage;
+import com.example.myapplication.experimental.FindNDriveManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -26,19 +26,25 @@ public class InstantMessengerReceiver extends BroadcastReceiver {
 
     public void onReceive(Context context, Intent intent) {
 
+        FindNDriveManager findNDriveManager = ((FindNDriveManager)context.getApplicationContext());
+
+        Bundle bundle = intent.getExtras();
+
+        com.example.myapplication.domain_objects.Notification notification = new Gson().fromJson(bundle.getString(IntentConstants.NOTIFICATION),
+                new TypeToken<com.example.myapplication.domain_objects.Notification>() {}.getType());
+
+        int collapsibleKey = notification == null ? Integer.parseInt(bundle.getString("collapsibleKey")) : notification.CollapsibleKey;
+
+        int notificationId = collapsibleKey == -1 ?  (int) System.currentTimeMillis() : collapsibleKey;
+
         NotificationManager mNotificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        ChatMessage chatMessage = new Gson().fromJson(intent.getStringExtra(IntentConstants.PAYLOAD), new TypeToken<ChatMessage>() {}.getType());
-        Log.i(TAG, intent.getStringExtra(IntentConstants.PAYLOAD));
-
-        Bundle extras = new Bundle();
-        extras.putString(IntentConstants.RECIPIENT_USERNAME, chatMessage.SenderUserName);
-        extras.putInt(IntentConstants.RECIPIENT_ID, chatMessage.SenderId);
+        ChatMessage chatMessage = new Gson().fromJson(bundle.getString(IntentConstants.PAYLOAD) ,new TypeToken<ChatMessage>() {}.getType());
 
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, InstantMessengerActivity.class)
-                        .putExtras(extras).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), PendingIntent.FLAG_CANCEL_CURRENT);
+                        .putExtras(bundle).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), PendingIntent.FLAG_CANCEL_CURRENT);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
@@ -48,9 +54,14 @@ public class InstantMessengerReceiver extends BroadcastReceiver {
                         .setContentText(chatMessage.MessageBody);
 
         mBuilder.setContentIntent(contentIntent);
-        Notification notification = mBuilder.build();
-        notification.flags = Notification.DEFAULT_LIGHTS | Notification.FLAG_AUTO_CANCEL;
+        Notification deviceNotification = mBuilder.build();
+        deviceNotification.flags = Notification.DEFAULT_LIGHTS | Notification.FLAG_AUTO_CANCEL;
 
-        mNotificationManager.notify(0, notification);
+        mNotificationManager.notify(notificationId, deviceNotification);
+
+        if(findNDriveManager != null)
+        {
+            findNDriveManager.addNotificationId(notificationId);
+        }
     }
 }

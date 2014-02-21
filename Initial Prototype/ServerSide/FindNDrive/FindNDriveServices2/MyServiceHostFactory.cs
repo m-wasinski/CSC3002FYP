@@ -10,7 +10,6 @@
 namespace FindNDriveServices2
 {
     using System;
-    using System.Reflection;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
     using System.ServiceModel.Channels;
@@ -20,7 +19,7 @@ namespace FindNDriveServices2
     using DomainObjects.Domains;
     using FindNDriveDataAccessLayer;
     using FindNDriveInfrastructureDataAccessLayer;
-    using FindNDriveServices2.Services;
+
     using WebMatrix.WebData;
 
     /// <summary>
@@ -34,7 +33,9 @@ namespace FindNDriveServices2
         public MyServiceHostFactory()
         {
             if (!WebSecurity.Initialized)
+            {
                 WebSecurity.InitializeDatabaseConnection("FindNDriveConnectionString", "User", "Id", "UserName", true);
+            }
         }
 
         /// <summary>
@@ -64,7 +65,6 @@ namespace FindNDriveServices2
         /// The _service type.
         /// </summary>
         private readonly Type serviceType;
-
        
 
         /// <summary>
@@ -120,6 +120,7 @@ namespace FindNDriveServices2
             var friendsRequestRepository = new EntityFrameworkRepository<FriendRequest>(dbContext);
             var journeyMessageRepository = new EntityFrameworkRepository<JourneyMessage>(dbContext);
             var geoAddressRepository = new EntityFrameworkRepository<GeoAddress>(dbContext);
+            var ratingsRepository = new EntityFrameworkRepository<Rating>(dbContext);
 
             var findNDriveUnitOfWork = new FindNDriveUnitOfWork(
                 dbContext,
@@ -131,12 +132,14 @@ namespace FindNDriveServices2
                 notificationRepository,
                 friendsRequestRepository,
                 journeyMessageRepository,
-                geoAddressRepository);
+                geoAddressRepository,
+                ratingsRepository);
 
             var sessionManager = new SessionManager(findNDriveUnitOfWork);
+            var notificationManager = new NotificationManager(findNDriveUnitOfWork, sessionManager);
 
             var service = this.serviceType.GetConstructor(new[] { typeof(FindNDriveUnitOfWork), typeof(SessionManager), typeof(NotificationManager) });
-            return service.Invoke(new object[] { findNDriveUnitOfWork, sessionManager, new NotificationManager(findNDriveUnitOfWork) });
+            return service != null ? service.Invoke(new object[] { findNDriveUnitOfWork, sessionManager, notificationManager }) : null;
         }
 
         /// <summary>

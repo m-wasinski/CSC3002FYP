@@ -87,9 +87,9 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<bool> ProcessDecision(FriendRequestDTO friendRequestDTO)
         {
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(false);
+                return ServiceResponseBuilder.Unauthorised(false);
             }
 
             var receivingUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable()
@@ -102,7 +102,7 @@ namespace FindNDriveServices2.Services
 
             if (receivingUser == null || requestingUser == null)
             {
-                return ResponseBuilder.Failure<bool>("Invalid user id.");
+                return ServiceResponseBuilder.Failure<bool>("Invalid user id.");
             }
 
             var targetRequest = this.findNDriveUnitOfWork.FriendRequestsRepository.Find(
@@ -110,7 +110,7 @@ namespace FindNDriveServices2.Services
 
             if (targetRequest.FriendRequestDecision != FriendRequestDecision.Undecided)
             {
-                return ResponseBuilder.Failure<bool>(String.Format("You have already {0} this request ", targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted ? "accepted": "denied"));
+                return ServiceResponseBuilder.Failure<bool>(String.Format("You have already {0} this request ", targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted ? "accepted": "denied"));
             }
 
             targetRequest.DecidedOnDate = DateTime.Now;
@@ -128,7 +128,7 @@ namespace FindNDriveServices2.Services
                 }
                 else
                 {
-                    return ResponseBuilder.Failure<bool>("This user is already in your list of friends.");
+                    return ServiceResponseBuilder.Failure<bool>("This user is already in your list of friends.");
                 }
             }
 
@@ -157,7 +157,7 @@ namespace FindNDriveServices2.Services
 
             this.notificationManager.SendGcmNotification(new Collection<User>{receivingUser}, "Friend request reply", GcmNotificationType.NotificationTickle, string.Empty);
 
-            return ResponseBuilder.Success(true);
+            return ServiceResponseBuilder.Success(true);
         }
 
         /// <summary>
@@ -171,9 +171,9 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<bool> SendRequest(FriendRequestDTO friendRequestDTO)
         {
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(false);
+                return ServiceResponseBuilder.Unauthorised(false);
             }
 
             var receivingUser =
@@ -188,19 +188,19 @@ namespace FindNDriveServices2.Services
 
             if (receivingUser == null || sendingUser == null)
             {
-                return ResponseBuilder.Failure<bool>("Invalid user id.");
+                return ServiceResponseBuilder.Failure<bool>("Invalid user id.");
             }
 
             var match = sendingUser.Friends.FirstOrDefault(_ => _.UserId == receivingUser.UserId);
 
             if (match != null)
             {
-                return ResponseBuilder.Failure<bool>("This user is already in your list of friends.");
+                return ServiceResponseBuilder.Failure<bool>("This user is already in your list of friends.");
             }
 
             if (friendRequestDTO.TargetUserId == friendRequestDTO.RequestingUserId)
             {
-                return ResponseBuilder.Failure<bool>("You cannot invite yourself to your friends list.");
+                return ServiceResponseBuilder.Failure<bool>("You cannot invite yourself to your friends list.");
             }
 
             var friendRequest = new FriendRequest
@@ -239,7 +239,7 @@ namespace FindNDriveServices2.Services
 
             this.notificationManager.SendGcmNotification(new List<User> { receivingUser }, "New friend request received.", GcmNotificationType.NotificationTickle, string.Empty);
             
-            return ResponseBuilder.Success(true);
+            return ServiceResponseBuilder.Success(true);
         }
 
         /// <summary>
@@ -253,25 +253,25 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<List<User>> GetFriends(int userId)
         {
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(new List<User>());
+                return ServiceResponseBuilder.Unauthorised(new List<User>());
             }
 
             var user = this.findNDriveUnitOfWork.UserRepository.AsQueryable()
                 .IncludeAll()
                 .FirstOrDefault(_ => _.UserId == userId);
 
-            if (user != null)
+            if (user == null)
             {
-                var friends =
-                    user
-                        .Friends.ToList();
-
-                return ResponseBuilder.Success(friends);
+                return ServiceResponseBuilder.Failure<List<User>>("Invalid user id");
             }
 
-            return ResponseBuilder.Failure<List<User>>("Invalid user id");
+            var friends =
+                user
+                    .Friends.ToList();
+
+            return ServiceResponseBuilder.Success(friends);
         }
     }
 }

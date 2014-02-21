@@ -1,11 +1,16 @@
 package com.example.myapplication.gcm;
 
 import android.app.IntentService;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.example.myapplication.R;
+import com.example.myapplication.activities.activities.LoginActivity;
 import com.example.myapplication.constants.BroadcastTypes;
 import com.example.myapplication.constants.GcmNotificationTypes;
 import com.example.myapplication.constants.IntentConstants;
@@ -13,9 +18,9 @@ import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.experimental.FindNDriveManager;
+import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.notification_management.NotificationProcessor;
 import com.example.myapplication.interfaces.WCFServiceCallback;
-import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.reflect.TypeToken;
 
@@ -37,20 +42,13 @@ public class GcmIntentService extends IntentService {
 
         Log.d(TAG, "GCM Intent Service called.");
 
-        FindNDriveManager findNDriveManager = ((FindNDriveManager)getApplication());
-
-        if(findNDriveManager.hasAppBeenKilled())
-        {
-            findNDriveManager.logout(false, false);
-            //TODO tell user they have a new home_activity_notification and ask them to log in.
-            return;
-        }
-
         Bundle extras = intent.getExtras();
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
         // The getMessageType() intent parameter must be the intent you received
         // in your BroadcastReceiver.
         String messageType = gcm.getMessageType(intent);
+
+        FindNDriveManager findNDriveManager = ((FindNDriveManager)getApplication());
 
         if (!extras.isEmpty())
         {
@@ -71,6 +69,13 @@ public class GcmIntentService extends IntentService {
                 Intent refreshBroadcastIntent = new Intent();
                 refreshBroadcastIntent.setAction(BroadcastTypes.BROADCAST_ACTION_REFRESH);
                 Log.d(TAG, "GCM Notification Type: " + requestType);
+
+                if(findNDriveManager.hasAppBeenKilled())
+                {
+                    displayAnonymousNotification(getApplicationContext(), findNDriveManager);
+                    return;
+                }
+
                 switch (requestType)
                 {
                     case GcmNotificationTypes.NOTIFICATION_TICKLE:
@@ -79,11 +84,11 @@ public class GcmIntentService extends IntentService {
                         break;
                     case GcmNotificationTypes.CHAT_MESSAGE: //Chat instant message.
                         sendBroadcast(refreshBroadcastIntent);
-                        instantMessageReceived(intent.getExtras().getString(IntentConstants.PAYLOAD));
+                        sendOrderedBroadcast(new Intent(BroadcastTypes.BROADCAST_INSTANT_MESSENGER).putExtras(intent.getExtras()), null);
                         break;
                     case GcmNotificationTypes.JOURNEY_CHAT_MESSAGE:
                         sendBroadcast(refreshBroadcastIntent);
-                        journeyChatMessageReceived(intent.getExtras().getString(IntentConstants.PAYLOAD));
+                        sendOrderedBroadcast(new Intent(BroadcastTypes.BROADCAST_JOURNEY_MESSAGE).putExtras(intent.getExtras()), null);
                         break;
                 }
             }
@@ -93,62 +98,49 @@ public class GcmIntentService extends IntentService {
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-    /*
-    * Notifies the Instant Message Broadcast receiver about a new message.
-    */
-    private void instantMessageReceived(String message)
+    private void retrieveDeviceNotifications(final FindNDriveManager findNDriveManager)
     {
-        Intent orderedBroadcastIntent = new Intent(BroadcastTypes.BROADCAST_INSTANT_MESSENGER);
-        sendOrderedBroadcast(orderedBroadcastIntent.putExtra(IntentConstants.PAYLOAD, message), null);
-    }
-
-    /*
-    * Notifies the Journey Request Receiver about a new journey request.
-    */
-    private void journeyRequestReceived(String header, String message)
-    {
-        Bundle extras = new Bundle();
-        extras.putString(IntentConstants.PAYLOAD, message);
-        extras.putString(IntentConstants.CONTENT_TITLE, header);
-
-        Intent broadcastIntent = new Intent(BroadcastTypes.BROADCAST_JOURNEY_REQUEST);
-        sendBroadcast(broadcastIntent.putExtras(extras), null);
-    }
-
-    private void journeyRequestReplyReceived(String header, String message)
-    {
-        Bundle extras = new Bundle();
-        extras.putString(IntentConstants.PAYLOAD, message);
-        extras.putString(IntentConstants.CONTENT_TITLE, header);
-
-        Intent broadcastIntent = new Intent(BroadcastTypes.BROADCAST_JOURNEY_REQUEST_REPLY);
-        sendBroadcast(broadcastIntent.putExtras(extras), null);
-    }
-
-    private void journeyChatMessageReceived(String message)
-    {
-        Intent orderedBroadcastIntent = new Intent(BroadcastTypes.BROADCAST_JOURNEY_MESSAGE);
-        sendOrderedBroadcast(orderedBroadcastIntent.putExtra(IntentConstants.PAYLOAD, message), null);
-    }
-
-    private void retrieveDeviceNotifications(FindNDriveManager findNDriveManager)
-    {
-        new WCFServiceTask<Integer>(this, getResources().getString(R.string.GetDeviceNotificationsURL), findNDriveManager.getUser().UserId,
+        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetDeviceNotificationsURL), findNDriveManager.getUser().getUserId(),
                 new TypeToken<ServiceResponse<ArrayList<Notification>>>() {}.getType(),
                 findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<Notification>, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<ArrayList<Notification>> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {
-                    deviceNotificationsRetrieved(serviceResponse.Result);
+                    deviceNotificationsRetrieved(serviceResponse.Result, findNDriveManager);
                 }
             }
         }).execute();
     }
 
-    private void deviceNotificationsRetrieved(ArrayList<Notification> notifications)
+    private void deviceNotificationsRetrieved(ArrayList<Notification> notifications, FindNDriveManager findNDriveManager)
     {
         Log.d(TAG, "Retrieved: "+notifications.size() + " new notifications.");
-        NotificationProcessor.DisplayNotification(this, notifications);
+        NotificationProcessor.DisplayNotification(this, findNDriveManager, notifications);
+    }
+
+    private void displayAnonymousNotification(Context context, FindNDriveManager findNDriveManager)
+    {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(context)
+                        .setSmallIcon(R.drawable.logo)
+                        .setContentTitle("You have a new notification.")
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText("Please log in to see it."))
+                        .setContentText("Please log in to see it.");
+
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        builder.setContentIntent(PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT));
+        android.app.Notification appNotification = builder.build();
+
+        appNotification.flags = android.app.Notification.DEFAULT_LIGHTS | android.app.Notification.FLAG_AUTO_CANCEL;
+
+        notificationManager.notify(0, appNotification);
+        findNDriveManager.addNotificationId(0);
     }
 }

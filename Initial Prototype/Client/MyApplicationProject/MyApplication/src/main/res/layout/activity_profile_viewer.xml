@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:requiresFadingEdge="vertical">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="15dip"
+                android:paddingBottom="15dip"
+                android:background="#80151515">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dip"
+                android:orientation="vertical">
+
+                <ImageView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/user_man"
+                    android:id="@+id/ProfileViewerActivityProfileIconImageView"
+                    android:background="@drawable/transparent_button_selector"
+                    android:visibility="gone"/>
+
+                    <ProgressBar
+                        android:id="@+id/ProfileViewerActivityProfileImageProgressBar"
+                        style="?android:attr/progressBarStyleLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:indeterminateDrawable="@drawable/progress"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/TapToChange"
+                        android:id="@+id/ProfileViewerActivityTapToChangeTextView"
+                        android:visibility="gone"
+                        android:gravity="center_horizontal"
+                        style="@style/ContentBody"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Member since:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ProfileViewerActivityMemberSinceTextView"
+                        android:paddingLeft="10dip"
+                        style="@style/RegularEditText"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Last logon:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ProfileViewerActivityLastLogonTextView"
+                        android:paddingLeft="10dip"
+                        style="@style/RegularEditText"/>
+
+
+                </LinearLayout>
+             </LinearLayout>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:id="@+id/ProfileViewerActivityNameTableRow"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/OfferJourneyStepTwoActivityNameView"
+                    android:src="@drawable/driver_small"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Name:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ProfileViewerActivityNameTextView"
+                        android:paddingLeft="10dip"
+                        style="@style/RegularEditText"/>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/downarrow"
+                    android:layout_marginRight="10sp"
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/ProfileViewerActivityNameArrowImageVIew"
+                    android:visibility="gone"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:id="@+id/ProfileViewerActivityEmailAddressTableRow"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/OfferJourneyStepTwoActivityCigaretteImageView"
+                    android:src="@drawable/email"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Email address:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ProfileViewerActivityEmailTextView"
+                        android:paddingLeft="10dip"
+                        style="@style/RegularEditText"/>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/downarrow"
+                    android:layout_marginRight="10sp"
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/ProfileViewerActivityEmailAddressArrowImageVIew"
+                    android:visibility="gone"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:id="@+id/ProfileViewerActivityGenderTableRow"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/gender"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Gender:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ProfileViewerActivityGenderTextView"
+                        android:paddingLeft="10dip"
+                        style="@style/RegularEditText"/>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/downarrow"
+                    android:layout_marginRight="10sp"
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/ProfileViewerActivityGenderImageView"
+                    android:visibility="gone"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:id="@+id/ProfileViewerActivityDateOfBirthTableRow"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/calendar"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Date of birth:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ProfileViewerActivityDateOfBirthTextView"
+                        android:paddingLeft="10dip"
+                        style="@style/RegularEditText"/>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/downarrow"
+                    android:layout_marginRight="10sp"
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/ProfileViewerActivityDateOfBirthImageView"
+                    android:visibility="gone"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:id="@+id/ProfileViewerActivityPhoneNumberTableRow"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/OfferJourneyStepTwoActivityPetImageView"
+                    android:src="@drawable/phone"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Phone number:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ProfileViewerActivityPhoneNumberTextView"
+                        android:paddingLeft="10dip"
+                        style="@style/RegularEditText"/>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/downarrow"
+                    android:layout_marginRight="10sp"
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/ProfileViewerActivityPhoneNumberImageView"
+                    android:visibility="gone"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:background="@drawable/home_navigation_selector"
+                android:id="@+id/ProfileViewerActivityRatingTableRow"
+                android:clickable="true">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/OfferJourneyStepTwoActivityFeeImageView"
+                    android:src="@drawable/star"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rating:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ProfileViewerActivityRatingTextView"
+                        android:paddingLeft="10dip"
+                        style="@style/RegularEditText"/>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/downarrow"
+                    android:layout_marginRight="10sp"
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/ProfileViewerActivityRatingArrowImageVIew"/>
+
+            </TableRow>
+
+        </TableLayout>
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/ProfileViewerActivityProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:indeterminateDrawable="@drawable/progress"
+        android:visibility="gone"/>
+
+</RelativeLayout>

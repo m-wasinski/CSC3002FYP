@@ -20,7 +20,7 @@ import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.R;
 import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.interfaces.WCFServiceCallback;
-import com.example.myapplication.network_tasks.WCFServiceTask;
+import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.utilities.Utilities;
 import com.google.gson.reflect.TypeToken;
 
@@ -81,8 +81,8 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
 
         final Journey journey = displayedCarShares.get(position);
 
-        new WCFServiceTask<JourneyMessageRetrieverDTO>(this.context, this.context.getResources().getString(R.string.RetrieveUnreadJourneyMessagesCountURL),
-                new JourneyMessageRetrieverDTO(journey.getJourneyId(), this.findNDriveManager.getUser().UserId, null),
+        new WcfPostServiceTask<JourneyMessageRetrieverDTO>(this.context, this.context.getResources().getString(R.string.RetrieveUnreadJourneyMessagesCountURL),
+                new JourneyMessageRetrieverDTO(journey.getJourneyId(), this.findNDriveManager.getUser().getUserId(), null),
                 new TypeToken<ServiceResponse<Integer>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
                     @Override
                     public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {
@@ -117,7 +117,7 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
         holder.availableSeats.setText(String.valueOf(journey.AvailableSeats));
         holder.statusTextView.setText(statusText);
         holder.creationDateTextView.setText(DateTimeHelper.getSimpleDate(journey.CreationDate));
-        holder.modeTextView.setText(journey.DriverId == this.findNDriveManager.getUser().UserId ? "Driver" : "Passenger");
+        holder.modeTextView.setText(journey.DriverId == this.findNDriveManager.getUser().getUserId() ? "Driver" : "Passenger");
         holder.newRequestIcon.setImageResource(journey.UnreadRequestsCount > 0 ? R.drawable.new_notification_myjourney : R.drawable.notification_myjourney);
         holder.unreadRequests.setTypeface(null, journey.UnreadRequestsCount > 0 ? (Typeface.BOLD) : (Typeface.NORMAL));
         holder.unreadRequests.setText(""+journey.UnreadRequestsCount);

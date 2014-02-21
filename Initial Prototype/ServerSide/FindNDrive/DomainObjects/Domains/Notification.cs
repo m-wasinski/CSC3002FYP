@@ -43,6 +43,12 @@ namespace DomainObjects.Domains
         public User User { get; set; }
 
         /// <summary>
+        /// Gets or sets the collapsible key.
+        /// </summary>
+        [DataMember]
+        public int CollapsibleKey { get; set; }
+
+        /// <summary>
         /// Gets or sets the notification type.
         /// </summary>
         [DataMember]

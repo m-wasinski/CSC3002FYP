@@ -38,4 +38,15 @@
         android:indeterminateDrawable="@drawable/progress"
         android:visibility="gone"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="You currently have no friends."
+        android:id="@+id/FriendsListActivityNoFriendsTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        style="@style/LargeTextField"
+        android:visibility="gone"/>
+
 </RelativeLayout>

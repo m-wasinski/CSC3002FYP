@@ -7,6 +7,7 @@ public class Notification {
 
     public int NotificationId;
     public int UserId;
+    public int CollapsibleKey;
     public int NotificationType;
     public int NotificationContentType;
     public String NotificationTitle;

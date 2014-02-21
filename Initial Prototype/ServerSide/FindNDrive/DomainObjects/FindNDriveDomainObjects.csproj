@@ -60,6 +60,7 @@
     <Compile Include="Constants\JourneyRequestDecision.cs" />
     <Compile Include="Constants\JourneyStatus.cs" />
     <Compile Include="Constants\NotificationContext.cs" />
+    <Compile Include="Constants\RatingContext.cs" />
     <Compile Include="Constants\SessionConstants.cs" />
     <Compile Include="Constants\SessionTypes.cs" />
     <Compile Include="Constants\Status.cs" />
@@ -72,10 +73,11 @@
     <Compile Include="Domains\JourneyMessage.cs" />
     <Compile Include="Domains\JourneyRequest.cs" />
     <Compile Include="Domains\GeoAddress.cs" />
-    <Compile Include="Domains\TravelLocation.cs" />
+    <Compile Include="Domains\Rating.cs" />
     <Compile Include="Domains\Notification.cs" />
     <Compile Include="Domains\Session.cs" />
     <Compile Include="Domains\User.cs" />
+    <Compile Include="Domains\UserImage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

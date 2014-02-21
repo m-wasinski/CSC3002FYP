@@ -17,8 +17,7 @@ import com.example.myapplication.domain_objects.FriendRequest;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.interfaces.WCFServiceCallback;
-import com.example.myapplication.network_tasks.WCFServiceTask;
-import com.google.gson.reflect.TypeToken;
+import com.example.myapplication.network_tasks.WcfPostServiceTask;
 
 /**
  * Created by Michal on 10/02/14.
@@ -44,6 +43,7 @@ public class SendFriendRequestDialogActivity extends BaseActivity implements WCF
         this.messageEditText = (EditText) this.findViewById(R.id.SendFriendRequestActivityMessageEditText);
         this.okButton = (Button) this.findViewById(R.id.SendFriendRequestActivitySendButton);
         this.headerTextView = (TextView) this.findViewById(R.id.SendFriendRequestActivityHeaderTextView);
+        this.headerTextView.setText(this.headerTextView.getText().toString() + " " + this.targetUser.getFirstName() + " " + this.targetUser.getLastName() + " ("+this.targetUser.getUserName()+")");
 
         // Setup event handlers.
         this.setupEventHandlers();
@@ -63,10 +63,10 @@ public class SendFriendRequestDialogActivity extends BaseActivity implements WCF
     {
         FriendRequest friendRequest = new FriendRequest();
         friendRequest.Message = this.messageEditText.getText().toString();
-        friendRequest.TargetUserId = this.targetUser.UserId;
-        friendRequest.RequestingUserId = this.findNDriveManager.getUser().UserId;
+        friendRequest.TargetUserId = this.targetUser.getUserId();
+        friendRequest.RequestingUserId = this.findNDriveManager.getUser().getUserId();
 
-        new WCFServiceTask<FriendRequest>(this,
+        new WcfPostServiceTask<FriendRequest>(this,
                 this.getResources().getString(R.string.SendFriendRequestURL), friendRequest,
                 TokenTypes.getServiceResponseBooleanToken(), findNDriveManager.getAuthorisationHeaders(), this).execute();
     }

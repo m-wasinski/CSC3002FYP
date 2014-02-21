@@ -76,6 +76,11 @@ namespace FindNDriveDataAccessLayer
         public IRepository<GeoAddress> GeoAddressRepository { get; set; }
 
         /// <summary>
+        /// Gets or sets the ratings repository.
+        /// </summary>
+        public IRepository<Rating> RatingsRepository { get; set; } 
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FindNDriveUnitOfWork"/> class.
         /// </summary>
         /// <param name="dbContext">
@@ -118,7 +123,8 @@ namespace FindNDriveDataAccessLayer
             IRepository<Notification> notificationRepository,
             IRepository<FriendRequest> friendRequestsRepository,
             IRepository<JourneyMessage> journeyMessageRepository,
-            IRepository<GeoAddress> geoAddressRepository )
+            IRepository<GeoAddress> geoAddressRepository,
+            IRepository<Rating> ratingsRepository)
         {
             this._dbContext = dbContext;
             this.UserRepository = userRepository;
@@ -130,6 +136,7 @@ namespace FindNDriveDataAccessLayer
             this.FriendRequestsRepository = friendRequestsRepository;
             this.JourneyMessageRepository = journeyMessageRepository;
             this.GeoAddressRepository = geoAddressRepository;
+            this.RatingsRepository = ratingsRepository;
         }
 
         /// <summary>

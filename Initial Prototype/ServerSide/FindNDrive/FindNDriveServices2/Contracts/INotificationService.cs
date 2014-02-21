@@ -79,8 +79,7 @@ namespace FindNDriveServices2.Contracts
         /// <summary>
         /// The mark as delivered.
         /// </summary>
-        /// <param name="notificationId">
-        /// The notification id.
+        /// <param name="notificationMarkerDTO">
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
@@ -91,6 +90,6 @@ namespace FindNDriveServices2.Contracts
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/markdelivered")]
-        ServiceResponse<bool> MarkAsDelivered(int notificationId);
+        ServiceResponse<bool> MarkAsDelivered(NotificationMarkerDTO notificationMarkerDTO);
     }
 }

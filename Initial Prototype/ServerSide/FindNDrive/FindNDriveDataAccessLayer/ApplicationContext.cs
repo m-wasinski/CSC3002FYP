@@ -71,6 +71,11 @@ namespace FindNDriveDataAccessLayer
         public DbSet<GeoAddress> GeoAddresses { get; set; }
 
         /// <summary>
+        /// Gets or sets the ratings.
+        /// </summary>
+        public DbSet<Rating> Ratings { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ApplicationContext"/> class.
         /// </summary>
         public ApplicationContext()
@@ -143,6 +148,14 @@ namespace FindNDriveDataAccessLayer
                    map.MapLeftKey("JourneyMessageId");
                    map.MapRightKey("UserId");
                    map.ToTable("JourneyMessage_UserId");
+               });
+
+            modelBuilder.Entity<User>()
+               .HasMany(_ => _.Rating).WithMany().Map(map =>
+               {
+                   map.MapLeftKey("UserId");
+                   map.MapRightKey("RatingId");
+                   map.ToTable("User_Rating");
                });
 
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();   

@@ -19,7 +19,7 @@ import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.notification_management.NotificationProcessor;
 import com.example.myapplication.interfaces.WCFServiceCallback;
-import com.example.myapplication.network_tasks.WCFServiceTask;
+import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.google.gson.reflect.TypeToken;
 
 /**
@@ -34,6 +34,7 @@ public class ReceivedFriendRequestDialogActivity extends BaseActivity {
     private FriendRequest friendRequest;
 
     private TextView headerTextView;
+    private TextView messageTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,13 +54,17 @@ public class ReceivedFriendRequestDialogActivity extends BaseActivity {
                 Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
             }
         });
-
+        Log.i(this.getClass().getSimpleName(), gson.toJson(friendRequest));
         // Initialise UI elements.
         this.acceptButton = (Button) this.findViewById(R.id.FriendRequestReceivedActivityAcceptButton);
+        this.acceptButton.setEnabled(this.friendRequest.FriendRequestDecision == FriendRequestDecisions.Undecided);
         this.denyButton = (Button) this.findViewById(R.id.FriendRequestReceivedActivityDenyButton);
+        this.denyButton.setEnabled(this.friendRequest.FriendRequestDecision == FriendRequestDecisions.Undecided);
+        this.messageTextView = (TextView) this.findViewById(R.id.FriendRequestReceivedMessageTextView);
+
         this.headerTextView = (TextView) this.findViewById(R.id.FriendRequestReceiverHeaderTextView);
         this.headerTextView.setText(this.friendRequest.RequestingUserName);
-
+        this.messageTextView.setText(this.friendRequest.Message == null ? "" : this.friendRequest.Message);
         // Setup event handlers.
         this.setupEventHandlers();
 
@@ -92,7 +97,7 @@ public class ReceivedFriendRequestDialogActivity extends BaseActivity {
     {
         this.friendRequest.FriendRequestDecision = decision;
 
-        new WCFServiceTask<FriendRequest>(this,
+        new WcfPostServiceTask<FriendRequest>(this,
                 getResources().getString(R.string.ProcessFriendRequestDecisionURL), friendRequest,
                 new TypeToken<ServiceResponse<Boolean>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
             @Override

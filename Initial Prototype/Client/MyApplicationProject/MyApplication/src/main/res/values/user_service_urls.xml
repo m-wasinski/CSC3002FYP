@@ -5,4 +5,6 @@
     <string name="UserRegisterURL">https://findndrive.no-ip.co.uk/Services/UserService.svc/register</string>
     <string name="UserLogoutURL">https://findndrive.no-ip.co.uk/Services/UserService.svc/logout</string>
     <string name="RefreshUserURL">https://findndrive.no-ip.co.uk/Services/UserService.svc/refresh</string>
+    <string name="UpdateUserURL">https://findndrive.no-ip.co.uk/Services/UserService.svc/update</string>
+    <string name="UpdateProfilePictureURL">https://findndrive.no-ip.co.uk/Services/UserService.svc/updateProfilePicture</string>
 </resources>

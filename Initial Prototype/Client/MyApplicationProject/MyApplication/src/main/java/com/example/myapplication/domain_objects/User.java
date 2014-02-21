@@ -7,36 +7,113 @@ import java.util.ArrayList;
  */
 public class User {
 
-    public int UserId;
+    private int UserId;
 
-    public String UserName;
+    private String UserName;
 
-    public String EmailAddress;
+    private String EmailAddress;
 
-    public String FirstName;
+    private String FirstName;
 
-    public String LastName;
+    private String LastName;
 
-    public int Gender;
+    private int Gender;
 
-    public String DateOfBirth;
+    private String DateOfBirth;
 
-    public String GCMRegistrationID;
+    private String GCMRegistrationID;
 
-    public ArrayList<User> Friends;
+    private ArrayList<User> Friends;
 
-    public int Status;
+    private int Status;
 
+    private String LastLogon;
+
+    public double getAverageRating() {
+        return AverageRating;
+    }
+
+    private String MemberSince;
+
+    private String PhoneNumber;
+
+    private double AverageRating;
+
+    private ArrayList<Rating> Rating;
+
+    public ArrayList<Rating> getRating() {
+        return Rating;
+    }
+
+    public String getLastLogon() {
+        return LastLogon;
+    }
+
+    public String getMemberSince() {
+        return MemberSince;
+    }
+
+    public String getPhoneNumber() {
+        return PhoneNumber;
+    }
+
+    public String getGCMRegistrationID() {
+        return GCMRegistrationID;
+    }
+
+    public String getUserName() {
+        return UserName;
+    }
+
+    public String getEmailAddress() {
+        return EmailAddress;
+    }
+
+    public int getUserId() {
+        return UserId;
+    }
+
+    public String getFirstName() {
+        return FirstName;
+    }
+
+    public String getLastName() {
+        return LastName;
+    }
+
+    public int getGender() {
+        return Gender;
+    }
+
+    public String getDateOfBirth() {
+        return DateOfBirth;
+    }
+
+    public ArrayList<User> getFriends() {
+        return Friends;
+    }
+
+    public int getStatus() {
+        return Status;
+    }
+
+    /*
+     * This overload is required by GSON.
+     */
     public User()
     {
     }
-    public User(String userName, String email, String first, String last, long dob, int s)
+
+
+    /*
+     * This overload is called by the RegistrationActivity to create a basic user object.
+     */
+    public User(String userName, String email, String gcmRegistrationId)
     {
-        UserName = userName;
-        EmailAddress = email;
-        FirstName = first;
-        LastName = last;
-        Gender = s;
-        DateOfBirth = "/Date("+dob+")/";
+        this.UserName = userName;
+        this.EmailAddress = email;
+        this.GCMRegistrationID = gcmRegistrationId;
+
+        //DateOfBirth = "/Date("+dob+")/";
     }
 }

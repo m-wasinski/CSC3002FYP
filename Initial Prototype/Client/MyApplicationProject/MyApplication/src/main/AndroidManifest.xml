@@ -37,6 +37,9 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <uses-permission android:name="android.permission.GET_TASKS" />
+
+    <uses-feature android:name="android.hardware.camera.front" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <application
         android:allowBackup="true"
         android:icon="@drawable/icon"
@@ -140,6 +143,33 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Dialog"/>
 
+        <activity
+            android:name=".activities.activities.JourneySummaryActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Dialog"/>
+
+        <activity
+            android:name=".activities.activities.ProfileViewerActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".activities.activities.ProfileEditorActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".activities.activities.PictureUploadActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Dialog"/>
+
+        <activity
+            android:name=".activities.activities.RateDriverActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Dialog"/>
+
+        <activity
+            android:name=".activities.activities.RatingsActivity"
+            android:screenOrientation="portrait"/>
+
         <receiver
             android:name=".gcm.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
@@ -176,6 +206,12 @@
         <receiver android:name=".broadcast_receivers.JourneyChatMessageReceiver">
             <intent-filter>
                 <action android:name="BROADCAST_JOURNEY_MESSAGE" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".broadcast_receivers.NotificationDeleteReceiver">
+            <intent-filter>
+                <action android:name="BROADCAST_NOTIFICATION_DELETED" />
             </intent-filter>
         </receiver>
 

@@ -87,9 +87,9 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<List<Journey>> GetAllJourneysForUser(LoadRangeDTO loadRangeDTO)
         {
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(new List<Journey>());
+                return ServiceResponseBuilder.Unauthorised(new List<Journey>());
             }
 
             var journeys =
@@ -117,7 +117,7 @@ namespace FindNDriveServices2.Services
 
             this.findNDriveUnitOfWork.Commit();
 
-            return ResponseBuilder.Success(journeys);
+            return ServiceResponseBuilder.Success(journeys);
         }
 
         /// <summary>
@@ -131,17 +131,28 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<Journey> CreateNewJourney(JourneyDTO journeyDTO)
         {
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(new Journey());
+                return ServiceResponseBuilder.Unauthorised(new Journey());
             }
+
 
             var validatedJourney = ValidationHelper.Validate(journeyDTO);
             Journey newJourney = null;
 
             if (!validatedJourney.IsValid)
             {
-                return ResponseBuilder.Failure<Journey>("Validation error");
+                return ServiceResponseBuilder.Failure<Journey>("Validation error.");
+            }
+
+            var user =
+                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+                    .IncludeAll()
+                    .FirstOrDefault(_ => _.UserId == journeyDTO.DriverId);
+
+            if (user == null)
+            {
+                return ServiceResponseBuilder.Failure<Journey>("Invalid user id.");
             }
 
             newJourney = new Journey
@@ -162,8 +173,34 @@ namespace FindNDriveServices2.Services
                              };
 
             this.findNDriveUnitOfWork.JourneyRepository.Add(newJourney);
+
             this.findNDriveUnitOfWork.Commit();
-            return ResponseBuilder.Success(newJourney);
+
+            this.notificationManager.SendAppNotification(
+                new Collection<User> {user}, 
+                "You offered new journey",
+                string.Format("You have offerred new journey from {0} to {1} and its number is: {2}, ", newJourney.GeoAddresses.First().AddressLine, newJourney.GeoAddresses.Last().AddressLine, newJourney.JourneyId),
+                NotificationContext.Positive,
+                NotificationType.App,
+                NotificationContentType.JourneyModified,
+                newJourney);
+
+            this.notificationManager.SendAppNotification(
+                user.Friends,
+                string.Format("{0} {1} ({2}) offered new journey.", user.FirstName, user.LastName, user.UserName),
+                "Click this notification to see it.",
+                NotificationContext.Neutral,
+                NotificationType.Both,
+                NotificationContentType.FriendOfferedNewJourney,
+                newJourney);
+
+            this.notificationManager.SendGcmNotification(
+                user.Friends,
+                "Friend offered new journey.",
+                GcmNotificationType.NotificationTickle,
+                string.Empty);
+
+            return ServiceResponseBuilder.Success(newJourney);
         }
 
         /// <summary>
@@ -177,16 +214,16 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<Journey> GetSingleJourneyById(int id)
         {
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(new Journey());
+                return ServiceResponseBuilder.Unauthorised(new Journey());
             }
 
             var journey =
                 this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
                     .IncludeAll()
                     .FirstOrDefault(_ => _.JourneyId == id);
-            return ResponseBuilder.Success(journey);
+            return ServiceResponseBuilder.Success(journey);
         }
 
         /// <summary>
@@ -200,9 +237,9 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<List<Journey>> GetMultipleJourneysById(Collection<int> ids)
         {
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(new List<Journey>());
+                return ServiceResponseBuilder.Unauthorised(new List<Journey>());
             }
 
             var journeys =
@@ -210,7 +247,7 @@ namespace FindNDriveServices2.Services
                     .IncludeAll()
                     .Where(_ => ids.Contains(_.JourneyId))
                     .ToList();
-            return ResponseBuilder.Success(journeys);
+            return ServiceResponseBuilder.Success(journeys);
         }
 
         /// <summary>
@@ -224,9 +261,9 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<Journey> ModifyJourney(JourneyDTO journeyDTO)
         {
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(new Journey());
+                return ServiceResponseBuilder.Unauthorised(new Journey());
             }
 
             var journey =
@@ -236,7 +273,12 @@ namespace FindNDriveServices2.Services
 
             if (journey == null)
             {
-                return ResponseBuilder.Failure<Journey>("Invalid journey id");
+                return ServiceResponseBuilder.Failure<Journey>("Invalid journey id");
+            }
+
+            if (journey.JourneyStatus != JourneyStatus.OK)
+            {
+                return ServiceResponseBuilder.Failure<Journey>(string.Format("This journey is {0}, you cannot make a change to it.", journey.JourneyStatus == JourneyStatus.Cancelled ? "cancelled" : "expired"));
             }
 
             this.findNDriveUnitOfWork.GeoAddressRepository.RemoveRange(journey.GeoAddresses);
@@ -257,67 +299,187 @@ namespace FindNDriveServices2.Services
 
             this.notificationManager.SendAppNotification(
                 journey.Participants,
-                "Journey modified",
-                "Change has been made lol",
+                "Journey changed.",
+                "A change has been made to one of the journeys you are taking part in. Click this notification to see the details of this journey.",
                 NotificationContext.Neutral,
                 NotificationType.Both,
                 NotificationContentType.JourneyModified,
                 journey);
+
             this.notificationManager.SendGcmNotification(
                 journey.Participants,
                 "Journey modified",
                 GcmNotificationType.NotificationTickle,
                 string.Empty);
 
-            return ResponseBuilder.Success(journey);
+            return ServiceResponseBuilder.Success(journey);
         }
 
-        public ServiceResponse<bool> CancelJourney(int id)
+        /// <summary>
+        /// The cancel journey.
+        /// </summary>
+        /// <param name="journeyUserDTO">
+        /// The journey user dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<bool> CancelJourney(JourneyUserDTO journeyUserDTO)
         {
+            if (!this.sessionManager.IsSessionValid())
+            {
+                return ServiceResponseBuilder.Unauthorised(false);
+            }
+
             var journey =
                 this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
                     .IncludeAll()
-                    .FirstOrDefault(_ => _.JourneyId == id);
+                    .FirstOrDefault(_ => _.JourneyId == journeyUserDTO.JourneyId);
 
             if (journey == null)
             {
-                return ResponseBuilder.Failure<bool>("Invalid journey id");
+                return ServiceResponseBuilder.Failure<bool>("Invalid journey id.");
+            }
+
+            if (journey.JourneyStatus != JourneyStatus.OK)
+            {
+                return ServiceResponseBuilder.Failure<bool>(string.Format("You cannot cancel an {0} journey", journey.JourneyStatus == JourneyStatus.Cancelled ? "already cancelled" : "expired"));
+            }
+
+            var user = this.findNDriveUnitOfWork.UserRepository.Find(journeyUserDTO.UserId);
+
+            if (user == null)
+            {
+                return ServiceResponseBuilder.Failure<bool>("Invalid user id.");
+            }
+
+            if (journey.Driver.UserId != user.UserId)
+            {
+                return ServiceResponseBuilder.Failure<bool>("You are not allowed to cancel journey in which you are not the driver.");
             }
 
             journey.JourneyStatus = JourneyStatus.Cancelled;
             this.findNDriveUnitOfWork.Commit();
 
-            return ResponseBuilder.Success(true);
+            this.notificationManager.SendAppNotification(
+               journey.Participants,
+               "Journey has been cancelled.",
+               string.Format(
+                   "{0} {1} ({2}) has cancelled the journey no: {3}, from: {4} to: {5}",
+                   journey.Driver.FirstName,
+                   journey.Driver.LastName,
+                   journey.Driver.UserName,
+                   journey.JourneyId,
+                   journey.GeoAddresses.First().AddressLine,
+                   journey.GeoAddresses.Last().AddressLine),
+               NotificationContext.Negative,
+               NotificationType.Both,
+               NotificationContentType.JourneyCancelled,
+               journey);
+
+            this.notificationManager.SendAppNotification(
+               new List<User> { journey.Driver },
+               "You have cancelled your journey.",
+               string.Format(
+                   "You have cancelled your journey no: {0}, from: {1} to: {2}. All of the passengers have been notified.",
+                   journey.JourneyId,
+                   journey.GeoAddresses.First().AddressLine,
+                   journey.GeoAddresses.Last().AddressLine),
+               NotificationContext.Negative,
+               NotificationType.Both,
+               NotificationContentType.JourneyCancelled,
+               journey);
+
+            this.notificationManager.SendGcmNotification(
+                journey.Participants,
+                "Journey Cancelled",
+                GcmNotificationType.NotificationTickle,
+                string.Empty);
+
+            return ServiceResponseBuilder.Success(true);
         }
 
-        public ServiceResponse<bool> WithdrawFromJourney(JourneyPassengerWithdrawDTO journeyPassengerWithdrawDTO)
+        public ServiceResponse<bool> WithdrawFromJourney(JourneyUserDTO journeyUserDTO)
         {
+            if (!this.sessionManager.IsSessionValid())
+            {
+                return ServiceResponseBuilder.Unauthorised(false);
+            }
+
             var journey =
                 this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
                     .IncludeAll()
-                    .FirstOrDefault(_ => _.JourneyId == journeyPassengerWithdrawDTO.JourneyId);
+                    .FirstOrDefault(_ => _.JourneyId == journeyUserDTO.JourneyId);
 
             if (journey == null)
             {
-                return ResponseBuilder.Failure<bool>("Invalid journey id");
+                return ServiceResponseBuilder.Failure<bool>("Invalid journey id");
             }
 
-            var passenger = this.findNDriveUnitOfWork.UserRepository.Find(journeyPassengerWithdrawDTO.UserId);
+            if (journey.JourneyStatus != JourneyStatus.OK)
+            {
+                return ServiceResponseBuilder.Failure<bool>(string.Format("This journey is {0}, there is no need to withdraw.", journey.JourneyStatus == JourneyStatus.Cancelled ? "cancelled" : "expired"));
+            }
+
+            var passenger = this.findNDriveUnitOfWork.UserRepository.Find(journeyUserDTO.UserId);
 
             if (passenger == null)
             {
-                return ResponseBuilder.Failure<bool>("Invalid passenger id");
+                return ServiceResponseBuilder.Failure<bool>("Invalid passenger id");
             }
 
             if (passenger.UserId == journey.DriverId)
             {
-                return ResponseBuilder.Failure<bool>("As driver, you cannot withdraw from this journey.");
+                return ServiceResponseBuilder.Failure<bool>("As driver, you cannot withdraw from this journey.");
             }
-
+            
             journey.Participants.Remove(passenger);
+            journey.AvailableSeats += 1;
             this.findNDriveUnitOfWork.Commit();
 
-            return ResponseBuilder.Success(true);
+            this.notificationManager.SendAppNotification(
+                new List<User> { journey.Driver },
+                string.Format(
+                    "{0} {1} ({2}) has left your journey.",
+                    passenger.FirstName,
+                    passenger.LastName,
+                    passenger.UserName),
+                string.Format(
+                    "{0} {1} ({2}) has left your journey no: {3}, from: {4} to: {5}",
+                    passenger.FirstName,
+                    passenger.LastName,
+                    passenger.UserName,
+                    journey.JourneyId,
+                    journey.GeoAddresses.First().AddressLine,
+                    journey.GeoAddresses.Last().AddressLine),
+                NotificationContext.Neutral,
+                NotificationType.Both,
+                NotificationContentType.PassengerLeftJourney,
+                journey);
+
+            this.notificationManager.SendAppNotification(
+                new List<User> { passenger },
+                "You have left a journey.",
+                string.Format(
+                    "you have left a journey no: {0} from: {1} to: {2}. The driver {3} {4} ({5}) has been notified.",
+                    journey.JourneyId,
+                    journey.GeoAddresses.First().AddressLine,
+                    journey.GeoAddresses.Last().AddressLine,
+                    journey.Driver.FirstName,
+                    journey.Driver.LastName,
+                    journey.Driver.UserName),
+                NotificationContext.Neutral,
+                NotificationType.App,
+                NotificationContentType.IleftAjourney,
+                string.Empty);
+
+            this.notificationManager.SendGcmNotification(
+                new List<User> { journey.Driver },
+                "Passenger withdrawn",
+                GcmNotificationType.NotificationTickle,
+                string.Empty);
+
+            return ServiceResponseBuilder.Success(true);
         }
     }
 }

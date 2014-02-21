@@ -168,14 +168,14 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
         this.departureGPSButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getCurrentAddress(MarkerType.Departure, locationClient.getLastLocation());
+                getCurrentAddress(MarkerType.Departure, locationClient.getLastLocation(), 0);
             }
         });
 
         this.destinationGPSButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getCurrentAddress(MarkerType.Destination, locationClient.getLastLocation());
+                getCurrentAddress(MarkerType.Destination, locationClient.getLastLocation(), 0);
             }
         });
 
@@ -374,7 +374,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
         this.journey.Description = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.journey.Description : "";
         this.journey.DateAndTimeOfDeparture = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ?
                 this.journey.DateAndTimeOfDeparture : DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime());
-        this.journey.DriverId = this.findNDriveManager.getUser().UserId;
+        this.journey.DriverId = this.findNDriveManager.getUser().getUserId();
 
         this.proceedToStepTwo();
     }

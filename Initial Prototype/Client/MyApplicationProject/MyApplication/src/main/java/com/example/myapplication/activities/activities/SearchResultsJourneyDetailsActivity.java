@@ -1,12 +1,10 @@
 package com.example.myapplication.activities.activities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -21,10 +19,13 @@ import com.example.myapplication.constants.RequestDecision;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.domain_objects.JourneyRequest;
+import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.experimental.DateTimeHelper;
+import com.example.myapplication.experimental.DialogCreator;
 import com.example.myapplication.interfaces.WCFServiceCallback;
-import com.example.myapplication.network_tasks.WCFServiceTask;
+import com.example.myapplication.network_tasks.WcfPostServiceTask;
+import com.example.myapplication.notification_management.NotificationProcessor;
 import com.example.myapplication.utilities.Utilities;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -61,13 +62,26 @@ public class SearchResultsJourneyDetailsActivity extends BaseMapActivity impleme
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_journey_details);
+        setContentView(R.layout.activity_search_result_journey_details);
 
         // Initialise variables.
         Bundle extras = getIntent().getExtras();
-        this.journey = gson.fromJson(extras.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
+        Notification notification = gson.fromJson(extras.getString(IntentConstants.NOTIFICATION), new TypeToken<Notification>() {}.getType());
+
+        if(notification != null)
+        {
+            NotificationProcessor.MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+                @Override
+                public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+                    Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
+                }
+            });
+        }
+
+        this.journey = notification == null ? (Journey) gson.fromJson(extras.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType()) :
+                (Journey)gson.fromJson(notification.NotificationPayload, new TypeToken<Journey>() {}.getType());
+
         DisplayMetrics metrics = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int halfScreen = (int) (metrics.heightPixels/2.5f);
@@ -118,18 +132,17 @@ public class SearchResultsJourneyDetailsActivity extends BaseMapActivity impleme
     private void fillJourneyInformation()
     {
         String[] vehicleTypes = getResources().getStringArray(R.array.vehicle_types);
-        String[] paymentOptions = getResources().getStringArray(R.array.payment_options);
 
         this.journeyHeaderTextView.setText(Utilities.getJourneyHeader(this.journey.GeoAddresses));
         this.journeyIdTextView.setText(String.valueOf(this.journey.getJourneyId()));
-        this.journeyDriverTextView.setText(this.journey.Driver.FirstName + " " + this.journey.Driver.LastName);
+        this.journeyDriverTextView.setText(this.journey.Driver.getUserName());
         this.journeyDateTextView.setText(DateTimeHelper.getSimpleDate(this.journey.DateAndTimeOfDeparture));
         this.journeyTimeTextView.setText(DateTimeHelper.getSimpleTime(this.journey.DateAndTimeOfDeparture));
         this.journeySmokersTextView.setText(Utilities.translateBoolean(this.journey.SmokersAllowed));
         this.journeyPetsTextView.setText(Utilities.translateBoolean(this.journey.PetsAllowed));
         this.journeyVehicleTypeTextView.setText(vehicleTypes[this.journey.VehicleType]);
         this.journeySeatsAvailableTextView.setText(String.valueOf(this.journey.AvailableSeats));
-        this.journeyFeeTextView.setText("£"+new DecimalFormat("0.00").format(this.journey.Fee)+" "+paymentOptions[this.journey.PaymentOption]);
+        this.journeyFeeTextView.setText(("£"+new DecimalFormat("0.00").format(this.journey.Fee)) + (this.journey.PreferredPaymentMethod.isEmpty() ? "" : ", " +this.journey.PreferredPaymentMethod));
     }
 
     private void initialiseMap() {
@@ -150,7 +163,7 @@ public class SearchResultsJourneyDetailsActivity extends BaseMapActivity impleme
         this.journeyDriverTableRow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                 showDriverAlertDialog();
+                showDriverOptionsDialog();
             }
         });
 
@@ -162,10 +175,15 @@ public class SearchResultsJourneyDetailsActivity extends BaseMapActivity impleme
         });
     }
 
+    private void showDriverOptionsDialog()
+    {
+        DialogCreator.ShowProfileOptionsDialog(this, journey.Driver);
+    }
+
     private void sendRequest()
     {
         JourneyRequest journeyRequest = new JourneyRequest();
-        journeyRequest.UserId = this.findNDriveManager.getUser().UserId;
+        journeyRequest.UserId = this.findNDriveManager.getUser().getUserId();
         journeyRequest.User = this.findNDriveManager.getUser();
         journeyRequest.JourneyId = this.journey.getJourneyId();
         journeyRequest.Message = this.journeyMessageToDriverEditText.getText().toString();
@@ -173,24 +191,9 @@ public class SearchResultsJourneyDetailsActivity extends BaseMapActivity impleme
         journeyRequest.Decision = RequestDecision.UNDECIDED;
         journeyRequest.SentOnDate = DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime());
 
-        new WCFServiceTask<JourneyRequest>(this, getResources().getString(R.string.SendRequestURL),
+        new WcfPostServiceTask<JourneyRequest>(this, getResources().getString(R.string.SendRequestURL),
                 journeyRequest, new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), this).execute();
     }
-
-    private void showDriverAlertDialog()
-    {
-        CharSequence options[] = new CharSequence[] {"Show profile", "Send friend request"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(this.journey.Driver.FirstName + " " + this.journey.Driver.LastName);
-        builder.setItems(options, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        builder.show();
-    }
-
 
     @Override
     public void onServiceCallCompleted(ServiceResponse<JourneyRequest> serviceResponse, Void parameter) {

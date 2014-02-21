@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/LargeBlueHeader"
+            android:paddingTop="20dip"
+            android:background="#FFFFFF"
+            android:text="Rate the driver"
+            android:id="@+id/JourneyRequestDialogActivityHeaderTextView"/>
+
+        <LinearLayout
+            android:layout_marginTop="10dip"
+            android:layout_width="match_parent"
+            android:layout_height="2dip"
+            android:background="#32B4E4"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/RateDriverActivityFeedbackEditText"
+            android:hint="@string/EnterFeedback"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/RateDriverQuestion"
+            android:textSize="18sp"
+            android:id="@+id/RateDriverActivityMessageTextView"
+            android:gravity="center_horizontal"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dip"
+            android:gravity="center_horizontal">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/transparent_button_selector"
+                android:id="@+id/RateDriverActivityStarOneButton"
+                android:drawableTop="@drawable/no_rating"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/transparent_button_selector"
+                android:id="@+id/RateDriverActivityStarTwoButton"
+                android:drawableTop="@drawable/no_rating"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/transparent_button_selector"
+                android:id="@+id/RateDriverActivityStarThreeButton"
+                android:drawableTop="@drawable/no_rating"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/transparent_button_selector"
+                android:id="@+id/RateDriverActivityStarFourButton"
+                android:drawableTop="@drawable/no_rating"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/transparent_button_selector"
+                android:id="@+id/RateDriverActivityStarFiveButton"
+                android:drawableTop="@drawable/no_rating"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="10dip"
+            android:layout_width="match_parent"
+            android:layout_height="2dip"
+            android:background="#32B4E4"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/Rate"
+            android:id="@+id/RateDriverActivityRateButton"
+            android:background="@drawable/alert_button_selector"
+            android:minHeight="50dip"/>
+
+    </LinearLayout>
+</RelativeLayout>

@@ -134,6 +134,8 @@
     <color name="AppLightGray">#E69e9e9e</color>
     <color name="AppBlue">#BF0086C9</color>
 
+    <color name="Transparent">#00000000</color>
+
     <style name="Theme.CustomDialog" parent="@android:style/Theme.Translucent.NoTitleBar">
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowNoTitle">true</item>

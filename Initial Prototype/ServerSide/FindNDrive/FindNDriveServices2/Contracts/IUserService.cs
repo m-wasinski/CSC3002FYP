@@ -8,6 +8,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace FindNDriveServices2.Contracts
 {
+    using System.IO;
     using System.Security.Permissions;
     using System.ServiceModel;
     using System.ServiceModel.Web;
@@ -56,7 +57,6 @@ namespace FindNDriveServices2.Contracts
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/autologin")]
-        [PrincipalPermission(SecurityAction.Demand, Authenticated = true)]
         ServiceResponse<User> AutoUserLogin();
 
         /// <summary>
@@ -95,8 +95,24 @@ namespace FindNDriveServices2.Contracts
         /// <summary>
         /// The refresh user.
         /// </summary>
-        /// <param name="userId">
-        /// The user id.
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebGet(
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/refresh/?id={id}")]
+        ServiceResponse<User> RefreshUser(int id);
+
+        /// <summary>
+        /// The update user.
+        /// </summary>
+        /// <param name="userDTO">
+        /// The user dto.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
@@ -105,7 +121,40 @@ namespace FindNDriveServices2.Contracts
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/refresh")]
-        ServiceResponse<User> RefreshUser(int userId);
+            UriTemplate = "/update")]
+        ServiceResponse<User> UpdateUser(UserDTO userDTO);
+
+        /// <summary>
+        /// The get user picture by id.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebGet(
+            UriTemplate = "/getProfilePicture?id={id}",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        Stream GetUserProfilePicture(int id);
+
+        /// <summary>
+        /// The update profile picture.
+        /// </summary>
+        /// <param name="profilePictureUpdaterDTO">
+        /// The profile Picture Updater DTO.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebInvoke(
+            Method = "POST",
+            UriTemplate = "/updateProfilePicture",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        ServiceResponse<string> UpdateProfilePicture(ProfilePictureUpdaterDTO profilePictureUpdaterDTO);
     }
 }

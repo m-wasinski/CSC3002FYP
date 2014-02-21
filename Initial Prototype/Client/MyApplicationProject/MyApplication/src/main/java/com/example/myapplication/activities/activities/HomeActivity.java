@@ -21,12 +21,11 @@ import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.experimental.FindNDriveService;
+import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.notification_management.NotificationProcessor;
 import com.example.myapplication.experimental.WakeLocker;
 import com.example.myapplication.interfaces.WCFServiceCallback;
-import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.example.myapplication.R;
 import com.google.gson.reflect.TypeToken;
 
@@ -43,6 +42,7 @@ public class HomeActivity extends BaseActivity {
     private LinearLayout notificationsLayout;
     private LinearLayout friendsLayout;
     private LinearLayout addNewJourneyLayout;
+    private LinearLayout myProfileLinearLayout;
 
     private ImageView notificationsImageView;
     private ImageView friendsImageView;
@@ -61,7 +61,7 @@ public class HomeActivity extends BaseActivity {
         this.setContentView(R.layout.activity_home);
 
         //Initialise local variables.
-        this.actionBar.setTitle(" Hi " + findNDriveManager.getUser().UserName);
+        this.actionBar.setTitle(" Hi " + findNDriveManager.getUser().getUserName());
 
         /*
          * Alarm manager is used to trigger a task every 5 minutes.
@@ -79,8 +79,11 @@ public class HomeActivity extends BaseActivity {
         this.notificationsLayout = (LinearLayout) this.findViewById(R.id.ActivityHomeNotificationsLayout);
         this.friendsLayout = (LinearLayout) this.findViewById(R.id.ActivityHomeFriendsLayout);
         this.addNewJourneyLayout = (LinearLayout) this.findViewById(R.id.ActivityHomeMyOfferJourneyLayout);
+        this.myProfileLinearLayout = (LinearLayout) this.findViewById(R.id.ActivityHomeMyProfileLayout);
+
         this.notificationsImageView = (ImageView) this.findViewById(R.id.HomeActivityNotificationsImageView);
         this.friendsImageView =(ImageView) this.findViewById(R.id.HomeActivityFriendsImageView);
+
         this.progressBar = (ProgressBar) this.findViewById(R.id.HomeActivityProgressBar);
 
         // Setup event handlers for UI elements.
@@ -90,7 +93,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        this.findNDriveManager.logout(false, false);
+        this.findNDriveManager.logout(false, true);
     }
 
     @Override
@@ -104,7 +107,7 @@ public class HomeActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout_menu_option:
-                findNDriveManager.logout(true, false);
+                findNDriveManager.logout(true, true);
                 break;
             case R.id.action_refresh:
                 this.refreshInformation();
@@ -137,19 +140,7 @@ public class HomeActivity extends BaseActivity {
         this.progressBar.setVisibility(View.VISIBLE);
         this.refreshedItems = 0;
 
-        new WCFServiceTask<Integer>(this, getResources().getString(R.string.RefreshUserURL), findNDriveManager.getUser().UserId,
-                new TypeToken<ServiceResponse<User>>() {}.getType(),
-                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<User, Void>() {
-            @Override
-            public void onServiceCallCompleted(ServiceResponse<User> serviceResponse, Void parameter) {
-                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
-                {
-                    userRefreshed(serviceResponse.Result);
-                }
-            }
-        }).execute();
-
-        new WCFServiceTask<Integer>(this, getResources().getString(R.string.GetUnreadAppNotificationsCountURL), findNDriveManager.getUser().UserId,
+        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetUnreadAppNotificationsCountURL), findNDriveManager.getUser().getUserId(),
                 new TypeToken<ServiceResponse<Integer>>() {}.getType(),
                 findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
             @Override
@@ -161,7 +152,7 @@ public class HomeActivity extends BaseActivity {
             }
         }).execute();
 
-        new WCFServiceTask<Integer>(this, getResources().getString(R.string.GetUnreadMessagesCountURL), findNDriveManager.getUser().UserId,
+        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetUnreadMessagesCountURL), findNDriveManager.getUser().getUserId(),
                 new TypeToken<ServiceResponse<Integer>>() {}.getType(),
                 findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
             @Override
@@ -176,7 +167,7 @@ public class HomeActivity extends BaseActivity {
 
     private void retrieveDeviceNotifications()
     {
-        new WCFServiceTask<Integer>(this, getResources().getString(R.string.GetDeviceNotificationsURL), findNDriveManager.getUser().UserId,
+        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetDeviceNotificationsURL), findNDriveManager.getUser().getUserId(),
                 new TypeToken<ServiceResponse<ArrayList<Notification>>>() {}.getType(),
                 findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<Notification>, Void>() {
             @Override
@@ -194,16 +185,14 @@ public class HomeActivity extends BaseActivity {
         this.myJourneysLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), MyJourneysActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(getApplicationContext(), MyJourneysActivity.class));
             }
         });
 
         this.searchLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(getApplicationContext(), SearchActivity.class));
             }
         });
 
@@ -218,8 +207,7 @@ public class HomeActivity extends BaseActivity {
         this.friendsLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), FriendsListActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(getApplicationContext(), FriendsListActivity.class));
             }
         });
 
@@ -233,6 +221,13 @@ public class HomeActivity extends BaseActivity {
                 intent.putExtras(bundle);
 
                 startActivity(intent);
+            }
+        });
+
+        this.myProfileLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), ProfileEditorActivity.class).putExtra(IntentConstants.USER, gson.toJson(findNDriveManager.getUser())));
             }
         });
     }
@@ -249,26 +244,19 @@ public class HomeActivity extends BaseActivity {
     private void notificationCountRetrieved(int count)
     {
         this.refreshedItems += 1;
-        this.progressBar.setVisibility(this.refreshedItems >= 3 ? View.GONE : View.VISIBLE);
+        this.progressBar.setVisibility(this.refreshedItems >= 2 ? View.GONE : View.VISIBLE);
         this.notificationsImageView.setImageResource(count == 0 ? R.drawable.home_activity_notification : R.drawable.home_activity_notification_new);
-    }
-
-    private void userRefreshed(User user)
-    {
-        this.refreshedItems += 1;
-        this.progressBar.setVisibility(this.refreshedItems >= 3 ? View.GONE : View.VISIBLE);
-        this.findNDriveManager.setUser(user);
     }
 
     private void unreadMessagesCountRetrieved(int count)
     {
         this.refreshedItems += 1;
-        this.progressBar.setVisibility(this.refreshedItems >= 3 ? View.GONE : View.VISIBLE);
+        this.progressBar.setVisibility(this.refreshedItems >= 2 ? View.GONE : View.VISIBLE);
         this.friendsImageView.setImageResource(count == 0 ? R.drawable.home_activity_friends : R.drawable.home_activity_friends_new_message);
     }
 
     private void deviceNotificationsRetrieved(ArrayList<Notification> notifications)
     {
-        NotificationProcessor.DisplayNotification(this, notifications);
+        NotificationProcessor.DisplayNotification(this, this.findNDriveManager, notifications);
     }
 }

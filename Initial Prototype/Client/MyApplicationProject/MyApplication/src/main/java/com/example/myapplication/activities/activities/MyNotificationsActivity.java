@@ -18,7 +18,7 @@ import com.example.myapplication.dtos.LoadRangeDTO;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.interfaces.WCFServiceCallback;
-import com.example.myapplication.network_tasks.WCFServiceTask;
+import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.R;
 import com.example.myapplication.notification_management.NotificationProcessor;
 import com.google.gson.reflect.TypeToken;
@@ -88,8 +88,8 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
     private void getNotifications()
     {
         progressBar.setVisibility(View.VISIBLE);
-        new WCFServiceTask<LoadRangeDTO>(this, getResources().getString(R.string.GetAppNotificationsURL),
-                new LoadRangeDTO(findNDriveManager.getUser().UserId, mainListView.getCount(), findNDriveManager.getItemsPerCall(), loadMoreData),
+        new WcfPostServiceTask<LoadRangeDTO>(this, getResources().getString(R.string.GetAppNotificationsURL),
+                new LoadRangeDTO(findNDriveManager.getUser().getUserId(), mainListView.getCount(), findNDriveManager.getItemsPerCall(), loadMoreData),
                 new TypeToken<ServiceResponse<ArrayList<Notification>>>() {}.getType(),
                 findNDriveManager.getAuthorisationHeaders(), this).execute();
     }

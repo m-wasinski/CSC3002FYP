@@ -5,4 +5,6 @@
     <string name="GetSingleJourneyURL">https://findndrive.no-ip.co.uk/Services/JourneyService.svc/getsingle</string>
     <string name="GetManyJourneysURL">https://findndrive.no-ip.co.uk/Services/JourneyService.svc/getmany</string>
     <string name="EditJourneyURL">https://findndrive.no-ip.co.uk/Services/JourneyService.svc/edit</string>
+    <string name="CancelJourneyURL">https://findndrive.no-ip.co.uk/Services/JourneyService.svc/cancel</string>
+    <string name="WithdrawFromJourneyURL">https://findndrive.no-ip.co.uk/Services/JourneyService.svc/withdraw</string>
 </resources>

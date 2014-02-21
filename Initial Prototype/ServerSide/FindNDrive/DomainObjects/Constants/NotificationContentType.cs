@@ -87,6 +87,21 @@ namespace DomainObjects.Constants
         /// <summary>
         /// The journey modified.
         /// </summary>
-        JourneyModified = 14
+        JourneyModified = 14,
+
+        /// <summary>
+        /// The passenger left journey.
+        /// </summary>
+        PassengerLeftJourney = 15,
+
+        /// <summary>
+        /// The ileft ajourney.
+        /// </summary>
+        IleftAjourney = 16,
+
+        /// <summary>
+        /// The journey cancelled.
+        /// </summary>
+        JourneyCancelled = 17
     }
 }

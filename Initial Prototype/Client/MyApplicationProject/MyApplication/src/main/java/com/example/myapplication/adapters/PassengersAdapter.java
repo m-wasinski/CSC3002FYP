@@ -52,7 +52,7 @@ public class PassengersAdapter extends ArrayAdapter<User> {
         User passenger = this.passengers.get(position);
 
         passengerHolder.profilePicture.setImageResource(R.drawable.user_man);
-        passengerHolder.nameTextView.setText(passenger.FirstName + " " + passenger.LastName + " ("+passenger.UserName+")");
+        passengerHolder.nameTextView.setText(passenger.getFirstName() + " " + passenger.getLastName() + " ("+passenger.getUserName()+")");
 
         return currentRow;
     }

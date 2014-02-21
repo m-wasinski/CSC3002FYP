@@ -19,7 +19,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.dtos.ChatMessageRetrieverDTO;
 import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.interfaces.WCFServiceCallback;
-import com.example.myapplication.network_tasks.WCFServiceTask;
+import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -73,10 +73,10 @@ public class FriendsAdapter extends ArrayAdapter<User> {
 
         User friend = this.friends.get(position);
 
-        holder.userNameTextView.setText(friend.UserName);
-        holder.currentOnlineStatus.setImageResource(friend.Status == StatusConstants.Online ? R.drawable.available : R.drawable.unavailable);
-        new WCFServiceTask<ChatMessageRetrieverDTO>(this.context, getContext().getResources().getString(R.string.GetUnreadMessagesCountForFriendURL),
-                new ChatMessageRetrieverDTO(friends.get(position).UserId, findNDriveManager.getUser().UserId, null),
+        holder.userNameTextView.setText(friend.getUserName());
+        holder.currentOnlineStatus.setImageResource(friend.getStatus() == StatusConstants.Online ? R.drawable.available : R.drawable.unavailable);
+        new WcfPostServiceTask<ChatMessageRetrieverDTO>(this.context, getContext().getResources().getString(R.string.GetUnreadMessagesCountForFriendURL),
+                new ChatMessageRetrieverDTO(friends.get(position).getUserId(), findNDriveManager.getUser().getUserId(), null),
                 new TypeToken<ServiceResponse<Integer>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {

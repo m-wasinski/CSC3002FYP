@@ -12,14 +12,18 @@ import android.widget.Toast;
 
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.constants.IntentConstants;
+import com.example.myapplication.constants.JourneyRequestDecisions;
 import com.example.myapplication.constants.RequestDecision;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.constants.TokenTypes;
 import com.example.myapplication.domain_objects.JourneyRequest;
+import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.interfaces.WCFServiceCallback;
-import com.example.myapplication.network_tasks.WCFServiceTask;
+import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.R;
+import com.example.myapplication.notification_management.NotificationProcessor;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * Created by Michal on 02/01/14.
@@ -35,22 +39,41 @@ public class JourneyRequestDialogActivity extends BaseActivity{
     private Button showProfileButton;
     private Button sendFriendRequestButton;
 
+    private Notification notification;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_journey_request_dialog);
 
-        //Initialise local variables.
-        Log.i(this.getClass().getSimpleName(), getIntent().getExtras().getString(IntentConstants.JOURNEY_REQUEST));
-        this.journeyRequest = gson.fromJson(getIntent().getExtras().getString(IntentConstants.JOURNEY_REQUEST), TokenTypes.getJourneyRequestToken());
+        // Initialise local variables.
+        Bundle bundle = getIntent().getExtras();
+
+        this.notification =  gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),  new TypeToken<Notification>() {}.getType());
+        this.journeyRequest = notification != null ? (JourneyRequest)gson.fromJson(notification.NotificationPayload, TokenTypes.getJourneyRequestToken()) :
+                (JourneyRequest)gson.fromJson(bundle.getString(IntentConstants.JOURNEY_REQUEST), TokenTypes.getJourneyRequestToken());
+
+        if(this.notification != null)
+        {
+            NotificationProcessor.MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+                @Override
+                public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+                    Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
+                }
+            });
+        }
 
         // Initialise UI elements.
         this.headerTextView = (TextView) this.findViewById(R.id.JourneyRequestDialogActivityHeaderTextView);
-        this.headerTextView.setText("Request from " + journeyRequest.User.FirstName + " " + journeyRequest.User.LastName + " ("+journeyRequest.User.UserName+")");
+        this.headerTextView.setText("Request from " + journeyRequest.User.getFirstName() + " " + journeyRequest.User.getLastName() + " ("+journeyRequest.User.getUserName()+")");
 
         this.acceptButton = (Button) this.findViewById(R.id.JourneyRequestDialogActivityAcceptButton);
+        this.acceptButton.setEnabled(this.journeyRequest.Decision == JourneyRequestDecisions.Undecided);
+
         this.denyButton = (Button) this.findViewById(R.id.JourneyRequestDialogActivityDenyButton);
+        this.denyButton.setEnabled(this.journeyRequest.Decision == JourneyRequestDecisions.Undecided);
+
         this.showProfileButton = (Button) this.findViewById(R.id.JourneyRequestDialogActivityShowProfileButton);
         this.sendFriendRequestButton = (Button) this.findViewById(R.id.JourneyRequestDialogActivitySendFriendRequestButton);
 
@@ -103,7 +126,7 @@ public class JourneyRequestDialogActivity extends BaseActivity{
 
         this.journeyRequest.Decision = decision;
 
-        new WCFServiceTask<JourneyRequest>(this, getResources().getString(R.string.ProcessRequestDecisionURL),
+        new WcfPostServiceTask<JourneyRequest>(this, getResources().getString(R.string.ProcessRequestDecisionURL),
                 this.journeyRequest, TokenTypes.getServiceResponseJourneyRequestToken(),
                 findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<JourneyRequest, Void>() {
             @Override

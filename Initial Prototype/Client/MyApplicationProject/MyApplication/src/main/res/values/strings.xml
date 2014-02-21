@@ -74,6 +74,20 @@
     <string name="TypeYourMessage">Type your message</string>
     <string name="Login">Login</string>
     <string name="WithdrawFromJourney">Withdraw from journey</string>
+    <string name="Status">Status: </string>
+    <string name="JourneyRouteSummary">Journey route summary:</string>
+    <string name="NoPassengers">There are no passengers to display.</string>
+    <string name="NoRequests">There are no requests to display.</string>
+    <string name="PersonalMessage">Personal message:</string>
+    <string name="SaveChanges">Save changes</string>
+    <string name="ChangeProfilePicture">Change</string>
+    <string name="TapToChange">tap to change</string>
+    <string name="ShowLeaderboard">Show leaderboard</string>
+    <string name="RateDriver">Rate driver</string>
+    <string name="Rate">Rate</string>
+    <string name="EnterFeedback">Enter your freedback here</string>
+    <string name="RateDriverQuestion">Overall, how would rate the driver?</string>
+    <string name="NoRatings">has no ratings.</string>
     <string-array name="app_menu_options">
         <item>Home</item>
         <item>My Car Shares</item>

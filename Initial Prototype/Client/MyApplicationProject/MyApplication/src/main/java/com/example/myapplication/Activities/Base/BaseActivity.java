@@ -3,28 +3,17 @@ package com.example.myapplication.activities.base;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Notification;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.Window;
 
 import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.HomeActivity;
-import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.experimental.FindNDriveManager;
-import com.example.myapplication.interfaces.WCFServiceCallback;
-import com.example.myapplication.network_tasks.WCFServiceTask;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.util.ArrayList;
 
 /**
  * Created by Michal on 05/01/14.
@@ -41,6 +30,11 @@ public class BaseActivity extends Activity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override
@@ -80,7 +74,7 @@ public class BaseActivity extends Activity {
                 startActivity(intent);
                 break;
             case R.id.logout_menu_option:
-                findNDriveManager.logout(true, false);
+                findNDriveManager.logout(true, true);
                 break;
             default:
                 return super.onOptionsItemSelected(item);

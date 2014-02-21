@@ -8,5 +8,8 @@
         android:state_focused="true" />
 
     <item android:drawable="@color/LayoutNormal"
-        android:state_pressed="false"/>
+        android:state_enabled="true"/>
+
+    <item android:drawable="@color/LayoutPressed"
+        android:state_enabled="false" />
 </selector>

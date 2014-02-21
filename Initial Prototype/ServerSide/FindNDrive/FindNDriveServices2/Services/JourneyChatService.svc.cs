@@ -62,9 +62,9 @@
 
         public ServiceResponse<bool> SendMessage(JourneyMessageDTO journeyMessageDTO)
         {   
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(false);
+                return ServiceResponseBuilder.Unauthorised(false);
             }
 
             var journey =
@@ -74,14 +74,14 @@
 
             if (journey == null)
             {
-                return ResponseBuilder.Failure<bool>("Invalid journey id.");
+                return ServiceResponseBuilder.Failure<bool>("Invalid journey id.");
             }
 
             var sender = this.findNDriveUnitOfWork.UserRepository.Find(journeyMessageDTO.SenderId);
 
             if (sender == null)
             {
-                return ResponseBuilder.Failure<bool>("Invalid sender id.");
+                return ServiceResponseBuilder.Failure<bool>("Invalid sender id.");
             }
 
             var journeyMessage = new JourneyMessage
@@ -105,23 +105,23 @@
                 participants.Add(journey.Driver);
             }
 
-            this.notificationManager.SendGcmNotification(participants, "Journey Message", GcmNotificationType.JourneyChatMessage, journeyMessage);
+            this.notificationManager.SendGcmNotification(participants, "Journey Message", GcmNotificationType.JourneyChatMessage, journeyMessage, journey.JourneyId);
 
-            return ResponseBuilder.Success(true);
+            return ServiceResponseBuilder.Success(true);
         }
 
         public ServiceResponse<List<JourneyMessage>> RetrieveMessages(JourneyMessageRetrieverDTO journeyMessageRetrieverDTO)
         {   
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(new List<JourneyMessage>());
+                return ServiceResponseBuilder.Unauthorised(new List<JourneyMessage>());
             }
 
             var user = this.findNDriveUnitOfWork.UserRepository.Find(journeyMessageRetrieverDTO.UserId);
 
             if (user == null)
             {
-                return ResponseBuilder.Failure<List<JourneyMessage>>("Invalid user id");
+                return ServiceResponseBuilder.Failure<List<JourneyMessage>>("Invalid user id");
             }
 
             var messages =
@@ -143,21 +143,21 @@
 
             this.findNDriveUnitOfWork.Commit();
 
-            return ResponseBuilder.Success(messages);
+            return ServiceResponseBuilder.Success(messages);
         }
 
         public ServiceResponse<List<JourneyMessage>> RetrieveUnreadMessages(JourneyMessageRetrieverDTO journeyMessageRetrieverDTO)
         {
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(new List<JourneyMessage>());
+                return ServiceResponseBuilder.Unauthorised(new List<JourneyMessage>());
             }
 
             var user = this.findNDriveUnitOfWork.UserRepository.Find(journeyMessageRetrieverDTO.UserId);
 
             if (user == null)
             {
-                return ResponseBuilder.Failure<List<JourneyMessage>>("Invalid user id");
+                return ServiceResponseBuilder.Failure<List<JourneyMessage>>("Invalid user id");
             }
 
             var messages =
@@ -168,21 +168,21 @@
 
             this.findNDriveUnitOfWork.Commit();
 
-            return ResponseBuilder.Success(messages);
+            return ServiceResponseBuilder.Success(messages);
         }
 
         public ServiceResponse<bool> MarkAsRead(JourneyMessageMarkerDTO journeyMessageMarkerDTO)
         {
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(false);
+                return ServiceResponseBuilder.Unauthorised(false);
             }
 
             var user = this.findNDriveUnitOfWork.UserRepository.Find(journeyMessageMarkerDTO.UserId);
 
             if (user == null)
             {
-                return ResponseBuilder.Failure<bool>("Invalid user id");
+                return ServiceResponseBuilder.Failure<bool>("Invalid user id");
             }
 
             var message =
@@ -192,27 +192,27 @@
 
             if (message == null)
             {
-                return ResponseBuilder.Failure<bool>("Invalid message id");
+                return ServiceResponseBuilder.Failure<bool>("Invalid message id");
             }
 
             message.SeenBy.Add(user);
             this.findNDriveUnitOfWork.Commit();
 
-            return ResponseBuilder.Success(true);
+            return ServiceResponseBuilder.Success(true);
         }
 
         public ServiceResponse<int> GetUnreadMessagesCount(JourneyMessageRetrieverDTO journeyMessageRetrieverDTO)
         {
-            if (!this.sessionManager.ValidateSession())
+            if (!this.sessionManager.IsSessionValid())
             {
-                return ResponseBuilder.Unauthorised(0);
+                return ServiceResponseBuilder.Unauthorised(0);
             }
 
             var user = this.findNDriveUnitOfWork.UserRepository.Find(journeyMessageRetrieverDTO.UserId);
 
             if (user == null)
             {
-                return ResponseBuilder.Failure<int>("Invalid user id");
+                return ServiceResponseBuilder.Failure<int>("Invalid user id");
             }
 
             var messages =
@@ -227,7 +227,7 @@
                     return !ids.Contains(journeyMessageRetrieverDTO.UserId);
                 });
 
-            return ResponseBuilder.Success(count);
+            return ServiceResponseBuilder.Success(count);
         }
     }
 }

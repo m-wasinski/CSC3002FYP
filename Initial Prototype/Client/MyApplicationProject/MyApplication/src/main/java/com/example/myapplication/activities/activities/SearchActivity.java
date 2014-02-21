@@ -5,9 +5,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -32,7 +29,7 @@ import com.example.myapplication.dtos.JourneySearchDTO;
 import com.example.myapplication.experimental.GeocoderParams;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.GeocoderTask;
-import com.example.myapplication.network_tasks.WCFServiceTask;
+import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.Marker;
@@ -180,14 +177,14 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         this.departureGPSButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getCurrentAddress(MarkerType.Departure, locationClient.getLastLocation());
+                getCurrentAddress(MarkerType.Departure, locationClient.getLastLocation(), 2);
             }
         });
 
         this.destinationGPSButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getCurrentAddress(MarkerType.Destination, locationClient.getLastLocation());
+                getCurrentAddress(MarkerType.Destination, locationClient.getLastLocation(), 2);
             }
         });
 
@@ -252,7 +249,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         journeySearchDTO.DepartureRadius = this.departureRadius.getRadius() / METERS_IN_MILE;
         journeySearchDTO.DestinationRadius = this.destinationRadius.getRadius() / METERS_IN_MILE;
         // Call the webservice to begin the search.
-        new WCFServiceTask<JourneySearchDTO>(this, getResources().getString(R.string.SearchForJourneysURL),
+        new WcfPostServiceTask<JourneySearchDTO>(this, getResources().getString(R.string.SearchForJourneysURL),
                 journeySearchDTO, new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), this).execute();
     }
 

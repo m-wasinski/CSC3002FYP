@@ -2,6 +2,7 @@ package com.example.myapplication.experimental;
 
 import android.annotation.TargetApi;
 import android.app.Application;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +10,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.util.Log;
 
 import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.LoginActivity;
@@ -17,11 +19,12 @@ import com.example.myapplication.constants.SharedPreferencesConstants;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.interfaces.WCFServiceCallback;
-import com.example.myapplication.network_tasks.WCFServiceTask;
+import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.utilities.Pair;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -39,6 +42,17 @@ public class FindNDriveManager extends Application {
     private SharedPreferences sharedPreferences;
     private WifiManager wifiManager;
     private WifiManager.WifiLock wifiLock;
+    private ArrayList<Integer> notificationIds;
+
+    public void addNotificationId(Integer id)
+    {
+        if(this.notificationIds == null)
+        {
+            this.notificationIds = new ArrayList<Integer>();
+        }
+
+        this.notificationIds.add(id);
+    }
 
     public Boolean hasAppBeenKilled()
     {
@@ -68,16 +82,7 @@ public class FindNDriveManager extends Application {
 
         this.wifiLock.acquire();
 
-        this.user = u;
-
-        if(this.sharedPreferences == null)
-        {
-            this.sharedPreferences = this.retrieveSharedPreferences();
-        }
-
-        SharedPreferences.Editor editor = this.sharedPreferences.edit();
-        editor.putString(SharedPreferencesConstants.PROPERTY_USER, u == null ? "" : new Gson().toJson(user));
-        editor.commit();
+        this.setUser(u);
     }
 
     public void setUser(User u)
@@ -204,27 +209,28 @@ public class FindNDriveManager extends Application {
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public void logout(boolean forceLogout, boolean unauthorised)
+    public void logout(final boolean force, boolean setOfflineOnServer)
     {
-        if(!unauthorised)
+        if(setOfflineOnServer)
         {
-            new WCFServiceTask<Boolean>(this, getResources().getString(R.string.UserLogoutURL),
-                    forceLogout, new TypeToken<ServiceResponse<Boolean>>(){}.getType(), this.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+            new WcfPostServiceTask<Boolean>(this, getResources().getString(R.string.UserLogoutURL),
+                    force, new TypeToken<ServiceResponse<Boolean>>(){}.getType(), this.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
-
                 }
             }).execute();
         }
 
-        if(this.getSessionId().endsWith("0") || forceLogout)
+        if(getSessionId().endsWith("0") || force)
         {
-            this.setUser(null);
-            this.setSessionId("");
+            setUser(null);
+            setSessionId("");
+            clearNotifications();
         }
 
-        if(forceLogout)
+        if(force)
         {
+
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -236,7 +242,26 @@ public class FindNDriveManager extends Application {
                 this.retrieveWifiLock();
             }
 
-            this.wifiLock.release();
+            if(this.wifiLock.isHeld())
+            {
+                this.wifiLock.release();
+            }
+
+        }
+    }
+
+    private void clearNotifications()
+    {
+        NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(getApplicationContext().NOTIFICATION_SERVICE);
+
+
+        if(this.notificationIds != null)
+        {
+            for(Integer id : this.notificationIds)
+            {
+                Log.i(this.getClass().getSimpleName(), "Notification: " + id + " is being cleared");
+                notificationManager.cancel(id);
+            }
         }
     }
 
@@ -249,6 +274,7 @@ public class FindNDriveManager extends Application {
         this.uniqueDeviceId = this.retrieveUniqueDeviceId();
         this.wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         this.wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "LockTag");
+        this.notificationIds = new ArrayList<Integer>();
     }
 
     private String retrieveUniqueDeviceId()
@@ -285,7 +311,7 @@ public class FindNDriveManager extends Application {
 
         String registrationId = sharedPreferences.getString(SharedPreferencesConstants.PROPERTY_REG_ID, "");
 
-        this.registrationId = registrationId == null ? "" : registrationId;
+        this.registrationId = registrationId == null ? "0" : registrationId;
 
         return this.registrationId;
     }

@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:clickable="true"
+            android:paddingTop="2dip"
             android:id="@+id/OfferJourneyStepOneActivityDepartureRelativeLayout"
             android:background="@drawable/home_navigation_selector">
 
@@ -47,26 +48,41 @@
                 android:layout_below="@+id/OfferJourneyStepTwoActivityFromLabel"
                 android:id="@+id/OfferJourneyStepOneActivityDepartureTextView"
                 android:layout_toRightOf="@+id/OfferJourneyStepOneActivityDepartureIconImageView"
-                android:layout_toLeftOf="@+id/OfferJourneyStepOneActivityDepartureGPSButton"
+                android:layout_toLeftOf="@+id/OfferJourneyStepOneActivityDepartureGPSButtonLayout"
                 android:layout_marginLeft="10sp"
                 android:text="@string/SelectDeparturePoint"
-                style="@style/RegularEditText"/>
+                style="@style/RegularEditText"
+                android:singleLine="true"/>
 
-            <Button
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/OfferJourneyStepOneActivityDepartureGPSButton"
-                android:background="@drawable/transparent_button_selector"
-                android:drawableLeft="@drawable/my_location"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"/>
+                android:layout_alignParentRight="true"
+                android:id="@+id/OfferJourneyStepOneActivityDepartureGPSButtonLayout"
+                android:orientation="horizontal">
 
+                <LinearLayout
+                    android:layout_width="1dip"
+                    android:layout_marginTop="1dip"
+                    android:layout_marginBottom="1dip"
+                    android:layout_height="match_parent"
+                    android:background="#B7D8E8"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/OfferJourneyStepOneActivityDepartureGPSButton"
+                    android:background="@drawable/transparent_button_selector"
+                    android:drawableLeft="@drawable/my_location"
+                    android:paddingLeft="10dip"/>
+
+            </LinearLayout>
         </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dip"
-            android:background="#B7D8E8"></LinearLayout>
+            android:background="#B7D8E8"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -107,13 +123,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dip"
-            android:background="#B7D8E8"></LinearLayout>
+            android:background="#B7D8E8"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:clickable="true"
+            android:paddingTop="2dip"
             android:id="@+id/OfferJourneyStepOneActivityDestinationRelativeLayout"
             android:background="@drawable/home_navigation_selector">
 
@@ -139,20 +156,35 @@
                 android:layout_below="@+id/OfferJourneyStepOneActivityDestinationLabelTextView"
                 android:id="@+id/OfferJourneyStepOneActivityDestinationTextView"
                 android:layout_toRightOf="@+id/OfferJourneyStepOneActivityDestinationFlagImageView"
-                android:layout_toLeftOf="@+id/OfferJourneyStepOneActivityDestinationGPSButton"
+                android:layout_toLeftOf="@+id/OfferJourneyStepOneActivityDestinationGPSButtonLayout"
                 android:layout_marginLeft="10sp"
                 android:text="@string/SelectDestinationPoint"
-                style="@style/RegularEditText"/>
+                style="@style/RegularEditText"
+                android:singleLine="true"/>
 
-            <Button
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/OfferJourneyStepOneActivityDestinationGPSButton"
-                android:background="@drawable/transparent_button_selector"
-                android:drawableLeft="@drawable/my_location"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"/>
+                android:layout_alignParentRight="true"
+                android:id="@+id/OfferJourneyStepOneActivityDestinationGPSButtonLayout"
+                android:orientation="horizontal">
 
+                <LinearLayout
+                    android:layout_width="1dip"
+                    android:layout_marginTop="1dip"
+                    android:layout_marginBottom="1dip"
+                    android:layout_height="match_parent"
+                    android:background="#B7D8E8"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/OfferJourneyStepOneActivityDestinationGPSButton"
+                    android:background="@drawable/transparent_button_selector"
+                    android:drawableLeft="@drawable/my_location"
+                    android:paddingLeft="10dip"/>
+
+            </LinearLayout>
         </RelativeLayout>
 
         <Button

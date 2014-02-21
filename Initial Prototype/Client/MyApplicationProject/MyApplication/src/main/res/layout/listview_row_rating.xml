@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="2sp"
+    android:orientation="vertical"
+    android:background="#80151515">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/RatingListViewRowContentLinearLayout"
+        android:layout_toLeftOf="@+id/RatingListViewRowRightArrowImageView"
+        android:layout_alignParentLeft="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="5dip">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/no_rating_small"
+                android:id="@+id/RatingListViewRowStarOneButton"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/no_rating_small"
+                android:id="@+id/RatingListViewRowStarTwoButton"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/no_rating_small"
+                android:id="@+id/RatingListViewRowStarThreeButton"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/no_rating_small"
+                android:id="@+id/RatingListViewRowStarFourButton"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/no_rating_small"
+                android:id="@+id/RatingListViewRowStarFiveButton"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="right">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Date: "
+                    android:gravity="right"
+                    android:textColor="#32B4E4"
+                    android:layout_weight="1"/>
+
+                <TextView android:id="@+id/RatingListViewRowLeftOnTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="date"
+                    android:layout_weight="1"
+                    style="@style/ContentBody"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView android:id="@+id/RatingListViewRowFeedbackTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Content"
+            android:layout_marginLeft="5dip"
+            style="@style/ContentBody"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_below="@+id/RatingListViewRowContentLinearLayout"
+        android:layout_alignParentRight="true"
+        android:paddingTop="15dip"
+        android:id="@+id/NotificationListViewRowDateLinearLayout">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Left by: "
+            android:textColor="#32B4E4"
+            android:layout_marginLeft="15dip"/>
+
+        <TextView android:id="@+id/RatingListViewRowLeftByTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="user"
+            android:gravity="right"
+            style="@style/ContentBody"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:background="#B7D8E8"
+        android:layout_below="@+id/NotificationListViewRowDateLinearLayout"/>
+
+    <ImageView
+        android:id="@+id/RatingListViewRowRightArrowImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/right_arrow"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dip"
+        android:paddingLeft="15dip"/>
+
+</RelativeLayout>

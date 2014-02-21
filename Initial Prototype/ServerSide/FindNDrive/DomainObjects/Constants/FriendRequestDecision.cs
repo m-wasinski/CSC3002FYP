@@ -9,11 +9,14 @@
 
 namespace DomainObjects.Constants
 {
+    using System;
     using System.Runtime.Serialization;
 
     /// <summary>
     /// The friend request decision.
     /// </summary>
+    [DataContract]
+    [Serializable]
     public enum FriendRequestDecision
     {
         /// <summary>
@@ -31,7 +34,7 @@ namespace DomainObjects.Constants
         /// <summary>
         /// The rejected.
         /// </summary>
-        [EnumMember(Value = "Rejected")]
-        Rejected = 2
+        [EnumMember(Value = "Denied")]
+        Denied = 2
     }
 }

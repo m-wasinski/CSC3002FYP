@@ -18,4 +18,8 @@ public class NotificationContentTypes
     public static final int NOTIFICATION_FRIEND_OFFERED_NEW_JOURNEY = 11;
     public static final int NOTIFICATION_INSTANT_MESSENGER = 12;
     public static final int NOTIFICATION_JOURNEY_CHAT_MESSAGE = 13;
+    public static final int NOTIFICATION_JOURNEY_MODIFIED = 14;
+    public static final int NOTIFICATION_PASSENGER_LEFT_JOURNEY = 15;
+    public static final int NOTIFICATION_I_LEFT_A_JOURNEY = 16;
+    public static final int NOTIFICATION_JOURNEY_CANCELLED = 17;
 }

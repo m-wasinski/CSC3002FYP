@@ -46,14 +46,18 @@ public class ReceivedFriendRequestDialogActivity extends BaseActivity {
         Bundle bundle = getIntent().getExtras();
 
         this.notification =  gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),  new TypeToken<Notification>() {}.getType());
-        this.friendRequest =  gson.fromJson(notification.NotificationPayload, TokenTypes.getFriendRequestToken());
+        this.friendRequest =  gson.fromJson(bundle.getString(IntentConstants.FRIEND_REQUEST), TokenTypes.getFriendRequestToken());
 
-        NotificationProcessor.MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
-            @Override
-            public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
-                Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
-            }
-        });
+        if(this.notification != null)
+        {
+            new NotificationProcessor().MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+                @Override
+                public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+                    Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
+                }
+            });
+        }
+
         Log.i(this.getClass().getSimpleName(), gson.toJson(friendRequest));
         // Initialise UI elements.
         this.acceptButton = (Button) this.findViewById(R.id.FriendRequestReceivedActivityAcceptButton);

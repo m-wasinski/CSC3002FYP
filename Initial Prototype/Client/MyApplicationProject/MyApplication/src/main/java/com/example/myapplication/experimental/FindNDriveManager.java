@@ -8,9 +8,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.util.Log;
+import android.util.LruCache;
 
 import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.LoginActivity;
@@ -43,6 +45,7 @@ public class FindNDriveManager extends Application {
     private WifiManager wifiManager;
     private WifiManager.WifiLock wifiLock;
     private ArrayList<Integer> notificationIds;
+    private LruCache<String, Bitmap> bitmapLruCache;
 
     public void addNotificationId(Integer id)
     {
@@ -97,6 +100,16 @@ public class FindNDriveManager extends Application {
         SharedPreferences.Editor editor = this.sharedPreferences.edit();
         editor.putString(SharedPreferencesConstants.PROPERTY_USER, u == null ? "" : new Gson().toJson(user));
         editor.commit();
+    }
+
+    public LruCache<String, Bitmap> getBitmapLruCache()
+    {
+        if(this.bitmapLruCache == null)
+        {
+            this.bitmapLruCache = this.createBitmapLruCache();
+        }
+
+        return this.bitmapLruCache;
     }
 
     public User getUser()
@@ -275,6 +288,7 @@ public class FindNDriveManager extends Application {
         this.wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         this.wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "LockTag");
         this.notificationIds = new ArrayList<Integer>();
+        this.bitmapLruCache = this.createBitmapLruCache();
     }
 
     private String retrieveUniqueDeviceId()
@@ -325,5 +339,10 @@ public class FindNDriveManager extends Application {
     {
         this.wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         this.wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "LockTag");
+    }
+
+    private LruCache<String, Bitmap> createBitmapLruCache()
+    {
+        return new LruCache<String, Bitmap>((int)(Runtime.getRuntime().maxMemory() / 1024) / 4);
     }
 }

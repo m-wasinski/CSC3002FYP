@@ -1,10 +1,13 @@
 package com.example.myapplication.activities.activities;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -14,6 +17,8 @@ import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.experimental.DialogCreator;
+import com.example.myapplication.interfaces.WCFImageRetrieved;
+import com.example.myapplication.network_tasks.WcfPictureServiceTask;
 import com.example.myapplication.utilities.Utilities;
 import com.google.gson.reflect.TypeToken;
 
@@ -22,7 +27,7 @@ import java.text.DecimalFormat;
 /**
  * Created by Michal on 19/02/14.
  */
-public class JourneySummaryActivity extends BaseActivity {
+public class JourneySummaryActivity extends BaseActivity implements WCFImageRetrieved{
 
     private TextView journeyIdTextView;
     private TextView journeyDriverTextView;
@@ -37,6 +42,8 @@ public class JourneySummaryActivity extends BaseActivity {
     private TableRow journeyDriverTableRow;
 
     private Journey journey;
+
+    private ImageView driverIconImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +65,8 @@ public class JourneySummaryActivity extends BaseActivity {
         this.journeyFeeTextView = (TextView) this.findViewById(R.id.JourneySummaryJourneyFeeTextView);
         this.journeyVehicleTypeTextView = (TextView) this.findViewById(R.id.JourneySummaryJourneyVehicleTypeTextView);
 
+        this.driverIconImageView = (ImageView) this.findViewById(R.id.JourneySummaryActivityDriverImageView);
+
         this.journeyDriverTableRow = (TableRow) this.findViewById(R.id.JourneySummaryActivityJourneyDriverTableRow);
 
         // Fill in the details.
@@ -65,6 +74,9 @@ public class JourneySummaryActivity extends BaseActivity {
 
         // Setup event handlers.
         this.setupEventHandlers();
+
+        // Retrieve picture of the driver.
+        this.getDriverPicture();
     }
 
     private void setupEventHandlers()
@@ -95,5 +107,20 @@ public class JourneySummaryActivity extends BaseActivity {
         this.journeyVehicleTypeTextView.setText(vehicleTypes[this.journey.VehicleType]);
         this.journeySeatsAvailableTextView.setText(String.valueOf(this.journey.AvailableSeats));
         this.journeyFeeTextView.setText(("£"+new DecimalFormat("0.00").format(this.journey.Fee)) + (this.journey.PreferredPaymentMethod.isEmpty() ? "" : ", " +this.journey.PreferredPaymentMethod));
+
+    }
+
+    private void getDriverPicture()
+    {
+        new WcfPictureServiceTask(this.findNDriveManager.getBitmapLruCache(), this.getResources().getString(R.string.GetProfilePictureURL),
+                this.journey.DriverId, this.findNDriveManager.getAuthorisationHeaders(), this).execute();
+    }
+
+    @Override
+    public void onImageRetrieved(Bitmap bitmap) {
+        if(bitmap != null)
+        {
+            this.driverIconImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/2, bitmap.getHeight()/2, false));
+        }
     }
 }

@@ -14,11 +14,14 @@ import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.adapters.RatingsAdapter;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
+import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.Rating;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
+import com.example.myapplication.experimental.DialogCreator;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
+import com.example.myapplication.notification_management.NotificationProcessor;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -49,9 +52,25 @@ public class RatingsActivity extends BaseActivity implements WCFServiceCallback<
         this.setContentView(R.layout.activity_ratings);
 
         // Initialise local variables.
-        this.user = gson.fromJson(getIntent().getStringExtra(IntentConstants.USER), new TypeToken<User>(){}.getType());
+        Bundle bundle = getIntent().getExtras();
+
+        this.user = gson.fromJson(bundle.getString(IntentConstants.USER), new TypeToken<User>(){}.getType());
         this.ratings = new ArrayList<Rating>();
 
+        if(bundle != null)
+        {
+            Notification notification =  gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),  new TypeToken<Notification>() {}.getType());
+
+            if(notification != null)
+            {
+                new NotificationProcessor().MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+                    @Override
+                    public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+                        Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
+                    }
+                });
+            }
+        }
 
         // Initialise UI elements.
         this.ratingsListView = (ListView) this.findViewById(R.id.RatingsActivityListView);
@@ -83,20 +102,20 @@ public class RatingsActivity extends BaseActivity implements WCFServiceCallback<
 
             this.noRatingsTextView.setVisibility(serviceResponse.Result.size() == 0 ? View.VISIBLE : View.GONE);
             this.noRatingsTextView.setText(serviceResponse.Result.size() == 0 ? this.user.getUserName() + " has no ratings." : "");
-            this.ratingsAdapter = new RatingsAdapter(this, R.layout.listview_row_rating, serviceResponse.Result);
+            this.ratingsAdapter = new RatingsAdapter(this, R.layout.listview_row_rating, serviceResponse.Result, this.findNDriveManager);
             this.ratingsListView.setAdapter(ratingsAdapter);
 
             this.ratingsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    showPersonsProfile(serviceResponse.Result.get(i).getFromUser());
+                    showPersonDialog(serviceResponse.Result.get(i).getFromUser());
                 }
             });
         }
     }
 
-    private void showPersonsProfile(User fromUser)
+    private void showPersonDialog(User user)
     {
-        this.startActivity(new Intent(this, ProfileViewerActivity.class).putExtra(IntentConstants.USER, gson.toJson(fromUser)));
+        DialogCreator.ShowProfileOptionsDialog(this, user);
     }
 }

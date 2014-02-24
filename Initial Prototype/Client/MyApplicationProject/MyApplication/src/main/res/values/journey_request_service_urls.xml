@@ -4,5 +4,6 @@
     <string name="ProcessRequestDecisionURL">https://findndrive.no-ip.co.uk/Services/JourneyRequestService.svc/processdecision</string>
     <string name="GetRequestsForJourneyURL">https://findndrive.no-ip.co.uk/Services/JourneyRequestService.svc/getforjourney</string>
     <string name="GetRequestsForUserURL">https://findndrive.no-ip.co.uk/Services/JourneyRequestService.svc/getforuser</string>
+    <string name="GetJourneyRequestURL">https://findndrive.no-ip.co.uk/Services/JourneyRequestService.svc/get</string>
     <string name="MarkRequestAsReadURL">https://findndrive.no-ip.co.uk/Services/JourneyRequestService.svc/markasread</string>
 </resources>

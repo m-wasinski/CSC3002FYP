@@ -102,6 +102,16 @@ namespace DomainObjects.Constants
         /// <summary>
         /// The journey cancelled.
         /// </summary>
-        JourneyCancelled = 17
+        JourneyCancelled = 17,
+
+        /// <summary>
+        /// The rating received.
+        /// </summary>
+        RatingReceived = 18,
+
+        /// <summary>
+        /// The rating left.
+        /// </summary>
+        RatingLeft = 19
     }
 }

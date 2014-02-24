@@ -13,7 +13,6 @@ namespace DomainObjects.Domains
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Runtime.Serialization;
-
     using DomainObjects.Constants;
 
     /// <summary>
@@ -41,6 +40,18 @@ namespace DomainObjects.Domains
         [ForeignKey("UserId")]
         [DataMember]
         public User User { get; set; }
+
+        /// <summary>
+        /// Gets or sets the profile picture id.
+        /// </summary>
+        [DataMember]
+        public int ProfilePictureId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the profile picture.
+        /// </summary>
+        [ForeignKey("ProfilePictureId")]
+        public ProfilePicture ProfilePicture { get; set; }
 
         /// <summary>
         /// Gets or sets the collapsible key.
@@ -76,7 +87,7 @@ namespace DomainObjects.Domains
         /// Gets or sets the notification payload.
         /// </summary>
         [DataMember]
-        public string NotificationPayload { get; set; }
+        public int TargetObjectId { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether read.
@@ -85,10 +96,10 @@ namespace DomainObjects.Domains
         public bool Delivered { get; set; }
 
         /// <summary>
-        /// Gets or sets the context.
+        /// Gets or sets a value indicating whether action taken.
         /// </summary>
         [DataMember]
-        public NotificationContext Context { get; set; }
+        public bool ActionTaken { get; set; }
 
         /// <summary>
         /// Gets or sets the received on date.

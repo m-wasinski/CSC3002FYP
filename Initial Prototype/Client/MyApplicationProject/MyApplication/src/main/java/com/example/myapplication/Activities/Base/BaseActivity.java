@@ -12,6 +12,7 @@ import android.view.MenuItem;
 
 import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.HomeActivity;
+import com.example.myapplication.activities.activities.LeaderboardActivity;
 import com.example.myapplication.experimental.FindNDriveManager;
 import com.google.gson.Gson;
 
@@ -67,14 +68,15 @@ public class BaseActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
         switch (item.getItemId()) {
             case R.id.action_home:
-                intent = new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
+                startActivity(new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
                 break;
             case R.id.logout_menu_option:
                 findNDriveManager.logout(true, true);
+                break;
+            case R.id.action_show_leaderboard:
+                startActivity(new Intent(this, LeaderboardActivity.class));
                 break;
             default:
                 return super.onOptionsItemSelected(item);

@@ -46,9 +46,10 @@ namespace FindNDriveServices2.Services
         /// </summary>
         private readonly NotificationManager notificationManager;
 
-        public MessengerService()
-        {
-        }
+        /// <summary>
+        /// The random.
+        /// </summary>
+        private Random random;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessengerService"/> class.
@@ -66,6 +67,7 @@ namespace FindNDriveServices2.Services
             this.findNDriveUnitOfWork = findNDriveUnitOfWork;
             this.sessionManager = sessionManager;
             this.notificationManager = notificationManager;
+            this.random = new Random(Guid.NewGuid().GetHashCode());
         }
 
         /// <summary>
@@ -106,12 +108,12 @@ namespace FindNDriveServices2.Services
             this.findNDriveUnitOfWork.ChatMessageRepository.Add(newMessage);
             this.findNDriveUnitOfWork.Commit();
 
-            this.notificationManager.SendGcmNotification(
+            this.notificationManager.SendInstantMessage(
                 new Collection<User> { targetUser },
-                "Message",
                 GcmNotificationType.ChatMessage,
-                newMessage, sendingUser.UserId);
-                
+                sendingUser.ProfilePictureId,
+                sendingUser.UserId,
+                newMessage);
 
             return ServiceResponseBuilder.Success(true);
         }

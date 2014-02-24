@@ -69,7 +69,7 @@ public class JourneyDetailsActivity extends BaseMapActivity {
 
         if(notification != null)
         {
-            NotificationProcessor.MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+            new NotificationProcessor().MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                     Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
@@ -77,8 +77,7 @@ public class JourneyDetailsActivity extends BaseMapActivity {
             });
         }
 
-        this.journey = notification == null ?(Journey) gson.fromJson(extras.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType()) :
-                (Journey)gson.fromJson(notification.NotificationPayload, new TypeToken<Journey>() {}.getType());
+        this.journey = gson.fromJson(extras.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
 
         this.newMessagesCount = extras.getInt(IntentConstants.NEW_JOURNEY_MESSAGES);
         this.newRequestsCount = extras.getInt(IntentConstants.NEW_JOURNEY_REQUESTS);
@@ -382,7 +381,7 @@ public class JourneyDetailsActivity extends BaseMapActivity {
         noRequestsTextView.setVisibility(requests.size() == 0 ? View.VISIBLE : View.GONE);
         if(requests.size() > 0)
         {
-            JourneyRequestAdapter adapter = new JourneyRequestAdapter(this, R.layout.listview_row_journey_request, requests);
+            JourneyRequestAdapter adapter = new JourneyRequestAdapter(this.findNDriveManager, this, R.layout.listview_row_journey_request, requests);
             requestsListView.setAdapter(adapter);
             requestsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -417,7 +416,7 @@ public class JourneyDetailsActivity extends BaseMapActivity {
 
         if(this.journey.Participants.size() > 0)
         {
-            PassengersAdapter adapter = new PassengersAdapter(this, R.layout.listview_row_journey_passengers, this.journey.Participants);
+            PassengersAdapter adapter = new PassengersAdapter(this.findNDriveManager, this, R.layout.listview_row_journey_passengers, this.journey.Participants);
             passengersListView.setAdapter(adapter);
             passengersListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
             {

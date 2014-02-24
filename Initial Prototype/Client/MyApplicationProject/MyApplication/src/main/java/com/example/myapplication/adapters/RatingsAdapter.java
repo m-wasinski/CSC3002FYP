@@ -2,6 +2,8 @@ package com.example.myapplication.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,9 @@ import com.example.myapplication.R;
 import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.domain_objects.Rating;
 import com.example.myapplication.experimental.DateTimeHelper;
+import com.example.myapplication.experimental.FindNDriveManager;
+import com.example.myapplication.interfaces.WCFImageRetrieved;
+import com.example.myapplication.network_tasks.WcfPictureServiceTask;
 import com.example.myapplication.utilities.Utilities;
 
 import java.util.ArrayList;
@@ -21,23 +26,26 @@ import java.util.ArrayList;
 /**
  * Created by Michal on 21/02/14.
  */
-public class RatingsAdapter  extends ArrayAdapter<Rating> {
+public class RatingsAdapter  extends ArrayAdapter<Rating>{
 
     private Context context;
     private int layoutResourceId;
     private ArrayList<Rating> ratings;
-
-    public RatingsAdapter(Context context, int resource, ArrayList<Rating> ratings) {
+    private FindNDriveManager findNDriveManager;
+    public RatingsAdapter(Context context, int resource, ArrayList<Rating> ratings, FindNDriveManager findNDriveManager) {
         super(context, resource, ratings);
         this.layoutResourceId = resource;
         this.context = context;
         this.ratings = ratings;
+        this.findNDriveManager = findNDriveManager;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
         View currentRow = convertView;
-        RatingsHolder holder;
+
+        final RatingsHolder holder;
 
         if(currentRow == null)
         {
@@ -52,6 +60,7 @@ public class RatingsAdapter  extends ArrayAdapter<Rating> {
             holder.starRating[3]  = (ImageView) currentRow.findViewById(R.id.RatingListViewRowStarFourButton);
             holder.starRating[4]  = (ImageView) currentRow.findViewById(R.id.RatingListViewRowStarFiveButton);
 
+            holder.leftByImageView = (ImageView) currentRow.findViewById(R.id.RatingListViewRowLeftByImageView);
             holder.receivedOnDateTextView = (TextView) currentRow.findViewById(R.id.RatingListViewRowLeftOnTextView);
             holder.feedbackTextView = (TextView) currentRow.findViewById(R.id.RatingListViewRowFeedbackTextView);
             holder.leftByTextView = (TextView) currentRow.findViewById(R.id.RatingListViewRowLeftByTextView);
@@ -65,6 +74,17 @@ public class RatingsAdapter  extends ArrayAdapter<Rating> {
 
         Rating rating = ratings.get(position);
 
+        new WcfPictureServiceTask(this.findNDriveManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
+                rating.getFromUser().getProfilePictureId(), this.findNDriveManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+            @Override
+            public void onImageRetrieved(Bitmap bitmap) {
+                if(bitmap != null)
+                {
+                    holder.leftByImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/8, bitmap.getHeight()/8, false));
+                }
+            }
+        }).execute();
+
         for(int i = 0; i < rating.getScore(); i++)
         {
             holder.starRating[i].setImageDrawable(this.context.getResources().getDrawable(R.drawable.rating_small));
@@ -73,12 +93,14 @@ public class RatingsAdapter  extends ArrayAdapter<Rating> {
         holder.feedbackTextView.setText(rating.getFeedback());
         holder.leftByTextView.setText(rating.getFromUser().getUserName());
         holder.receivedOnDateTextView.setText(DateTimeHelper.getSimpleDate(rating.getLeftOnDate()));
+
         return currentRow;
     }
 
     private class RatingsHolder
     {
         ImageView[] starRating;
+        ImageView leftByImageView;
         TextView receivedOnDateTextView;
         TextView feedbackTextView;
         TextView leftByTextView;

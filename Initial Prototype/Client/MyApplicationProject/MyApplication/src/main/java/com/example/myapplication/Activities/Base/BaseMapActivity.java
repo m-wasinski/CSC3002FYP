@@ -28,7 +28,6 @@ import com.example.myapplication.experimental.GeocoderParams;
 import com.example.myapplication.experimental.WaypointHolder;
 import com.example.myapplication.interfaces.GeoCoderFinishedCallBack;
 import com.example.myapplication.network_tasks.GeocoderTask;
-import com.example.myapplication.notification_management.NotificationDisplayManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
@@ -72,7 +71,6 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
     protected InputMethodManager inputMethodManager;
     protected ArrayList<WaypointHolder> wayPoints;
     protected LocationClient locationClient;
-    protected NotificationDisplayManager notificationDisplayManager;
 
     private Polyline polyline;
 
@@ -81,7 +79,6 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
         super.onCreate(savedInstanceState);
 
         // Initialise local variables.
-        this.notificationDisplayManager = new NotificationDisplayManager();
         this.inputMethodManager = (InputMethodManager) this.getSystemService(INPUT_METHOD_SERVICE);
         this.findNDriveManager = ((FindNDriveManager)getApplication());
         this.gson = new Gson();
@@ -89,7 +86,6 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
         this.gMapV2Direction = new GMapV2Direction();
         this.locationClient = new LocationClient(this, this, this);
         this.geocoder = new Geocoder(this);
-        this.notificationDisplayManager = new NotificationDisplayManager();
     }
 
     @Override

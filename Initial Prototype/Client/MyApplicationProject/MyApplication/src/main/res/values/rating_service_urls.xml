@@ -2,4 +2,5 @@
 <resources>
     <string name="RateDriverURL">https://findndrive.no-ip.co.uk/Services/RatingService.svc/rate</string>
     <string name="GetUserRatingsURL">https://findndrive.no-ip.co.uk/Services/RatingService.svc/getuserratings</string>
+    <string name="GetLeaderboardURL">https://findndrive.no-ip.co.uk/Services/RatingService.svc/getleaderboard</string>
 </resources>

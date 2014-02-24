@@ -72,7 +72,7 @@ namespace FindNDriveServices2.Contracts
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/getsingle")]
-        ServiceResponse<Journey> GetSingleJourneyById(int id);
+        ServiceResponse<Journey> GetJourneyById(int id);
 
         /// <summary>
         /// The get car shares by id.

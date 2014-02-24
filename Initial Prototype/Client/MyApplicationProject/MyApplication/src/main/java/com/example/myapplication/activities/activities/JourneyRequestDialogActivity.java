@@ -51,12 +51,12 @@ public class JourneyRequestDialogActivity extends BaseActivity{
         Bundle bundle = getIntent().getExtras();
 
         this.notification =  gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),  new TypeToken<Notification>() {}.getType());
-        this.journeyRequest = notification != null ? (JourneyRequest)gson.fromJson(notification.NotificationPayload, TokenTypes.getJourneyRequestToken()) :
-                (JourneyRequest)gson.fromJson(bundle.getString(IntentConstants.JOURNEY_REQUEST), TokenTypes.getJourneyRequestToken());
+
+        this.journeyRequest = gson.fromJson(bundle.getString(IntentConstants.JOURNEY_REQUEST),  new TypeToken<JourneyRequest>() {}.getType());
 
         if(this.notification != null)
         {
-            NotificationProcessor.MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+            new NotificationProcessor().MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                     Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");

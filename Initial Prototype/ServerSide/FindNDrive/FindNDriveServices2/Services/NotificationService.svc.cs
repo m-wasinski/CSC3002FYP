@@ -168,47 +168,6 @@ namespace FindNDriveServices2.Services
                 return ServiceResponseBuilder.Success(true);
             }
 
-            if (notification.NotificationContentType == NotificationContentType.JourneyChatMessage)
-            {
-                var journeyId = (int)JObject.Parse(notification.NotificationPayload)["JourneyId"];
-
-                var journeyMessages =
-                    this.findNDriveUnitOfworkWork.NotificationRepository.AsQueryable()
-                        .Where(_ => _.UserId == notificationMarkerDTO.UserId && !_.Delivered && _.NotificationContentType == NotificationContentType.JourneyChatMessage)
-                        .ToList();
-
-
-                journeyMessages.ForEach(
-                    delegate(Notification n)
-                        {
-                            if ((int)JObject.Parse(n.NotificationPayload)["JourneyId"] == journeyId)
-                            {
-                                n.Delivered = true;
-                            }
-                        });
-            }
-
-            if (notification.NotificationContentType == NotificationContentType.InstantMessenger)
-            {
-                var senderId = (int)JObject.Parse(notification.NotificationPayload)["SenderId"];
-
-                var journeyMessages =
-                    this.findNDriveUnitOfworkWork.NotificationRepository.AsQueryable()
-                        .Where(_ => _.UserId == notificationMarkerDTO.UserId && !_.Delivered && _.NotificationContentType == NotificationContentType.InstantMessenger)
-                        .ToList();
-
-
-                journeyMessages.ForEach(
-                    delegate(Notification n)
-                    {
-                        if ((int)JObject.Parse(n.NotificationPayload)["SenderId"] == senderId)
-                        {
-                            n.Delivered = true;
-                        }
-                    });
-            }
-
-
             notification.Delivered = true;
             this.findNDriveUnitOfworkWork.Commit();
 

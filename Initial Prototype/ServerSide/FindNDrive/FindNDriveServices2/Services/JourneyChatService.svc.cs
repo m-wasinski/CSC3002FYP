@@ -105,7 +105,12 @@
                 participants.Add(journey.Driver);
             }
 
-            this.notificationManager.SendGcmNotification(participants, "Journey Message", GcmNotificationType.JourneyChatMessage, journeyMessage, journey.JourneyId);
+            this.notificationManager.SendInstantMessage(
+                participants,
+                GcmNotificationType.JourneyChatMessage,
+                -1,
+                journey.JourneyId,
+                journeyMessage);
 
             return ServiceResponseBuilder.Success(true);
         }

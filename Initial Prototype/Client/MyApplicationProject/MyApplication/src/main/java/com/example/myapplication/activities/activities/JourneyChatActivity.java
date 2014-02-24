@@ -69,7 +69,7 @@ public class JourneyChatActivity extends BaseListActivity{
 
         if(notification != null)
         {
-            NotificationProcessor.MarkDelivered(this, findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+            new NotificationProcessor().MarkDelivered(this, findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
 

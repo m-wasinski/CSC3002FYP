@@ -11,10 +11,12 @@ namespace FindNDriveServices2.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
 
+    using DomainObjects.Constants;
     using DomainObjects.Domains;
 
     using FindNDriveDataAccessLayer;
@@ -123,16 +125,48 @@ namespace FindNDriveServices2.Services
             ratings.Add(ratingDTO.Score);
             driver.AverageRating = ratings.Average();
 
-            driver.Rating.Add(new Rating
-                                  {
-                                      UserId = ratingDTO.UserId,
-                                      Score = ratingDTO.Score,
-                                      Feedback = ratingDTO.Feedback,
-                                      FromUser = leavingUser,
-                                      LeftOnDate = DateTime.Now
-                                  });
+            var newRating = new Rating
+                                {
+                                    UserId = ratingDTO.UserId,
+                                    Score = ratingDTO.Score,
+                                    Feedback = ratingDTO.Feedback,
+                                    FromUser = leavingUser,
+                                    LeftOnDate = DateTime.Now
+                                };
+
+            driver.Rating.Add(newRating);
 
             this.findNDriveUnitOfWork.Commit();
+
+            this.notificationManager.SendAppNotification(
+                new Collection<User> { driver },
+                "New rating received",
+                string.Format(
+                    "You have received new rating from user {0} {1} ({2}).",
+                    leavingUser.FirstName,
+                    leavingUser.LastName,
+                    leavingUser.UserName),
+                leavingUser.ProfilePictureId,
+                -1,
+                NotificationType.Both,
+                NotificationContentType.RatingReceived,
+                newRating.RatingId);
+
+            this.notificationManager.SendAppNotification(
+                new Collection<User> { driver },
+                "Rating left.",
+                string.Format(
+                    "You have left a rating for user {0} {1} ({2}).",
+                    driver.FirstName,
+                    driver.LastName,
+                    driver.UserName),
+                leavingUser.ProfilePictureId,
+                -1,
+                NotificationType.App,
+                NotificationContentType.RatingLeft,
+                newRating.RatingId);
+
+            this.notificationManager.SendGcmTickle(new Collection<User> { driver });
 
             return ServiceResponseBuilder.Success(true);
         }
@@ -150,15 +184,19 @@ namespace FindNDriveServices2.Services
             return ServiceResponseBuilder.Success(ratings);
         }
 
-        public ServiceResponse<List<Rating>> GetLeaderboard(int id)
+        public ServiceResponse<List<User>> GetLeaderboard()
         {
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(new List<Rating>());
+                return ServiceResponseBuilder.Unauthorised(new List<User>());
             }
 
+            var rating =
+                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+                    .IncludeAll()
+                    .OrderByDescending(_ => _.AverageRating).ToList();
 
-            throw new NotImplementedException();
+            return ServiceResponseBuilder.Success(rating);
         }
     }
 }

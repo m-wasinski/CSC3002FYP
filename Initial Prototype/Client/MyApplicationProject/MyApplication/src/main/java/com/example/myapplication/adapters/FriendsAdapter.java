@@ -2,6 +2,7 @@ package com.example.myapplication.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +19,9 @@ import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.R;
 import com.example.myapplication.dtos.ChatMessageRetrieverDTO;
 import com.example.myapplication.experimental.FindNDriveManager;
+import com.example.myapplication.interfaces.WCFImageRetrieved;
 import com.example.myapplication.interfaces.WCFServiceCallback;
+import com.example.myapplication.network_tasks.WcfPictureServiceTask;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.google.gson.reflect.TypeToken;
 
@@ -85,6 +88,17 @@ public class FriendsAdapter extends ArrayAdapter<User> {
                     holder.unreadMessagesCountTextView.setText(String.valueOf(serviceResponse.Result));
                     holder.unreadMessagesCountTextView.setVisibility(serviceResponse.Result > 0 ? View.VISIBLE : View.GONE);
                     holder.parentLayout.setBackgroundColor(serviceResponse.Result > 0 ? Color.parseColor("#80dea516") : Color.parseColor("#80151515"));
+                }
+            }
+        }).execute();
+
+        new WcfPictureServiceTask(this.findNDriveManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
+                friend.getProfilePictureId(), this.findNDriveManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+            @Override
+            public void onImageRetrieved(Bitmap bitmap) {
+                if(bitmap != null)
+                {
+                    holder.profilePicture.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/8, bitmap.getHeight()/8, false));
                 }
             }
         }).execute();

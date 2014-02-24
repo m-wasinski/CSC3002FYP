@@ -50,6 +50,11 @@ namespace FindNDriveServices2.Services
         private readonly NotificationManager notificationManager;
 
         /// <summary>
+        /// The random.
+        /// </summary>
+        private readonly Random random;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FriendsService"/> class.
         /// </summary>
         public FriendsService()
@@ -74,6 +79,7 @@ namespace FindNDriveServices2.Services
             this.findNDriveUnitOfWork = findNDriveUnitOfWork;
             this.sessionManager = sessionManager;
             this.notificationManager = notificationManager;
+            this.random = new Random(Guid.NewGuid().GetHashCode());
         }
 
         /// <summary>
@@ -110,7 +116,7 @@ namespace FindNDriveServices2.Services
 
             if (targetRequest.FriendRequestDecision != FriendRequestDecision.Undecided)
             {
-                return ServiceResponseBuilder.Failure<bool>(String.Format("You have already {0} this request ", targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted ? "accepted": "denied"));
+                return ServiceResponseBuilder.Failure<bool>(string.Format("You have already {0} this request ", targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted ? "accepted": "denied"));
             }
 
             targetRequest.DecidedOnDate = DateTime.Now;
@@ -137,25 +143,43 @@ namespace FindNDriveServices2.Services
             const string SenderMessage = "You have {0} {1}'s friend request.";
             const string ReceiverMessage = "{0} has {1} your friend request.";
 
-            this.notificationManager.SendAppNotification(new List<User> { receivingUser }, targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted ? "Friend request accepted" : "Friend request denied", String.Format(
-                                                         SenderMessage,
-                                                         targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted ? "accepted" : "denied",
-                                                         requestingUser.UserName),
-                                                         targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted ? NotificationContext.Positive : NotificationContext.Negative,
-                                                         NotificationType.App,
-                                                         targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted ? NotificationContentType.FriendRequestAccepted : NotificationContentType.FriendRequestDenied,
-                                                         string.Empty);
+            var notificationTitle = targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted
+                                        ? "Friend request accepted"
+                                        : "Friend request denied";
 
-            this.notificationManager.SendAppNotification(new List<User> { requestingUser }, targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted ? "Friend request accepted" : "Friend request denied", String.Format(
-                                                         ReceiverMessage,
-                                                         receivingUser.UserName,
-                                                         targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted ? "accepted" : "denied"),
-                                                         targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted ? NotificationContext.Positive : NotificationContext.Negative,
-                                                         NotificationType.Both,
-                                                         targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted ? NotificationContentType.FriendRequestAccepted : NotificationContentType.FriendRequestDenied,
-                                                         string.Empty);
+            // This notification is sent to the user who replied to the friend request.
+            this.notificationManager.SendAppNotification(
+                new List<User> { receivingUser },
+                notificationTitle,
+                string.Format(
+                    SenderMessage,
+                    targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted ? "accepted" : "denied",
+                    requestingUser.UserName),
+                requestingUser.ProfilePictureId,
+                -1,
+                NotificationType.App,
+                targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted
+                    ? NotificationContentType.FriendRequestAccepted
+                    : NotificationContentType.FriendRequestDenied,
+                this.random.Next());
 
-            this.notificationManager.SendGcmNotification(new Collection<User>{receivingUser}, "Friend request reply", GcmNotificationType.NotificationTickle, string.Empty);
+            // This notification is sent to the user who sent the friend request in the first place.
+            this.notificationManager.SendAppNotification(
+                new List<User> { requestingUser },
+                notificationTitle,
+                string.Format(
+                    ReceiverMessage,
+                    receivingUser.UserName,
+                    targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted ? "accepted" : "denied"),
+                receivingUser.ProfilePictureId,
+                -1,
+                NotificationType.Both,
+                targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted
+                    ? NotificationContentType.FriendRequestAccepted
+                    : NotificationContentType.FriendRequestDenied,
+                this.random.Next());
+
+            this.notificationManager.SendGcmTickle(new Collection<User>{receivingUser});
 
             return ServiceResponseBuilder.Success(true);
         }
@@ -225,19 +249,35 @@ namespace FindNDriveServices2.Services
             const string ReceiverMessage = "You received a friend request from user: {0} {1} ({2})";
             const string SenderMessage = "You sent a friend request to user: {0} {1} ({2})";
 
-            this.notificationManager.SendAppNotification(new List<User> { receivingUser }, "New friend request received.", String.Format(
-                                                         ReceiverMessage,
-                                                         sendingUser.FirstName,
-                                                         sendingUser.LastName,
-                                                         sendingUser.UserName), NotificationContext.Positive, NotificationType.Both, NotificationContentType.FriendRequestReceived, friendRequest);
+            this.notificationManager.SendAppNotification(
+                new List<User> { receivingUser },
+                "New friend request received.",
+                string.Format(
+                    ReceiverMessage,
+                    sendingUser.FirstName,
+                    sendingUser.LastName,
+                    sendingUser.UserName),
+                sendingUser.ProfilePictureId,
+                friendRequest.FriendRequestId,
+                NotificationType.Both,
+                NotificationContentType.FriendRequestReceived,
+                this.random.Next());
 
-            this.notificationManager.SendAppNotification(new List<User> { sendingUser }, "Friend request sent.", String.Format(
-                                                        SenderMessage,
-                                                        receivingUser.FirstName,
-                                                        receivingUser.LastName,
-                                                        receivingUser.UserName), NotificationContext.Positive, NotificationType.App, NotificationContentType.FriendRequestSent, string.Empty);
+            this.notificationManager.SendAppNotification(
+                new List<User> { sendingUser },
+                "Friend request sent.",
+                string.Format(
+                    SenderMessage,
+                    receivingUser.FirstName,
+                receivingUser.LastName,
+                receivingUser.UserName),
+                receivingUser.ProfilePictureId,
+                -1,
+                NotificationType.App,
+                NotificationContentType.FriendRequestSent,
+                this.random.Next());
 
-            this.notificationManager.SendGcmNotification(new List<User> { receivingUser }, "New friend request received.", GcmNotificationType.NotificationTickle, string.Empty);
+            this.notificationManager.SendGcmTickle(new List<User> { receivingUser });
             
             return ServiceResponseBuilder.Success(true);
         }
@@ -272,6 +312,18 @@ namespace FindNDriveServices2.Services
                     .Friends.ToList();
 
             return ServiceResponseBuilder.Success(friends);
+        }
+
+        public ServiceResponse<FriendRequest> GetFriendRequest(int id)
+        {
+            if (!this.sessionManager.IsSessionValid())
+            {
+                return ServiceResponseBuilder.Unauthorised(new FriendRequest());
+            }
+
+            var friendRequest = this.findNDriveUnitOfWork.FriendRequestsRepository.Find(id);
+
+            return friendRequest == null ? ServiceResponseBuilder.Failure<FriendRequest>("Friend request with this id does not exist.") : ServiceResponseBuilder.Success(friendRequest);
         }
     }
 }

@@ -17,6 +17,7 @@ namespace FindNDriveServices2.Services
     using System.ServiceModel.Web;
 
     using DomainObjects.Constants;
+    using DomainObjects.Domains;
 
     using FindNDriveDataAccessLayer;
 
@@ -330,7 +331,7 @@ namespace FindNDriveServices2.Services
             }
 
             var user =
-                this.findNDriveUnitOfWork.UserRepository.Find(id);
+                this.findNDriveUnitOfWork.ProfilePicturesRepository.Find(id);
 
             if (user == null)
             {
@@ -342,29 +343,32 @@ namespace FindNDriveServices2.Services
                 WebOperationContext.Current.OutgoingResponse.ContentType = "image/png";
             }
 
-            return new MemoryStream(user.ProfileImage);
+            return new MemoryStream(user.ProfilePictureBytes);
         }
 
-        public ServiceResponse<string> UpdateProfilePicture(ProfilePictureUpdaterDTO profilePictureUpdaterDTO)
+        public ServiceResponse<bool> UpdateProfilePicture(ProfilePictureUpdaterDTO profilePictureUpdaterDTO)
         {
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(string.Empty);
+                return ServiceResponseBuilder.Unauthorised(false);
             }
 
-            var user = this.findNDriveUnitOfWork.UserRepository.Find(profilePictureUpdaterDTO.UserId);
+            var user =
+                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+                    .IncludeAll()
+                    .FirstOrDefault(_ => _.UserId == profilePictureUpdaterDTO.UserId);
 
             if (user == null)
             {
-                return ServiceResponseBuilder.Failure<string>("Invalid user id.");
+                return ServiceResponseBuilder.Failure<bool>("User with this id does not exist.");
             }
 
             var imageBytes = Convert.FromBase64String(profilePictureUpdaterDTO.Picture);
-            user.ProfileImage = imageBytes;
+            user.ProfilePicture.ProfilePictureBytes = imageBytes;
 
             this.findNDriveUnitOfWork.Commit();
 
-            return ServiceResponseBuilder.Success(profilePictureUpdaterDTO.Picture);
+            return ServiceResponseBuilder.Success(true);
         }
     }
 

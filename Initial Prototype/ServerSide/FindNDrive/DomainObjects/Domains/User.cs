@@ -31,9 +31,16 @@ namespace DomainObjects.Domains
         public int UserId { get; set; }
 
         /// <summary>
+        /// Gets or sets the profile picture id.
+        /// </summary>
+        [DataMember]
+        public int ProfilePictureId { get; set; }
+
+        /// <summary>
         /// Gets or sets the profile image.
         /// </summary>
-        public byte[] ProfileImage { get; set; }
+        [ForeignKey("ProfilePictureId")]
+        public ProfilePicture ProfilePicture { get; set; }
 
         /// <summary>
         /// Gets or sets the user name.

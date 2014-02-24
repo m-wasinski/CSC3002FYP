@@ -34,13 +34,6 @@ namespace FindNDriveServices2.Services
     public class JourneyService : IJourneyService
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="JourneyService"/> class.
-        /// </summary>
-        public JourneyService()
-        {
-        }
-
-        /// <summary>
         /// The _find n drive unit of work.
         /// </summary>
         private readonly FindNDriveUnitOfWork findNDriveUnitOfWork;
@@ -54,6 +47,11 @@ namespace FindNDriveServices2.Services
         /// The notification manager.
         /// </summary>
         private readonly NotificationManager notificationManager;
+
+        /// <summary>
+        /// The random.
+        /// </summary>
+        private Random random;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="JourneyService"/> class. 
@@ -74,6 +72,7 @@ namespace FindNDriveServices2.Services
             this.findNDriveUnitOfWork = findNDriveUnitOfWork;
             this.sessionManager = sessionManager;
             this.notificationManager = notificationManager;
+            this.random = new Random(Guid.NewGuid().GetHashCode());
         }
 
         /// <summary>
@@ -180,25 +179,20 @@ namespace FindNDriveServices2.Services
                 new Collection<User> {user}, 
                 "You offered new journey",
                 string.Format("You have offerred new journey from {0} to {1} and its number is: {2}, ", newJourney.GeoAddresses.First().AddressLine, newJourney.GeoAddresses.Last().AddressLine, newJourney.JourneyId),
-                NotificationContext.Positive,
+                user.ProfilePictureId, newJourney.JourneyId,
                 NotificationType.App,
-                NotificationContentType.JourneyModified,
-                newJourney);
+                NotificationContentType.JourneyModified, random.Next());
 
             this.notificationManager.SendAppNotification(
                 user.Friends,
                 string.Format("{0} {1} ({2}) offered new journey.", user.FirstName, user.LastName, user.UserName),
                 "Click this notification to see it.",
-                NotificationContext.Neutral,
+                user.ProfilePictureId, newJourney.JourneyId,
                 NotificationType.Both,
-                NotificationContentType.FriendOfferedNewJourney,
-                newJourney);
+                NotificationContentType.FriendOfferedNewJourney, random.Next());
 
-            this.notificationManager.SendGcmNotification(
-                user.Friends,
-                "Friend offered new journey.",
-                GcmNotificationType.NotificationTickle,
-                string.Empty);
+            this.notificationManager.SendGcmTickle(
+                user.Friends);
 
             return ServiceResponseBuilder.Success(newJourney);
         }
@@ -212,7 +206,7 @@ namespace FindNDriveServices2.Services
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<Journey> GetSingleJourneyById(int id)
+        public ServiceResponse<Journey> GetJourneyById(int id)
         {
             if (!this.sessionManager.IsSessionValid())
             {
@@ -223,7 +217,8 @@ namespace FindNDriveServices2.Services
                 this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
                     .IncludeAll()
                     .FirstOrDefault(_ => _.JourneyId == id);
-            return ServiceResponseBuilder.Success(journey);
+
+            return journey != null ? ServiceResponseBuilder.Success(journey) : ServiceResponseBuilder.Failure<Journey>("Journey with this id does not exist.");
         }
 
         /// <summary>
@@ -297,20 +292,27 @@ namespace FindNDriveServices2.Services
 
             this.findNDriveUnitOfWork.Commit();
 
+            // Inform all the passengers that a change to one of the journeys they participate in has been made.
             this.notificationManager.SendAppNotification(
                 journey.Participants,
                 "Journey changed.",
-                "A change has been made to one of the journeys you are taking part in. Click this notification to see the details of this journey.",
-                NotificationContext.Neutral,
+                string.Format(
+                    "{0}, {1}, ({2}) has made a change to journey no: {3}, departing from: {4} to {5}. Click here to see the change.",
+                    journey.Driver.FirstName,
+                    journey.Driver.LastName,
+                    journey.Driver.UserName,
+                    journey.JourneyId,
+                    journey.GeoAddresses.First().AddressLine,
+                    journey.GeoAddresses.Last().AddressLine),
+                journey.Driver.ProfilePictureId,
+                journey.JourneyId,
                 NotificationType.Both,
                 NotificationContentType.JourneyModified,
-                journey);
+                this.random.Next());
 
-            this.notificationManager.SendGcmNotification(
-                journey.Participants,
-                "Journey modified",
-                GcmNotificationType.NotificationTickle,
-                string.Empty);
+
+            this.notificationManager.SendGcmTickle(
+                journey.Participants);
 
             return ServiceResponseBuilder.Success(journey);
         }
@@ -338,7 +340,7 @@ namespace FindNDriveServices2.Services
 
             if (journey == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid journey id.");
+                return ServiceResponseBuilder.Failure<bool>("Journey with this id does not exist.");
             }
 
             if (journey.JourneyStatus != JourneyStatus.OK)
@@ -350,7 +352,7 @@ namespace FindNDriveServices2.Services
 
             if (user == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid user id.");
+                return ServiceResponseBuilder.Failure<bool>("User with this id does not exist.");
             }
 
             if (journey.Driver.UserId != user.UserId)
@@ -359,42 +361,45 @@ namespace FindNDriveServices2.Services
             }
 
             journey.JourneyStatus = JourneyStatus.Cancelled;
+
             this.findNDriveUnitOfWork.Commit();
 
+            // We must inform all the passengers of this journey of the cancellation.
             this.notificationManager.SendAppNotification(
-               journey.Participants,
-               "Journey has been cancelled.",
-               string.Format(
-                   "{0} {1} ({2}) has cancelled the journey no: {3}, from: {4} to: {5}",
-                   journey.Driver.FirstName,
+                journey.Participants,
+                "Journey has been cancelled.",
+                string.Format(
+                    "{0} {1} ({2}) has cancelled the journey no: {3}, from: {4} to: {5}",
+                    journey.Driver.FirstName,
                    journey.Driver.LastName,
                    journey.Driver.UserName,
                    journey.JourneyId,
                    journey.GeoAddresses.First().AddressLine,
                    journey.GeoAddresses.Last().AddressLine),
-               NotificationContext.Negative,
-               NotificationType.Both,
-               NotificationContentType.JourneyCancelled,
-               journey);
+                journey.Driver.ProfilePictureId,
+                journey.JourneyId,
+                NotificationType.Both,
+                NotificationContentType.JourneyCancelled,
+                this.random.Next());
 
+            // Send an in-app notification to the driver to confirm that the journey has been succesfully cancelled.
             this.notificationManager.SendAppNotification(
                new List<User> { journey.Driver },
-               "You have cancelled your journey.",
-               string.Format(
-                   "You have cancelled your journey no: {0}, from: {1} to: {2}. All of the passengers have been notified.",
-                   journey.JourneyId,
+                "You have cancelled your journey.",
+                string.Format(
+                    "You have cancelled your journey no: {0}, from: {1} to: {2}. All of the passengers have been notified.",
+                    journey.JourneyId,
                    journey.GeoAddresses.First().AddressLine,
                    journey.GeoAddresses.Last().AddressLine),
-               NotificationContext.Negative,
-               NotificationType.Both,
-               NotificationContentType.JourneyCancelled,
-               journey);
+                -1,
+                journey.JourneyId,
+                NotificationType.Both,
+                NotificationContentType.JourneyCancelled,
+                this.random.Next());
 
-            this.notificationManager.SendGcmNotification(
-                journey.Participants,
-                "Journey Cancelled",
-                GcmNotificationType.NotificationTickle,
-                string.Empty);
+            // Send tickle to all the passengers to let their apps synchronise with the sever.
+            this.notificationManager.SendGcmTickle(
+                journey.Participants);
 
             return ServiceResponseBuilder.Success(true);
         }
@@ -452,10 +457,9 @@ namespace FindNDriveServices2.Services
                     journey.JourneyId,
                     journey.GeoAddresses.First().AddressLine,
                     journey.GeoAddresses.Last().AddressLine),
-                NotificationContext.Neutral,
+                passenger.ProfilePictureId, journey.JourneyId, 
                 NotificationType.Both,
-                NotificationContentType.PassengerLeftJourney,
-                journey);
+                NotificationContentType.PassengerLeftJourney, random.Next());
 
             this.notificationManager.SendAppNotification(
                 new List<User> { passenger },
@@ -468,16 +472,12 @@ namespace FindNDriveServices2.Services
                     journey.Driver.FirstName,
                     journey.Driver.LastName,
                     journey.Driver.UserName),
-                NotificationContext.Neutral,
+                journey.Driver.ProfilePictureId, -1, 
                 NotificationType.App,
-                NotificationContentType.IleftAjourney,
-                string.Empty);
+                NotificationContentType.IleftAjourney, random.Next());
 
-            this.notificationManager.SendGcmNotification(
-                new List<User> { journey.Driver },
-                "Passenger withdrawn",
-                GcmNotificationType.NotificationTickle,
-                string.Empty);
+            this.notificationManager.SendGcmTickle(
+                new List<User> { journey.Driver });
 
             return ServiceResponseBuilder.Success(true);
         }

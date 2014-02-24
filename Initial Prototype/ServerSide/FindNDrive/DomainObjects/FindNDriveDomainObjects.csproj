@@ -73,11 +73,11 @@
     <Compile Include="Domains\JourneyMessage.cs" />
     <Compile Include="Domains\JourneyRequest.cs" />
     <Compile Include="Domains\GeoAddress.cs" />
+    <Compile Include="Domains\ProfilePicture.cs" />
     <Compile Include="Domains\Rating.cs" />
     <Compile Include="Domains\Notification.cs" />
     <Compile Include="Domains\Session.cs" />
     <Compile Include="Domains\User.cs" />
-    <Compile Include="Domains\UserImage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

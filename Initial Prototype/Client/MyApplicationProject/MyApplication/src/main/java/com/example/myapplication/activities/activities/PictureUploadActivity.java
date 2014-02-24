@@ -100,15 +100,15 @@ public class PictureUploadActivity extends BaseActivity {
             public void onServiceCallCompleted(ServiceResponse serviceResponse, Object parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {
-                    pictureUploadedSuccessfully();
+                    pictureUploadedSuccessfully(bitmap);
                 }
             }
         }).execute();
     }
 
-    private void pictureUploadedSuccessfully()
+    private void pictureUploadedSuccessfully(Bitmap bitmap)
     {
-        okButton.setEnabled(true);
+        this.findNDriveManager.getBitmapLruCache().put(String.valueOf(this.findNDriveManager.getUser().getUserId()),bitmap);
         this.progressBar.setVisibility(View.GONE);
         this.finish();
     }

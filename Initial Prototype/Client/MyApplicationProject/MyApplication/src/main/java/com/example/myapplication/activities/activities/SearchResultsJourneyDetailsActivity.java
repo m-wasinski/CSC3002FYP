@@ -71,7 +71,7 @@ public class SearchResultsJourneyDetailsActivity extends BaseMapActivity impleme
 
         if(notification != null)
         {
-            NotificationProcessor.MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+            new NotificationProcessor().MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                     Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
@@ -79,8 +79,7 @@ public class SearchResultsJourneyDetailsActivity extends BaseMapActivity impleme
             });
         }
 
-        this.journey = notification == null ? (Journey) gson.fromJson(extras.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType()) :
-                (Journey)gson.fromJson(notification.NotificationPayload, new TypeToken<Journey>() {}.getType());
+        this.journey = gson.fromJson(extras.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
 
         DisplayMetrics metrics = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(metrics);

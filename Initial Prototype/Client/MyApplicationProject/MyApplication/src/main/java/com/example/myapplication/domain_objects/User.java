@@ -39,6 +39,12 @@ public class User {
 
     private double AverageRating;
 
+    public int getProfilePictureId() {
+        return ProfilePictureId;
+    }
+
+    private int ProfilePictureId;
+
     private ArrayList<Rating> Rating;
 
     public ArrayList<Rating> getRating() {

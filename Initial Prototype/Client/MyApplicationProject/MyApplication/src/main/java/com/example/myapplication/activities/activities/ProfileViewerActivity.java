@@ -2,10 +2,10 @@ package com.example.myapplication.activities.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TableRow;
@@ -15,7 +15,6 @@ import com.example.myapplication.R;
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.TokenTypes;
-import com.example.myapplication.domain_objects.Rating;
 import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.interfaces.WCFImageRetrieved;
@@ -97,7 +96,9 @@ public class ProfileViewerActivity extends BaseActivity implements WCFImageRetri
 
     private void showRatingsActivity()
     {
-        this.startActivity(new Intent(this, RatingsActivity.class).putExtra(IntentConstants.USER, gson.toJson(this.user)));
+        Bundle bundle = new Bundle();
+        bundle.putString(IntentConstants.USER, gson.toJson(this.user));
+        this.startActivity(new Intent(this, RatingsActivity.class).putExtras(bundle));
     }
 
 
@@ -115,8 +116,8 @@ public class ProfileViewerActivity extends BaseActivity implements WCFImageRetri
 
     private void getProfilePicture()
     {
-        new WcfPictureServiceTask("https://findndrive.no-ip.co.uk/Services/UserService.svc/getProfilePicture?id="+this.user.getUserId(),
-                this.findNDriveManager.getAuthorisationHeaders(), this).execute();
+        new WcfPictureServiceTask(this.findNDriveManager.getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
+                this.user.getUserId(), this.findNDriveManager.getAuthorisationHeaders(), this).execute();
     }
 
     @Override
@@ -124,6 +125,7 @@ public class ProfileViewerActivity extends BaseActivity implements WCFImageRetri
     {
         this.profileImageProgressBar.setVisibility(View.GONE);
         this.profileImageView.setVisibility(View.VISIBLE);
+
         if(bitmap != null)
         {
             this.profileImageView.setImageBitmap(bitmap);

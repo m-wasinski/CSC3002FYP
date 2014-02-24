@@ -61,9 +61,6 @@ namespace FindNDriveServices2.Contracts
         /// <summary>
         /// The get leaderboard.
         /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
@@ -73,6 +70,6 @@ namespace FindNDriveServices2.Contracts
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/getleaderboard")]
-        ServiceResponse<List<Rating>> GetLeaderboard(int id);
+        ServiceResponse<List<User>> GetLeaderboard();
     }
 }

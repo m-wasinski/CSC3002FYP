@@ -155,6 +155,6 @@ namespace FindNDriveServices2.Contracts
             UriTemplate = "/updateProfilePicture",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare)]
-        ServiceResponse<string> UpdateProfilePicture(ProfilePictureUpdaterDTO profilePictureUpdaterDTO);
+        ServiceResponse<bool> UpdateProfilePicture(ProfilePictureUpdaterDTO profilePictureUpdaterDTO);
     }
 }

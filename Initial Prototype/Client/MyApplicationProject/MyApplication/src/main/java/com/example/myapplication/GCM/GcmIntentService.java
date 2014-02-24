@@ -116,7 +116,12 @@ public class GcmIntentService extends IntentService {
     private void deviceNotificationsRetrieved(ArrayList<Notification> notifications, FindNDriveManager findNDriveManager)
     {
         Log.d(TAG, "Retrieved: "+notifications.size() + " new notifications.");
-        NotificationProcessor.DisplayNotification(this, findNDriveManager, notifications);
+        NotificationProcessor notificationProcessor = new NotificationProcessor();
+
+        for(Notification notification : notifications)
+        {
+            notificationProcessor.process(this, findNDriveManager, notification, null);
+        }
     }
 
     private void displayAnonymousNotification(Context context, FindNDriveManager findNDriveManager)

@@ -257,6 +257,11 @@ public class HomeActivity extends BaseActivity {
 
     private void deviceNotificationsRetrieved(ArrayList<Notification> notifications)
     {
-        NotificationProcessor.DisplayNotification(this, this.findNDriveManager, notifications);
+        NotificationProcessor notificationProcessor = new NotificationProcessor();
+
+        for(Notification notification : notifications)
+        {
+            notificationProcessor.process(this, this.findNDriveManager, notification, null);
+        }
     }
 }

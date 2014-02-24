@@ -26,6 +26,7 @@ namespace DomainObjects.Domains
         /// Gets or sets the rating id.
         /// </summary>
         [DataMember]
+        [ConcurrencyCheck]
         public int RatingId { get; set; }
 
         /// <summary>

@@ -3,6 +3,7 @@ package com.example.myapplication.activities.activities;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -13,10 +14,13 @@ import android.widget.TextView;
 
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.adapters.NotificationsAdapter;
+import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
+import com.example.myapplication.domain_objects.JourneyRequest;
 import com.example.myapplication.dtos.LoadRangeDTO;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.interfaces.NotificationTargetRetrieved;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.R;
@@ -39,9 +43,28 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
     private Boolean loadMoreData = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_notifications);
+
+        Bundle bundle = getIntent().getExtras();
+
+        if(bundle != null)
+        {
+            Notification notification =  gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),  new TypeToken<Notification>() {}.getType());
+
+            if(notification != null)
+            {
+                new NotificationProcessor().MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+                    @Override
+                    public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+                        Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
+                    }
+                });
+            }
+        }
+
         progressBar = (ProgressBar) findViewById(R.id.ActivityMyNotificationsProgressBar);
         loadMoreButton = (Button) findViewById(R.id.ActivityMyNotificationsLoadMoreButton);
         loadMoreButton.setOnClickListener(new View.OnClickListener() {
@@ -53,7 +76,8 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
             }
         });
         mainListView = (ListView) findViewById(R.id.MyNotificationsActivityMainListView);
-        mainListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+        mainListView.setOnScrollListener(new AbsListView.OnScrollListener()
+        {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int i) {
 
@@ -74,13 +98,15 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
                 }
             }
         });
+
         notifications = new ArrayList<Notification>();
-        notificationsAdapter = new NotificationsAdapter(this, R.layout.listview_row_notification, notifications);
+        notificationsAdapter = new NotificationsAdapter(this.findNDriveManager, this, R.layout.listview_row_notification, notifications);
         mainListView.setAdapter(notificationsAdapter);
     }
 
     @Override
-    public void onResume() {
+    public void onResume()
+    {
         super.onResume();
         getNotifications();
     }
@@ -94,9 +120,13 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
                 findNDriveManager.getAuthorisationHeaders(), this).execute();
     }
     @Override
-    public void onServiceCallCompleted(final ServiceResponse<ArrayList<Notification>> serviceResponse, Void parameter) {
+    public void onServiceCallCompleted(final ServiceResponse<ArrayList<Notification>> serviceResponse, Void parameter)
+    {
+
         TextView noRequestsTextView = (TextView) findViewById(R.id.MyNotificationsActivityNoNotificationsTextView);
+
         progressBar.setVisibility(View.GONE);
+
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             if(serviceResponse.Result.size() == 0 && mainListView.getCount() == 0)
@@ -106,8 +136,6 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
             }
             else
             {
-
-
                 if(serviceResponse.Result.size() < findNDriveManager.getItemsPerCall())
                 {
                     loadMoreButton.setText("No more data to load");
@@ -129,26 +157,49 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
                 }
 
                 notificationsAdapter.notifyDataSetInvalidated();
+
                 mainListView.setSelectionFromTop(currentScrollPosition, 0);
-                mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, final View view, int i, long l) {
 
-                        NotificationProcessor.MarkDelivered(getApplicationContext(), findNDriveManager, notifications.get(i), new WCFServiceCallback<Boolean, Void>() {
-                            public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
-                                view.findViewById(R.id.NotificationListViewRowParentRelativeLayout).setBackgroundColor(Color.parseColor("#80151515"));
-                            }
-                        });
+                        NotificationProcessor notificationProcessor = new NotificationProcessor();
 
-                        Intent intent = NotificationProcessor.getIntent(getApplicationContext(), notifications.get(i));
-                        if(intent != null)
+                        markNotificationRead(notificationProcessor, notifications.get(i), view);
+
+                        if(notifications.get(i).TargetObjectId != -1)
                         {
-                            startActivity(intent);
+                            progressBar.setVisibility(View.VISIBLE);
+                            launchNotificationProcessor(notificationProcessor, notifications.get(i), view);
                         }
-
                     }
                 });
             }
         }
+    }
+
+    private void markNotificationRead(NotificationProcessor notificationProcessor, Notification notification, final View view)
+    {
+        notificationProcessor.MarkDelivered(this, findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+            public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+                view.findViewById(R.id.NotificationListViewRowParentRelativeLayout).setBackgroundColor(Color.parseColor("#80151515"));
+            }
+        });
+    }
+
+    private void launchNotificationProcessor(NotificationProcessor notificationProcessor, Notification notification, final View view)
+    {
+        notificationProcessor.process(this, findNDriveManager, notification, new NotificationTargetRetrieved() {
+
+            @Override
+            public void onNotificationTargetRetrieved(Intent intent) {
+                progressBar.setVisibility(View.GONE);
+                if (intent != null) {
+                    startActivity(intent);
+                }
+            }
+        });
     }
 }

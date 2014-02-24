@@ -2,6 +2,7 @@ package com.example.myapplication.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,9 @@ import com.example.myapplication.constants.RequestDecision;
 import com.example.myapplication.domain_objects.JourneyRequest;
 import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.R;
+import com.example.myapplication.experimental.FindNDriveManager;
+import com.example.myapplication.interfaces.WCFImageRetrieved;
+import com.example.myapplication.network_tasks.WcfPictureServiceTask;
 
 import java.util.ArrayList;
 
@@ -27,34 +31,37 @@ public class JourneyRequestAdapter extends ArrayAdapter<JourneyRequest> implemen
     private ArrayList<JourneyRequest> journeyRequests;
     private Context context;
     private int resourceId;
+    private FindNDriveManager findNDriveManager;
 
-    public JourneyRequestAdapter(Context context, int resource, ArrayList<JourneyRequest> requests) {
+    public JourneyRequestAdapter(FindNDriveManager findNDriveManager, Context context, int resource, ArrayList<JourneyRequest> requests) {
         super(context, resource, requests);
         this.journeyRequests = requests;
         this.context = context;
         this.resourceId = resource;
+        this.findNDriveManager = findNDriveManager;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View currentRow = convertView;
-        JourneyRequestHolder holder = new JourneyRequestHolder();
+        final JourneyRequestHolder journeyRequestHolder;
 
         if(currentRow == null)
         {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
             currentRow = inflater.inflate(resourceId, parent, false);
-            holder.profilePicture = (ImageView) currentRow.findViewById(R.id.JourneyRequestListViewRowProfileIcon);
-            holder.nameTextView = (TextView) currentRow.findViewById(R.id.JourneyRequestListViewRowNameTextView);
-            holder.parentLayout = (LinearLayout) currentRow.findViewById(R.id.JourneyRequestListViewRowParentLayout);
-            holder.statusTextView = (TextView) currentRow.findViewById(R.id.JourneyRequestListViewRowStatusTextView);
-            holder.receivedOnTextView = (TextView) currentRow.findViewById(R.id.JourneyRequestListViewRowReceivedOnTextView);
-            holder.decidedOnTextView = (TextView) currentRow.findViewById(R.id.JourneyRequestListViewRowDecidedOnTextView);
-            currentRow.setTag(holder);
+            journeyRequestHolder = new JourneyRequestHolder();
+            journeyRequestHolder.profilePicture = (ImageView) currentRow.findViewById(R.id.JourneyRequestListViewRowProfileIcon);
+            journeyRequestHolder.nameTextView = (TextView) currentRow.findViewById(R.id.JourneyRequestListViewRowNameTextView);
+            journeyRequestHolder.parentLayout = (LinearLayout) currentRow.findViewById(R.id.JourneyRequestListViewRowParentLayout);
+            journeyRequestHolder.statusTextView = (TextView) currentRow.findViewById(R.id.JourneyRequestListViewRowStatusTextView);
+            journeyRequestHolder.receivedOnTextView = (TextView) currentRow.findViewById(R.id.JourneyRequestListViewRowReceivedOnTextView);
+            journeyRequestHolder.decidedOnTextView = (TextView) currentRow.findViewById(R.id.JourneyRequestListViewRowDecidedOnTextView);
+            currentRow.setTag(journeyRequestHolder);
         }
         else
         {
-            holder = (JourneyRequestHolder)currentRow.getTag();
+            journeyRequestHolder = (JourneyRequestHolder)currentRow.getTag();
         }
 
         final JourneyRequest request = journeyRequests.get(position);
@@ -64,7 +71,7 @@ public class JourneyRequestAdapter extends ArrayAdapter<JourneyRequest> implemen
 
         String decisionStatus="";
 
-        holder.parentLayout.setBackgroundColor(request.Read ? Color.rgb(255, 255, 255) : Color.rgb(112, 146, 190));
+        journeyRequestHolder.parentLayout.setBackgroundColor(request.Read ? Color.rgb(255, 255, 255) : Color.rgb(112, 146, 190));
 
         switch(request.Decision)
         {
@@ -79,12 +86,21 @@ public class JourneyRequestAdapter extends ArrayAdapter<JourneyRequest> implemen
                 break;
         }
 
-        holder.nameTextView.setText(request.User.getFirstName() + " " + request.User.getLastName()  + " ("+request.User.getUserName()+")");
-        holder.receivedOnTextView.setText(DateTimeHelper.getSimpleDate(request.SentOnDate) +  " " + DateTimeHelper.getSimpleTime(request.SentOnDate));
-        holder.decidedOnTextView.setText(repliedOnDate);
-        holder.profilePicture.setImageResource(R.drawable.user_man);
-        holder.statusTextView.setText(decisionStatus);
+        journeyRequestHolder.nameTextView.setText(request.User.getFirstName() + " " + request.User.getLastName()  + " ("+request.User.getUserName()+")");
+        journeyRequestHolder.receivedOnTextView.setText(DateTimeHelper.getSimpleDate(request.SentOnDate) +  " " + DateTimeHelper.getSimpleTime(request.SentOnDate));
+        journeyRequestHolder.decidedOnTextView.setText(repliedOnDate);
+        journeyRequestHolder.statusTextView.setText(decisionStatus);
 
+        new WcfPictureServiceTask(this.findNDriveManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
+                request.UserId, this.findNDriveManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+            @Override
+            public void onImageRetrieved(Bitmap bitmap) {
+                if(bitmap != null)
+                {
+                    journeyRequestHolder.profilePicture.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/8, bitmap.getHeight()/8, false));
+                }
+            }
+        }).execute();
 
         return currentRow;
     }

@@ -26,6 +26,7 @@ namespace DomainObjects.Domains
         /// Gets or sets the friend request id.
         /// </summary>
         [DataMember]
+        [ConcurrencyCheck]
         public int FriendRequestId { get; set; }
 
         /// <summary>

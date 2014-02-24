@@ -66,7 +66,15 @@ namespace FindNDriveDataAccessLayer.Migrations
         /// The context.
         /// </param>
         private static void AddAdministrator(ApplicationContext context)
-        {   
+        {
+            var img = Image.FromFile(@"C:\\CSC3002FYP\\user.png");
+            byte[] arr;
+
+            using (var ms = new MemoryStream())
+            {
+                img.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+                arr = ms.ToArray();
+            }
 
             var administrator = new User
             {
@@ -75,11 +83,16 @@ namespace FindNDriveDataAccessLayer.Migrations
                 FirstName = "Michal",
                 LastName = "Wasinski",
                 Gender = Gender.Male,
-                UserName = "Admin",
+                UserName = "admin",
                 GCMRegistrationID = "0",
                 Status = Status.Offline,
                 Role = Roles.Administrator,
-                UserId = 1
+                UserId = 1,
+                ProfilePicture = new ProfilePicture
+                {
+                    ProfilePictureBytes = arr,
+                    ProfilePictureId = 1
+                }
             };
 
             context.User.AddOrUpdate(_ => _.UserId, administrator);
@@ -90,11 +103,11 @@ namespace FindNDriveDataAccessLayer.Migrations
                 SessionType = SessionTypes.Permanent,
                 SessionId = SessionManager.GenerateNewSessionId(administrator.UserId),
                 DeviceId = "Test",
-                ExpiryDate = DateTime.Now.AddDays(14),
+                ExpiryDate = DateTime.Now.AddDays(999),
             };
 
             context.Sessions.AddOrUpdate(_ => _.UserId, session);
-            WebSecurity.CreateUserAndAccount("Admin", "password");
+            WebSecurity.CreateUserAndAccount("admin", "password");
 
             context.SaveChanges();
         }
@@ -107,7 +120,16 @@ namespace FindNDriveDataAccessLayer.Migrations
         /// </param>
         private static void AddJourneysAndPassengers(ApplicationContext context)
         {
-            Calendar cal = new GregorianCalendar();
+            var img = Image.FromFile(@"C:\\CSC3002FYP\\user.png");
+            byte[] arr;
+
+            using (var ms = new MemoryStream())
+            {
+                img.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+                arr = ms.ToArray();
+            }
+
+            var cal = new GregorianCalendar();
 
             var participant1 = new User
             {
@@ -122,7 +144,12 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Role = Roles.User,
                 UserId = 2,
                 MemberSince = DateTime.Now,
-                AverageRating = 0
+                AverageRating = 0,
+                ProfilePicture = new ProfilePicture
+                                     {
+                                         ProfilePictureBytes = arr,
+                                         ProfilePictureId = 2
+                                     }
             };
 
             context.User.AddOrUpdate(_ => _.UserId, participant1);
@@ -139,13 +166,7 @@ namespace FindNDriveDataAccessLayer.Migrations
 
             context.Sessions.AddOrUpdate(_ => _.UserId, session1);
             context.SaveChanges();
-            Image img = Image.FromFile(@"C:\\CSC3002FYP\\user.png");
-            byte[] arr;
-            using (MemoryStream ms = new MemoryStream())
-            {
-                img.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
-                arr =  ms.ToArray();
-            }
+            
             var participant2 = new User
             {
                 DateOfBirth = new DateTime(1985, 3, 2),
@@ -158,7 +179,11 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Status = Status.Offline,
                 Role = Roles.User,
                 UserId = 3,
-                ProfileImage = arr
+                ProfilePicture = new ProfilePicture
+                {
+                    ProfilePictureBytes = arr,
+                    ProfilePictureId = 3
+                }
             };
 
             context.User.AddOrUpdate(_ => _.UserId, participant2);
@@ -187,7 +212,12 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Gender = Gender.Female,
                 UserName = "alex",
                 Role = Roles.User,
-                UserId = 4
+                UserId = 4,
+                ProfilePicture = new ProfilePicture
+                {
+                    ProfilePictureBytes = arr,
+                    ProfilePictureId = 4
+                }
             };
 
             context.SaveChanges();

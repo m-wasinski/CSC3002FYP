@@ -121,6 +121,7 @@ namespace FindNDriveServices2
             var journeyMessageRepository = new EntityFrameworkRepository<JourneyMessage>(dbContext);
             var geoAddressRepository = new EntityFrameworkRepository<GeoAddress>(dbContext);
             var ratingsRepository = new EntityFrameworkRepository<Rating>(dbContext);
+            var profilePictureRepository = new EntityFrameworkRepository<ProfilePicture>(dbContext);
 
             var findNDriveUnitOfWork = new FindNDriveUnitOfWork(
                 dbContext,
@@ -133,7 +134,8 @@ namespace FindNDriveServices2
                 friendsRequestRepository,
                 journeyMessageRepository,
                 geoAddressRepository,
-                ratingsRepository);
+                ratingsRepository,
+                profilePictureRepository);
 
             var sessionManager = new SessionManager(findNDriveUnitOfWork);
             var notificationManager = new NotificationManager(findNDriveUnitOfWork, sessionManager);

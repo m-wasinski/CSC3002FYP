@@ -67,8 +67,24 @@ namespace FindNDriveServices2.Contracts
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/get")]
+            UriTemplate = "/getfriends")]
         ServiceResponse<List<User>> GetFriends(int userId);
 
+        /// <summary>
+        /// The get friend request.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebInvoke(
+            Method = "POST",
+            UriTemplate = "/getrequest",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        ServiceResponse<FriendRequest> GetFriendRequest(int id);
     }
 }

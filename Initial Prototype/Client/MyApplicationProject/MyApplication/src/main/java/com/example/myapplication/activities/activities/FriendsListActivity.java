@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -16,12 +17,15 @@ import com.example.myapplication.adapters.FriendsAdapter;
 import com.example.myapplication.constants.BroadcastTypes;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
+import com.example.myapplication.constants.TokenTypes;
+import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.experimental.WakeLocker;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.R;
+import com.example.myapplication.notification_management.NotificationProcessor;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -41,6 +45,23 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_friends_list);
+
+        Bundle bundle = getIntent().getExtras();
+
+        if(bundle != null)
+        {
+             Notification notification =  gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),  new TypeToken<Notification>() {}.getType());
+
+            if(notification != null)
+            {
+                new NotificationProcessor().MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+                    @Override
+                    public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+                        Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
+                    }
+                });
+            }
+        }
 
         // Initialise UI elements.
         this.progressBar = (ProgressBar) this.findViewById(R.id.FriendListActivityProgressBar);

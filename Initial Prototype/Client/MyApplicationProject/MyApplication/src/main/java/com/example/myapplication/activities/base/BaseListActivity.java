@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.HomeActivity;
 import com.example.myapplication.experimental.FindNDriveManager;
-import com.example.myapplication.notification_management.NotificationDisplayManager;
 import com.google.gson.Gson;
 
 /**
@@ -22,7 +21,6 @@ public class BaseListActivity extends ListActivity
     protected FindNDriveManager findNDriveManager;
     protected Gson gson;
     protected ActionBar actionBar;
-    protected NotificationDisplayManager notificationDisplayManager;
 
     @Override
     public void onBackPressed()
@@ -39,7 +37,6 @@ public class BaseListActivity extends ListActivity
         // Initialise local variables.
         this.findNDriveManager = ((FindNDriveManager)getApplication());
         this.gson = new Gson();
-        this.notificationDisplayManager = new NotificationDisplayManager();
         //getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
         this.actionBar = getActionBar();

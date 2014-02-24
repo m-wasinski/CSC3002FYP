@@ -41,7 +41,12 @@ namespace FindNDriveServices2
         /// <summary>
         /// The gcm post data.
         /// </summary>
-        private const string GCMPostData = "{{ \"registration_ids\": {0} , \"data\": {{\"tickerText\":\"{1}\", \"contentTitle\":\"{2}\", \"notificationType\": {3}, \"collapsibleKey\": {4}, \"payload\": {5} }}}}";
+        private const string GCMInstantMessage = "{{ \"registration_ids\": {0} , \"data\": {{\"tickerText\":\"{1}\", \"contentTitle\":\"{2}\", \"notificationType\": {3}, \"collapsibleKey\": {4}, \"payload\": {5}, \"pictureId\": {6} }}}}";
+
+        /// <summary>
+        /// The gcm tickle.
+        /// </summary>
+        private const string GCMTickle = "{{ \"registration_ids\": {0} , \"data\": {{\"tickerText\":\"{1}\", \"contentTitle\":\"{2}\", \"notificationType\": {3} }}}}";
 
         /// <summary>
         /// The content type.
@@ -83,53 +88,57 @@ namespace FindNDriveServices2
             this.sessionManager = sessionManager;
         }
 
-        /// <summary>
-        /// Send appropriate type of notification based on current status of the user.
-        /// </summary>
-        /// <typeparam name="T">
-        /// </typeparam>
-        /// <param name="users">
-        /// The users.
-        /// </param>
-        /// <param name="contentTitle">
-        /// The content Title.
-        /// </param>
-        /// <param name="gcmNotificationType">
-        /// The gcm Notification Type.
-        /// </param>
-        /// <param name="payload">
-        /// The payload.
-        /// </param>
-        public void SendGcmNotification<T>(ICollection<User> users, string contentTitle, GcmNotificationType gcmNotificationType, T payload, int collapsibleKey = -1)
+        public void SendGcmTickle(ICollection<User> users)
+        {
+            // Determine which users are online.
+            var onlineUsers = users.Where(_ => this.sessionManager.IsStillLoggedIn(_)).ToList();
+
+            if (onlineUsers.Count <= 0)
+            {
+                return;
+            }
+
+            var gcmPostData = string.Format(
+                GCMTickle,
+                JsonConvert.SerializeObject(onlineUsers.Select(_ => _.GCMRegistrationID).ToList()),
+                string.Empty,
+                "tickle",
+                JsonConvert.SerializeObject(GcmNotificationType.NotificationTickle));
+
+            this.ForwardGCMNotification(gcmPostData);
+        }
+
+        public void SendInstantMessage<T>(ICollection<User> users, GcmNotificationType gcmNotificationType, int pictureId, int collapsibleKey, T message)
         {
             // Determine which users are online.
             var onlineUsers = users.Where(_ => this.sessionManager.IsStillLoggedIn(_)).ToList();
             var offlineUsers = users.Where(_ => !this.sessionManager.IsStillLoggedIn(_)).ToList();
 
+            if (onlineUsers.Count <= 0)
+            {
+                return;
+            }
+
             // Serialise the message using the provided type.
-            var serialisedPayload = JsonConvert.SerializeObject(
-                payload,
+            var serialisedMessage = JsonConvert.SerializeObject(
+                message,
                 typeof(T),
                 Formatting.None,
                 new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.MicrosoftDateFormat });
 
-            if (onlineUsers.Count > 0)
-            {
-                var gcmPostData = string.Format(
-                    GCMPostData,
-                    JsonConvert.SerializeObject(onlineUsers.Select(_ => _.GCMRegistrationID).ToList()),
-                    string.Empty,
-                    contentTitle,
-                    JsonConvert.SerializeObject(gcmNotificationType),
-                    collapsibleKey,
-                    serialisedPayload);
+            var gcmPostData = string.Format(
+                GCMInstantMessage,
+                JsonConvert.SerializeObject(onlineUsers.Select(_ => _.GCMRegistrationID).ToList()),
+                string.Empty,
+                "New message",
+                JsonConvert.SerializeObject(gcmNotificationType),
+                JsonConvert.SerializeObject(collapsibleKey),
+                serialisedMessage,
+                JsonConvert.SerializeObject(pictureId));
 
-                this.ForwardGCMNotification(gcmPostData);
-            }
+            this.ForwardGCMNotification(gcmPostData);
 
-            if (offlineUsers.Count <= 0
-                || (gcmNotificationType != GcmNotificationType.ChatMessage
-                    && gcmNotificationType != GcmNotificationType.JourneyChatMessage))
+            if (offlineUsers.Count <= 0)
             {
                 return;
             }
@@ -137,80 +146,43 @@ namespace FindNDriveServices2
             foreach (var offlineUser in offlineUsers)
             {
                 this.findNDriveUnitOfWork.NotificationRepository.Add(new Notification
-                                                                         {
-                                                                             Context = NotificationContext.Neutral,
-                                                                             CollapsibleKey = collapsibleKey,
-                                                                             Delivered = false,
-                                                                             NotificationType = NotificationType.Device,
-                                                                             NotificationMessage = string.Empty,
-                                                                             NotificationContentType = gcmNotificationType == GcmNotificationType.JourneyChatMessage ?
-                                                                                                           NotificationContentType.JourneyChatMessage : NotificationContentType.InstantMessenger,
-                                                                             UserId = offlineUser.UserId,
-                                                                             ReceivedOnDate = DateTime.Now,
-                                                                             NotificationTitle = contentTitle,
-                                                                             NotificationPayload = serialisedPayload
-                                                                         });
+                {
+                    ProfilePictureId = pictureId,
+                    CollapsibleKey = collapsibleKey,
+                    Delivered = false,
+                    NotificationType = NotificationType.Device,
+                    NotificationMessage = string.Empty,
+                    NotificationContentType = gcmNotificationType == GcmNotificationType.JourneyChatMessage ?
+                                                  NotificationContentType.JourneyChatMessage : NotificationContentType.InstantMessenger,
+                    UserId = offlineUser.UserId,
+                    ReceivedOnDate = DateTime.Now,
+                    NotificationTitle = "New message",
+                    TargetObjectId = -1
+                });
             }
 
             this.findNDriveUnitOfWork.Commit();
         }
 
-        /// <summary>
-        /// The send app notification.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <param name="notificationTitle">
-        /// The notification title.
-        /// </param>
-        /// <param name="notificationMessage">
-        /// The notification message.
-        /// </param>
-        /// <param name="context">
-        /// The context.
-        /// </param>
-        /// <param name="notificationType">
-        /// The notification type.
-        /// </param>
-        /// <param name="notificationContentType">
-        /// The notification content type.
-        /// </param>
-        /// <param name="payload">
-        /// The payload.
-        /// </param>
-        /// <typeparam name="T">
-        /// </typeparam>
-        public void SendAppNotification<T>(ICollection<User> users, string notificationTitle, string notificationMessage, NotificationContext context, NotificationType notificationType, NotificationContentType notificationContentType, T payload, int collapsibleKey = -1)
+        public void SendAppNotification(ICollection<User> users, string notificationTitle, string notificationMessage, int profilePicture, int targetObjectId, NotificationType notificationType, NotificationContentType notificationContentType, int collapsibleKey)
         {
-            var serialisedPayload = string.Empty;
-
-            if(payload.GetType() != typeof(String))
-            {
-                // Serialise the message using the provided type.
-                serialisedPayload = JsonConvert.SerializeObject(
-                    payload,
-                    typeof(T),
-                    Formatting.None,
-                    new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.MicrosoftDateFormat });
-            }
-
             foreach (var user in users)
             {
                 this.findNDriveUnitOfWork.NotificationRepository.Add(
-                new Notification
-                {
-                    UserId = user.UserId,
-                    NotificationTitle = notificationTitle,
-                    NotificationMessage = notificationMessage,
-                    CollapsibleKey = collapsibleKey,
-                    NotificationContentType = notificationContentType,
-                    Delivered = false,
-                    Context = context,
-                    ReceivedOnDate = DateTime.Now,
-                    NotificationType = notificationType,
-                    NotificationPayload = serialisedPayload
-                });
+
+                    new Notification
+                    {
+                        UserId = user.UserId,
+                        NotificationTitle = notificationTitle,
+                        NotificationMessage = notificationMessage,
+                        CollapsibleKey = collapsibleKey,
+                        NotificationContentType = notificationContentType,
+                        Delivered = false,
+                        ProfilePictureId = profilePicture,
+                        ReceivedOnDate = DateTime.Now,
+                        NotificationType = notificationType,
+                        TargetObjectId = targetObjectId
+                    });
             }
 
             this.findNDriveUnitOfWork.Commit();

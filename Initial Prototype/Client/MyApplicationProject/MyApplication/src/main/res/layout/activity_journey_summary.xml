@@ -61,7 +61,11 @@
                     android:src="@drawable/driver_small"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
+                    android:id="@+id/JourneySummaryActivityDriverImageView"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginTop="5dip"
+                    android:layout_marginBottom="5dip"
+                    android:layout_marginLeft="10dip"
                     android:layout_marginRight="10sp"/>
 
                 <LinearLayout android:layout_width="match_parent"
@@ -80,6 +84,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/JourneySummaryJourneyDriverTextView"
                         android:paddingLeft="10dip"
+                        android:text="driver"
                         style="@style/RegularEditText"/>
                 </LinearLayout>
 

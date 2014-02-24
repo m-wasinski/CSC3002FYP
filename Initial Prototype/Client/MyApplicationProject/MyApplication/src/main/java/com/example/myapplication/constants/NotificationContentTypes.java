@@ -22,4 +22,6 @@ public class NotificationContentTypes
     public static final int NOTIFICATION_PASSENGER_LEFT_JOURNEY = 15;
     public static final int NOTIFICATION_I_LEFT_A_JOURNEY = 16;
     public static final int NOTIFICATION_JOURNEY_CANCELLED = 17;
+    public static final int NOTIFICATION_RATING_RECEIVED = 18;
+    public static final int NOTIFICATION_RATING_LEFT = 19;
 }

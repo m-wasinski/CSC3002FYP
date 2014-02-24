@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="2sp"
     android:orientation="vertical"
     android:background="#80151515">
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/RatingListViewRowContentLinearLayout"
-        android:layout_toLeftOf="@+id/RatingListViewRowRightArrowImageView"
-        android:layout_alignParentLeft="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -55,7 +47,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="right">
+                android:layout_marginTop="5dip">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -73,6 +65,33 @@
                     style="@style/ContentBody"/>
 
             </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dip"
+        android:layout_marginLeft="5dip">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/RatingListViewRowLeftByImageView"
+                android:src="@drawable/user_man"/>
+
+            <TextView android:id="@+id/RatingListViewRowLeftByTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="user"
+                android:layout_gravity="center"
+                android:gravity="right"
+                style="@style/ContentBody"/>
 
         </LinearLayout>
 
@@ -86,43 +105,8 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_below="@+id/RatingListViewRowContentLinearLayout"
-        android:layout_alignParentRight="true"
-        android:paddingTop="15dip"
-        android:id="@+id/NotificationListViewRowDateLinearLayout">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Left by: "
-            android:textColor="#32B4E4"
-            android:layout_marginLeft="15dip"/>
-
-        <TextView android:id="@+id/RatingListViewRowLeftByTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="user"
-            android:gravity="right"
-            style="@style/ContentBody"/>
-    </LinearLayout>
-
-    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="1dip"
-        android:background="#B7D8E8"
-        android:layout_below="@+id/NotificationListViewRowDateLinearLayout"/>
+        android:background="#B7D8E8"/>
 
-    <ImageView
-        android:id="@+id/RatingListViewRowRightArrowImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/right_arrow"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="10dip"
-        android:paddingLeft="15dip"/>
-
-</RelativeLayout>
+</LinearLayout>

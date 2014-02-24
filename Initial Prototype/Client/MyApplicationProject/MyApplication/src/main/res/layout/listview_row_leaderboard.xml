@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#80151515">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15sp"
+        android:orientation="horizontal">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/LoginFields"
+        android:layout_gravity="center_vertical"
+        android:text="#"
+        android:id="@+id/LeaderboardListviewRowPositionTextView"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/LeaderboardListviewRowProfilePictureImageView"
+        android:src="@drawable/user_man"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/LoginFields"
+        android:text="Name"
+        android:id="@+id/LeaderboardListviewRowNameTextView"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/no_rating_small"
+                android:id="@+id/LeaderboardListviewRowStarOneImageView"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/no_rating_small"
+                android:id="@+id/LeaderboardListviewRowStarTwoImageView"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/no_rating_small"
+                android:id="@+id/LeaderboardListviewRowStarThreeImageView"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/no_rating_small"
+                android:id="@+id/LeaderboardListviewRowStarFourImageView"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/no_rating_small"
+                android:id="@+id/LeaderboardListviewRowStarFiveImageView"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        style="@style/LoginFields"
+        android:layout_marginRight="10dip"
+        android:layout_gravity="center_vertical"
+        android:text="Score"
+        android:id="@+id/LeaderboardListviewRowAverageScoreTextView"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:background="#B7D8E8"/>
+
+</LinearLayout>

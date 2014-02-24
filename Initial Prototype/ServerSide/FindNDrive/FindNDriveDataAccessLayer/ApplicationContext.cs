@@ -76,6 +76,11 @@ namespace FindNDriveDataAccessLayer
         public DbSet<Rating> Ratings { get; set; }
 
         /// <summary>
+        /// Gets or sets the profile pictures.
+        /// </summary>
+        public DbSet<ProfilePicture> ProfilePictures { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ApplicationContext"/> class.
         /// </summary>
         public ApplicationContext()
@@ -157,6 +162,8 @@ namespace FindNDriveDataAccessLayer
                    map.MapRightKey("RatingId");
                    map.ToTable("User_Rating");
                });
+
+            modelBuilder.Entity<User>().HasRequired(x => x.ProfilePicture);
 
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();   
         }

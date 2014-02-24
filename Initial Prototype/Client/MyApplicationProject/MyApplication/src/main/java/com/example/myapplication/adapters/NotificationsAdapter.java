@@ -2,6 +2,8 @@ package com.example.myapplication.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +13,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.myapplication.constants.NotificationContextTypes;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.experimental.DateTimeHelper;
 import com.example.myapplication.R;
+import com.example.myapplication.experimental.FindNDriveManager;
+import com.example.myapplication.interfaces.WCFImageRetrieved;
+import com.example.myapplication.network_tasks.WcfPictureServiceTask;
 
 import java.util.ArrayList;
 
@@ -26,9 +30,11 @@ public class NotificationsAdapter extends ArrayAdapter<Notification> {
     private Context context;
     private int layoutResourceId;
     private ArrayList<Notification> notifications;
+    private FindNDriveManager findNDriveManager;
 
-    public NotificationsAdapter(Context context, int resource, ArrayList<Notification> notifications) {
+    public NotificationsAdapter(FindNDriveManager findNDriveManager, Context context, int resource, ArrayList<Notification> notifications) {
         super(context, resource, notifications);
+        this.findNDriveManager = findNDriveManager;
         this.layoutResourceId = resource;
         this.context = context;
         this.notifications = notifications;
@@ -38,7 +44,7 @@ public class NotificationsAdapter extends ArrayAdapter<Notification> {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         View row = convertView;
-        NotificationsHolder holder;
+        final NotificationsHolder holder;
 
         if(row == null)
         {
@@ -61,27 +67,24 @@ public class NotificationsAdapter extends ArrayAdapter<Notification> {
         Notification notification = notifications.get(position);
 
         holder.parentRelativeLayout.setBackgroundColor(notification.Delivered ?  Color.parseColor("#80151515") : Color.parseColor("#80dea516"));
-        holder.hasActionImageView.setVisibility(notification.NotificationPayload.isEmpty() ? View.GONE : View.VISIBLE);
+        holder.hasActionImageView.setVisibility(notification.TargetObjectId == -1 ? View.GONE : View.VISIBLE);
         holder.dateTextView.setText(DateTimeHelper.getSimpleDate(notification.ReceivedOnDate) + " " + DateTimeHelper.getSimpleTime(notification.ReceivedOnDate));
         holder.notificationHeaderTextView.setText(notification.NotificationTitle);
         holder.messageTextView.setText(notification.NotificationMessage);
 
-        int image;
-
-        switch(notification.Context)
+        if(notification.ProfilePictureId != -1)
         {
-            case NotificationContextTypes.Negative:
-                image = R.drawable.negative;
-                break;
-            case NotificationContextTypes.Positive:
-                image = R.drawable.positive;
-                break;
-             default:
-                image = R.drawable.neutral;
-                break;
+            new WcfPictureServiceTask(this.findNDriveManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
+                    notification.ProfilePictureId, this.findNDriveManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+                @Override
+                public void onImageRetrieved(Bitmap bitmap) {
+                    if(bitmap != null)
+                    {
+                        holder.contextImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/6, bitmap.getHeight()/6, false));
+                    }
+                }
+            }).execute();
         }
-
-        holder.contextImageView.setImageResource(image);
 
         return row;
     }

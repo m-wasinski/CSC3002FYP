@@ -12,8 +12,9 @@ public class Notification {
     public int NotificationContentType;
     public String NotificationTitle;
     public String NotificationMessage;
-    public String NotificationPayload;
-    public int Context;
+    public int ProfilePictureId;
     public String ReceivedOnDate;
     public Boolean Delivered;
+    public Boolean ActionTaken;
+    public int TargetObjectId;
 }

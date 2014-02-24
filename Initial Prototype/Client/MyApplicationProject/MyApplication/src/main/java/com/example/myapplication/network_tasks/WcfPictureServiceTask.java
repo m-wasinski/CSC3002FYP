@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.util.LruCache;
 
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.constants.SessionConstants;
@@ -32,6 +33,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,8 +47,13 @@ public class WcfPictureServiceTask extends AsyncTask<Void, Void, Void> {
     private List<Pair> httpHeaders;
     private WCFImageRetrieved listener;
 
+    private LruCache<String, Bitmap> bitmapLruCache;
+
+    private int id;
     private final int HTTPConnectionTimeout = 10000;
     private final int HTTPSocketTimeout = 15000;
+
+    private String TAG = "WCF Picture Service Task: ";
 
     @Override
     protected void onPostExecute(Void aVoid) {
@@ -54,17 +61,30 @@ public class WcfPictureServiceTask extends AsyncTask<Void, Void, Void> {
         listener.onImageRetrieved(this.bitmap);
     }
 
-    public WcfPictureServiceTask(String url, List<Pair> httpHeaders, WCFImageRetrieved wcfImageRetrieved)
+    public WcfPictureServiceTask(LruCache<String, Bitmap> bitmapLruCache, String url, int id, List<Pair> httpHeaders, WCFImageRetrieved wcfImageRetrieved)
     {
-        this.url = url;
+        this.url = url+String.valueOf(id);
+        this.id = id;
         this.httpHeaders = httpHeaders;
         this.listener = wcfImageRetrieved;
+        this.bitmapLruCache = bitmapLruCache;
     }
 
     @Override
     protected Void doInBackground(Void... voids) {
         try {
 
+            Log.i(TAG, "Retrieving image from URL: " + this.url);
+
+            this.bitmap = this.bitmapLruCache.get(String.valueOf(this.id));
+
+            if(this.bitmap != null)
+            {
+                Log.i(TAG, "Picture retrieved from lru cache.");
+                return null;
+            }
+
+            Log.i(TAG, "Picture not in cache, calling the webservice to retrieve it.");
             HttpParams httpParameters = new BasicHttpParams();
             // Set the timeout in milliseconds until a connection is established.
             // The default value is zero, that means the timeout is not used.
@@ -87,10 +107,12 @@ public class WcfPictureServiceTask extends AsyncTask<Void, Void, Void> {
             this.bitmap = httpClient.execute(httpGet, new ResponseHandler<Bitmap>() {
 
                 public Bitmap handleResponse(HttpResponse response) throws IOException {
+
                     switch(response.getStatusLine().getStatusCode()) {
 
                         case HttpStatus.SC_OK:
                             return BitmapFactory.decodeStream(response.getEntity().getContent());
+
                         case HttpStatus.SC_NOT_FOUND:
                             throw new IOException("Data Not Found");
                     }
@@ -98,6 +120,11 @@ public class WcfPictureServiceTask extends AsyncTask<Void, Void, Void> {
                 }
             });
 
+            if(this.bitmap != null)
+            {
+                Log.i(TAG, "Saving picture in lru cache.");
+                this.bitmapLruCache.put(String.valueOf(this.id), this.bitmap);
+            }
 
         } catch (URISyntaxException e) {
             e.printStackTrace();

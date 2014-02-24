@@ -6,14 +6,19 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.InstantMessengerActivity;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.domain_objects.ChatMessage;
 import com.example.myapplication.experimental.FindNDriveManager;
+import com.example.myapplication.interfaces.WCFImageRetrieved;
+import com.example.myapplication.network_tasks.WcfPictureServiceTask;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -22,25 +27,39 @@ import com.google.gson.reflect.TypeToken;
  */
 public class InstantMessengerReceiver extends BroadcastReceiver {
 
-    public final String TAG = this.getClass().getSimpleName();
+    public final String TAG = "Instant Messenger Receiver";
 
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, Intent intent) {
 
-        FindNDriveManager findNDriveManager = ((FindNDriveManager)context.getApplicationContext());
 
-        Bundle bundle = intent.getExtras();
+        final FindNDriveManager findNDriveManager = ((FindNDriveManager)context.getApplicationContext());
+        final Bundle bundle = intent.getExtras();
+        int pictureId = Integer.parseInt(bundle.getString("pictureId"));
+        Log.i(TAG, String.valueOf(pictureId));
+        if(pictureId != -1)
+        {
+            new WcfPictureServiceTask(findNDriveManager.getBitmapLruCache(), context.getResources().getString(R.string.GetProfilePictureURL),
+                    pictureId, findNDriveManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+                @Override
+                public void onImageRetrieved(Bitmap bitmap) {
+                      showNotification(context, bundle, findNDriveManager, bitmap);
+                }
+            }).execute();
+        }else
+        {
+            showNotification(context, bundle, findNDriveManager, null);
+        }
 
-        com.example.myapplication.domain_objects.Notification notification = new Gson().fromJson(bundle.getString(IntentConstants.NOTIFICATION),
-                new TypeToken<com.example.myapplication.domain_objects.Notification>() {}.getType());
 
-        int collapsibleKey = notification == null ? Integer.parseInt(bundle.getString("collapsibleKey")) : notification.CollapsibleKey;
+    }
 
-        int notificationId = collapsibleKey == -1 ?  (int) System.currentTimeMillis() : collapsibleKey;
-
+    private void showNotification(Context context,Bundle bundle, FindNDriveManager findNDriveManager, Bitmap bitmap)
+    {
         NotificationManager mNotificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         ChatMessage chatMessage = new Gson().fromJson(bundle.getString(IntentConstants.PAYLOAD) ,new TypeToken<ChatMessage>() {}.getType());
+        int notificationId = Integer.parseInt(bundle.getString("collapsibleKey"));
 
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, InstantMessengerActivity.class)
@@ -49,6 +68,7 @@ public class InstantMessengerReceiver extends BroadcastReceiver {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.logo)
+                        .setLargeIcon(bitmap != null ? Bitmap.createScaledBitmap(bitmap, 128, 128, false) : BitmapFactory.decodeResource(context.getResources(), R.drawable.logo))
                         .setContentTitle("Message from " + chatMessage.SenderUserName)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(chatMessage.MessageBody))
                         .setContentText(chatMessage.MessageBody);

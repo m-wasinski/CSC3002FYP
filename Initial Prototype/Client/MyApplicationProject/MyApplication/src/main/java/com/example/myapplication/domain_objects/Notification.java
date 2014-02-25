@@ -15,6 +15,5 @@ public class Notification {
     public int ProfilePictureId;
     public String ReceivedOnDate;
     public Boolean Delivered;
-    public Boolean ActionTaken;
     public int TargetObjectId;
 }

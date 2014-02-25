@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.domain_objects.ChatMessage;
-import com.example.myapplication.experimental.DateTimeHelper;
+import com.example.myapplication.utilities.DateTimeHelper;
 
 import java.util.ArrayList;
 /**

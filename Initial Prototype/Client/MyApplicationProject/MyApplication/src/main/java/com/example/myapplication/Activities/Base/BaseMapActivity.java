@@ -19,13 +19,12 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.HomeActivity;
+import com.example.myapplication.app_management.AppManager;
 import com.example.myapplication.domain_objects.GeoAddress;
 import com.example.myapplication.domain_objects.Journey;
-import com.example.myapplication.domain_objects.MarkerType;
-import com.example.myapplication.experimental.FindNDriveManager;
-import com.example.myapplication.experimental.GMapV2Direction;
-import com.example.myapplication.experimental.GeocoderParams;
-import com.example.myapplication.experimental.WaypointHolder;
+import com.example.myapplication.enums.MarkerType;
+import com.example.myapplication.google_maps_utilities.GMapV2Direction;
+import com.example.myapplication.google_maps_utilities.GeocoderParams;
 import com.example.myapplication.interfaces.GeoCoderFinishedCallBack;
 import com.example.myapplication.network_tasks.GeocoderTask;
 import com.google.android.gms.common.ConnectionResult;
@@ -65,7 +64,7 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
     protected LocationManager  locationManager;
     protected Circle departureRadius;
     protected Circle destinationRadius;
-    protected FindNDriveManager findNDriveManager;
+    protected AppManager appManager;
     protected Gson gson;
     protected ActionBar actionBar;
     protected InputMethodManager inputMethodManager;
@@ -80,7 +79,7 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
 
         // Initialise local variables.
         this.inputMethodManager = (InputMethodManager) this.getSystemService(INPUT_METHOD_SERVICE);
-        this.findNDriveManager = ((FindNDriveManager)getApplication());
+        this.appManager = ((AppManager)getApplication());
         this.gson = new Gson();
         this.actionBar = getActionBar();
         this.gMapV2Direction = new GMapV2Direction();
@@ -104,7 +103,7 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
                 startActivity(intent);
                 break;
             case R.id.logout_menu_option:
-                findNDriveManager.logout(true, true);
+                appManager.logout(true, true);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -321,5 +320,23 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
     protected void onStop() {
         super.onStop();
         this.locationClient.disconnect();
+    }
+
+    protected class WaypointHolder {
+
+        public Marker googleMapMarker;
+        public GeoAddress geoAddress;
+
+        public WaypointHolder() {
+        }
+
+        public void removeMarker()
+        {
+            if(this.googleMapMarker != null)
+            {
+                this.googleMapMarker.remove();
+                this.googleMapMarker = null;
+            }
+        }
     }
 }

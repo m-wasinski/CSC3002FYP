@@ -21,10 +21,10 @@ import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.experimental.FindNDriveService;
+import com.example.myapplication.app_management.GcmHeartbeatService;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.notification_management.NotificationProcessor;
-import com.example.myapplication.experimental.WakeLocker;
+import com.example.myapplication.utilities.WakeLocker;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.R;
 import com.google.gson.reflect.TypeToken;
@@ -61,7 +61,7 @@ public class HomeActivity extends BaseActivity {
         this.setContentView(R.layout.activity_home);
 
         //Initialise local variables.
-        this.actionBar.setTitle(" Hi " + findNDriveManager.getUser().getUserName());
+        this.actionBar.setTitle(" Hi " + appManager.getUser().getUserName());
 
         /*
          * Alarm manager is used to trigger a task every 5 minutes.
@@ -71,7 +71,7 @@ public class HomeActivity extends BaseActivity {
         this.alarmManager = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
         this.alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
                 Calendar.getInstance().getTimeInMillis(),
-                FIVE_MINUTES, PendingIntent.getService(this, 0, new Intent(this, FindNDriveService.class), 0));
+                FIVE_MINUTES, PendingIntent.getService(this, 0, new Intent(this, GcmHeartbeatService.class), 0));
 
         // Initialise UI elements.
         this.myJourneysLayout = (LinearLayout) this.findViewById(R.id.ActivityHomeMyJourneysLayout);
@@ -93,7 +93,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        this.findNDriveManager.logout(false, true);
+        this.appManager.logout(false, true);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class HomeActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout_menu_option:
-                findNDriveManager.logout(true, true);
+                appManager.logout(true, true);
                 break;
             case R.id.action_refresh:
                 this.refreshInformation();
@@ -140,9 +140,9 @@ public class HomeActivity extends BaseActivity {
         this.progressBar.setVisibility(View.VISIBLE);
         this.refreshedItems = 0;
 
-        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetUnreadAppNotificationsCountURL), findNDriveManager.getUser().getUserId(),
+        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetUnreadAppNotificationsCountURL), appManager.getUser().getUserId(),
                 new TypeToken<ServiceResponse<Integer>>() {}.getType(),
-                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -152,9 +152,9 @@ public class HomeActivity extends BaseActivity {
             }
         }).execute();
 
-        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetUnreadMessagesCountURL), findNDriveManager.getUser().getUserId(),
+        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetUnreadMessagesCountURL), appManager.getUser().getUserId(),
                 new TypeToken<ServiceResponse<Integer>>() {}.getType(),
-                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -167,9 +167,9 @@ public class HomeActivity extends BaseActivity {
 
     private void retrieveDeviceNotifications()
     {
-        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetDeviceNotificationsURL), findNDriveManager.getUser().getUserId(),
+        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetDeviceNotificationsURL), appManager.getUser().getUserId(),
                 new TypeToken<ServiceResponse<ArrayList<Notification>>>() {}.getType(),
-                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<Notification>, Void>() {
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<Notification>, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<ArrayList<Notification>> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -227,7 +227,7 @@ public class HomeActivity extends BaseActivity {
         this.myProfileLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), ProfileEditorActivity.class).putExtra(IntentConstants.USER, gson.toJson(findNDriveManager.getUser())));
+                startActivity(new Intent(getApplicationContext(), ProfileEditorActivity.class).putExtra(IntentConstants.USER, gson.toJson(appManager.getUser())));
             }
         });
     }
@@ -261,7 +261,7 @@ public class HomeActivity extends BaseActivity {
 
         for(Notification notification : notifications)
         {
-            notificationProcessor.process(this, this.findNDriveManager, notification, null);
+            notificationProcessor.process(this, this.appManager, notification, null);
         }
     }
 }

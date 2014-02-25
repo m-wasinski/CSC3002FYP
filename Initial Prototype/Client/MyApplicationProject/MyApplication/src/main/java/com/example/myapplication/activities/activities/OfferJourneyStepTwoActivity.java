@@ -29,7 +29,7 @@ import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.experimental.DateTimeHelper;
+import com.example.myapplication.utilities.DateTimeHelper;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.utilities.Utilities;
@@ -473,7 +473,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
                     R.string.CreateNewJourneyURL : R.string.EditJourneyURL),
                     journey,
                     new TypeToken<ServiceResponse<Journey>>() {}.getType(),
-                    findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Journey, Void>() {
+                    appManager.getAuthorisationHeaders(), new WCFServiceCallback<Journey, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Journey> serviceResponse, Void parameter) {
                     progressBar.setVisibility(View.GONE);

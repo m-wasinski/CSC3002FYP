@@ -17,6 +17,8 @@
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
 
+    using Microsoft.Practices.ObjectBuilder2;
+
     /// <summary>
     /// The journey chat service.
     /// </summary>
@@ -110,7 +112,8 @@
                 GcmNotificationType.JourneyChatMessage,
                 -1,
                 journey.JourneyId,
-                journeyMessage);
+                journeyMessage,
+                journeyMessage.JourneyMessageId);
 
             return ServiceResponseBuilder.Success(true);
         }
@@ -131,9 +134,8 @@
 
             var messages =
                 this.findNDriveUnitOfWork.JourneyMessageRepository.AsQueryable().IncludeAll()
-                    .Where(_ => _.JourneyId == journeyMessageRetrieverDTO.JourneyId).OrderBy(x => x.SentOnDate).ToList();
-
-            messages = LoadRangeHelper<JourneyMessage>.GetConversations(messages, journeyMessageRetrieverDTO.LoadRangeDTO.Index, journeyMessageRetrieverDTO.LoadRangeDTO.Count, journeyMessageRetrieverDTO.LoadRangeDTO.LoadMoreData);
+                    .Where(_ => _.JourneyId == journeyMessageRetrieverDTO.JourneyId).OrderByDescending(x => x.SentOnDate)
+                    .Skip(journeyMessageRetrieverDTO.LoadRangeDTO.Skip).Take(journeyMessageRetrieverDTO.LoadRangeDTO.Take);
 
             messages.ForEach(
                 delegate(JourneyMessage journeyMessage)
@@ -148,7 +150,7 @@
 
             this.findNDriveUnitOfWork.Commit();
 
-            return ServiceResponseBuilder.Success(messages);
+            return ServiceResponseBuilder.Success(messages.ToList());
         }
 
         public ServiceResponse<List<JourneyMessage>> RetrieveUnreadMessages(JourneyMessageRetrieverDTO journeyMessageRetrieverDTO)
@@ -204,6 +206,23 @@
             this.findNDriveUnitOfWork.Commit();
 
             return ServiceResponseBuilder.Success(true);
+        }
+
+        public ServiceResponse<JourneyMessage> GetJourneyMessageById(int id)
+        {
+            if (!this.sessionManager.IsSessionValid())
+            {
+                return ServiceResponseBuilder.Unauthorised(new JourneyMessage());
+            }
+
+            var journeyMessage =
+                this.findNDriveUnitOfWork.JourneyMessageRepository.AsQueryable()
+                    .IncludeAll()
+                    .FirstOrDefault(_ => _.JourneyMessageId == id);
+
+            return journeyMessage == null
+                       ? ServiceResponseBuilder.Failure<JourneyMessage>("Invalid message id")
+                       : ServiceResponseBuilder.Success(journeyMessage);
         }
 
         public ServiceResponse<int> GetUnreadMessagesCount(JourneyMessageRetrieverDTO journeyMessageRetrieverDTO)

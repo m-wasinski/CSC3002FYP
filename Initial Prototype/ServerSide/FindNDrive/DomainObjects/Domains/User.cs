@@ -84,12 +84,6 @@ namespace DomainObjects.Domains
         public virtual Gender Gender { get; set; }
 
         /// <summary>
-        /// Gets or sets the role.
-        /// </summary>
-        [DataMember]
-        public virtual Roles Role { get; set; }
-
-        /// <summary>
         /// Gets or sets the gcm registration id.
         /// </summary>
         [DataMember]

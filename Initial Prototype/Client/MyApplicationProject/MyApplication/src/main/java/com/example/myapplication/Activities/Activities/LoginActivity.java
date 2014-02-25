@@ -89,9 +89,9 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
         this.progressBar.setVisibility(View.VISIBLE);
 
         new WcfPostServiceTask<LoginDTO>(this, getResources().getString(R.string.UserManualLoginURL),
-                new LoginDTO(userName.getText().toString(), password.getText().toString(), findNDriveManager.getRegistrationId()), new TypeToken<ServiceResponse<User>>() {}.getType(),
-                asList(new Pair(SessionConstants.REMEMBER_ME, ""+this.rememberMeCheckbox.isChecked()), new Pair(SessionConstants.DEVICE_ID, findNDriveManager.getUniqueDeviceId()),
-                        new Pair(SessionConstants.UUID, findNDriveManager.getUUID())), this).execute();
+                new LoginDTO(userName.getText().toString(), password.getText().toString(), appManager.getRegistrationId()), new TypeToken<ServiceResponse<User>>() {}.getType(),
+                asList(new Pair(SessionConstants.REMEMBER_ME, ""+this.rememberMeCheckbox.isChecked()), new Pair(SessionConstants.DEVICE_ID, appManager.getUniqueDeviceId()),
+                        new Pair(SessionConstants.UUID, appManager.getUUID())), this).execute();
     }
 
     private boolean validateFields(EditText editText, String value)
@@ -137,8 +137,8 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
 
         if (serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
-            findNDriveManager.setSessionId(session);
-            findNDriveManager.login(serviceResponse.Result);
+            appManager.setSessionId(session);
+            appManager.login(serviceResponse.Result);
             Intent intent = new Intent(this, HomeActivity.class)
                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);

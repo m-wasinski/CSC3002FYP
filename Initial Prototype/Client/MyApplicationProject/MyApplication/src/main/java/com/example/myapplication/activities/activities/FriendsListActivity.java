@@ -17,11 +17,10 @@ import com.example.myapplication.adapters.FriendsAdapter;
 import com.example.myapplication.constants.BroadcastTypes;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.constants.TokenTypes;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
-import com.example.myapplication.experimental.WakeLocker;
+import com.example.myapplication.utilities.WakeLocker;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.R;
@@ -54,7 +53,7 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
 
             if(notification != null)
             {
-                new NotificationProcessor().MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+                new NotificationProcessor().MarkDelivered(this, this.appManager, notification, new WCFServiceCallback<Boolean, Void>() {
                     @Override
                     public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                         Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
@@ -89,8 +88,8 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
 
     private void retrieveFriendsList()
     {
-        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetFriendsURL), findNDriveManager.getUser().getUserId(),
-                new TypeToken<ServiceResponse<ArrayList<User>>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), this).execute();
+        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetFriendsURL), appManager.getUser().getUserId(),
+                new TypeToken<ServiceResponse<ArrayList<User>>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
     }
 
     /*
@@ -104,7 +103,7 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
         {
             this.noFriendsTextView.setVisibility(serviceResponse.Result.size() == 0 ? View.VISIBLE : View.GONE);
 
-            FriendsAdapter friendsAdapter = new FriendsAdapter(this, R.layout.listview_row_friend, findNDriveManager, serviceResponse.Result);
+            FriendsAdapter friendsAdapter = new FriendsAdapter(this, R.layout.listview_row_friend, appManager, serviceResponse.Result);
 
             travelBuddiesListView.setAdapter(friendsAdapter);
 

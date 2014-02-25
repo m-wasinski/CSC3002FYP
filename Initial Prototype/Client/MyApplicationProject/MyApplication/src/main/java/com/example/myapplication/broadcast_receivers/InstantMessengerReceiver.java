@@ -14,9 +14,9 @@ import android.util.Log;
 
 import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.InstantMessengerActivity;
+import com.example.myapplication.app_management.AppManager;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.domain_objects.ChatMessage;
-import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.interfaces.WCFImageRetrieved;
 import com.example.myapplication.network_tasks.WcfPictureServiceTask;
 import com.google.gson.Gson;
@@ -32,28 +32,28 @@ public class InstantMessengerReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
 
 
-        final FindNDriveManager findNDriveManager = ((FindNDriveManager)context.getApplicationContext());
+        final AppManager appManager = ((AppManager)context.getApplicationContext());
         final Bundle bundle = intent.getExtras();
         int pictureId = Integer.parseInt(bundle.getString("pictureId"));
         Log.i(TAG, String.valueOf(pictureId));
         if(pictureId != -1)
         {
-            new WcfPictureServiceTask(findNDriveManager.getBitmapLruCache(), context.getResources().getString(R.string.GetProfilePictureURL),
-                    pictureId, findNDriveManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+            new WcfPictureServiceTask(appManager.getBitmapLruCache(), context.getResources().getString(R.string.GetProfilePictureURL),
+                    pictureId, appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
                 @Override
                 public void onImageRetrieved(Bitmap bitmap) {
-                      showNotification(context, bundle, findNDriveManager, bitmap);
+                      showNotification(context, bundle, appManager, bitmap);
                 }
             }).execute();
         }else
         {
-            showNotification(context, bundle, findNDriveManager, null);
+            showNotification(context, bundle, appManager, null);
         }
 
 
     }
 
-    private void showNotification(Context context,Bundle bundle, FindNDriveManager findNDriveManager, Bitmap bitmap)
+    private void showNotification(Context context,Bundle bundle, AppManager appManager, Bitmap bitmap)
     {
         NotificationManager mNotificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -79,9 +79,9 @@ public class InstantMessengerReceiver extends BroadcastReceiver {
 
         mNotificationManager.notify(notificationId, deviceNotification);
 
-        if(findNDriveManager != null)
+        if(appManager != null)
         {
-            findNDriveManager.addNotificationId(notificationId);
+            appManager.addNotificationId(notificationId);
         }
     }
 }

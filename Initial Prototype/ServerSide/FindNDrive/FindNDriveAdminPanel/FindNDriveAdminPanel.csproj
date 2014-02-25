@@ -34,8 +34,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -53,6 +56,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="ValidatableModelBase.cs" />
+    <Compile Include="ViewModels\LoginViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -67,6 +73,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -92,6 +99,24 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Commands\" />
+    <Folder Include="Views\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DomainObjects\FindNDriveDomainObjects.csproj">
+      <Project>{2fe3e5e1-2d9f-4791-b60f-86fc293a8240}</Project>
+      <Name>FindNDriveDomainObjects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FindNDriveInfrastructureCore\FindNDriveInfrastructureCore.csproj">
+      <Project>{315FFCF8-0595-41A9-AB9A-56495FB93FD7}</Project>
+      <Name>FindNDriveInfrastructureCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FindNDriveServices2\FindNDriveServices2.csproj">
+      <Project>{FC80B470-8A56-4BF8-AFF6-BD33176F79A4}</Project>
+      <Name>FindNDriveServices2</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

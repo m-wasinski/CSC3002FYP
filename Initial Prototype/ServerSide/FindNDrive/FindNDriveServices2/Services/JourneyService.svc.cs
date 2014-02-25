@@ -26,6 +26,8 @@ namespace FindNDriveServices2.Services
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
 
+    using Microsoft.Practices.ObjectBuilder2;
+
     /// <summary>
     /// The car share service.
     /// </summary>
@@ -91,32 +93,43 @@ namespace FindNDriveServices2.Services
                 return ServiceResponseBuilder.Unauthorised(new List<Journey>());
             }
 
+            var user = this.findNDriveUnitOfWork.UserRepository.Find(loadRangeDTO.Id);
+
+            if (user == null)
+            {
+                return ServiceResponseBuilder.Failure<List<Journey>>("Invalid user id");
+            }
+
             var journeys =
                 this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
                     .IncludeAll()
                     .Where(_ => _.DriverId == loadRangeDTO.Id || _.Participants.Any(x => x.UserId == loadRangeDTO.Id))
                     .OrderByDescending(x => x.CreationDate)
-                    .ToList();
+                    .Skip(loadRangeDTO.Skip)
+                    .Take(loadRangeDTO.Take);
 
             journeys.ForEach(
                 delegate(Journey journey)
                     {
-                        if (journey.DateAndTimeOfDeparture < DateTime.Now
-                            && journey.JourneyStatus != JourneyStatus.Expired)
+                        if (journey.DateAndTimeOfDeparture < DateTime.Now && journey.JourneyStatus != JourneyStatus.Expired)
                         {
                             journey.JourneyStatus = JourneyStatus.Expired;
                         }
-                    });
 
-            journeys = LoadRangeHelper<Journey>.GetValidRange(
-                journeys,
-                loadRangeDTO.Index,
-                loadRangeDTO.Count,
-                loadRangeDTO.LoadMoreData);
+                        var messages = this.findNDriveUnitOfWork.JourneyMessageRepository.AsQueryable().IncludeAll().Where(_ => _.JourneyId == journey.JourneyId).ToList();
+
+                        journey.UnreadMessagesCount = messages.Count(
+                            delegate(JourneyMessage journeyMessage)
+                            {
+                                var ids = journeyMessage.SeenBy.Select(_ => _.UserId).ToList();
+
+                                return !ids.Contains(loadRangeDTO.Id);
+                            });
+                    });
 
             this.findNDriveUnitOfWork.Commit();
 
-            return ServiceResponseBuilder.Success(journeys);
+            return ServiceResponseBuilder.Success(journeys.ToList());
         }
 
         /// <summary>

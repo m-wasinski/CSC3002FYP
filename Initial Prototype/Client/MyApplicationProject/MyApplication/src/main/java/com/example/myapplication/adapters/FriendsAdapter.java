@@ -12,13 +12,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.myapplication.app_management.AppManager;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.constants.StatusConstants;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.R;
 import com.example.myapplication.dtos.ChatMessageRetrieverDTO;
-import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.interfaces.WCFImageRetrieved;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPictureServiceTask;
@@ -35,13 +35,13 @@ public class FriendsAdapter extends ArrayAdapter<User> {
     private Context context;
     private int layoutResourceId;
     private ArrayList<User> friends;
-    private FindNDriveManager findNDriveManager;
+    private AppManager appManager;
 
-    public FriendsAdapter(Context context, int resource, FindNDriveManager findNDriveManager, ArrayList<User> friends) {
+    public FriendsAdapter(Context context, int resource, AppManager appManager, ArrayList<User> friends) {
         super(context, resource, friends);
         this.context = context;
         this.layoutResourceId = resource;
-        this.findNDriveManager = findNDriveManager;
+        this.appManager = appManager;
         this.friends = friends;
     }
 
@@ -79,8 +79,8 @@ public class FriendsAdapter extends ArrayAdapter<User> {
         holder.userNameTextView.setText(friend.getUserName());
         holder.currentOnlineStatus.setImageResource(friend.getStatus() == StatusConstants.Online ? R.drawable.available : R.drawable.unavailable);
         new WcfPostServiceTask<ChatMessageRetrieverDTO>(this.context, getContext().getResources().getString(R.string.GetUnreadMessagesCountForFriendURL),
-                new ChatMessageRetrieverDTO(friends.get(position).getUserId(), findNDriveManager.getUser().getUserId(), null),
-                new TypeToken<ServiceResponse<Integer>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
+                new ChatMessageRetrieverDTO(friends.get(position).getUserId(), appManager.getUser().getUserId(), null),
+                new TypeToken<ServiceResponse<Integer>>() {}.getType(), appManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -92,8 +92,8 @@ public class FriendsAdapter extends ArrayAdapter<User> {
             }
         }).execute();
 
-        new WcfPictureServiceTask(this.findNDriveManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
-                friend.getProfilePictureId(), this.findNDriveManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+        new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
+                friend.getProfilePictureId(), this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
             @Override
             public void onImageRetrieved(Bitmap bitmap) {
                 if(bitmap != null)

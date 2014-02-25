@@ -31,15 +31,6 @@
             android:id="@+id/MyCarSharesListView"
             android:layout_below="@+id/ActivityHomeFilterEditText"/>
 
-        <Button
-            android:id="@+id/ActivityMyJourneysLoadMoreButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/ShowMore"
-            android:layout_alignParentBottom="true"
-            android:background="@drawable/button_selector"
-            style="@style/UniversalButtonStyle"/>
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

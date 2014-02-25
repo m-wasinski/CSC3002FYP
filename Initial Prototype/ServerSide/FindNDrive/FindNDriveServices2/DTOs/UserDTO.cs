@@ -73,12 +73,6 @@ namespace FindNDriveServices2.DTOs
         public Gender Gender { get; set; }
 
         /// <summary>
-        /// Gets or sets the role.
-        /// </summary>
-        [DataMember]
-        public Roles Role { get; set; }
-
-        /// <summary>
         /// Gets or sets the gcm registration id.
         /// </summary>
         [DataMember]

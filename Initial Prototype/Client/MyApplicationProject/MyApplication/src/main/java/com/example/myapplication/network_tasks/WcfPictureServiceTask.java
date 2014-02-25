@@ -6,13 +6,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.util.LruCache;
 
-import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.constants.SessionConstants;
-import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.experimental.SSLSocketFactory;
+import com.example.myapplication.utilities.SSLSocketFactory;
 import com.example.myapplication.interfaces.WCFImageRetrieved;
 import com.example.myapplication.utilities.Pair;
-import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import org.apache.http.HttpResponse;
@@ -21,20 +17,14 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Arrays;
 import java.util.List;
 
 /**

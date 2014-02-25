@@ -11,8 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.myapplication.R;
+import com.example.myapplication.app_management.AppManager;
 import com.example.myapplication.domain_objects.User;
-import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.interfaces.WCFImageRetrieved;
 import com.example.myapplication.network_tasks.WcfPictureServiceTask;
 
@@ -26,13 +26,13 @@ public class LeaderboardAdapter extends ArrayAdapter<User> {
     private Context context;
     private int layoutResourceId;
     private ArrayList<User> users;
-    private FindNDriveManager findNDriveManager;
+    private AppManager appManager;
 
-    public LeaderboardAdapter(FindNDriveManager findNDriveManager, Context context, int resource, ArrayList<User> users) {
+    public LeaderboardAdapter(AppManager appManager, Context context, int resource, ArrayList<User> users) {
         super(context, resource, users);
         this.context = context;
         this.layoutResourceId = resource;
-        this.findNDriveManager = findNDriveManager;
+        this.appManager = appManager;
         this.users = users;
     }
 
@@ -70,8 +70,8 @@ public class LeaderboardAdapter extends ArrayAdapter<User> {
 
         User user = users.get(position);
 
-        new WcfPictureServiceTask(this.findNDriveManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
-                user.getProfilePictureId(), this.findNDriveManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+        new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
+                user.getProfilePictureId(), this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
             @Override
             public void onImageRetrieved(Bitmap bitmap) {
                 if(bitmap != null)

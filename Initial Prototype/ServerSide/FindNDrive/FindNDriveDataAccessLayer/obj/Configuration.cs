@@ -46,28 +46,9 @@ namespace FindNDriveDataAccessLayer.Migrations
         /// The context.
         /// </param>
         protected override void Seed(ApplicationContext context)
-        {
-            // This method will be called after migrating to the latest version.
-            if (!WebSecurity.Initialized)
-            {
-                WebSecurity.InitializeDatabaseConnection("FindNDriveConnectionString", "User", "Id", "UserName", true); 
-            }
-
-            AddAdministrator(context);
-            AddJourneysAndPassengers(context);
-            AddNotifications(context);
-            this.AddMessages(context);
-        }
-
-        /// <summary>
-        /// The add administrator.
-        /// </summary>
-        /// <param name="context">
-        /// The context.
-        /// </param>
-        private static void AddAdministrator(ApplicationContext context)
-        {
-            var img = Image.FromFile(@"C:\\CSC3002FYP\\user.png");
+        {   
+            // Prepare the default profile picture.
+            var img = Image.FromFile(@"C:\\CSC3002FYP\\Initial Prototype\\Resources\\default_picture.png");
             byte[] arr;
 
             using (var ms = new MemoryStream())
@@ -76,6 +57,34 @@ namespace FindNDriveDataAccessLayer.Migrations
                 arr = ms.ToArray();
             }
 
+            // Initialise the WebSecurity module.
+            if (!WebSecurity.Initialized)
+            {
+                WebSecurity.InitializeDatabaseConnection("FindNDriveConnectionString", "User", "Id", "UserName", true); 
+            }
+
+            // Create the administrator role.
+            if (!System.Web.Security.Roles.RoleExists("Administrators"))
+            {
+                System.Web.Security.Roles.CreateRole("Administrators");
+            }
+
+            this.AddAdministrator(context, arr);
+            this.AddJourneysAndPassengers(context, arr);
+            this.AddNotifications(context);
+        }
+
+        /// <summary>
+        /// The add administrator.
+        /// </summary>
+        /// <param name="context">
+        /// The context.
+        /// </param>
+        /// <param name="arr">
+        /// The arr.
+        /// </param>
+        private void AddAdministrator(ApplicationContext context, byte[] arr)
+        {
             var administrator = new User
             {
                 DateOfBirth = new DateTime(1990, 11, 11),
@@ -83,10 +92,9 @@ namespace FindNDriveDataAccessLayer.Migrations
                 FirstName = "Michal",
                 LastName = "Wasinski",
                 Gender = Gender.Male,
-                UserName = "admin",
+                UserName = "Admin",
                 GCMRegistrationID = "0",
                 Status = Status.Offline,
-                Role = Roles.Administrator,
                 UserId = 1,
                 ProfilePicture = new ProfilePicture
                 {
@@ -107,28 +115,25 @@ namespace FindNDriveDataAccessLayer.Migrations
             };
 
             context.Sessions.AddOrUpdate(_ => _.UserId, session);
-            WebSecurity.CreateUserAndAccount("admin", "password");
+
+            WebSecurity.CreateUserAndAccount("Admin", "password");
+
+            System.Web.Security.Roles.AddUserToRole("Admin", "Administrators");
 
             context.SaveChanges();
         }
 
         /// <summary>
-        /// The add car share.
+        /// The add journeys and passengers.
         /// </summary>
         /// <param name="context">
         /// The context.
         /// </param>
-        private static void AddJourneysAndPassengers(ApplicationContext context)
+        /// <param name="arr">
+        /// The arr.
+        /// </param>
+        private void AddJourneysAndPassengers(ApplicationContext context, byte[] arr)
         {
-            var img = Image.FromFile(@"C:\\CSC3002FYP\\user.png");
-            byte[] arr;
-
-            using (var ms = new MemoryStream())
-            {
-                img.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
-                arr = ms.ToArray();
-            }
-
             var cal = new GregorianCalendar();
 
             var participant1 = new User
@@ -141,7 +146,6 @@ namespace FindNDriveDataAccessLayer.Migrations
                 UserName = "john",
                 GCMRegistrationID = "0",
                 Status = Status.Offline,
-                Role = Roles.User,
                 UserId = 2,
                 MemberSince = DateTime.Now,
                 AverageRating = 0,
@@ -154,7 +158,7 @@ namespace FindNDriveDataAccessLayer.Migrations
 
             context.User.AddOrUpdate(_ => _.UserId, participant1);
             WebSecurity.CreateUserAndAccount(participant1.UserName, "p");
-
+            
             var session1 = new Session()
             {
                 UserId = participant1.UserId,
@@ -177,7 +181,6 @@ namespace FindNDriveDataAccessLayer.Migrations
                 UserName = "laura",
                 GCMRegistrationID = "0",
                 Status = Status.Offline,
-                Role = Roles.User,
                 UserId = 3,
                 ProfilePicture = new ProfilePicture
                 {
@@ -211,7 +214,6 @@ namespace FindNDriveDataAccessLayer.Migrations
                 Status = Status.Offline,
                 Gender = Gender.Female,
                 UserName = "alex",
-                Role = Roles.User,
                 UserId = 4,
                 ProfilePicture = new ProfilePicture
                 {
@@ -222,7 +224,7 @@ namespace FindNDriveDataAccessLayer.Migrations
 
             context.SaveChanges();
 
-            WebSecurity.CreateUserAndAccount(driver.UserName, "password");
+            WebSecurity.CreateUserAndAccount(driver.UserName, "p");
 
             var encoding = new UTF8Encoding();
             var bytes = encoding.GetBytes("Test1");
@@ -249,31 +251,29 @@ namespace FindNDriveDataAccessLayer.Migrations
             var geoAddress2 = new GeoAddress { AddressLine = "Warrenpoint City Centre", Latitude = 54.09900, Longitude = -6.24900, Order = 1 };
             var geoAddress3 = new GeoAddress { AddressLine = "Belfast City Centre", Latitude = 54.5970, Longitude = -5.9300, Order = 2};
 
-            for(int i = 0; i < 1; i++)
+            for (var i = 0; i < 5; i++)
             {
                 context.Journeys.AddOrUpdate(
                     new Journey
                         {
-                            AvailableSeats = 4,
+                            AvailableSeats = i + 1,
                             DateAndTimeOfDeparture = DateTime.Now.AddDays(i + 1),
-                            GeoAddresses = new List<GeoAddress> { geoAddress1, geoAddress3 },
+                            GeoAddresses = new List<GeoAddress> { geoAddress1, geoAddress2, geoAddress3 },
                             Description = "Free ride to Dublin!",
                             Fee = 0.00,
                             Driver = driver,
                             SmokersAllowed = false,
                             JourneyStatus = JourneyStatus.OK,
-                            CreationDate = DateTime.Now,
+                            CreationDate = DateTime.Now.Subtract(TimeSpan.FromDays(i)),
                             PreferredPaymentMethod = string.Empty,
                             Participants = new Collection<User> { participant1, participant2 }
                         });
             }
 
-            return; 
-
             var geoAddress4 = new GeoAddress { AddressLine = "London City Centre", Latitude = 51.5072, Longitude = 0.12755, Order = 4 };
             var geoAddress5 = new GeoAddress { AddressLine = "Manchester City Centre", Latitude = 53.4667, Longitude = -2.247926, Order = 5 };
 
-            for (int i = 0; i < 20; i++)
+            for (var i = 0; i < 8; i++)
             {
                 context.Journeys.AddOrUpdate(
                     new Journey
@@ -291,72 +291,29 @@ namespace FindNDriveDataAccessLayer.Migrations
                     });
             }
 
-
-
-            for (int i = 0; i < 20; i++)
-            {
-                context.Journeys.AddOrUpdate(
-                    new Journey
-                    {
-                        AvailableSeats = 4,
-                        DateAndTimeOfDeparture = new DateTime(2014, 2, 1, 20, 15, 0, cal),
-                        GeoAddresses = new List<GeoAddress> { geoAddress1, geoAddress2, geoAddress3, geoAddress4, geoAddress5 },
-                        Description = "Ultimate trip!",
-                        Fee = 0.00,
-                        Driver = driver,
-                        SmokersAllowed = false,
-                        JourneyStatus = JourneyStatus.OK,
-                        CreationDate = new DateTime(2014, 1, 1, 20, 15, 0, cal),
-                        Participants = new Collection<User> { participant1, participant2 }
-                    });
-            }
-
             context.SaveChanges();
         }
 
-        private void AddMessages(ApplicationContext context)
-        {
-            /*for (int i = 1; i <= 500; i++)
-            {
-                context.ChatMessages.Add(
-                    new ChatMessage()
-                        {
-                            ChatMessageId = i,
-                            Read = false,
-                            MessageBody = "Test message: " + i,
-                            SenderId = 2,
-                            RecipientId = 4,
-                            RecipientUserName = "jess",
-                            SentOnDate = DateTime.Now,
-                            SenderUserName = "john"
-                        });
-            }
-
-            context.SaveChanges(); */
-        }
-
-        /// <summary>
-        /// The add notifications.
-        /// </summary>
-        /// <param name="context">
-        /// The context.
-        /// </param>
         private void AddNotifications(ApplicationContext context)
         {
-            /*for (int i = 0; i < 100; i++)
+            for (var i = 0; i < 100; i++)
             {
                 context.Notifications.AddOrUpdate(
                     new Notification()
                         {
                             UserId = 4,
-                            NotificationBody = "Test Notification no: " + i,
-                            Context = NotificationContext.Neutral,
-                            Read = false,
-                            ReceivedOnDate = DateTime.Now
+                            ProfilePictureId = 4,
+                            NotificationType = NotificationType.App,
+                            ReceivedOnDate = DateTime.Now,
+                            NotificationMessage =
+                                string.Format("This is a test notification no: {0}", i + 1),
+                            Delivered = true,
+                            TargetObjectId = -1,
+                            NotificationTitle = "Test notification",
+                            CollapsibleKey = -1,
+                            NotificationContentType = NotificationContentType.JourneyRequestSent
                         });
             }
-
-            context.SaveChanges();*/
         }
     }
 }

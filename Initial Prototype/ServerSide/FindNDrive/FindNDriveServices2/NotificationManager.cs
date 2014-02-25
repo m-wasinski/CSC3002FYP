@@ -108,35 +108,33 @@ namespace FindNDriveServices2
             this.ForwardGCMNotification(gcmPostData);
         }
 
-        public void SendInstantMessage<T>(ICollection<User> users, GcmNotificationType gcmNotificationType, int pictureId, int collapsibleKey, T message)
+        public void SendInstantMessage<T>(ICollection<User> users, GcmNotificationType gcmNotificationType, int pictureId, int collapsibleKey, T message, int targetObjectId)
         {
             // Determine which users are online.
             var onlineUsers = users.Where(_ => this.sessionManager.IsStillLoggedIn(_)).ToList();
             var offlineUsers = users.Where(_ => !this.sessionManager.IsStillLoggedIn(_)).ToList();
 
-            if (onlineUsers.Count <= 0)
+            if (onlineUsers.Count > 0)
             {
-                return;
+                // Serialise the message using the provided type.
+                var serialisedMessage = JsonConvert.SerializeObject(
+                    message,
+                    typeof(T),
+                    Formatting.None,
+                    new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.MicrosoftDateFormat });
+
+                var gcmPostData = string.Format(
+                    GCMInstantMessage,
+                    JsonConvert.SerializeObject(onlineUsers.Select(_ => _.GCMRegistrationID).ToList()),
+                    string.Empty,
+                    "New message",
+                    JsonConvert.SerializeObject(gcmNotificationType),
+                    JsonConvert.SerializeObject(collapsibleKey),
+                    serialisedMessage,
+                    JsonConvert.SerializeObject(pictureId));
+
+                this.ForwardGCMNotification(gcmPostData);
             }
-
-            // Serialise the message using the provided type.
-            var serialisedMessage = JsonConvert.SerializeObject(
-                message,
-                typeof(T),
-                Formatting.None,
-                new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.MicrosoftDateFormat });
-
-            var gcmPostData = string.Format(
-                GCMInstantMessage,
-                JsonConvert.SerializeObject(onlineUsers.Select(_ => _.GCMRegistrationID).ToList()),
-                string.Empty,
-                "New message",
-                JsonConvert.SerializeObject(gcmNotificationType),
-                JsonConvert.SerializeObject(collapsibleKey),
-                serialisedMessage,
-                JsonConvert.SerializeObject(pictureId));
-
-            this.ForwardGCMNotification(gcmPostData);
 
             if (offlineUsers.Count <= 0)
             {
@@ -157,7 +155,7 @@ namespace FindNDriveServices2
                     UserId = offlineUser.UserId,
                     ReceivedOnDate = DateTime.Now,
                     NotificationTitle = "New message",
-                    TargetObjectId = -1
+                    TargetObjectId = targetObjectId
                 });
             }
 

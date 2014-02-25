@@ -141,7 +141,6 @@
     <Compile Include="DTOs\FriendDTO.cs" />
     <Compile Include="DTOs\UserDTO.cs" />
     <Compile Include="Haversine.cs" />
-    <Compile Include="LoadRangeHelper.cs" />
     <Compile Include="MyServiceHost.cs" />
     <Compile Include="MyServiceHostFactory.cs" />
     <Compile Include="NotificationManager.cs" />

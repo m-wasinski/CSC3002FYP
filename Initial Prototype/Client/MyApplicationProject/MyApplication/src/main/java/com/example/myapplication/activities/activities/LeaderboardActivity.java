@@ -12,7 +12,7 @@ import com.example.myapplication.adapters.LeaderboardAdapter;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
-import com.example.myapplication.experimental.DialogCreator;
+import com.example.myapplication.utilities.DialogCreator;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.google.gson.reflect.TypeToken;
@@ -48,7 +48,7 @@ public class LeaderboardActivity extends BaseActivity implements WCFServiceCallb
     {
         this.progressBar.setVisibility(View.VISIBLE);
         new WcfPostServiceTask<Void>(this, this.getResources().getString(R.string.GetLeaderboardURL), null,
-                new TypeToken<ServiceResponse<ArrayList<User>>>(){}.getType(),this.findNDriveManager.getAuthorisationHeaders(), this).execute();
+                new TypeToken<ServiceResponse<ArrayList<User>>>(){}.getType(),this.appManager.getAuthorisationHeaders(), this).execute();
     }
 
     @Override
@@ -56,7 +56,7 @@ public class LeaderboardActivity extends BaseActivity implements WCFServiceCallb
         this.progressBar.setVisibility(View.GONE);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
-            LeaderboardAdapter leaderboardAdapter = new LeaderboardAdapter(this.findNDriveManager, this, R.layout.listview_row_leaderboard, serviceResponse.Result);
+            LeaderboardAdapter leaderboardAdapter = new LeaderboardAdapter(this.appManager, this, R.layout.listview_row_leaderboard, serviceResponse.Result);
             this.mainListView.setAdapter(leaderboardAdapter);
             this.mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override

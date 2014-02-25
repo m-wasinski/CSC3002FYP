@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -16,7 +15,7 @@ import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.adapters.NotificationsAdapter;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.domain_objects.JourneyRequest;
+import com.example.myapplication.constants.WcfConstants;
 import com.example.myapplication.dtos.LoadRangeDTO;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
@@ -32,21 +31,26 @@ import java.util.ArrayList;
 /**
  * Created by Michal on 06/01/14.
  */
-public class MyNotificationsActivity extends BaseActivity implements WCFServiceCallback<ArrayList<Notification>, Void> {
+public class MyNotificationsActivity extends BaseActivity implements WCFServiceCallback<ArrayList<Notification>, Void>,
+        AbsListView.OnScrollListener, AdapterView.OnItemClickListener{
 
-    private ListView mainListView;
+    private ListView notificationsListView;
     private ArrayList<Notification> notifications;
     private NotificationsAdapter notificationsAdapter;
     private ProgressBar progressBar;
-    private Button loadMoreButton;
-    private int currentScrollPosition;
-    private Boolean loadMoreData = false;
+
+    private int currentScrollIndex;
+    private int currentScrollTop;
+    private int previousTotalListViewItemCount;
+
+    private boolean requestMoreData;
+    private TextView noNotificationsTestView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_notifications);
+        this.setContentView(R.layout.activity_my_notifications);
 
         Bundle bundle = getIntent().getExtras();
 
@@ -56,7 +60,7 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
 
             if(notification != null)
             {
-                new NotificationProcessor().MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+                new NotificationProcessor().MarkDelivered(this, this.appManager, notification, new WCFServiceCallback<Boolean, Void>() {
                     @Override
                     public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                         Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
@@ -65,124 +69,77 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
             }
         }
 
-        progressBar = (ProgressBar) findViewById(R.id.ActivityMyNotificationsProgressBar);
-        loadMoreButton = (Button) findViewById(R.id.ActivityMyNotificationsLoadMoreButton);
-        loadMoreButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                currentScrollPosition = mainListView.getFirstVisiblePosition();
-                loadMoreData = true;
-                getNotifications();
-            }
-        });
-        mainListView = (ListView) findViewById(R.id.MyNotificationsActivityMainListView);
-        mainListView.setOnScrollListener(new AbsListView.OnScrollListener()
-        {
-            @Override
-            public void onScrollStateChanged(AbsListView absListView, int i) {
+        // Initialise UI elements.
+        this.progressBar = (ProgressBar) this.findViewById(R.id.ActivityMyNotificationsProgressBar);
+        this.noNotificationsTestView = (TextView) this.findViewById(R.id.MyNotificationsActivityNoNotificationsTextView);
+        this.notificationsListView = (ListView) this.findViewById(R.id.MyNotificationsActivityMainListView);
+        this.notifications = new ArrayList<Notification>();
+        this.notificationsAdapter = new NotificationsAdapter(this.appManager, this, R.layout.listview_row_notification, notifications);
+        this.notificationsListView.setAdapter(notificationsAdapter);
 
-            }
-
-            @Override
-            public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                int lastItem = firstVisibleItem + visibleItemCount;
-                if(lastItem == totalItemCount && totalItemCount > 0) {
-                    // Last item is fully visible.
-                    loadMoreButton.setVisibility(View.VISIBLE);
-                    mainListView.setPadding(0, 0, 0, loadMoreButton.getHeight());
-                }
-                else
-                {
-                    loadMoreButton.setVisibility(View.GONE);
-                    mainListView.setPadding(0, 0, 0, 0);
-                }
-            }
-        });
-
-        notifications = new ArrayList<Notification>();
-        notificationsAdapter = new NotificationsAdapter(this.findNDriveManager, this, R.layout.listview_row_notification, notifications);
-        mainListView.setAdapter(notificationsAdapter);
+        // Wire up event handlers.
+        this.setupEventHandlers();
     }
 
     @Override
     public void onResume()
     {
         super.onResume();
-        getNotifications();
+        this.requestMoreData = this.notificationsListView.getCount() == 0;
+        this.getNotifications();
+    }
+
+    private void setupEventHandlers()
+    {
+        this.notificationsListView.setOnScrollListener(this);
     }
 
     private void getNotifications()
     {
-        progressBar.setVisibility(View.VISIBLE);
+        this.progressBar.setVisibility(View.VISIBLE);
+
         new WcfPostServiceTask<LoadRangeDTO>(this, getResources().getString(R.string.GetAppNotificationsURL),
-                new LoadRangeDTO(findNDriveManager.getUser().getUserId(), mainListView.getCount(), findNDriveManager.getItemsPerCall(), loadMoreData),
+                new LoadRangeDTO(appManager.getUser().getUserId(),
+                        this.requestMoreData ? this.notificationsListView.getCount() : 0, this.requestMoreData ? WcfConstants.NotificationsPerCall : this.notificationsListView.getCount()),
                 new TypeToken<ServiceResponse<ArrayList<Notification>>>() {}.getType(),
-                findNDriveManager.getAuthorisationHeaders(), this).execute();
+                appManager.getAuthorisationHeaders(), this).execute();
     }
     @Override
     public void onServiceCallCompleted(final ServiceResponse<ArrayList<Notification>> serviceResponse, Void parameter)
     {
-
-        TextView noRequestsTextView = (TextView) findViewById(R.id.MyNotificationsActivityNoNotificationsTextView);
-
         progressBar.setVisibility(View.GONE);
 
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
-            if(serviceResponse.Result.size() == 0 && mainListView.getCount() == 0)
+            if(serviceResponse.Result.size() == 0 && notificationsListView.getCount() == 0)
             {
-                noRequestsTextView.setVisibility(View.VISIBLE);
-                mainListView.setVisibility(View.GONE);
+                noNotificationsTestView.setVisibility(View.VISIBLE);
+                notificationsListView.setVisibility(View.GONE);
             }
             else
             {
-                if(serviceResponse.Result.size() < findNDriveManager.getItemsPerCall())
+                if(!this.requestMoreData)
                 {
-                    loadMoreButton.setText("No more data to load");
-                    loadMoreButton.setEnabled(false);
-                }
-
-                noRequestsTextView.setVisibility(View.GONE);
-                mainListView.setVisibility(View.VISIBLE);
-
-                if(loadMoreData)
-                {
-                    notifications.addAll(notifications.size() == 0 ? 0 : notifications.size(), serviceResponse.Result);
-                    loadMoreData = false;
+                    this.notifications.clear();
                 }
                 else
                 {
-                    notifications.clear();
-                    notifications.addAll(serviceResponse.Result);
+                    this.notificationsListView.setSelectionFromTop(currentScrollIndex, currentScrollTop);
                 }
 
-                notificationsAdapter.notifyDataSetInvalidated();
-
-                mainListView.setSelectionFromTop(currentScrollPosition, 0);
-
-                mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-                {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, final View view, int i, long l) {
-
-                        NotificationProcessor notificationProcessor = new NotificationProcessor();
-
-                        markNotificationRead(notificationProcessor, notifications.get(i), view);
-
-                        if(notifications.get(i).TargetObjectId != -1)
-                        {
-                            progressBar.setVisibility(View.VISIBLE);
-                            launchNotificationProcessor(notificationProcessor, notifications.get(i), view);
-                        }
-                    }
-                });
+                this.notifications.addAll(serviceResponse.Result);
+                this.notificationsAdapter.notifyDataSetInvalidated();
+                this.noNotificationsTestView.setVisibility(View.GONE);
+                this.notificationsListView.setVisibility(View.VISIBLE);
+                this.notificationsListView.setOnItemClickListener(this);
+                this.requestMoreData = false;
             }
         }
     }
 
     private void markNotificationRead(NotificationProcessor notificationProcessor, Notification notification, final View view)
     {
-        notificationProcessor.MarkDelivered(this, findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+        notificationProcessor.MarkDelivered(this, appManager, notification, new WCFServiceCallback<Boolean, Void>() {
             public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                 view.findViewById(R.id.NotificationListViewRowParentRelativeLayout).setBackgroundColor(Color.parseColor("#80151515"));
             }
@@ -191,7 +148,7 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
 
     private void launchNotificationProcessor(NotificationProcessor notificationProcessor, Notification notification, final View view)
     {
-        notificationProcessor.process(this, findNDriveManager, notification, new NotificationTargetRetrieved() {
+        notificationProcessor.process(this, appManager, notification, new NotificationTargetRetrieved() {
 
             @Override
             public void onNotificationTargetRetrieved(Intent intent) {
@@ -201,5 +158,47 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
                 }
             }
         });
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        NotificationProcessor notificationProcessor = new NotificationProcessor();
+
+        markNotificationRead(notificationProcessor, notifications.get(i), view);
+
+        if(this.notifications.get(i).TargetObjectId != -1)
+        {
+            this.progressBar.setVisibility(View.VISIBLE);
+            launchNotificationProcessor(notificationProcessor, notifications.get(i), view);
+        }
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView absListView, int i) {
+
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+    {
+        if (totalItemCount == 0)
+        {
+            return;
+        }
+
+        if (this.previousTotalListViewItemCount == totalItemCount)
+        {
+            return;
+        }
+
+        if(firstVisibleItem + visibleItemCount >= totalItemCount)
+        {
+            this.previousTotalListViewItemCount = totalItemCount;
+            this.currentScrollIndex = this.notificationsListView.getFirstVisiblePosition();
+            View v = this.notificationsListView.getChildAt(0);
+            this.currentScrollTop= (v == null) ? 0 : v.getTop();
+            this.requestMoreData = true;
+            this.getNotifications();
+        }
     }
 }

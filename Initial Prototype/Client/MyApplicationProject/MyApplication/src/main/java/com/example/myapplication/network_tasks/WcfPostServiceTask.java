@@ -6,7 +6,7 @@ import android.util.Log;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.constants.SessionConstants;
 import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.experimental.SSLSocketFactory;
+import com.example.myapplication.utilities.SSLSocketFactory;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.utilities.Pair;
 import com.google.gson.Gson;
@@ -53,7 +53,7 @@ public class WcfPostServiceTask<T> extends WcfBaseServiceTask {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        this.wcfServiceCallback.onServiceCallCompleted(serviceResponse, this.sessionInformation);
+        this.wcfServiceCallback.onServiceCallCompleted(this.serviceResponse, this.sessionInformation);
     }
 
     @Override

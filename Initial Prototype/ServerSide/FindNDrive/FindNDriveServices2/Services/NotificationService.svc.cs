@@ -89,12 +89,17 @@ namespace FindNDriveServices2.Services
                 return ServiceResponseBuilder.Unauthorised(new List<Notification>());
             }
 
-            var notifications = this.findNDriveUnitOfworkWork.NotificationRepository.AsQueryable().Where(_ => _.UserId == loadRangeDTO.Id && (_.NotificationType == NotificationType.App || _.NotificationType == NotificationType.Both))
-                .OrderByDescending(x => x.ReceivedOnDate).ToList();
+            var notifications =
+                this.findNDriveUnitOfworkWork.NotificationRepository.AsQueryable()
+                    .Where(
+                        _ =>
+                        _.UserId == loadRangeDTO.Id
+                        && (_.NotificationType == NotificationType.App || _.NotificationType == NotificationType.Both))
+                    .OrderByDescending(x => x.ReceivedOnDate)
+                    .Skip(loadRangeDTO.Skip)
+                    .Take(loadRangeDTO.Take);
 
-            notifications = LoadRangeHelper<Notification>.GetValidRange(notifications, loadRangeDTO.Index, loadRangeDTO.Count, loadRangeDTO.LoadMoreData);
-           
-            return ServiceResponseBuilder.Success(notifications);
+            return ServiceResponseBuilder.Success(notifications.ToList());
         }
 
         /// <summary>

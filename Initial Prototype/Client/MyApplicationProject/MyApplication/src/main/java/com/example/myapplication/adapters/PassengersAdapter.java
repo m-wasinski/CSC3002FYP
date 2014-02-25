@@ -11,8 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.myapplication.R;
+import com.example.myapplication.app_management.AppManager;
 import com.example.myapplication.domain_objects.User;
-import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.interfaces.WCFImageRetrieved;
 import com.example.myapplication.network_tasks.WcfPictureServiceTask;
 
@@ -26,15 +26,15 @@ public class PassengersAdapter extends ArrayAdapter<User> {
     private ArrayList<User> passengers;
     private Context context;
     private int resourceId;
-    private FindNDriveManager findNDriveManager;
+    private AppManager appManager;
 
-    public PassengersAdapter(FindNDriveManager findNDriveManager, Context context, int resourceId, ArrayList<User> passengers) {
+    public PassengersAdapter(AppManager appManager, Context context, int resourceId, ArrayList<User> passengers) {
         super(context, resourceId, passengers);
 
         this.context = context;
         this.passengers = passengers;
         this.resourceId = resourceId;
-        this.findNDriveManager = findNDriveManager;
+        this.appManager = appManager;
     }
 
     @Override
@@ -60,8 +60,8 @@ public class PassengersAdapter extends ArrayAdapter<User> {
 
         passengerHolder.nameTextView.setText(passenger.getFirstName() + " " + passenger.getLastName() + " ("+passenger.getUserName()+")");
 
-        new WcfPictureServiceTask(this.findNDriveManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
-                passenger.getProfilePictureId(), this.findNDriveManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+        new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
+                passenger.getProfilePictureId(), this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
             @Override
             public void onImageRetrieved(Bitmap bitmap) {
                 if(bitmap != null)

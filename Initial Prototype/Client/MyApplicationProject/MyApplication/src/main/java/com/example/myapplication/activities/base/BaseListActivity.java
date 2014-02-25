@@ -10,7 +10,7 @@ import android.view.MenuItem;
 
 import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.HomeActivity;
-import com.example.myapplication.experimental.FindNDriveManager;
+import com.example.myapplication.app_management.AppManager;
 import com.google.gson.Gson;
 
 /**
@@ -18,7 +18,7 @@ import com.google.gson.Gson;
  */
 public class BaseListActivity extends ListActivity
 {
-    protected FindNDriveManager findNDriveManager;
+    protected AppManager appManager;
     protected Gson gson;
     protected ActionBar actionBar;
 
@@ -35,7 +35,7 @@ public class BaseListActivity extends ListActivity
         super.onCreate(savedInstanceState);
 
         // Initialise local variables.
-        this.findNDriveManager = ((FindNDriveManager)getApplication());
+        this.appManager = ((AppManager)getApplication());
         this.gson = new Gson();
         //getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
@@ -64,7 +64,7 @@ public class BaseListActivity extends ListActivity
                 startActivity(intent);
                 break;
             case R.id.logout_menu_option:
-                findNDriveManager.logout(true, true);
+                appManager.logout(true, true);
                 break;
             default:
                 return super.onOptionsItemSelected(item);

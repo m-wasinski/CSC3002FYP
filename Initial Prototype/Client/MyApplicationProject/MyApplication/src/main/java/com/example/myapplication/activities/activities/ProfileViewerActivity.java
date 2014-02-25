@@ -2,7 +2,6 @@ package com.example.myapplication.activities.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -14,12 +13,12 @@ import android.widget.TextView;
 import com.example.myapplication.R;
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.constants.IntentConstants;
-import com.example.myapplication.constants.TokenTypes;
 import com.example.myapplication.domain_objects.User;
-import com.example.myapplication.experimental.DateTimeHelper;
+import com.example.myapplication.utilities.DateTimeHelper;
 import com.example.myapplication.interfaces.WCFImageRetrieved;
 import com.example.myapplication.network_tasks.WcfPictureServiceTask;
 import com.example.myapplication.utilities.Utilities;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * Created by Michal on 19/02/14.
@@ -61,7 +60,7 @@ public class ProfileViewerActivity extends BaseActivity implements WCFImageRetri
         this.setContentView(R.layout.activity_profile_viewer);
 
         // Initialise local variables.
-        this.user = gson.fromJson(getIntent().getStringExtra(IntentConstants.USER), TokenTypes.getUserToken());
+        this.user = gson.fromJson(getIntent().getStringExtra(IntentConstants.USER), new TypeToken<User>() {}.getType());
         this.setTitle(this.user.getUserName());
 
         //Initialise UI elements.
@@ -116,8 +115,8 @@ public class ProfileViewerActivity extends BaseActivity implements WCFImageRetri
 
     private void getProfilePicture()
     {
-        new WcfPictureServiceTask(this.findNDriveManager.getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
-                this.user.getUserId(), this.findNDriveManager.getAuthorisationHeaders(), this).execute();
+        new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
+                this.user.getUserId(), this.appManager.getAuthorisationHeaders(), this).execute();
     }
 
     @Override

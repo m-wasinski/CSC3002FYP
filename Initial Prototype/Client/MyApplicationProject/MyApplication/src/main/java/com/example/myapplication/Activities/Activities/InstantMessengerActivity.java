@@ -1,14 +1,10 @@
 package com.example.myapplication.activities.activities;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
@@ -21,12 +17,13 @@ import com.example.myapplication.adapters.ChatAdapter;
 import com.example.myapplication.constants.BroadcastTypes;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
+import com.example.myapplication.constants.WcfConstants;
 import com.example.myapplication.domain_objects.ChatMessage;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.dtos.ChatMessageRetrieverDTO;
 import com.example.myapplication.R;
 import com.example.myapplication.dtos.LoadRangeDTO;
-import com.example.myapplication.experimental.DateTimeHelper;
+import com.example.myapplication.utilities.DateTimeHelper;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.notification_management.NotificationProcessor;
@@ -34,11 +31,12 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 
 /**
  * Created by Michal on 04/01/14.
  */
-public class InstantMessengerActivity extends BaseListActivity {
+public class InstantMessengerActivity extends BaseListActivity  implements AbsListView.OnScrollListener{
     /** Called when the activity is first created. */
 
     private ArrayList<ChatMessage> chatMessages;
@@ -55,28 +53,33 @@ public class InstantMessengerActivity extends BaseListActivity {
 
     private Button sendButton;
 
-    private Button loadMoreButton;
+    private int currentScrollIndex;
+    private int currentScrollTop;
 
-    private Boolean loadMoreData = false;
+    private int previousTotalListViewItemCount;
+    private int previousFirstVisibleItem;
+    private int previousVisibleItemCount;
 
-    private int currentScrollPosition;
+    private boolean requestMoreData;
+    private boolean callInProgress;
 
-    private final String TAG = this.getClass().getSimpleName();
+    private final String TAG = "Instant Messenger Activity";
 
     protected void onResume() {
         super.onResume();
+
         this.progressBar.setVisibility(View.VISIBLE);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BroadcastTypes.BROADCAST_INSTANT_MESSENGER);
         intentFilter.setPriority(1000);
-        registerReceiver(GCMReceiver, intentFilter);
+        registerReceiver(MessageReceiver, intentFilter);
         this.getUnreadMessages();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(GCMReceiver);
+        unregisterReceiver(MessageReceiver);
     }
 
     @Override
@@ -92,14 +95,13 @@ public class InstantMessengerActivity extends BaseListActivity {
 
         if(notification != null)
         {
-            new NotificationProcessor().MarkDelivered(this, findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
 
                 }
             });
         }
-
 
         ChatMessage chatMessage = this.gson.fromJson(extras.getString(IntentConstants.PAYLOAD) ,new TypeToken<ChatMessage>() {}.getType());
 
@@ -111,13 +113,12 @@ public class InstantMessengerActivity extends BaseListActivity {
         this.progressBar = (ProgressBar) this.findViewById(R.id.ActivityInstantMessengerProgressBar);
         this.sendButton = (Button) this.findViewById(R.id.InstantMessengerActivityButton);
         this.messageEditText = (EditText) this.findViewById(R.id.InstantMessengerActivityMessageEditText);
-        this.loadMoreButton = (Button) this.findViewById(R.id.InstantMessengerActivityLoadMoreButton);
 
         // Setup event handlers.
         this.setupEventHandlers();
 
         this.chatMessages = new ArrayList<ChatMessage>();
-        this.chatAdapter = new ChatAdapter(this, chatMessages, findNDriveManager.getUser().getUserId());
+        this.chatAdapter = new ChatAdapter(this, chatMessages, appManager.getUser().getUserId());
         this.setListAdapter(chatAdapter);
         this.retrieveMessages();
 
@@ -134,40 +135,20 @@ public class InstantMessengerActivity extends BaseListActivity {
             }
         });
 
-        this.loadMoreButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loadMoreButton.setEnabled(false);
-                progressBar.setVisibility(View.VISIBLE);
-                currentScrollPosition = getListView().getLastVisiblePosition();
-                loadMoreData = true;
-                retrieveMessages();
-            }
-        });
-
-        this.getListView().setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView absListView, int i) {
-            }
-
-            @Override
-            public void onScroll(AbsListView absListView,  int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                loadMoreButton.setVisibility(firstVisibleItem == 0 && getListView().getCount() >= findNDriveManager.getItemsPerCall() ? View.VISIBLE : View.GONE);
-                getListView().setPadding(0, loadMoreButton.getVisibility() == View.VISIBLE ? loadMoreButton.getHeight() : 0, 0, 0);
-            }
-        });
+        this.getListView().setOnScrollListener(this);
     }
 
     private void getUnreadMessages() {
         new WcfPostServiceTask<ChatMessageRetrieverDTO>(this, getResources().getString(R.string.GetUnreadMessages),
-                new ChatMessageRetrieverDTO(recipientId, findNDriveManager.getUser().getUserId(),
-                        new LoadRangeDTO(findNDriveManager.getUser().getUserId(), getListView().getCount(), findNDriveManager.getItemsPerCall(), loadMoreData)),
+                new ChatMessageRetrieverDTO(recipientId, appManager.getUser().getUserId(),
+                        new LoadRangeDTO(appManager.getUser().getUserId(), 0,0)),
                 new TypeToken<ServiceResponse<ArrayList<ChatMessage>>>() {}.getType(),
-                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<ChatMessage>, Void>() {
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<ChatMessage>, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<ArrayList<ChatMessage>> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {
+                    Log.i(TAG, "Successfully retrieved: "+ serviceResponse.Result.size() + " unread messages.");
                     messagesRetrieved(serviceResponse.Result);
                 }
 
@@ -178,8 +159,8 @@ public class InstantMessengerActivity extends BaseListActivity {
     private void sendMessage()
     {
         this.progressBar.setVisibility(View.VISIBLE);
-        final ChatMessage newMessage = new ChatMessage(findNDriveManager.getUser().getUserId(), recipientId, messageEditText.getText().toString(),
-                DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime()), false, recipientUserName, findNDriveManager.getUser().getUserName());
+        final ChatMessage newMessage = new ChatMessage(appManager.getUser().getUserId(), recipientId, messageEditText.getText().toString(),
+                DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime()), false, recipientUserName, appManager.getUser().getUserName());
 
         if(newMessage.MessageBody.length() > 0 )
         {
@@ -187,7 +168,7 @@ public class InstantMessengerActivity extends BaseListActivity {
 
             new WcfPostServiceTask<ChatMessage>(this, getResources().getString(R.string.SendMessageURL), newMessage,
                     new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
-                    findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+                    appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                     if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -211,16 +192,17 @@ public class InstantMessengerActivity extends BaseListActivity {
 
     private void retrieveMessages()
     {
-        new WcfPostServiceTask<ChatMessageRetrieverDTO>(this, getResources().getString(R.string.GetMessagesURL), new ChatMessageRetrieverDTO(findNDriveManager.getUser().getUserId(), recipientId,
-                new LoadRangeDTO(findNDriveManager.getUser().getUserId(), getListView().getCount(), findNDriveManager.getItemsPerCall(), loadMoreData)),
+        this.callInProgress = true;
+        new WcfPostServiceTask<ChatMessageRetrieverDTO>(this, getResources().getString(R.string.GetMessagesURL), new ChatMessageRetrieverDTO(appManager.getUser().getUserId(), recipientId,
+                new LoadRangeDTO(appManager.getUser().getUserId(), this.getListView().getCount(),WcfConstants.MessagesPerCall)),
                 new TypeToken<ServiceResponse<ArrayList<ChatMessage>>>() {}.getType(),
-                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<ChatMessage>, Void>() {
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<ChatMessage>, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<ArrayList<ChatMessage>> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {
-                    loadMoreButton.setText(serviceResponse.Result.size() < findNDriveManager.getItemsPerCall() ? "No more data to load" : "Show more");
-                    loadMoreButton.setEnabled(!(serviceResponse.Result.size() < findNDriveManager.getItemsPerCall()));
+                    Collections.reverse(serviceResponse.Result);
+                    Log.i(TAG, "Successfully retrieved: "+ serviceResponse.Result.size() + " messages.");
                     messagesRetrieved(serviceResponse.Result);
                 }
 
@@ -250,7 +232,7 @@ public class InstantMessengerActivity extends BaseListActivity {
             }
         }
 
-        if(this.loadMoreData)
+        if(this.requestMoreData)
         {
             for(int i = 0; i < filteredMessages.size(); i++)
             {
@@ -263,11 +245,21 @@ public class InstantMessengerActivity extends BaseListActivity {
         }
 
         this.chatAdapter.notifyDataSetInvalidated();
-        this.getListView().setSelection(this.loadMoreData ? this.currentScrollPosition : this.getListView().getLastVisiblePosition());
-        this.loadMoreData = false;
+
+        if(this.requestMoreData)
+        {
+            this.getListView().setSelectionFromTop(currentScrollIndex, currentScrollTop);
+        }
+        else
+        {
+            this.getListView().setSelection(chatMessages.size());
+        }
+
+        this.requestMoreData = false;
+        this.callInProgress = false;
     }
 
-    private final BroadcastReceiver GCMReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver MessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -282,17 +274,13 @@ public class InstantMessengerActivity extends BaseListActivity {
                     return;
                 }
             }
-            if(findNDriveManager.getUser().getUserId() == chatMessage.RecipientId && chatMessage.SenderId == recipientId)
+
+            if(appManager.getUser().getUserId() == chatMessage.RecipientId && chatMessage.SenderId == recipientId)
             {
                 addNewMessage(chatMessage);
                 markMessageAsRead(chatMessage);
+                this.abortBroadcast();
             }
-            else
-            {
-                ohShitThisIsNotMyMessage(chatMessage);
-            }
-
-            this.abortBroadcast();
         }
     };
 
@@ -300,7 +288,7 @@ public class InstantMessengerActivity extends BaseListActivity {
     {
         new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.MarkMessageAsReadURL),chatMessage.ChatMessageId,
                 new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
-                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -312,30 +300,28 @@ public class InstantMessengerActivity extends BaseListActivity {
         }).execute();
     }
 
-    private void ohShitThisIsNotMyMessage(ChatMessage chatMessage)
+    @Override
+    public void onScrollStateChanged(AbsListView absListView, int i) {}
+
+    @Override
+    public void onScroll(AbsListView absListView,  int firstVisibleItem, int visibleItemCount, int totalItemCount)
     {
-        NotificationManager mNotificationManager = (NotificationManager)
-                this.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (this.previousTotalListViewItemCount == totalItemCount || this.previousVisibleItemCount == visibleItemCount || this.callInProgress)
+        {
+            return;
+        }
 
-        Bundle extras = new Bundle();
-        extras.putString(IntentConstants.RECIPIENT_USERNAME, chatMessage.SenderUserName);
-        extras.putInt(IntentConstants.RECIPIENT_ID, chatMessage.SenderId);
-
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, InstantMessengerActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        .putExtras(extras), 0);
-
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.logo)
-                        .setContentTitle("Message from " + chatMessage.SenderUserName)
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(chatMessage.MessageBody))
-                        .setContentText(chatMessage.MessageBody);
-
-        mBuilder.setContentIntent(contentIntent);
-        Notification notification = mBuilder.build();
-        notification.flags = Notification.DEFAULT_LIGHTS | Notification.FLAG_AUTO_CANCEL;
-
-        mNotificationManager.notify(0, notification);
+        if(firstVisibleItem == 0)
+        {
+            Log.i(TAG, "ListView at top!");
+            this.previousTotalListViewItemCount = totalItemCount;
+            this.previousFirstVisibleItem = firstVisibleItem;
+            this.previousVisibleItemCount = visibleItemCount;
+            this.currentScrollIndex = this.getListView().getFirstVisiblePosition();
+            View v = this.getListView().getChildAt(0);
+            this.currentScrollTop= (v == null) ? 0 : v.getTop();
+            this.requestMoreData = true;
+            this.retrieveMessages();
+        }
     }
 }

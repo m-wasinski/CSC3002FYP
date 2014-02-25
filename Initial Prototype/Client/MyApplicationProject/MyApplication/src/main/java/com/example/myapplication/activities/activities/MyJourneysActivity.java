@@ -7,10 +7,10 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -21,10 +21,11 @@ import com.example.myapplication.adapters.JourneyAdapter;
 import com.example.myapplication.constants.BroadcastTypes;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
+import com.example.myapplication.constants.WcfConstants;
 import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.dtos.LoadRangeDTO;
 import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.experimental.WakeLocker;
+import com.example.myapplication.utilities.WakeLocker;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.R;
@@ -36,7 +37,8 @@ import java.util.ArrayList;
  * Created by Michal on 27/11/13.
  */
 
-public class MyJourneysActivity extends BaseActivity implements WCFServiceCallback<ArrayList<Journey>, String>  {
+public class MyJourneysActivity extends BaseActivity implements WCFServiceCallback<ArrayList<Journey>, String>,
+        AbsListView.OnScrollListener, AdapterView.OnItemClickListener, TextWatcher {
 
     private EditText filterEditText;
 
@@ -46,13 +48,17 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
 
     private ProgressBar progressBar;
 
-    private Button loadMoreButton;
-
     private ArrayList<Journey> myJourneys;
 
-    private int currentScrollPosition;
+    private int currentScrollIndex;
 
-    private Boolean pollMoreData = false;
+    private int currentScrollTop;
+
+    private TextView noJourneysTextView;
+
+    private boolean requestMoreData;
+
+    private int previousTotalListViewItemCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,13 +69,14 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
         this.myJourneys = new ArrayList<Journey>();
 
         // Initialise UI elements.
-        this.filterEditText = (EditText) findViewById(R.id.ActivityHomeFilterEditText);
-        this.myJourneysListView = (ListView) findViewById(R.id.MyCarSharesListView);
-        this.journeyAdapter = new JourneyAdapter(this, R.layout.listview_row_my_journey, myJourneys, this.findNDriveManager);
+        this.filterEditText = (EditText) this.findViewById(R.id.ActivityHomeFilterEditText);
+        this.myJourneysListView = (ListView) this.findViewById(R.id.MyCarSharesListView);
+        this.myJourneysListView.setScrollingCacheEnabled(false);
+        this.journeyAdapter = new JourneyAdapter(this, R.layout.listview_row_my_journey, myJourneys, this.appManager);
         this.journeyAdapter.getFilter().filter(filterEditText.getText().toString());
         this.myJourneysListView.setAdapter(journeyAdapter);
-        this.loadMoreButton = (Button) findViewById(R.id.ActivityMyJourneysLoadMoreButton);
-        this.progressBar = (ProgressBar) findViewById(R.id.ActivityMyJourneysProgressBar);
+        this.progressBar = (ProgressBar) this.findViewById(R.id.ActivityMyJourneysProgressBar);
+        this.noJourneysTextView = (TextView) this.findViewById(R.id.MyCarSharesNoJourneysTextView);
 
         // Setup all event handlers for UI elements.
         this.setupEventHandlers();
@@ -77,52 +84,8 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
 
     private void setupEventHandlers()
     {
-        this.loadMoreButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                currentScrollPosition = myJourneysListView.getFirstVisiblePosition();
-                pollMoreData = true;
-                retrieveJourneys();
-            }
-        });
-
-        this.myJourneysListView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView absListView, int i) {
-
-            }
-
-            @Override
-            public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                int lastItem = firstVisibleItem + visibleItemCount;
-                if (lastItem == totalItemCount && totalItemCount > 0 && myJourneysListView.getCount() >= findNDriveManager.getItemsPerCall()) {
-                    // Last item is fully visible.
-                    loadMoreButton.setVisibility(View.VISIBLE);
-                    myJourneysListView.setPadding(0, 0, 0, loadMoreButton.getHeight());
-                } else {
-                    loadMoreButton.setVisibility(View.GONE);
-                    myJourneysListView.setPadding(0, 0, 0, 0);
-                }
-            }
-        });
-
-        this.filterEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-                journeyAdapter.getFilter().filter(charSequence.toString());
-                myJourneysListView.setAdapter(journeyAdapter);
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
+        this.myJourneysListView.setOnScrollListener(this);
+        this.filterEditText.addTextChangedListener(this);
     }
 
     @Override
@@ -130,96 +93,132 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
         super.onResume();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BroadcastTypes.BROADCAST_ACTION_REFRESH);
-        registerReceiver(GCMReceiver, intentFilter);
+        registerReceiver(RefreshBroadcastReceiver, intentFilter);
+        this.requestMoreData = this.myJourneysListView.getCount() == 0;
         this.retrieveJourneys();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        this.unregisterReceiver(GCMReceiver);
+        this.unregisterReceiver(RefreshBroadcastReceiver);
     }
 
+    /*
+     * Called when list of journeys is retrieved from the server.
+     */
     @Override
     public void onServiceCallCompleted(final ServiceResponse<ArrayList<Journey>> serviceResponse, String s) {
-        TextView noJourneysTextView = (TextView) this.findViewById(R.id.MyCarSharesNoJourneysTextView);
 
         this.progressBar.setVisibility(View.GONE);
-        this.loadMoreButton.setEnabled(true);
 
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
-            if(serviceResponse.Result.size() == 0 && myJourneysListView.getCount() == 0)
+            Log.i("My Journeys Activity:", "Retrieved " + serviceResponse.Result.size() + " journeys.");
+
+            if(serviceResponse.Result.size() == 0 && this.myJourneysListView.getCount() == 0)
             {
-                noJourneysTextView.setVisibility(View.VISIBLE);
+                this.noJourneysTextView.setVisibility(View.VISIBLE);
                 this.myJourneysListView.setVisibility(View.GONE);
             }
             else
             {
-                if(serviceResponse.Result.size() < findNDriveManager.getItemsPerCall())
+                if(!this.requestMoreData)
                 {
-                    this.loadMoreButton.setText("No more data to load");
-                    this.loadMoreButton.setEnabled(false);
-                }
-
-                noJourneysTextView.setVisibility(View.GONE);
-
-                this.myJourneysListView.setVisibility(View.VISIBLE);
-                this.filterEditText.setEnabled(true);
-
-                if(this.pollMoreData)
-                {
-                    this.myJourneys.addAll(myJourneys.size() == 0 ? 0 : myJourneys.size(), serviceResponse.Result);
-                    this.pollMoreData = false;
+                    this.myJourneys.clear();
                 }
                 else
                 {
-                    this.myJourneys.clear();
-                    this.myJourneys.addAll(serviceResponse.Result);
+                    this.myJourneysListView.setSelectionFromTop(currentScrollIndex, currentScrollTop);
                 }
 
+                this.myJourneys.addAll(serviceResponse.Result);
                 this.journeyAdapter.notifyDataSetInvalidated();
-
-                this.myJourneysListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                        Bundle extras = new Bundle();
-                        extras.putInt(IntentConstants.NEW_JOURNEY_MESSAGES,Integer.parseInt(((TextView)view.findViewById(R.id.MyCarSharesNumberOfUnreadMessagesTextView)).getText().toString()));
-                        extras.putInt(IntentConstants.NEW_JOURNEY_REQUESTS,Integer.parseInt(((TextView)view.findViewById(R.id.MyCarSharesNumberOfUnreadRequestsTextView)).getText().toString()));
-                        extras.putString(IntentConstants.JOURNEY, gson.toJson(myJourneys.get(i)));
-                        Intent intent = new Intent(getApplicationContext(), JourneyDetailsActivity.class);
-                        intent.putExtras(extras);
-                        startActivity(intent);
-
-                    }
-                });
-                this.myJourneysListView.setSelectionFromTop(currentScrollPosition, 0);
+                this.noJourneysTextView.setVisibility(View.GONE);
+                this.myJourneysListView.setVisibility(View.VISIBLE);
+                this.filterEditText.setEnabled(true);
+                this.myJourneysListView.setOnItemClickListener(this);
+                this.requestMoreData = false;
             }
-
-
         }
     }
 
     private void retrieveJourneys()
     {
-        this.loadMoreButton.setEnabled(false);
-        progressBar.setVisibility(View.VISIBLE);
-        new WcfPostServiceTask<LoadRangeDTO>(this, getResources().getString(R.string.GetAllJourneysURL), new LoadRangeDTO(findNDriveManager.getUser().getUserId(), myJourneysListView.getCount(), findNDriveManager.getItemsPerCall(), pollMoreData),
+        this.progressBar.setVisibility(View.VISIBLE);
+        new WcfPostServiceTask<LoadRangeDTO>(this, getResources().getString(R.string.GetAllJourneysURL),
+                new LoadRangeDTO(appManager.getUser().getUserId(),
+                        this.requestMoreData ? myJourneysListView.getCount() : 0, this.requestMoreData ? WcfConstants.JourneysPerCall : myJourneysListView.getCount()),
                 new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(),
-                findNDriveManager.getAuthorisationHeaders(), this).execute();
+                appManager.getAuthorisationHeaders(), this).execute();
     }
 
     /**
-     * Receiving push messages
+     * Receiver which listens for incoming refresh requests.
      * */
-    private final BroadcastReceiver GCMReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver RefreshBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             WakeLocker.acquire(getApplicationContext());
+            requestMoreData = false;
             retrieveJourneys();
             WakeLocker.release();
         }
     };
 
+    @Override
+    public void onScrollStateChanged(AbsListView absListView, int i) {
+
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+    {
+        if (totalItemCount == 0)
+        {
+            return;
+        }
+
+        if (this.previousTotalListViewItemCount == totalItemCount)
+        {
+            return;
+        }
+
+        if(firstVisibleItem + visibleItemCount >= totalItemCount)
+        {
+            this.previousTotalListViewItemCount = totalItemCount;
+            this.requestMoreData = true;
+            this.currentScrollIndex = this.myJourneysListView.getFirstVisiblePosition();
+            View v = this.myJourneysListView.getChildAt(0);
+            this.currentScrollTop= (v == null) ? 0 : v.getTop();
+
+            this.retrieveJourneys();
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
+    {
+        Bundle extras = new Bundle();
+        extras.putInt(IntentConstants.NEW_JOURNEY_MESSAGES,Integer.parseInt(((TextView)view.findViewById(R.id.MyCarSharesNumberOfUnreadMessagesTextView)).getText().toString()));
+        extras.putInt(IntentConstants.NEW_JOURNEY_REQUESTS,Integer.parseInt(((TextView)view.findViewById(R.id.MyCarSharesNumberOfUnreadRequestsTextView)).getText().toString()));
+        extras.putString(IntentConstants.JOURNEY, gson.toJson(this.myJourneys.get(i)));
+        this.startActivity(new Intent(this, JourneyDetailsActivity.class).putExtras(extras));
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+        this.journeyAdapter.getFilter().filter(charSequence.toString());
+        this.myJourneysListView.setAdapter(journeyAdapter);
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+
+    }
 }

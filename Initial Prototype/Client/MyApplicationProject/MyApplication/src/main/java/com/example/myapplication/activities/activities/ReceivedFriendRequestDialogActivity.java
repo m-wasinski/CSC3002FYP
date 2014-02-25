@@ -13,7 +13,6 @@ import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.constants.FriendRequestDecisions;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.constants.TokenTypes;
 import com.example.myapplication.domain_objects.FriendRequest;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
@@ -46,11 +45,11 @@ public class ReceivedFriendRequestDialogActivity extends BaseActivity {
         Bundle bundle = getIntent().getExtras();
 
         this.notification =  gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),  new TypeToken<Notification>() {}.getType());
-        this.friendRequest =  gson.fromJson(bundle.getString(IntentConstants.FRIEND_REQUEST), TokenTypes.getFriendRequestToken());
+        this.friendRequest =  gson.fromJson(bundle.getString(IntentConstants.FRIEND_REQUEST), new TypeToken<FriendRequest>() {}.getType());
 
         if(this.notification != null)
         {
-            new NotificationProcessor().MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+            new NotificationProcessor().MarkDelivered(this, this.appManager, notification, new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                     Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
@@ -103,7 +102,7 @@ public class ReceivedFriendRequestDialogActivity extends BaseActivity {
 
         new WcfPostServiceTask<FriendRequest>(this,
                 getResources().getString(R.string.ProcessFriendRequestDecisionURL), friendRequest,
-                new TypeToken<ServiceResponse<Boolean>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+                new TypeToken<ServiceResponse<Boolean>>() {}.getType(), appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)

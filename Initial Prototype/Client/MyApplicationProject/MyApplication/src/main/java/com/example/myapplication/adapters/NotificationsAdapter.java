@@ -3,7 +3,6 @@ package com.example.myapplication.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +12,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.myapplication.app_management.AppManager;
 import com.example.myapplication.domain_objects.Notification;
-import com.example.myapplication.experimental.DateTimeHelper;
+import com.example.myapplication.utilities.DateTimeHelper;
 import com.example.myapplication.R;
-import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.interfaces.WCFImageRetrieved;
 import com.example.myapplication.network_tasks.WcfPictureServiceTask;
 
@@ -30,11 +29,11 @@ public class NotificationsAdapter extends ArrayAdapter<Notification> {
     private Context context;
     private int layoutResourceId;
     private ArrayList<Notification> notifications;
-    private FindNDriveManager findNDriveManager;
+    private AppManager appManager;
 
-    public NotificationsAdapter(FindNDriveManager findNDriveManager, Context context, int resource, ArrayList<Notification> notifications) {
+    public NotificationsAdapter(AppManager appManager, Context context, int resource, ArrayList<Notification> notifications) {
         super(context, resource, notifications);
-        this.findNDriveManager = findNDriveManager;
+        this.appManager = appManager;
         this.layoutResourceId = resource;
         this.context = context;
         this.notifications = notifications;
@@ -74,8 +73,8 @@ public class NotificationsAdapter extends ArrayAdapter<Notification> {
 
         if(notification.ProfilePictureId != -1)
         {
-            new WcfPictureServiceTask(this.findNDriveManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
-                    notification.ProfilePictureId, this.findNDriveManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+            new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
+                    notification.ProfilePictureId, this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
                 @Override
                 public void onImageRetrieved(Bitmap bitmap) {
                     if(bitmap != null)

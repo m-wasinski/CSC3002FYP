@@ -1,12 +1,9 @@
 package com.example.myapplication.activities.activities;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -15,8 +12,8 @@ import com.example.myapplication.R;
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.domain_objects.Journey;
-import com.example.myapplication.experimental.DateTimeHelper;
-import com.example.myapplication.experimental.DialogCreator;
+import com.example.myapplication.utilities.DateTimeHelper;
+import com.example.myapplication.utilities.DialogCreator;
 import com.example.myapplication.interfaces.WCFImageRetrieved;
 import com.example.myapplication.network_tasks.WcfPictureServiceTask;
 import com.example.myapplication.utilities.Utilities;
@@ -112,8 +109,8 @@ public class JourneySummaryActivity extends BaseActivity implements WCFImageRetr
 
     private void getDriverPicture()
     {
-        new WcfPictureServiceTask(this.findNDriveManager.getBitmapLruCache(), this.getResources().getString(R.string.GetProfilePictureURL),
-                this.journey.DriverId, this.findNDriveManager.getAuthorisationHeaders(), this).execute();
+        new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), this.getResources().getString(R.string.GetProfilePictureURL),
+                this.journey.DriverId, this.appManager.getAuthorisationHeaders(), this).execute();
     }
 
     @Override

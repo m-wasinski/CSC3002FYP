@@ -8,11 +8,9 @@ import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.domain_objects.MarkerType;
-import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.experimental.BackupGeocoder;
-import com.example.myapplication.experimental.GeocoderParams;
+import com.example.myapplication.enums.MarkerType;
+import com.example.myapplication.google_maps_utilities.BackupGeocoder;
+import com.example.myapplication.google_maps_utilities.GeocoderParams;
 import com.example.myapplication.interfaces.GeoCoderFinishedCallBack;
 import com.example.myapplication.utilities.Utilities;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;

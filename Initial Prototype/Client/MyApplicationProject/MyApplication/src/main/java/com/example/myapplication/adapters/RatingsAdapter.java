@@ -3,23 +3,19 @@ package com.example.myapplication.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.domain_objects.Journey;
+import com.example.myapplication.app_management.AppManager;
 import com.example.myapplication.domain_objects.Rating;
-import com.example.myapplication.experimental.DateTimeHelper;
-import com.example.myapplication.experimental.FindNDriveManager;
+import com.example.myapplication.utilities.DateTimeHelper;
 import com.example.myapplication.interfaces.WCFImageRetrieved;
 import com.example.myapplication.network_tasks.WcfPictureServiceTask;
-import com.example.myapplication.utilities.Utilities;
 
 import java.util.ArrayList;
 
@@ -31,13 +27,13 @@ public class RatingsAdapter  extends ArrayAdapter<Rating>{
     private Context context;
     private int layoutResourceId;
     private ArrayList<Rating> ratings;
-    private FindNDriveManager findNDriveManager;
-    public RatingsAdapter(Context context, int resource, ArrayList<Rating> ratings, FindNDriveManager findNDriveManager) {
+    private AppManager appManager;
+    public RatingsAdapter(Context context, int resource, ArrayList<Rating> ratings, AppManager appManager) {
         super(context, resource, ratings);
         this.layoutResourceId = resource;
         this.context = context;
         this.ratings = ratings;
-        this.findNDriveManager = findNDriveManager;
+        this.appManager = appManager;
     }
 
     @Override
@@ -74,8 +70,8 @@ public class RatingsAdapter  extends ArrayAdapter<Rating>{
 
         Rating rating = ratings.get(position);
 
-        new WcfPictureServiceTask(this.findNDriveManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
-                rating.getFromUser().getProfilePictureId(), this.findNDriveManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+        new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
+                rating.getFromUser().getProfilePictureId(), this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
             @Override
             public void onImageRetrieved(Bitmap bitmap) {
                 if(bitmap != null)

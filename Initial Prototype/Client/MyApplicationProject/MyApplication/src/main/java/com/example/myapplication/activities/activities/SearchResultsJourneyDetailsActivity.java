@@ -21,8 +21,8 @@ import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.domain_objects.JourneyRequest;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.experimental.DateTimeHelper;
-import com.example.myapplication.experimental.DialogCreator;
+import com.example.myapplication.utilities.DateTimeHelper;
+import com.example.myapplication.utilities.DialogCreator;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.notification_management.NotificationProcessor;
@@ -71,7 +71,7 @@ public class SearchResultsJourneyDetailsActivity extends BaseMapActivity impleme
 
         if(notification != null)
         {
-            new NotificationProcessor().MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+            new NotificationProcessor().MarkDelivered(this, this.appManager, notification, new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                     Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
@@ -182,8 +182,8 @@ public class SearchResultsJourneyDetailsActivity extends BaseMapActivity impleme
     private void sendRequest()
     {
         JourneyRequest journeyRequest = new JourneyRequest();
-        journeyRequest.UserId = this.findNDriveManager.getUser().getUserId();
-        journeyRequest.User = this.findNDriveManager.getUser();
+        journeyRequest.UserId = this.appManager.getUser().getUserId();
+        journeyRequest.User = this.appManager.getUser();
         journeyRequest.JourneyId = this.journey.getJourneyId();
         journeyRequest.Message = this.journeyMessageToDriverEditText.getText().toString();
         journeyRequest.Read = false;
@@ -191,7 +191,7 @@ public class SearchResultsJourneyDetailsActivity extends BaseMapActivity impleme
         journeyRequest.SentOnDate = DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime());
 
         new WcfPostServiceTask<JourneyRequest>(this, getResources().getString(R.string.SendRequestURL),
-                journeyRequest, new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), this).execute();
+                journeyRequest, new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
     }
 
     @Override

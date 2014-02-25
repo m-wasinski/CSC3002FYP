@@ -11,10 +11,7 @@ import android.support.v4.app.NotificationCompat;
 
 import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.JourneyChatActivity;
-import com.example.myapplication.constants.IntentConstants;
-import com.example.myapplication.experimental.FindNDriveManager;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.example.myapplication.app_management.AppManager;
 
 /**
  * Created by Michal on 12/02/14.
@@ -25,15 +22,11 @@ public class JourneyChatMessageReceiver extends BroadcastReceiver {
 
     public void onReceive(Context context, Intent intent) {
 
-        FindNDriveManager findNDriveManager = ((FindNDriveManager)context.getApplicationContext());
+        AppManager appManager = ((AppManager)context.getApplicationContext());
 
         Bundle bundle = intent.getExtras();
-        com.example.myapplication.domain_objects.Notification notification = new Gson().fromJson(bundle.getString(IntentConstants.NOTIFICATION),
-                new TypeToken<com.example.myapplication.domain_objects.Notification>() {}.getType());
 
-        int collapsibleKey = notification == null ? Integer.parseInt(bundle.getString("collapsibleKey")) : notification.CollapsibleKey;
-
-        int notificationId = collapsibleKey == -1 ?  (int) System.currentTimeMillis() : collapsibleKey;
+        int notificationId = Integer.parseInt(bundle.getString("collapsibleKey"));
 
         NotificationManager mNotificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -56,9 +49,9 @@ public class JourneyChatMessageReceiver extends BroadcastReceiver {
 
         mNotificationManager.notify(1, deviceNotification);
 
-        if(findNDriveManager != null)
+        if(appManager != null)
         {
-            findNDriveManager.addNotificationId(notificationId);
+            appManager.addNotificationId(notificationId);
         }
     }
 }

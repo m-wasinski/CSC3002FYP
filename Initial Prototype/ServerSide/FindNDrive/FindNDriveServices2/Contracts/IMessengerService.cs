@@ -119,5 +119,19 @@ namespace FindNDriveServices2.Contracts
         [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/markread")]
         ServiceResponse<bool> MarkAsRead(int id);
+
+        /// <summary>
+        /// The get message by id.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/get")]
+        ServiceResponse<ChatMessage> GetMessageById(int id);
     }
 }

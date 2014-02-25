@@ -22,6 +22,8 @@ namespace FindNDriveServices2.Services
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
 
+    using Microsoft.Practices.ObjectBuilder2;
+
     using Newtonsoft.Json;
 
     /// <summary>
@@ -113,7 +115,8 @@ namespace FindNDriveServices2.Services
                 GcmNotificationType.ChatMessage,
                 sendingUser.ProfilePictureId,
                 sendingUser.UserId,
-                newMessage);
+                newMessage,
+                newMessage.ChatMessageId);
 
             return ServiceResponseBuilder.Success(true);
         }
@@ -140,9 +143,7 @@ namespace FindNDriveServices2.Services
                         _ =>
                         (_.SenderId == chatMessageRetrieverDTO.SenderId
                         && _.RecipientId == chatMessageRetrieverDTO.RecipientId) || (_.SenderId == chatMessageRetrieverDTO.RecipientId && _.RecipientId == chatMessageRetrieverDTO.SenderId))
-                    .OrderBy(x => x.SentOnDate).ToList();
-
-            messages = LoadRangeHelper<ChatMessage>.GetConversations(messages, chatMessageRetrieverDTO.LoadRangeDTO.Index, chatMessageRetrieverDTO.LoadRangeDTO.Count, chatMessageRetrieverDTO.LoadRangeDTO.LoadMoreData);
+                    .OrderByDescending(x => x.SentOnDate).Skip(chatMessageRetrieverDTO.LoadRangeDTO.Skip).Take(chatMessageRetrieverDTO.LoadRangeDTO.Take);
 
             messages.ForEach(
                 delegate(ChatMessage chatMessage)
@@ -155,7 +156,7 @@ namespace FindNDriveServices2.Services
 
             this.findNDriveUnitOfWork.Commit();
 
-            return ServiceResponseBuilder.Success(messages);
+            return ServiceResponseBuilder.Success(messages.ToList());
         }
 
         /// <summary>
@@ -177,9 +178,10 @@ namespace FindNDriveServices2.Services
             var messages =
                 this.findNDriveUnitOfWork.ChatMessageRepository.AsQueryable()
                     .Where(
-                        _ => _.RecipientId == chatMessageRetrieverDTO.RecipientId && !_.Read && _.SenderId == chatMessageRetrieverDTO.SenderId ).OrderBy(x => x.SentOnDate).ToList();
-
-            messages = LoadRangeHelper<ChatMessage>.GetConversations(messages, chatMessageRetrieverDTO.LoadRangeDTO.Index, chatMessageRetrieverDTO.LoadRangeDTO.Count, chatMessageRetrieverDTO.LoadRangeDTO.LoadMoreData);
+                        _ =>
+                        _.RecipientId == chatMessageRetrieverDTO.RecipientId && !_.Read
+                        && _.SenderId == chatMessageRetrieverDTO.SenderId)
+                    .OrderBy(x => x.SentOnDate).ToList();
 
             messages.ForEach(
                 delegate(ChatMessage chatMessage)
@@ -188,6 +190,7 @@ namespace FindNDriveServices2.Services
                 });
 
             this.findNDriveUnitOfWork.Commit();
+
             return ServiceResponseBuilder.Success(messages);
         }
 
@@ -233,6 +236,22 @@ namespace FindNDriveServices2.Services
                 this.findNDriveUnitOfWork.ChatMessageRepository.AsQueryable().Count(_ => _.RecipientId == chatMessageRetrieverDTO.RecipientId && _.SenderId == chatMessageRetrieverDTO.SenderId && !_.Read);
 
             return ServiceResponseBuilder.Success(unreadMessages);
+        }
+
+        public ServiceResponse<ChatMessage> GetMessageById(int id)
+        {
+            if (!this.sessionManager.IsSessionValid())
+            {
+                return ServiceResponseBuilder.Unauthorised(new ChatMessage());
+            }
+
+            var message =
+                this.findNDriveUnitOfWork.ChatMessageRepository.Find(id);
+
+
+            return message != null
+                       ? ServiceResponseBuilder.Success(message)
+                       : ServiceResponseBuilder.Failure<ChatMessage>("Invalid message id");
         }
 
         public ServiceResponse<bool> MarkAsRead(int id)

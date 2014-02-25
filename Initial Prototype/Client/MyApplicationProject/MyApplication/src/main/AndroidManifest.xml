@@ -45,7 +45,7 @@
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
-        android:name=".experimental.FindNDriveManager">
+        android:name=".app_management.AppManager">
 
         <meta-data android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -176,7 +176,7 @@
             android:screenOrientation="portrait"/>
 
         <receiver
-            android:name=".gcm.GcmBroadcastReceiver"
+            android:name=".google_cloud_messaging.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -187,24 +187,6 @@
         <receiver android:name=".broadcast_receivers.InstantMessengerReceiver">
             <intent-filter>
                 <action android:name="BROADCAST_INSTANT_MESSENGER" />
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".broadcast_receivers.JourneyRequestReceiver">
-            <intent-filter>
-                <action android:name="BROADCAST_JOURNEY_REQUEST" />
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".broadcast_receivers.FriendRequestReceiver">
-            <intent-filter>
-                <action android:name="BROADCAST_FRIEND_REQUEST" />
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".broadcast_receivers.JourneyRequestReplyReceiver">
-            <intent-filter>
-                <action android:name="BROADCAST_JOURNEY_REQUEST_REPLY" />
             </intent-filter>
         </receiver>
 
@@ -220,8 +202,8 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".gcm.GcmIntentService" />
-        <service android:name=".experimental.FindNDriveService" />
+        <service android:name=".google_cloud_messaging.GcmIntentService" />
+        <service android:name=".app_management.GcmHeartbeatService" />
 
         <!-- Goolge API Key -->
         <meta-data

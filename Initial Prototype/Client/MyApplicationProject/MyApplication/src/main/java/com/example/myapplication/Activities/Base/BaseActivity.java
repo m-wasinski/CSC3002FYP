@@ -13,7 +13,7 @@ import android.view.MenuItem;
 import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.HomeActivity;
 import com.example.myapplication.activities.activities.LeaderboardActivity;
-import com.example.myapplication.experimental.FindNDriveManager;
+import com.example.myapplication.app_management.AppManager;
 import com.google.gson.Gson;
 
 /**
@@ -21,7 +21,7 @@ import com.google.gson.Gson;
  */
 public class BaseActivity extends Activity {
 
-    protected FindNDriveManager findNDriveManager;
+    protected AppManager appManager;
     protected Gson gson;
     protected ActionBar actionBar;
     protected final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -48,7 +48,7 @@ public class BaseActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        findNDriveManager = ((FindNDriveManager)getApplication());
+        appManager = ((AppManager)getApplication());
         gson = new Gson();
         //getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         actionBar = getActionBar();
@@ -73,7 +73,7 @@ public class BaseActivity extends Activity {
                 startActivity(new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
                 break;
             case R.id.logout_menu_option:
-                findNDriveManager.logout(true, true);
+                appManager.logout(true, true);
                 break;
             case R.id.action_show_leaderboard:
                 startActivity(new Intent(this, LeaderboardActivity.class));

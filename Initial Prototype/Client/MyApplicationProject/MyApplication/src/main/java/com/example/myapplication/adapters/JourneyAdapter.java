@@ -11,14 +11,14 @@ import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.myapplication.app_management.AppManager;
 import com.example.myapplication.constants.JourneyStatus;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.dtos.JourneyMessageRetrieverDTO;
-import com.example.myapplication.experimental.DateTimeHelper;
+import com.example.myapplication.utilities.DateTimeHelper;
 import com.example.myapplication.R;
-import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.utilities.Utilities;
@@ -35,19 +35,19 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
     private int layoutResourceId;
     private ArrayList<Journey> originalCarShares;
     private ArrayList<Journey> displayedCarShares;
-    private FindNDriveManager findNDriveManager;
+    private AppManager appManager;
     @Override
     public int getCount() {
         return displayedCarShares.size();
     }
 
-    public JourneyAdapter(Context context, int resource, ArrayList<Journey> carShares, FindNDriveManager findNDriveManager) {
+    public JourneyAdapter(Context context, int resource, ArrayList<Journey> carShares, AppManager appManager) {
         super(context, resource, carShares);
         this.layoutResourceId = resource;
         this.context = context;
         this.originalCarShares = carShares;
         this.displayedCarShares = this.originalCarShares;
-        this.findNDriveManager = findNDriveManager;
+        this.appManager = appManager;
     }
 
     @Override
@@ -81,20 +81,6 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
 
         final Journey journey = displayedCarShares.get(position);
 
-        new WcfPostServiceTask<JourneyMessageRetrieverDTO>(this.context, this.context.getResources().getString(R.string.RetrieveUnreadJourneyMessagesCountURL),
-                new JourneyMessageRetrieverDTO(journey.getJourneyId(), this.findNDriveManager.getUser().getUserId(), null),
-                new TypeToken<ServiceResponse<Integer>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
-                    @Override
-                    public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {
-                        if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
-                        {
-                            holder.unreadMessages.setText(String.valueOf(serviceResponse.Result));
-                            holder.newMessagesIconView.setImageResource(serviceResponse.Result > 0 ? R.drawable.new_journey_message : R.drawable.envelope_blue);
-                        }
-
-                    }
-        }).execute();
-
         String statusText = "";
 
         switch(journey.JourneyStatus)
@@ -117,10 +103,12 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
         holder.availableSeats.setText(String.valueOf(journey.AvailableSeats));
         holder.statusTextView.setText(statusText);
         holder.creationDateTextView.setText(DateTimeHelper.getSimpleDate(journey.CreationDate));
-        holder.modeTextView.setText(journey.DriverId == this.findNDriveManager.getUser().getUserId() ? "Driver" : "Passenger");
+        holder.modeTextView.setText(journey.DriverId == this.appManager.getUser().getUserId() ? "Driver" : "Passenger");
         holder.newRequestIcon.setImageResource(journey.UnreadRequestsCount > 0 ? R.drawable.new_notification_myjourney : R.drawable.notification_myjourney);
         holder.unreadRequests.setTypeface(null, journey.UnreadRequestsCount > 0 ? (Typeface.BOLD) : (Typeface.NORMAL));
         holder.unreadRequests.setText(""+journey.UnreadRequestsCount);
+        holder.unreadMessages.setText(String.valueOf(journey.UnreadMessagesCount));
+        holder.newMessagesIconView.setImageResource(journey.UnreadMessagesCount > 0 ? R.drawable.new_journey_message : R.drawable.envelope_blue);
 
         return row;
     }

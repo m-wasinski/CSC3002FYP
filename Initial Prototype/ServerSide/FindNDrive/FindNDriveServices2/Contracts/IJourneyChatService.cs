@@ -94,8 +94,8 @@ namespace FindNDriveServices2.Contracts
         /// <summary>
         /// The mark as read.
         /// </summary>
-        /// <param name="journeyMessageRetrieverDTO">
-        /// The journey Message Retriever DTO.
+        /// <param name="journeyMessageMarkerDTO">
+        /// The journey Message Marker DTO.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
@@ -104,5 +104,19 @@ namespace FindNDriveServices2.Contracts
         [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/markread")]
         ServiceResponse<bool> MarkAsRead(JourneyMessageMarkerDTO journeyMessageMarkerDTO);
+
+        /// <summary>
+        /// The get journey message by id.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/get")]
+        ServiceResponse<JourneyMessage> GetJourneyMessageById(int id);
     }
 }

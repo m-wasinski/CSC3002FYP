@@ -1,6 +1,5 @@
 package com.example.myapplication.activities.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,14 +17,13 @@ import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.Rating;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
-import com.example.myapplication.experimental.DialogCreator;
+import com.example.myapplication.utilities.DialogCreator;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.notification_management.NotificationProcessor;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Michal on 21/02/14.
@@ -63,7 +61,7 @@ public class RatingsActivity extends BaseActivity implements WCFServiceCallback<
 
             if(notification != null)
             {
-                new NotificationProcessor().MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+                new NotificationProcessor().MarkDelivered(this, this.appManager, notification, new WCFServiceCallback<Boolean, Void>() {
                     @Override
                     public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                         Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
@@ -89,7 +87,7 @@ public class RatingsActivity extends BaseActivity implements WCFServiceCallback<
     {
         this.progressBar.setVisibility(View.VISIBLE);
         new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetUserRatingsURL), this.user.getUserId(), new TypeToken<ServiceResponse<ArrayList<Rating>>>(){}.getType(),
-                this.findNDriveManager.getAuthorisationHeaders(), this).execute();
+                this.appManager.getAuthorisationHeaders(), this).execute();
     }
 
     @Override
@@ -102,7 +100,7 @@ public class RatingsActivity extends BaseActivity implements WCFServiceCallback<
 
             this.noRatingsTextView.setVisibility(serviceResponse.Result.size() == 0 ? View.VISIBLE : View.GONE);
             this.noRatingsTextView.setText(serviceResponse.Result.size() == 0 ? this.user.getUserName() + " has no ratings." : "");
-            this.ratingsAdapter = new RatingsAdapter(this, R.layout.listview_row_rating, serviceResponse.Result, this.findNDriveManager);
+            this.ratingsAdapter = new RatingsAdapter(this, R.layout.listview_row_rating, serviceResponse.Result, this.appManager);
             this.ratingsListView.setAdapter(ratingsAdapter);
 
             this.ratingsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

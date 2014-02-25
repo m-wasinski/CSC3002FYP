@@ -68,7 +68,6 @@
     <Compile Include="Domains\FriendRequest.cs" />
     <Compile Include="Domains\Journey.cs" />
     <Compile Include="Constants\Gender.cs" />
-    <Compile Include="Constants\Roles.cs" />
     <Compile Include="Constants\VehicleTypes.cs" />
     <Compile Include="Domains\JourneyMessage.cs" />
     <Compile Include="Domains\JourneyRequest.cs" />

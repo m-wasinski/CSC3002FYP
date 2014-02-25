@@ -12,12 +12,12 @@ import com.example.myapplication.R;
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.constants.TokenTypes;
 import com.example.myapplication.domain_objects.FriendRequest;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * Created by Michal on 10/02/14.
@@ -37,7 +37,7 @@ public class SendFriendRequestDialogActivity extends BaseActivity implements WCF
         this.setContentView(R.layout.activity_send_friend_request);
 
         //Initialise local variables.
-        this.targetUser = this.gson.fromJson(getIntent().getExtras().getString(IntentConstants.USER), TokenTypes.getUserToken());
+        this.targetUser = this.gson.fromJson(getIntent().getExtras().getString(IntentConstants.USER), new TypeToken<User>() {}.getType());
 
         //Initialise UI elements.
         this.messageEditText = (EditText) this.findViewById(R.id.SendFriendRequestActivityMessageEditText);
@@ -64,11 +64,11 @@ public class SendFriendRequestDialogActivity extends BaseActivity implements WCF
         FriendRequest friendRequest = new FriendRequest();
         friendRequest.Message = this.messageEditText.getText().toString();
         friendRequest.TargetUserId = this.targetUser.getUserId();
-        friendRequest.RequestingUserId = this.findNDriveManager.getUser().getUserId();
+        friendRequest.RequestingUserId = this.appManager.getUser().getUserId();
 
         new WcfPostServiceTask<FriendRequest>(this,
                 this.getResources().getString(R.string.SendFriendRequestURL), friendRequest,
-                TokenTypes.getServiceResponseBooleanToken(), findNDriveManager.getAuthorisationHeaders(), this).execute();
+                new TypeToken<ServiceResponse<Boolean>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
     }
 
     @Override

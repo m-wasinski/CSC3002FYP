@@ -15,7 +15,6 @@ import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.JourneyRequestDecisions;
 import com.example.myapplication.constants.RequestDecision;
 import com.example.myapplication.constants.ServiceResponseCode;
-import com.example.myapplication.constants.TokenTypes;
 import com.example.myapplication.domain_objects.JourneyRequest;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
@@ -56,7 +55,7 @@ public class JourneyRequestDialogActivity extends BaseActivity{
 
         if(this.notification != null)
         {
-            new NotificationProcessor().MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+            new NotificationProcessor().MarkDelivered(this, this.appManager, notification, new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                     Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
@@ -127,8 +126,8 @@ public class JourneyRequestDialogActivity extends BaseActivity{
         this.journeyRequest.Decision = decision;
 
         new WcfPostServiceTask<JourneyRequest>(this, getResources().getString(R.string.ProcessRequestDecisionURL),
-                this.journeyRequest, TokenTypes.getServiceResponseJourneyRequestToken(),
-                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<JourneyRequest, Void>() {
+                this.journeyRequest,  new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(),
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback<JourneyRequest, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<JourneyRequest> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)

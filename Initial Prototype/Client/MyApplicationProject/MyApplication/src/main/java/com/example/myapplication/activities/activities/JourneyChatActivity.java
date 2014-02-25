@@ -18,12 +18,13 @@ import com.example.myapplication.adapters.JourneyChatAdapter;
 import com.example.myapplication.constants.BroadcastTypes;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
+import com.example.myapplication.constants.WcfConstants;
 import com.example.myapplication.domain_objects.JourneyMessage;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.dtos.JourneyMessageMarkerDTO;
 import com.example.myapplication.dtos.JourneyMessageRetrieverDTO;
 import com.example.myapplication.dtos.LoadRangeDTO;
-import com.example.myapplication.experimental.DateTimeHelper;
+import com.example.myapplication.utilities.DateTimeHelper;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.notification_management.NotificationProcessor;
@@ -31,11 +32,12 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 
 /**
  * Created by Michal on 07/01/14.
  */
-public class JourneyChatActivity extends BaseListActivity{
+public class JourneyChatActivity extends BaseListActivity implements AbsListView.OnScrollListener{
 
     private ProgressBar progressBar;
 
@@ -48,13 +50,18 @@ public class JourneyChatActivity extends BaseListActivity{
     private JourneyChatAdapter journeyChatAdapter;
 
     private Button sendButton;
-    private Button loadMoreButton;
 
-    private int currentScrollPosition;
+    private int currentScrollIndex;
+    private int currentScrollTop;
 
-    private Boolean loadMoreData = false;
+    private int previousTotalListViewItemCount;
+    private int previousFirstVisibleItem;
+    private int previousVisibleItemCount;
 
-    private final String TAG = this.getClass().getSimpleName();
+    private boolean requestMoreData;
+    private boolean callInProgress;
+
+    private final String TAG = "Journey Chat Activity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -69,7 +76,7 @@ public class JourneyChatActivity extends BaseListActivity{
 
         if(notification != null)
         {
-            new NotificationProcessor().MarkDelivered(this, findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
 
@@ -78,18 +85,16 @@ public class JourneyChatActivity extends BaseListActivity{
         }
 
         JourneyMessage journeyMessage = gson.fromJson(bundle.getString(IntentConstants.PAYLOAD), new TypeToken<JourneyMessage>() {}.getType());
-
         // Initialise local variables.
         this.journeyId =  journeyMessage != null ? journeyMessage.JourneyId : bundle.getInt(IntentConstants.JOURNEY);
         this.journeyMessages = new ArrayList<JourneyMessage>();
-        this.journeyChatAdapter = new JourneyChatAdapter(this, this.journeyMessages, this.findNDriveManager.getUser().getUserId());
+        this.journeyChatAdapter = new JourneyChatAdapter(this, this.journeyMessages, this.appManager.getUser().getUserId());
         this.setListAdapter(journeyChatAdapter);
 
         // Initialise UI elements.
         this.progressBar = (ProgressBar) this.findViewById(R.id.JourneyChatActivityProgressBar);
         this.messageEditText = (EditText) this.findViewById(R.id.JourneyChatActivityMessageEditText);
         this.sendButton = (Button) this.findViewById(R.id.JourneyChatActivitySendButton);
-        this.loadMoreButton = (Button) this.findViewById(R.id.JourneyChatActivityLoadMoreButton);
 
         // Setup event handlers.
         this.setupEventHandlers();
@@ -106,29 +111,7 @@ public class JourneyChatActivity extends BaseListActivity{
                 sendMessage();
             }
         });
-
-        this.loadMoreButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loadMoreButton.setEnabled(false);
-                progressBar.setVisibility(View.VISIBLE);
-                currentScrollPosition = getListView().getLastVisiblePosition();
-                loadMoreData = true;
-                retrieveAllMessages();
-            }
-        });
-
-        this.getListView().setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView absListView, int i) {
-            }
-
-            @Override
-            public void onScroll(AbsListView absListView,  int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                loadMoreButton.setVisibility(firstVisibleItem == 0 && getListView().getCount() >= findNDriveManager.getItemsPerCall() ? View.VISIBLE : View.GONE);
-                getListView().setPadding(0, loadMoreButton.getVisibility() == View.VISIBLE ? loadMoreButton.getHeight() : 0, 0, 0);
-            }
-        });
+        this.getListView().setOnScrollListener(this);
     }
 
     private void sendMessage()
@@ -142,8 +125,8 @@ public class JourneyChatActivity extends BaseListActivity{
 
         final JourneyMessage newMessage = new JourneyMessage(
                 this.journeyId,
-                this.findNDriveManager.getUser().getUserName(),
-                this.findNDriveManager.getUser().getUserId(),
+                this.appManager.getUser().getUserName(),
+                this.appManager.getUser().getUserId(),
                 this.messageEditText.getText().toString(),
                 DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime()));
 
@@ -151,7 +134,7 @@ public class JourneyChatActivity extends BaseListActivity{
         {
             new WcfPostServiceTask<JourneyMessage>(this, getResources().getString(R.string.SendJourneyChatMessageURL), newMessage,
                     new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
-                    findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+                    appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                     progressBar.setVisibility(View.GONE);
@@ -174,12 +157,12 @@ public class JourneyChatActivity extends BaseListActivity{
         intentFilter.addAction(BroadcastTypes.BROADCAST_JOURNEY_MESSAGE);
         intentFilter.setPriority(1000);
 
-        this.registerReceiver(GCMReceiver, intentFilter);
+        this.registerReceiver(MessageReceiver, intentFilter);
 
         this.retrieveUnreadMessages();
     }
 
-    private final BroadcastReceiver GCMReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver MessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -208,9 +191,9 @@ public class JourneyChatActivity extends BaseListActivity{
     private void markMessageAsRead(final JourneyMessage journeyMessage)
     {
         new WcfPostServiceTask<JourneyMessageMarkerDTO>(this, getResources().getString(R.string.MarkJourneyMessageAsReadURL),
-                new JourneyMessageMarkerDTO(this.findNDriveManager.getUser().getUserId(), journeyMessage.JourneyMessageId),
+                new JourneyMessageMarkerDTO(this.appManager.getUser().getUserId(), journeyMessage.JourneyMessageId),
                 new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
-                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -232,17 +215,17 @@ public class JourneyChatActivity extends BaseListActivity{
 
     public void retrieveAllMessages()
     {
+        this.callInProgress = true;
         new WcfPostServiceTask<JourneyMessageRetrieverDTO>(this, getResources().getString(R.string.RetrieveJourneyChatMessagesURL),
-                new JourneyMessageRetrieverDTO(this.journeyId, this.findNDriveManager.getUser().getUserId(),
-                        new LoadRangeDTO(findNDriveManager.getUser().getUserId(), getListView().getCount(), findNDriveManager.getItemsPerCall(), loadMoreData)),
+                new JourneyMessageRetrieverDTO(this.journeyId, this.appManager.getUser().getUserId(),
+                        new LoadRangeDTO(appManager.getUser().getUserId(), this.getListView().getCount(),WcfConstants.MessagesPerCall)),
                 new TypeToken<ServiceResponse<ArrayList<JourneyMessage>>>() {}.getType(),
-                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyMessage>, Void>() {
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyMessage>, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<ArrayList<JourneyMessage>> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {
-                    loadMoreButton.setText(serviceResponse.Result.size() < findNDriveManager.getItemsPerCall() ? "No more data to load" : "Show more");
-                    loadMoreButton.setEnabled(!(serviceResponse.Result.size() < findNDriveManager.getItemsPerCall()));
+                    Collections.reverse(serviceResponse.Result);
                     messagesRetrieved(serviceResponse.Result);
                 }
 
@@ -253,10 +236,10 @@ public class JourneyChatActivity extends BaseListActivity{
     public void retrieveUnreadMessages()
     {
         new WcfPostServiceTask<JourneyMessageRetrieverDTO>(this, getResources().getString(R.string.RetrieveUnreadJourneyMessagesURL),
-                new JourneyMessageRetrieverDTO(this.journeyId, this.findNDriveManager.getUser().getUserId(),
-                        new LoadRangeDTO(findNDriveManager.getUser().getUserId(), getListView().getCount(), findNDriveManager.getItemsPerCall(), loadMoreData)),
+                new JourneyMessageRetrieverDTO(this.journeyId, this.appManager.getUser().getUserId(),
+                        new LoadRangeDTO(appManager.getUser().getUserId(), 0, 0)),
                 new TypeToken<ServiceResponse<ArrayList<JourneyMessage>>>() {}.getType(),
-                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyMessage>, Void>() {
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyMessage>, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<ArrayList<JourneyMessage>> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -270,7 +253,7 @@ public class JourneyChatActivity extends BaseListActivity{
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(GCMReceiver);
+        unregisterReceiver(MessageReceiver);
     }
 
     private void messagesRetrieved(ArrayList<JourneyMessage> retrievedMessages) {
@@ -294,7 +277,7 @@ public class JourneyChatActivity extends BaseListActivity{
             }
         }
 
-        if(this.loadMoreData)
+        if(this.requestMoreData)
         {
             for(int i = 0; i < filteredMessages.size(); i++)
             {
@@ -307,7 +290,43 @@ public class JourneyChatActivity extends BaseListActivity{
         }
 
         this.journeyChatAdapter.notifyDataSetInvalidated();
-        this.getListView().setSelection(this.loadMoreData ? this.currentScrollPosition : this.getListView().getLastVisiblePosition());
-        this.loadMoreData = false;
+
+        if(this.requestMoreData)
+        {
+            this.getListView().setSelectionFromTop(currentScrollIndex, currentScrollTop);
+        }
+        else
+        {
+            this.getListView().setSelection(journeyMessages.size());
+        }
+
+        this.requestMoreData = false;
+        this.callInProgress = false;
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView absListView, int i) {
+
+    }
+
+    @Override
+    public void onScroll(AbsListView absListView,  int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        if (this.previousTotalListViewItemCount == totalItemCount || this.previousVisibleItemCount == visibleItemCount || this.callInProgress)
+        {
+            return;
+        }
+
+        if(firstVisibleItem == 0)
+        {
+            Log.i(TAG, "ListView at top!");
+            this.previousTotalListViewItemCount = totalItemCount;
+            this.previousFirstVisibleItem = firstVisibleItem;
+            this.previousVisibleItemCount = visibleItemCount;
+            this.currentScrollIndex = this.getListView().getFirstVisiblePosition();
+            View v = this.getListView().getChildAt(0);
+            this.currentScrollTop= (v == null) ? 0 : v.getTop();
+            this.requestMoreData = true;
+            this.retrieveAllMessages();
+        }
     }
 }

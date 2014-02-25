@@ -123,8 +123,8 @@ public class RateDriverActivity extends BaseActivity implements WCFServiceCallba
 
         new WcfPostServiceTask<RatingDTO>(this, getResources().getString(R.string.RateDriverURL),
                 new RatingDTO(this.journey.Driver.getUserId(), this.rating,
-                        this.findNDriveManager.getUser().getUserId(), message),
-                new TypeToken<ServiceResponse<Boolean>>(){}.getType(), this.findNDriveManager.getAuthorisationHeaders(), this).execute();
+                        this.appManager.getUser().getUserId(), message),
+                new TypeToken<ServiceResponse<Boolean>>(){}.getType(), this.appManager.getAuthorisationHeaders(), this).execute();
     }
 
     private class ButtonHolder

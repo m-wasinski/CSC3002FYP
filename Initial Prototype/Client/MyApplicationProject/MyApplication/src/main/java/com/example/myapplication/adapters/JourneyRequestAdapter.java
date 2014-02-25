@@ -13,11 +13,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.myapplication.app_management.AppManager;
 import com.example.myapplication.constants.RequestDecision;
 import com.example.myapplication.domain_objects.JourneyRequest;
-import com.example.myapplication.experimental.DateTimeHelper;
+import com.example.myapplication.utilities.DateTimeHelper;
 import com.example.myapplication.R;
-import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.interfaces.WCFImageRetrieved;
 import com.example.myapplication.network_tasks.WcfPictureServiceTask;
 
@@ -31,14 +31,14 @@ public class JourneyRequestAdapter extends ArrayAdapter<JourneyRequest> implemen
     private ArrayList<JourneyRequest> journeyRequests;
     private Context context;
     private int resourceId;
-    private FindNDriveManager findNDriveManager;
+    private AppManager appManager;
 
-    public JourneyRequestAdapter(FindNDriveManager findNDriveManager, Context context, int resource, ArrayList<JourneyRequest> requests) {
+    public JourneyRequestAdapter(AppManager appManager, Context context, int resource, ArrayList<JourneyRequest> requests) {
         super(context, resource, requests);
         this.journeyRequests = requests;
         this.context = context;
         this.resourceId = resource;
-        this.findNDriveManager = findNDriveManager;
+        this.appManager = appManager;
     }
 
     @Override
@@ -91,8 +91,8 @@ public class JourneyRequestAdapter extends ArrayAdapter<JourneyRequest> implemen
         journeyRequestHolder.decidedOnTextView.setText(repliedOnDate);
         journeyRequestHolder.statusTextView.setText(decisionStatus);
 
-        new WcfPictureServiceTask(this.findNDriveManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
-                request.UserId, this.findNDriveManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+        new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
+                request.UserId, this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
             @Override
             public void onImageRetrieved(Bitmap bitmap) {
                 if(bitmap != null)

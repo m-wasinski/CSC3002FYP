@@ -1,6 +1,6 @@
 package com.example.myapplication.interfaces;
 
-import com.example.myapplication.domain_objects.MarkerType;
+import com.example.myapplication.enums.MarkerType;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 /**

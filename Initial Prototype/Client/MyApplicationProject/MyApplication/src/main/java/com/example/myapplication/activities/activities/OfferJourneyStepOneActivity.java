@@ -20,10 +20,9 @@ import com.example.myapplication.activities.base.BaseMapActivity;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.domain_objects.GeoAddress;
 import com.example.myapplication.domain_objects.Journey;
-import com.example.myapplication.domain_objects.MarkerType;
-import com.example.myapplication.experimental.DateTimeHelper;
-import com.example.myapplication.experimental.GeocoderParams;
-import com.example.myapplication.experimental.WaypointHolder;
+import com.example.myapplication.enums.MarkerType;
+import com.example.myapplication.utilities.DateTimeHelper;
+import com.example.myapplication.google_maps_utilities.GeocoderParams;
 import com.example.myapplication.network_tasks.GeocoderTask;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -374,7 +373,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
         this.journey.Description = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.journey.Description : "";
         this.journey.DateAndTimeOfDeparture = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ?
                 this.journey.DateAndTimeOfDeparture : DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime());
-        this.journey.DriverId = this.findNDriveManager.getUser().getUserId();
+        this.journey.DriverId = this.appManager.getUser().getUserId();
 
         this.proceedToStepTwo();
     }

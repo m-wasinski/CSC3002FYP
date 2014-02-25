@@ -10,6 +10,7 @@
 namespace FindNDriveServices2.Services
 {
     using System;
+    using System.Drawing;
     using System.IO;
     using System.Linq;
     using System.ServiceModel;
@@ -28,9 +29,6 @@ namespace FindNDriveServices2.Services
     using FindNDriveServices2.ServiceResponses;
 
     using WebMatrix.WebData;
-
-    using Roles = DomainObjects.Constants.Roles;
-    using User = DomainObjects.Domains.User;
 
     /// <summary>
     /// The user service.
@@ -150,27 +148,42 @@ namespace FindNDriveServices2.Services
             }
 
             var loggedInUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.UserId == userId);
-            if (loggedInUser != null)
+
+            if (loggedInUser == null)
             {
-                loggedInUser.Status = Status.Online;
-                loggedInUser.LastLogon = DateTime.Now;
+                return ServiceResponseBuilder.Failure<User>("User with this id does not exist.");
             }
 
+            loggedInUser.Status = Status.Online;
+            loggedInUser.LastLogon = DateTime.Now;
             this.findNDriveUnitOfWork.Commit();
+
             return ServiceResponseBuilder.Success(loggedInUser);
         }
 
         /// <summary>
-        /// Registers a new user.
+        /// The register user.
         /// </summary>
-        /// <param name="register"></param>
-        /// <returns></returns>
+        /// <param name="register">
+        /// The register.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         public ServiceResponse<User> RegisterUser(RegisterDTO register)
         {
+            // Prepare the default profile picture.
+            var img = Image.FromFile(@"C:\\CSC3002FYP\\Initial Prototype\\Resources\\default_picture.png");
+            byte[] arr;
+
+            using (var ms = new MemoryStream())
+            {
+                img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                arr = ms.ToArray();
+            }
+
             // Check if an account with the same username already exists.
-            if (
-                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                    .Any(_ => _.UserName.Equals(register.User.UserName)))
+            if (WebSecurity.UserExists(register.User.UserName))
             {
                 return ServiceResponseBuilder.Failure<User>("Account with this username already exists.");
             }
@@ -191,14 +204,18 @@ namespace FindNDriveServices2.Services
                 var newUser = new User
                 {
                     EmailAddress = register.User.EmailAddress,
-                    Role = Roles.User,
                     UserName = register.User.UserName,
                     UserId = register.User.UserId,
                     FirstName = string.Empty,
                     LastName = string.Empty,
                     GCMRegistrationID = register.User.GCMRegistrationID,
                     MemberSince = DateTime.Now,
-                    AverageRating = 0
+                    AverageRating = 0,
+                    LastLogon = DateTime.Now,
+                    ProfilePicture = new ProfilePicture
+                                         {
+                                             ProfilePictureBytes = arr
+                                         }
                 };
 
                 // Check if another user has been logged on on the same device before.

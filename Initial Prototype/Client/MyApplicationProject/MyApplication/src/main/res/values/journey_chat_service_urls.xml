@@ -5,4 +5,5 @@
     <string name="RetrieveUnreadJourneyMessagesCountURL">https://findndrive.no-ip.co.uk/Services/JourneyChatService.svc/getunreadcount</string>
     <string name="RetrieveUnreadJourneyMessagesURL">https://findndrive.no-ip.co.uk/Services/JourneyChatService.svc/getunread</string>
     <string name="MarkJourneyMessageAsReadURL">https://findndrive.no-ip.co.uk/Services/JourneyChatService.svc/markread</string>
+    <string name="GetJourneyMessageURL">https://findndrive.no-ip.co.uk/Services/JourneyChatService.svc/get</string>
 </resources>

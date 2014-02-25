@@ -25,7 +25,7 @@ import com.example.myapplication.domain_objects.JourneyRequest;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.dtos.JourneyUserDTO;
-import com.example.myapplication.experimental.DialogCreator;
+import com.example.myapplication.utilities.DialogCreator;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.notification_management.NotificationProcessor;
@@ -69,7 +69,7 @@ public class JourneyDetailsActivity extends BaseMapActivity {
 
         if(notification != null)
         {
-            new NotificationProcessor().MarkDelivered(this, this.findNDriveManager, notification, new WCFServiceCallback<Boolean, Void>() {
+            new NotificationProcessor().MarkDelivered(this, this.appManager, notification, new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                     Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
@@ -83,27 +83,27 @@ public class JourneyDetailsActivity extends BaseMapActivity {
         this.newRequestsCount = extras.getInt(IntentConstants.NEW_JOURNEY_REQUESTS);
 
         this.showRequestsButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityShowRequestsButton);
-        this.showRequestsButton.setEnabled(this.journey.Driver.getUserId() == this.findNDriveManager.getUser().getUserId());
-        this.showRequestsButton.setVisibility(this.journey.Driver.getUserId() == this.findNDriveManager.getUser().getUserId() ? View.VISIBLE : View.GONE);
+        this.showRequestsButton.setEnabled(this.journey.Driver.getUserId() == this.appManager.getUser().getUserId());
+        this.showRequestsButton.setVisibility(this.journey.Driver.getUserId() == this.appManager.getUser().getUserId() ? View.VISIBLE : View.GONE);
 
         this.showPassengersButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityShowPassengersButton);
         this.enterChatButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityEnterChatButton);
 
         this.makeChangeButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityMakeChangeButton);
-        this.makeChangeButton.setEnabled(this.journey.Driver.getUserId() == this.findNDriveManager.getUser().getUserId() && this.journey.JourneyStatus == JourneyStatus.OK);
-        this.makeChangeButton.setVisibility(this.journey.Driver.getUserId() == this.findNDriveManager.getUser().getUserId() ? View.VISIBLE : View.GONE);
+        this.makeChangeButton.setEnabled(this.journey.Driver.getUserId() == this.appManager.getUser().getUserId() && this.journey.JourneyStatus == JourneyStatus.OK);
+        this.makeChangeButton.setVisibility(this.journey.Driver.getUserId() == this.appManager.getUser().getUserId() ? View.VISIBLE : View.GONE);
 
         this.cancelJourneyButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityCancelJourneyButton);
-        this.cancelJourneyButton.setEnabled(this.journey.Driver.getUserId() == this.findNDriveManager.getUser().getUserId() && this.journey.JourneyStatus == JourneyStatus.OK);
-        this.cancelJourneyButton.setVisibility(this.journey.Driver.getUserId() == this.findNDriveManager.getUser().getUserId() ? View.VISIBLE : View.GONE);
+        this.cancelJourneyButton.setEnabled(this.journey.Driver.getUserId() == this.appManager.getUser().getUserId() && this.journey.JourneyStatus == JourneyStatus.OK);
+        this.cancelJourneyButton.setVisibility(this.journey.Driver.getUserId() == this.appManager.getUser().getUserId() ? View.VISIBLE : View.GONE);
 
         this.withdrawFromJourneyButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityWithdrawFromJourneyButton);
-        this.withdrawFromJourneyButton.setEnabled(this.journey.Driver.getUserId() != this.findNDriveManager.getUser().getUserId() && this.journey.JourneyStatus == JourneyStatus.OK);
-        this.withdrawFromJourneyButton.setVisibility(this.journey.Driver.getUserId() != this.findNDriveManager.getUser().getUserId() ? View.VISIBLE : View.GONE);
+        this.withdrawFromJourneyButton.setEnabled(this.journey.Driver.getUserId() != this.appManager.getUser().getUserId() && this.journey.JourneyStatus == JourneyStatus.OK);
+        this.withdrawFromJourneyButton.setVisibility(this.journey.Driver.getUserId() != this.appManager.getUser().getUserId() ? View.VISIBLE : View.GONE);
 
         this.rateDriverButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityRateDriverButton);
-        this.rateDriverButton.setEnabled(!(this.journey.Driver.getUserId() == this.findNDriveManager.getUser().getUserId()));
-        this.rateDriverButton.setVisibility(!(this.journey.Driver.getUserId() == this.findNDriveManager.getUser().getUserId()) ? View.VISIBLE : View.GONE);
+        this.rateDriverButton.setEnabled(!(this.journey.Driver.getUserId() == this.appManager.getUser().getUserId()));
+        this.rateDriverButton.setVisibility(!(this.journey.Driver.getUserId() == this.appManager.getUser().getUserId()) ? View.VISIBLE : View.GONE);
 
         this.summaryButton = (Button) this.findViewById(R.id.MyJourneyDetailsActivityShowSummaryButton);
         this.headerTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityHeaderTextView);
@@ -158,7 +158,7 @@ public class JourneyDetailsActivity extends BaseMapActivity {
     {
         new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetSingleJourneyURL), this.journey.getJourneyId(),
                 new TypeToken<ServiceResponse<Journey>>() {}.getType(),
-                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Journey, Void>() {
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Journey, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Journey> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -358,7 +358,7 @@ public class JourneyDetailsActivity extends BaseMapActivity {
         new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetRequestsForJourneyURL),
                 this.journey.getJourneyId(),
                 new TypeToken<ServiceResponse<ArrayList<JourneyRequest>>>() {}.getType(),
-                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyRequest>, Void>() {
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyRequest>, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<ArrayList<JourneyRequest>> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -381,7 +381,7 @@ public class JourneyDetailsActivity extends BaseMapActivity {
         noRequestsTextView.setVisibility(requests.size() == 0 ? View.VISIBLE : View.GONE);
         if(requests.size() > 0)
         {
-            JourneyRequestAdapter adapter = new JourneyRequestAdapter(this.findNDriveManager, this, R.layout.listview_row_journey_request, requests);
+            JourneyRequestAdapter adapter = new JourneyRequestAdapter(this.appManager, this, R.layout.listview_row_journey_request, requests);
             requestsListView.setAdapter(adapter);
             requestsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -416,7 +416,7 @@ public class JourneyDetailsActivity extends BaseMapActivity {
 
         if(this.journey.Participants.size() > 0)
         {
-            PassengersAdapter adapter = new PassengersAdapter(this.findNDriveManager, this, R.layout.listview_row_journey_passengers, this.journey.Participants);
+            PassengersAdapter adapter = new PassengersAdapter(this.appManager, this, R.layout.listview_row_journey_passengers, this.journey.Participants);
             passengersListView.setAdapter(adapter);
             passengersListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
             {
@@ -434,9 +434,9 @@ public class JourneyDetailsActivity extends BaseMapActivity {
     private void withdrawFromJourney()
     {
         new WcfPostServiceTask<JourneyUserDTO>(this, getResources().getString(R.string.WithdrawFromJourneyURL),
-                new JourneyUserDTO(this.journey.getJourneyId(), this.findNDriveManager.getUser().getUserId()),
+                new JourneyUserDTO(this.journey.getJourneyId(), this.appManager.getUser().getUserId()),
                 new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
-                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -457,9 +457,9 @@ public class JourneyDetailsActivity extends BaseMapActivity {
     private void cancelJourney()
     {
         new WcfPostServiceTask<JourneyUserDTO>(this, getResources().getString(R.string.CancelJourneyURL),
-                new JourneyUserDTO(this.journey.getJourneyId(), this.findNDriveManager.getUser().getUserId()),
+                new JourneyUserDTO(this.journey.getJourneyId(), this.appManager.getUser().getUserId()),
                 new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
-                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)

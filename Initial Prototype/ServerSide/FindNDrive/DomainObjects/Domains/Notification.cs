@@ -48,12 +48,6 @@ namespace DomainObjects.Domains
         public int ProfilePictureId { get; set; }
 
         /// <summary>
-        /// Gets or sets the profile picture.
-        /// </summary>
-        [ForeignKey("ProfilePictureId")]
-        public ProfilePicture ProfilePicture { get; set; }
-
-        /// <summary>
         /// Gets or sets the collapsible key.
         /// </summary>
         [DataMember]
@@ -94,12 +88,6 @@ namespace DomainObjects.Domains
         /// </summary>
         [DataMember]
         public bool Delivered { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether action taken.
-        /// </summary>
-        [DataMember]
-        public bool ActionTaken { get; set; }
 
         /// <summary>
         /// Gets or sets the received on date.

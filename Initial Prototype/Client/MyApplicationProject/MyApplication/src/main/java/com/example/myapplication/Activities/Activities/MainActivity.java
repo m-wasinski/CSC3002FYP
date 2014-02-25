@@ -14,15 +14,11 @@ import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.interfaces.GCMRegistrationCallback;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.GCMRegistrationTask;
-import com.example.myapplication.network_tasks.WcfGetServiceTask;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
-import com.example.myapplication.utilities.Pair;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.gson.reflect.TypeToken;
 import java.util.UUID;
-
-import static java.util.Arrays.asList;
 
 public class MainActivity extends BaseActivity implements WCFServiceCallback<User, String> {
 
@@ -62,7 +58,7 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
      */
     @Override
     public void onServiceCallCompleted(ServiceResponse<User> serviceResponse, String param) {
-        findNDriveManager.login(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS ? serviceResponse.Result : null);
+        appManager.login(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS ? serviceResponse.Result : null);
         Intent intent = new Intent(this, serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS ? HomeActivity.class : LoginActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
@@ -86,7 +82,7 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
                     .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.dismiss();
-                            findNDriveManager.setRegistrationId("0");
+                            appManager.setRegistrationId("0");
                             initialisationStepTwo();
                         }
                     });
@@ -96,7 +92,7 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
         }
         else
         {
-            if(findNDriveManager.getRegistrationId().isEmpty())
+            if(appManager.getRegistrationId().isEmpty())
             {
                 Log.i(TAG, "GCM Registration Id is empty, attempting to register device.");
                 GCMRegistrationTask registerGCMTask = new GCMRegistrationTask(new GCMRegistrationCallback() {
@@ -112,7 +108,7 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
                                     .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.dismiss();
-                                            findNDriveManager.setRegistrationId("0");
+                                            appManager.setRegistrationId("0");
                                             initialisationStepTwo();
                                         }
                                     });
@@ -125,7 +121,7 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
                         }
 
                         Log.i(TAG, "GCM Registration completed, the new registration id is: " + registrationId);
-                        findNDriveManager.setRegistrationId(registrationId);
+                        appManager.setRegistrationId(registrationId);
                         initialisationStepTwo();
                     }
                 }, getApplicationContext());
@@ -133,7 +129,7 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
             }
             else
             {
-                Log.i(TAG, "Current GCM registration id: "+ findNDriveManager.getRegistrationId());
+                Log.i(TAG, "Current GCM registration id: "+ appManager.getRegistrationId());
                 initialisationStepTwo();
             }
         }
@@ -142,10 +138,10 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
     private void initialisationStepTwo()
     {
         // Generate new random UUID for the duration of this session.
-        findNDriveManager.setUUID(UUID.randomUUID().toString());
-        Log.i(TAG, "New UUID generated, " + findNDriveManager.getUUID());
+        appManager.setUUID(UUID.randomUUID().toString());
+        Log.i(TAG, "New UUID generated, " + appManager.getUUID());
 
         new WcfPostServiceTask<String>(this, getResources().getString(R.string.UserAutoLoginURL), "", new TypeToken<ServiceResponse<User>>() {}.getType(),
-                findNDriveManager.getAuthorisationHeaders(), this).execute();
+                appManager.getAuthorisationHeaders(), this).execute();
     }
 }

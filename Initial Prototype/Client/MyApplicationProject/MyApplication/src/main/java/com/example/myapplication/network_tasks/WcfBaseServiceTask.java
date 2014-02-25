@@ -5,9 +5,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 
+import com.example.myapplication.app_management.AppManager;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.experimental.FindNDriveManager;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.utilities.Pair;
 import com.example.myapplication.utilities.Utilities;
@@ -51,8 +51,8 @@ public class WcfBaseServiceTask extends AsyncTask<Void, Void, Void> {
 
         if(this.serviceResponse.ServiceResponseCode == ServiceResponseCode.UNAUTHORISED)
         {
-            FindNDriveManager findNDriveManager = ((FindNDriveManager)this.context.getApplicationContext());
-            findNDriveManager.logout(true, false);
+            AppManager appManager = ((AppManager)this.context.getApplicationContext());
+            appManager.logout(true, false);
             return;
         }
 

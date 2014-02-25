@@ -31,6 +31,7 @@ public class Journey {
     public String CreationDate;
     public int PaymentOption;
     public String PreferredPaymentMethod;
+    public int UnreadMessagesCount;
 
     public Journey()
     {

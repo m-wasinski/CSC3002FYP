@@ -4,15 +4,15 @@ package com.example.myapplication.dtos;
  * Created by Michal on 17/01/14.
  */
 public class LoadRangeDTO {
-    public int Id;
-    public int Index;
-    public int Count;
-    public Boolean LoadMoreData;
-    public LoadRangeDTO(int id, int index, int count, Boolean loadMoreData)
+
+    private int Id;
+    private int Take;
+    private int Skip;
+
+    public LoadRangeDTO(int id, int skip, int take)
     {
         this.Id = id;
-        this.Index = index;
-        this.Count = count;
-        this.LoadMoreData = loadMoreData;
+        this.Skip = skip;
+        this.Take = take;
     }
 }

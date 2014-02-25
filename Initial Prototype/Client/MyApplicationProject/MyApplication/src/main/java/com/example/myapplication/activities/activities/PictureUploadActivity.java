@@ -93,9 +93,9 @@ public class PictureUploadActivity extends BaseActivity {
         byte[] byteArray = stream.toByteArray();
 
         new WcfPostServiceTask<ProfilePictureUpdaterDTO>(this, getResources().getString(R.string.UpdateProfilePictureURL),
-                new ProfilePictureUpdaterDTO(this.findNDriveManager.getUser().getUserId(), Base64.encodeToString(byteArray, Base64.DEFAULT)),
+                new ProfilePictureUpdaterDTO(this.appManager.getUser().getUserId(), Base64.encodeToString(byteArray, Base64.DEFAULT)),
                 new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
-                findNDriveManager.getAuthorisationHeaders(), new WCFServiceCallback() {
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback() {
             @Override
             public void onServiceCallCompleted(ServiceResponse serviceResponse, Object parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -108,7 +108,7 @@ public class PictureUploadActivity extends BaseActivity {
 
     private void pictureUploadedSuccessfully(Bitmap bitmap)
     {
-        this.findNDriveManager.getBitmapLruCache().put(String.valueOf(this.findNDriveManager.getUser().getUserId()),bitmap);
+        this.appManager.getBitmapLruCache().put(String.valueOf(this.appManager.getUser().getUserId()),bitmap);
         this.progressBar.setVisibility(View.GONE);
         this.finish();
     }

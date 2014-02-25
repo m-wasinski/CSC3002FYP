@@ -15,6 +15,7 @@ import java.util.ArrayList;
  * Created by Michal on 01/12/13.
  */
 public class Utilities {
+
     public static String translateBoolean(boolean b)
     {
         return b ? "yes" : "no";
@@ -75,19 +76,5 @@ public class Utilities {
             e.printStackTrace();
         }
         return false;
-    }
-
-    private static int getTotalHeightofListView(ListView listView) {
-
-        ListAdapter LvAdapter = listView.getAdapter();
-        int listviewElementsheight = 0;
-        for (int i = 0; i < LvAdapter.getCount(); i++) {
-            View mView = LvAdapter.getView(i, null, listView);
-            mView.measure(
-                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-            listviewElementsheight += mView.getMeasuredHeight();
-        }
-        return listviewElementsheight;
     }
 }

@@ -24,21 +24,15 @@ namespace FindNDriveServices2.DTOs
         public int Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the range.
+        /// Gets or sets the skip.
         /// </summary>
         [DataMember]
-        public int Index { get; set; }
+        public int Skip { get; set; }
 
         /// <summary>
         /// Gets or sets the count.
         /// </summary>
         [DataMember]
-        public int Count { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether poll more data.
-        /// </summary>
-        [DataMember]
-        public bool LoadMoreData { get; set; }
+        public int Take { get; set; }
     }
 }

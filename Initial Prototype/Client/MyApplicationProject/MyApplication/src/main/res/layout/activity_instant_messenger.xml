@@ -61,14 +61,4 @@
         android:indeterminateDrawable="@drawable/progress"
         android:visibility="gone"/>
 
-    <Button
-        android:id="@+id/InstantMessengerActivityLoadMoreButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/ShowMore"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/button_selector"
-        style="@style/UniversalButtonStyle"
-        android:visibility="gone"/>
-
 </RelativeLayout>

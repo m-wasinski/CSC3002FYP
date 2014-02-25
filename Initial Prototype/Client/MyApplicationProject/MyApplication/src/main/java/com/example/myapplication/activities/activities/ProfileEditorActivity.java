@@ -22,12 +22,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myapplication.R;
-import com.example.myapplication.constants.GenderTypes;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.dtos.UpdateUserDTO;
-import com.example.myapplication.experimental.DateTimeHelper;
+import com.example.myapplication.utilities.DateTimeHelper;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.utilities.Utilities;
@@ -187,16 +186,16 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
         nameDialog.setTitle("Enter new name.");
 
         final EditText firstNameEditText = (EditText) nameDialog.findViewById(R.id.NameChangerDialogFirstNameEditText);
-        firstNameEditText.setText(this.findNDriveManager.getUser().getFirstName());
+        firstNameEditText.setText(this.appManager.getUser().getFirstName());
 
         final EditText lastNameEditText = (EditText) nameDialog.findViewById(R.id.NameChangerDialogLastNameEditText);
-        lastNameEditText.setText(this.findNDriveManager.getUser().getLastName());
+        lastNameEditText.setText(this.appManager.getUser().getLastName());
 
         Button okButton = (Button) nameDialog.findViewById(R.id.NameChangerDialogOkButton);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveChanges(new UpdateUserDTO(findNDriveManager.getUser().getUserId(), firstNameEditText.getText().toString(), lastNameEditText.getText().toString(),
+                saveChanges(new UpdateUserDTO(appManager.getUser().getUserId(), firstNameEditText.getText().toString(), lastNameEditText.getText().toString(),
                         null, -1, null, null));
                 nameDialog.dismiss();
             }
@@ -217,7 +216,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
                 if(choice == 0 || choice == 1)
                 {
                     memberGenderTextView.setText(Utilities.translateGender(choice+1));
-                    saveChanges(new UpdateUserDTO(findNDriveManager.getUser().getUserId(), null, null, null, choice+1, null, null));
+                    saveChanges(new UpdateUserDTO(appManager.getUser().getUserId(), null, null, null, choice+1, null, null));
                 }
             }
         });
@@ -234,7 +233,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
 
         final EditText emailEditText = (EditText) emailDialog.findViewById(R.id.ProfileEditorDialogEditText);
         emailEditText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        emailEditText.setText(this.findNDriveManager.getUser().getEmailAddress());
+        emailEditText.setText(this.appManager.getUser().getEmailAddress());
 
         Button okButton = (Button) emailDialog.findViewById(R.id.ProfileEditorDialogOkButton);
 
@@ -245,7 +244,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
                 if(Validators.validateEmailAddress(emailEditText))
                 {
                     memberEmailAddressTextView.setText(emailEditText.getText().toString());
-                    saveChanges(new UpdateUserDTO(findNDriveManager.getUser().getUserId(), null, null, emailEditText.getText().toString(), -1, null, null));
+                    saveChanges(new UpdateUserDTO(appManager.getUser().getUserId(), null, null, emailEditText.getText().toString(), -1, null, null));
                     emailDialog.dismiss();
                 }
             }
@@ -264,7 +263,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
 
         final EditText phoneEditText = (EditText) phoneNumberDialog.findViewById(R.id.ProfileEditorDialogEditText);
         phoneEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
-        phoneEditText.setText(this.findNDriveManager.getUser().getPhoneNumber());
+        phoneEditText.setText(this.appManager.getUser().getPhoneNumber());
 
         Button okButton = (Button) phoneNumberDialog.findViewById(R.id.ProfileEditorDialogOkButton);
 
@@ -273,7 +272,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
             public void onClick(View view)
             {
                 phoneNumberTextView.setText(phoneEditText.getText().toString());
-                saveChanges(new UpdateUserDTO(findNDriveManager.getUser().getUserId(), null, null, null, -1, null, phoneNumberTextView.getText().toString()));
+                saveChanges(new UpdateUserDTO(appManager.getUser().getUserId(), null, null, null, -1, null, phoneNumberTextView.getText().toString()));
                 phoneNumberDialog.dismiss();
 
             }
@@ -298,7 +297,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMMM-yyyy", Locale.UK);
 
                     dateOfBirthTextVIew.setText(simpleDateFormat.format(calendar.getTime()));
-                    saveChanges(new UpdateUserDTO(findNDriveManager.getUser().getUserId(), null, null, null, -1, DateTimeHelper.convertToWCFDate(calendar.getTime()), null));
+                    saveChanges(new UpdateUserDTO(appManager.getUser().getUserId(), null, null, null, -1, DateTimeHelper.convertToWCFDate(calendar.getTime()), null));
                 }
 
             }
@@ -339,7 +338,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
         new WcfPostServiceTask<UpdateUserDTO>(this, getResources().getString(R.string.UpdateUserURL),
                 updateUserDTO,
                 new TypeToken<ServiceResponse<User>>() {}.getType(),
-                findNDriveManager.getAuthorisationHeaders(), this).execute();
+                appManager.getAuthorisationHeaders(), this).execute();
     }
 
     @Override
@@ -347,7 +346,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
         this.progressBar.setVisibility(View.GONE);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
-            this.findNDriveManager.setUser(serviceResponse.Result);
+            this.appManager.setUser(serviceResponse.Result);
             this.user = serviceResponse.Result;
             super.fillPersonDetails();
             Toast toast = Toast.makeText(this, "Changes to your profile were saved successfully.", Toast.LENGTH_LONG);

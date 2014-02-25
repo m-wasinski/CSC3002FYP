@@ -23,10 +23,10 @@ import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.GeoAddress;
 import com.example.myapplication.domain_objects.Journey;
-import com.example.myapplication.domain_objects.MarkerType;
+import com.example.myapplication.enums.MarkerType;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.dtos.JourneySearchDTO;
-import com.example.myapplication.experimental.GeocoderParams;
+import com.example.myapplication.google_maps_utilities.GeocoderParams;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.GeocoderTask;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
@@ -250,7 +250,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         journeySearchDTO.DestinationRadius = this.destinationRadius.getRadius() / METERS_IN_MILE;
         // Call the webservice to begin the search.
         new WcfPostServiceTask<JourneySearchDTO>(this, getResources().getString(R.string.SearchForJourneysURL),
-                journeySearchDTO, new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(), findNDriveManager.getAuthorisationHeaders(), this).execute();
+                journeySearchDTO, new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
     }
 
     @Override

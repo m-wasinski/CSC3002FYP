@@ -70,6 +70,6 @@ namespace FindNDriveServices2.Contracts
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/getleaderboard")]
-        ServiceResponse<List<User>> GetLeaderboard();
+        ServiceResponse<List<User>> GetLeaderboard(LoadRangeDTO loadRangeDTO);
     }
 }

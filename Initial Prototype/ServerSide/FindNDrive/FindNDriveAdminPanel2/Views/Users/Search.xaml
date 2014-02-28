@@ -1,0 +1,29 @@
+<mvvm:View xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+           xmlns:mvvm="clr-namespace:CODE.Framework.Wpf.Mvvm;assembly=CODE.Framework.Wpf.Mvvm"
+           xmlns:c="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf" 
+           Title="Search Customers"
+           Style="{DynamicResource CODE.Framework-Layout-ListPrimarySecondaryFormLayout}"
+           >
+
+    <mvvm:View UIElementType="Secondary"
+               Style="{DynamicResource SimpleSearch}">
+        <Image></Image>
+        <Label>Search Term #1:</Label>
+        <TextBox Text="{Binding SearchTerm1}" />
+        <Label>Search Term #2:</Label>
+        <TextBox Text="{Binding SearchTerm2}" />
+        <Label>Search Term #3:</Label>
+        <TextBox Text="{Binding SearchTerm3}" />
+        <Label>Search Term #4:</Label>
+        <TextBox Text="{Binding SearchTerm4}" />
+        <Label>Search Term #5:</Label>
+        <TextBox Text="{Binding SearchTerm5}" />
+        <Button Command="{Binding SearchCustomers}"
+                Content="{Binding SearchCustomers.Caption}" />
+    </mvvm:View>
+    
+    <ListBox ItemsSource="{Binding Customers}"
+             Style="{DynamicResource CustomerList2}"
+             c:ListBoxEx.Command="{Binding EditCustomer}"
+             mvvm:View.UIElementType="Primary" />
+</mvvm:View>

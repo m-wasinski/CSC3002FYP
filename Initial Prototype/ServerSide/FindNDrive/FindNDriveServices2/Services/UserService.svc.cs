@@ -28,6 +28,8 @@ namespace FindNDriveServices2.Services
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
 
+    using Newtonsoft.Json;
+
     using WebMatrix.WebData;
 
     /// <summary>
@@ -55,11 +57,6 @@ namespace FindNDriveServices2.Services
         /// The notification manager.
         /// </summary>
         private readonly NotificationManager notificationManager;
-
-        /// <summary>
-        /// The invalid gcm registration id.
-        /// </summary>
-        private const string InvalidGCMRegistrationId = "0";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserService"/> class.
@@ -113,7 +110,7 @@ namespace FindNDriveServices2.Services
             // If yes, reset this user's GCM registration ID to 0 to prevent GCM notifications from being sent to the wrong device.
             if (userToReset != null)
             {
-                userToReset.GCMRegistrationID = InvalidGCMRegistrationId;
+                userToReset.GCMRegistrationID = null;
                 userToReset.Status = Status.Offline;
             }
 

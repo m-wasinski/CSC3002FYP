@@ -37,7 +37,6 @@ namespace DomainObjects.Domains
         /// <summary>
         /// Gets or sets the car share.
         /// </summary>
-        [ForeignKey("JourneyId")]
         public virtual Journey Journey { get; set; }
 
         /// <summary>

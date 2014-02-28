@@ -8,13 +8,11 @@ import java.util.ArrayList;
 public class Journey {
 
     private int JourneyId;
-
     public int getJourneyId()
     {
         return this.JourneyId;
     }
 
-    public int DriverId;
     public User Driver;
     public ArrayList<GeoAddress> GeoAddresses;
     public String Description;

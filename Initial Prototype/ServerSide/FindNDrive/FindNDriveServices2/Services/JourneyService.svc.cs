@@ -103,7 +103,7 @@ namespace FindNDriveServices2.Services
             var journeys =
                 this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
                     .IncludeAll()
-                    .Where(_ => _.DriverId == loadRangeDTO.Id || _.Participants.Any(x => x.UserId == loadRangeDTO.Id))
+                    .Where(_ => _.Driver.UserId == loadRangeDTO.Id || _.Participants.Any(x => x.UserId == loadRangeDTO.Id))
                     .OrderByDescending(x => x.CreationDate)
                     .Skip(loadRangeDTO.Skip)
                     .Take(loadRangeDTO.Take);
@@ -160,7 +160,7 @@ namespace FindNDriveServices2.Services
             var user =
                 this.findNDriveUnitOfWork.UserRepository.AsQueryable()
                     .IncludeAll()
-                    .FirstOrDefault(_ => _.UserId == journeyDTO.DriverId);
+                    .FirstOrDefault(_ => _.UserId == journeyDTO.Driver.UserId);
 
             if (user == null)
             {
@@ -172,7 +172,7 @@ namespace FindNDriveServices2.Services
                                  AvailableSeats = journeyDTO.AvailableSeats,
                                  DateAndTimeOfDeparture = journeyDTO.DateAndTimeOfDeparture,
                                  Description = journeyDTO.Description,
-                                 DriverId = journeyDTO.DriverId,
+                                 Driver = user,
                                  Fee = journeyDTO.Fee,
                                  Private = journeyDTO.Private,
                                  SmokersAllowed = journeyDTO.SmokersAllowed,
@@ -192,7 +192,7 @@ namespace FindNDriveServices2.Services
                 new Collection<User> {user}, 
                 "You offered new journey",
                 string.Format("You have offerred new journey from {0} to {1} and its number is: {2}, ", newJourney.GeoAddresses.First().AddressLine, newJourney.GeoAddresses.Last().AddressLine, newJourney.JourneyId),
-                user.ProfilePictureId, newJourney.JourneyId,
+                -1, newJourney.JourneyId,
                 NotificationType.App,
                 NotificationContentType.JourneyModified, random.Next());
 
@@ -200,7 +200,7 @@ namespace FindNDriveServices2.Services
                 user.Friends,
                 string.Format("{0} {1} ({2}) offered new journey.", user.FirstName, user.LastName, user.UserName),
                 "Click this notification to see it.",
-                user.ProfilePictureId, newJourney.JourneyId,
+                user.UserId, newJourney.JourneyId,
                 NotificationType.Both,
                 NotificationContentType.FriendOfferedNewJourney, random.Next());
 
@@ -317,7 +317,7 @@ namespace FindNDriveServices2.Services
                     journey.JourneyId,
                     journey.GeoAddresses.First().AddressLine,
                     journey.GeoAddresses.Last().AddressLine),
-                journey.Driver.ProfilePictureId,
+                journey.Driver.UserId,
                 journey.JourneyId,
                 NotificationType.Both,
                 NotificationContentType.JourneyModified,
@@ -389,7 +389,7 @@ namespace FindNDriveServices2.Services
                    journey.JourneyId,
                    journey.GeoAddresses.First().AddressLine,
                    journey.GeoAddresses.Last().AddressLine),
-                journey.Driver.ProfilePictureId,
+                journey.Driver.UserId,
                 journey.JourneyId,
                 NotificationType.Both,
                 NotificationContentType.JourneyCancelled,
@@ -446,7 +446,7 @@ namespace FindNDriveServices2.Services
                 return ServiceResponseBuilder.Failure<bool>("Invalid passenger id");
             }
 
-            if (passenger.UserId == journey.DriverId)
+            if (passenger.UserId == journey.Driver.UserId)
             {
                 return ServiceResponseBuilder.Failure<bool>("As driver, you cannot withdraw from this journey.");
             }
@@ -470,7 +470,7 @@ namespace FindNDriveServices2.Services
                     journey.JourneyId,
                     journey.GeoAddresses.First().AddressLine,
                     journey.GeoAddresses.Last().AddressLine),
-                passenger.ProfilePictureId, journey.JourneyId, 
+                passenger.UserId, journey.JourneyId, 
                 NotificationType.Both,
                 NotificationContentType.PassengerLeftJourney, random.Next());
 
@@ -485,7 +485,7 @@ namespace FindNDriveServices2.Services
                     journey.Driver.FirstName,
                     journey.Driver.LastName,
                     journey.Driver.UserName),
-                journey.Driver.ProfilePictureId, -1, 
+                journey.Driver.UserId, -1, 
                 NotificationType.App,
                 NotificationContentType.IleftAjourney, random.Next());
 

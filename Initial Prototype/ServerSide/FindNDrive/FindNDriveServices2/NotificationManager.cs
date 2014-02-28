@@ -68,26 +68,32 @@ namespace FindNDriveServices2
         /// </summary>
         private readonly FindNDriveUnitOfWork findNDriveUnitOfWork;
 
-        private readonly SessionManager sessionManager;
-
         /// <summary>
-        /// The invalid gcm registration id.
+        /// The session manager.
         /// </summary>
-        private const string InvalidGcmRegistrationId = "0";
+        private readonly SessionManager sessionManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NotificationManager"/> class.
         /// </summary>
         /// <param name="findNDriveUnitOfWork">
-        ///     The find n drive unit of work.
+        /// The find n drive unit of work.
         /// </param>
-        /// <param name="sessionManager"></param>
+        /// <param name="sessionManager">
+        /// The session manager.
+        /// </param>
         public NotificationManager(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager)
         {
             this.findNDriveUnitOfWork = findNDriveUnitOfWork;
             this.sessionManager = sessionManager;
         }
 
+        /// <summary>
+        /// The send gcm tickle.
+        /// </summary>
+        /// <param name="users">
+        /// The users.
+        /// </param>
         public void SendGcmTickle(ICollection<User> users)
         {
             // Determine which users are online.
@@ -108,6 +114,29 @@ namespace FindNDriveServices2
             this.ForwardGCMNotification(gcmPostData);
         }
 
+        /// <summary>
+        /// The send instant message.
+        /// </summary>
+        /// <param name="users">
+        /// The users.
+        /// </param>
+        /// <param name="gcmNotificationType">
+        /// The gcm notification type.
+        /// </param>
+        /// <param name="pictureId">
+        /// The picture id.
+        /// </param>
+        /// <param name="collapsibleKey">
+        /// The collapsible key.
+        /// </param>
+        /// <param name="message">
+        /// The message.
+        /// </param>
+        /// <param name="targetObjectId">
+        /// The target object id.
+        /// </param>
+        /// <typeparam name="T">
+        /// </typeparam>
         public void SendInstantMessage<T>(ICollection<User> users, GcmNotificationType gcmNotificationType, int pictureId, int collapsibleKey, T message, int targetObjectId)
         {
             // Determine which users are online.
@@ -162,6 +191,33 @@ namespace FindNDriveServices2
             this.findNDriveUnitOfWork.Commit();
         }
 
+        /// <summary>
+        /// The send app notification.
+        /// </summary>
+        /// <param name="users">
+        /// The users.
+        /// </param>
+        /// <param name="notificationTitle">
+        /// The notification title.
+        /// </param>
+        /// <param name="notificationMessage">
+        /// The notification message.
+        /// </param>
+        /// <param name="profilePicture">
+        /// The profile picture.
+        /// </param>
+        /// <param name="targetObjectId">
+        /// The target object id.
+        /// </param>
+        /// <param name="notificationType">
+        /// The notification type.
+        /// </param>
+        /// <param name="notificationContentType">
+        /// The notification content type.
+        /// </param>
+        /// <param name="collapsibleKey">
+        /// The collapsible key.
+        /// </param>
         public void SendAppNotification(ICollection<User> users, string notificationTitle, string notificationMessage, int profilePicture, int targetObjectId, NotificationType notificationType, NotificationContentType notificationContentType, int collapsibleKey)
         {
             foreach (var user in users)

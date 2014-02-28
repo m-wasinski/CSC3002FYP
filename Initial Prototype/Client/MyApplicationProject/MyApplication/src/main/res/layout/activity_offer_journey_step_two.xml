@@ -136,7 +136,7 @@
                         android:layout_marginLeft="10sp"
                         android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityRepeatImageView"
                         android:layout_below="@+id/OfferJourneyStepTwoActivityJourneyTypeLabel"
-                        style="@style/RegularEditText"
+                        style="@style/RegularTextView"
                         android:singleLine="true"/>
 
                 </RelativeLayout>
@@ -182,7 +182,7 @@
                         android:layout_marginLeft="10sp"
                         android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityCalendarImageView"
                         android:layout_below="@+id/OfferJourneyStepTwoActivityJourneyDateLabel"
-                        style="@style/RegularEditText"
+                        style="@style/RegularTextView"
                         android:singleLine="true"/>
 
                 </RelativeLayout>
@@ -228,7 +228,7 @@
                         android:text="Select Time"
                         android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityClockImageView"
                         android:layout_marginLeft="10sp"
-                        style="@style/RegularEditText"
+                        style="@style/RegularTextView"
                         android:singleLine="true"/>
 
                 </RelativeLayout>
@@ -275,7 +275,7 @@
                         android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityLockImageView"
                         android:layout_below="@+id/OfferJourneyStepTwoActivityPrivateLabel"
                         android:id="@+id/OfferJourneyStepTwoActivityPrivateTextView"
-                        style="@style/RegularEditText"
+                        style="@style/RegularTextView"
                         android:singleLine="true"/>
 
                 </RelativeLayout>
@@ -322,7 +322,7 @@
                         android:text="No"
                         android:layout_marginLeft="10sp"
                         android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityCigaretteImageView"
-                        style="@style/RegularEditText"
+                        style="@style/RegularTextView"
                         android:singleLine="true"/>
 
                 </RelativeLayout>
@@ -369,7 +369,7 @@
                         android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityPetImageView"
                         android:layout_marginLeft="10sp"
                         android:text="No"
-                        style="@style/RegularEditText"
+                        style="@style/RegularTextView"
                         android:singleLine="true"/>
                 </RelativeLayout>
 
@@ -413,7 +413,7 @@
                         android:text="Select vehicle type"
                         android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityVehicleImageView"
                         android:layout_marginLeft="10sp"
-                        style="@style/RegularEditText"
+                        style="@style/RegularTextView"
                         android:singleLine="true"/>
 
                 </RelativeLayout>
@@ -458,7 +458,7 @@
                         android:text="1"
                         android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityAvailableSeatsImageView"
                         android:layout_marginLeft="10sp"
-                        style="@style/RegularEditText"
+                        style="@style/RegularTextView"
                         android:singleLine="true"/>
 
                 </RelativeLayout>
@@ -503,7 +503,7 @@
                         android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityFeeImageView"
                         android:layout_marginLeft="10sp"
                         android:text="Select fee &amp; payment method"
-                        style="@style/RegularEditText"
+                        style="@style/RegularTextView"
                         android:singleLine="true"/>
 
                 </RelativeLayout>
@@ -540,7 +540,7 @@
                         android:layout_marginLeft="5sp"
                         android:layout_marginTop="2sp"
                         android:hint="Additional comments"
-                        style="@style/RegularEditText"
+                        style="@style/RegularTextView"
                         android:singleLine="true"/>
 
                 </RelativeLayout>

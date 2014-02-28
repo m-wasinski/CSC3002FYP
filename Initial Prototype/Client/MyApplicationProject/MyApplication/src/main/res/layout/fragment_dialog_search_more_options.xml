@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:orientation="vertical">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:id="@+id/SearchMoreOptionsFragmentDialogParentLayout"
+            android:layout_height="wrap_content">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dip"
+                android:id="@+id/SearchMoreOptionsActivityDepartureDateTableRow"
+                android:background="@drawable/home_navigation_selector"
+                android:clickable="true">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/calendar"
+                    android:id="@+id/SearchMoreOptionsFragmentDialogDepartureDateImageView"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Departure Date:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/SearchMoreOptionsActivityDepartureDateTextView"
+                        android:paddingLeft="10dip"
+                        android:text="@string/DontMind"
+                        style="@style/RegularTextView"/>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/downarrow"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="15sp"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dip"
+                android:paddingTop="5dip"
+                android:paddingBottom="5dip"
+                android:layout_below="@+id/SearchMoreOptionsActivityDepartureDateTableRow"
+                android:id="@+id/SearchMoreOptionsFlexibleDateTableRow"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="Flexible:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/UniversalButtonStyle"
+                        android:text="-"
+                        android:id="@+id/SearchMoreOptionsMinusDaysButton"
+                        android:minHeight="30dip"
+                        android:minWidth="30dip"
+                        android:layout_marginLeft="10dip"
+                        android:background="@drawable/button_selector"/>
+
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:layout_marginLeft="15dip"
+                        android:paddingLeft="10dip"
+                        android:id="@+id/SearchMoreOptionsFlexibleDateEditText"
+                        android:paddingRight="10dip"
+                        android:text="0"
+                        android:editable="false"
+                        style="@style/RegularEditText"/>
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/UniversalButtonStyle"
+                        android:text="+"
+                        android:id="@+id/SearchMoreOptionsPlusDaysButton"
+                        android:minHeight="30dip"
+                        android:minWidth="30dip"
+                        android:layout_marginLeft="10dip"
+                        android:background="@drawable/button_selector"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="days."
+                        style="@style/LargeBlueHeader"/>
+
+                </LinearLayout>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dip"
+                android:clickable="true"
+                android:layout_below="@+id/SearchMoreOptionsFlexibleDateTableRow"
+                android:id="@+id/SearchMoreOptionsActivityDepartureTimeTableRow"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/clock"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Departure Time:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/SearchMoreOptionsActivityDepartureTimeTextView"
+                        android:paddingLeft="10dip"
+                        android:text="@string/DontMind"
+                        style="@style/RegularTextView"/>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/downarrow"
+                    android:layout_marginRight="15sp"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dip"
+                android:paddingTop="5dip"
+                android:paddingBottom="5dip"
+                android:layout_below="@+id/SearchMoreOptionsActivityDepartureTimeTableRow"
+                android:id="@+id/SearchMoreOptionsFlexibleTimeTableRow"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="Flexible:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/UniversalButtonStyle"
+                        android:text="-"
+                        android:id="@+id/SearchMoreOptionsMinusHoursButton"
+                        android:minHeight="30dip"
+                        android:minWidth="30dip"
+                        android:layout_marginLeft="10dip"
+                        android:background="@drawable/button_selector"/>
+
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:layout_marginLeft="15dip"
+                        android:paddingLeft="10dip"
+                        android:id="@+id/SearchMoreOptionsFlexibleTimeEditText"
+                        android:paddingRight="10dip"
+                        android:text="0"
+                        android:editable="false"
+                        style="@style/RegularEditText"/>
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/UniversalButtonStyle"
+                        android:text="+"
+                        android:id="@+id/SearchMoreOptionsPlusHoursButton"
+                        android:minHeight="30dip"
+                        android:minWidth="30dip"
+                        android:layout_marginLeft="10dip"
+                        android:background="@drawable/button_selector"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="hours."
+                        style="@style/LargeBlueHeader"/>
+
+                </LinearLayout>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dip"
+                android:clickable="true"
+                android:layout_below="@+id/SearchMoreOptionsFlexibleTimeTableRow"
+                android:id="@+id/SearchMoreOptionsActivitySmokersTableRow"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/OfferJourneyStepTwoActivityCigaretteImageView"
+                    android:src="@drawable/cigarette"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Smokers:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/SearchMoreOptionsActivitySmokersTextView"
+                        android:paddingLeft="10dip"
+                        android:text="@string/DontMind"
+                        style="@style/RegularTextView"/>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/downarrow"
+                    android:layout_marginRight="15sp"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dip"
+                android:clickable="true"
+                android:layout_below="@+id/SearchMoreOptionsActivitySmokersTableRow"
+                android:id="@+id/SearchMoreOptionsActivityPetsTableRow"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/OfferJourneyStepTwoActivityPetImageView"
+                    android:src="@drawable/pet"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pets:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/SearchMoreOptionsActivityPetsTextView"
+                        android:paddingLeft="10dip"
+                        android:text="@string/DontMind"
+                        style="@style/RegularTextView"/>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/downarrow"
+                    android:layout_marginRight="15sp"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dip"
+                android:clickable="true"
+                android:layout_below="@+id/SearchMoreOptionsActivityPetsTableRow"
+                android:id="@+id/SearchMoreOptionsActivityVehicleTypeTableRow"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/small_car"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Vehicle type:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/SearchMoreOptionsActivityVehicleTypeTextView"
+                        android:paddingLeft="10dip"
+                        android:text="@string/DontMind"
+                        style="@style/RegularTextView"/>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/downarrow"
+                    android:layout_marginRight="15sp"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dip"
+                android:clickable="true"
+                android:layout_below="@+id/SearchMoreOptionsActivityVehicleTypeTableRow"
+                android:id="@+id/SearchMoreOptionsActivityFeeTimeTableRow"
+                android:background="@drawable/home_navigation_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/OfferJourneyStepTwoActivityFeeImageView"
+                    android:src="@drawable/pound"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10sp"/>
+
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fee:"
+                        style="@style/LargeBlueHeader"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/SearchMoreOptionsActivityFeeTimeTextView"
+                        android:paddingLeft="10dip"
+                        android:text="@string/DontMind"
+                        style="@style/RegularTextView"/>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/downarrow"
+                    android:layout_marginRight="15sp"/>
+            </TableRow>
+
+        </TableLayout>
+
+</LinearLayout>

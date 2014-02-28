@@ -79,7 +79,7 @@ public class NotificationsAdapter extends ArrayAdapter<Notification> {
                 public void onImageRetrieved(Bitmap bitmap) {
                     if(bitmap != null)
                     {
-                        holder.contextImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/6, bitmap.getHeight()/6, false));
+                        holder.contextImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), false));
                     }
                 }
             }).execute();

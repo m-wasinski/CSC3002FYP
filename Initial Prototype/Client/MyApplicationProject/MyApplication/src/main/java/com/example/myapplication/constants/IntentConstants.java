@@ -8,6 +8,7 @@ public class IntentConstants {
     public static final String NOTIFICATION_TITLE = "notification_title";
     public static final String NOTIFICATION_ID = "notification_id";
     public static final String JOURNEY = "journey";
+    public static final String JOURNEY_SEARCH_DTO = "journey_search_dto";
     public static final String JOURNEY_ID = "journeyId";
     public static final String PAYLOAD = "payload";
     public static final String CONTENT_TITLE = "contentTitle";

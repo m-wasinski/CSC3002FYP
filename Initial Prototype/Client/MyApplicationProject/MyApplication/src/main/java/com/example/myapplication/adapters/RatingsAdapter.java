@@ -71,7 +71,7 @@ public class RatingsAdapter  extends ArrayAdapter<Rating>{
         Rating rating = ratings.get(position);
 
         new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
-                rating.getFromUser().getProfilePictureId(), this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+                rating.getFromUser().getUserId(), this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
             @Override
             public void onImageRetrieved(Bitmap bitmap) {
                 if(bitmap != null)

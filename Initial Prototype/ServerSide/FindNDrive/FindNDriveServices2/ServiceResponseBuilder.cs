@@ -65,5 +65,14 @@
         {
             return new ServiceResponse<T> { ServiceResponseCode = ServiceResponseCode.Unauthorized };
         }
+
+        public static ServiceResponse<T> Unauthorised<T>(string errorMessage)
+        {
+            return new ServiceResponse<T>
+            {
+                ServiceResponseCode = ServiceResponseCode.Unauthorized,
+                ErrorMessages = new List<string>{errorMessage}
+            };
+        }
     }
 }

@@ -63,7 +63,7 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/JourneyDetailsActivityJourneyIdTextView"
                             android:paddingLeft="10dip"
-                            style="@style/RegularEditText"/>
+                            style="@style/RegularTextView"/>
                     </LinearLayout>
                 </TableRow>
 
@@ -100,7 +100,7 @@
                                 android:layout_height="wrap_content"
                                 android:id="@+id/JourneyDetailsActivityJourneyDriverTextView"
                                 android:paddingLeft="10dip"
-                                style="@style/RegularEditText"/>
+                                style="@style/RegularTextView"/>
                         </LinearLayout>
 
                     <ImageView
@@ -140,7 +140,7 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/JourneyDetailsActivityJourneyDateTextView"
                             android:paddingLeft="10dip"
-                            style="@style/RegularEditText"/>
+                            style="@style/RegularTextView"/>
 
                     </LinearLayout>
                 </TableRow>
@@ -173,7 +173,7 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/JourneyDetailsActivityJourneyTimeTextView"
                             android:paddingLeft="10dip"
-                            style="@style/RegularEditText"/>
+                            style="@style/RegularTextView"/>
 
                     </LinearLayout>
                 </TableRow>
@@ -207,7 +207,7 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/JourneyDetailsActivityJourneySmokersTextView"
                             android:paddingLeft="10dip"
-                            style="@style/RegularEditText"/>
+                            style="@style/RegularTextView"/>
 
                     </LinearLayout>
                 </TableRow>
@@ -241,7 +241,7 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/JourneyDetailsActivityJourneyPetsTextView"
                             android:paddingLeft="10dip"
-                            style="@style/RegularEditText"/>
+                            style="@style/RegularTextView"/>
 
                     </LinearLayout>
                 </TableRow>
@@ -274,7 +274,7 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/JourneyDetailsActivityJourneyVehicleTypeTextView"
                             android:paddingLeft="10dip"
-                            style="@style/RegularEditText"/>
+                            style="@style/RegularTextView"/>
 
                     </LinearLayout>
                 </TableRow>
@@ -309,7 +309,7 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/JourneyDetailsActivityJourneySeatsTextView"
                             android:paddingLeft="10dip"
-                            style="@style/RegularEditText"/>
+                            style="@style/RegularTextView"/>
 
                     </LinearLayout>
                 </TableRow>
@@ -344,7 +344,7 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/JourneyDetailsActivityJourneyFeeTextView"
                             android:paddingLeft="10dip"
-                            style="@style/RegularEditText"/>
+                            style="@style/RegularTextView"/>
 
                     </LinearLayout>
                 </TableRow>
@@ -377,7 +377,7 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/JourneyDetailsActivityMessageToDriverEditText"
                             android:hint="Enter your message"
-                            style="@style/RegularEditText"
+                            style="@style/RegularTextView"
                             android:paddingLeft="10dip"
                             android:singleLine="true"/>
 

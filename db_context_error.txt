@@ -1,0 +1,12 @@
+System.Data.Entity.Infrastructure.DbUpdateException: Entities in 'ApplicationContext.Journeys' participate in the 'Journey_Driver' relationship. 0 related 'Journey_Driver_Target' were found. 1 'Journey_Driver_Target' is expected. ---> System.Data.Entity.Core.UpdateException: Entities in 'ApplicationContext.Journeys' participate in the 'Journey_Driver' relationship. 0 related 'Journey_Driver_Target' were found. 1 'Journey_Driver_Target' is expected.
+   at System.Data.Entity.Core.Mapping.Update.Internal.UpdateTranslator.RelationshipConstraintValidator.ValidateConstraints()
+   at System.Data.Entity.Core.Mapping.Update.Internal.UpdateTranslator.ProduceCommands()
+   at System.Data.Entity.Core.Mapping.Update.Internal.UpdateTranslator.Update()
+   at System.Data.Entity.Core.Objects.ObjectContext.ExecuteInTransaction[T](Func`1 func, IDbExecutionStrategy executionStrategy, Boolean startLocalTransaction, Boolean releaseConnectionOnSuccess)
+   at System.Data.Entity.Core.Objects.ObjectContext.SaveChangesToStore(SaveOptions options, IDbExecutionStrategy executionStrategy)
+   at System.Data.Entity.SqlServer.DefaultSqlExecutionStrategy.Execute[TResult](Func`1 operation)
+   at System.Data.Entity.Core.Objects.ObjectContext.SaveChanges(SaveOptions options)
+   at System.Data.Entity.Internal.InternalContext.SaveChanges()
+   --- End of inner exception stack trace ---
+   at System.Data.Entity.Internal.InternalContext.SaveChanges()
+   at FindNDriveDataAccessLayer.FindNDriveUnitOfWork.Commit() in c:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveDataAccessLayer\FindNDriveUnitOfWork.cs:line 156

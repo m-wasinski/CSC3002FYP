@@ -24,11 +24,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/LeaderboardListviewRowProfilePictureImageView"
+        android:layout_marginLeft="10dip"
         android:src="@drawable/user_man"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dip"
         android:orientation="vertical">
 
     <TextView

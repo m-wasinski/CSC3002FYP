@@ -10,7 +10,6 @@
 namespace FindNDriveServices2
 {
     using System;
-    using System.Collections.ObjectModel;
     using System.Security.Cryptography;
     using System.ServiceModel.Web;
     using System.Text;
@@ -29,11 +28,6 @@ namespace FindNDriveServices2
         /// The _find n drive unit of work.
         /// </summary>
         private readonly FindNDriveUnitOfWork findNDriveUnitOfWork;
-
-        /// <summary>
-        /// The invalid gcm registration id.
-        /// </summary>
-        private const string InvalidGcmRegistrationId = "0";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SessionManager"/> class.
@@ -150,10 +144,18 @@ namespace FindNDriveServices2
             return true;
         }
 
-
+        /// <summary>
+        /// The is still logged in.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool IsStillLoggedIn(User user)
         {
-            if (user.Status == Status.Offline && user.GCMRegistrationID.Equals(InvalidGcmRegistrationId))
+            if (user.Status == Status.Offline && user.GCMRegistrationID != null)
             {
                 return false;
             }
@@ -168,7 +170,7 @@ namespace FindNDriveServices2
             }
 
             user.Status = Status.Offline;
-            user.GCMRegistrationID = InvalidGcmRegistrationId;
+            user.GCMRegistrationID = null;
             savedSession.ExpiryDate = DateTime.Now.AddDays(-1);
             this.findNDriveUnitOfWork.Commit();
             return false;
@@ -364,7 +366,7 @@ namespace FindNDriveServices2
 
             var user = this.findNDriveUnitOfWork.UserRepository.Find(userId);
             user.Status = Status.Offline;
-            user.GCMRegistrationID = InvalidGcmRegistrationId;
+            user.GCMRegistrationID = null;
             savedSession.ExpiryDate = DateTime.Now.AddDays(-1);
             this.findNDriveUnitOfWork.Commit();
 

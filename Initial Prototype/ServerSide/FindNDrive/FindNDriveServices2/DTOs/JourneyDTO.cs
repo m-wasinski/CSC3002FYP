@@ -31,16 +31,9 @@ namespace FindNDriveServices2.DTOs
         public int JourneyId { get; set; }
 
         /// <summary>
-        /// Gets or sets the user id.
-        /// </summary>F
-        [DataMember]
-        public int DriverId { get; set; }
-
-        /// <summary>
         /// Gets or sets the driver.
         /// </summary>
         [DataMember]
-        [ForeignKey("DriverId")]
         public User Driver { get; set; }
 
         /// <summary>

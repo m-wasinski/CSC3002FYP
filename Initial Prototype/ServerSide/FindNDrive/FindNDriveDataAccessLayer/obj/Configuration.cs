@@ -12,6 +12,7 @@ namespace FindNDriveDataAccessLayer.Migrations
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Drawing;
     using System.Globalization;
@@ -37,6 +38,7 @@ namespace FindNDriveDataAccessLayer.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
+            
         }
 
         /// <summary>
@@ -46,7 +48,8 @@ namespace FindNDriveDataAccessLayer.Migrations
         /// The context.
         /// </param>
         protected override void Seed(ApplicationContext context)
-        {   
+        {
+            
             // Prepare the default profile picture.
             var img = Image.FromFile(@"C:\\CSC3002FYP\\Initial Prototype\\Resources\\default_picture.png");
             byte[] arr;
@@ -287,6 +290,7 @@ namespace FindNDriveDataAccessLayer.Migrations
                         SmokersAllowed = false,
                         JourneyStatus = JourneyStatus.OK,
                         CreationDate = DateTime.Now,
+                        PreferredPaymentMethod = string.Empty,
                         Participants = new Collection<User> { participant1, participant2 }
                     });
             }

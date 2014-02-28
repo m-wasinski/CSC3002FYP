@@ -1,0 +1,14 @@
+<mvvm:View xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+           xmlns:mvvm="clr-namespace:CODE.Framework.Wpf.Mvvm;assembly=CODE.Framework.Wpf.Mvvm"
+           xmlns:c="clr-namespace:CODE.Framework.Wpf.Controls;assembly=CODE.Framework.Wpf" 
+           Title="{Binding WindowTitle}"
+           Style="{DynamicResource CODE.Framework-Layout-ListPrimarySecondaryFormLayout}">
+
+    <TextBox Width="100" Height="30" mvvm:View.UIElementType="Secondary"></TextBox>
+
+    <ListBox ItemsSource="{Binding Users}"
+             Style="{DynamicResource CustomerList2}"
+             c:ListBoxEx.Command="{Binding EditCustomer}"
+             mvvm:View.UIElementType="Primary"/>
+    
+</mvvm:View>

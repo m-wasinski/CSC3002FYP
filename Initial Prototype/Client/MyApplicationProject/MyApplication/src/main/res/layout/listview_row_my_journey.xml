@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5sp"
             android:text="From City A to city B"
-            style="@style/RegularEditText"/>
+            style="@style/RegularTextView"/>
     </LinearLayout>
 
     <LinearLayout

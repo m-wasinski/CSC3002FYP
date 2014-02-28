@@ -51,7 +51,7 @@
                 android:layout_toLeftOf="@+id/OfferJourneyStepOneActivityDepartureGPSButtonLayout"
                 android:layout_marginLeft="10sp"
                 android:text="@string/SelectDeparturePoint"
-                style="@style/RegularEditText"
+                style="@style/RegularTextView"
                 android:singleLine="true"/>
 
             <LinearLayout
@@ -116,7 +116,7 @@
                 android:layout_toRightOf="@+id/OfferJourneyStepOneActivityViaIconImageView"
                 android:layout_marginLeft="10sp"
                 android:text="@string/AddNewWaypoint"
-                style="@style/RegularEditText"/>
+                style="@style/RegularTextView"/>
 
         </RelativeLayout>
 
@@ -159,7 +159,7 @@
                 android:layout_toLeftOf="@+id/OfferJourneyStepOneActivityDestinationGPSButtonLayout"
                 android:layout_marginLeft="10sp"
                 android:text="@string/SelectDestinationPoint"
-                style="@style/RegularEditText"
+                style="@style/RegularTextView"
                 android:singleLine="true"/>
 
             <LinearLayout
@@ -202,6 +202,6 @@
         android:layout_height="wrap_content"
         android:padding="5sp"
         android:text="@string/StepOneDescription"
-        style="@style/RegularEditText"
+        style="@style/RegularTextView"
         android:background="#80151515"/>
 </RelativeLayout>

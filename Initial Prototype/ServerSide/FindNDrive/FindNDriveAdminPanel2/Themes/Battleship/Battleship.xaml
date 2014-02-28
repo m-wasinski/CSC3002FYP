@@ -1,0 +1,8 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Battleship-Colors.xaml"/>
+        <ResourceDictionary Source="Battleship-Fonts.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>

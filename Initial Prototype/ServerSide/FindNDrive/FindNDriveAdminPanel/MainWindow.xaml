@@ -9,10 +9,10 @@
         <Label Content="{Binding ServiceResponse}" />
         <Label Content="{Binding ServiceResponseErrors}"/>
         
-        <TextBox Width="200"/>
-        <PasswordBox Width="200"/>
+        <TextBox Text="{ Binding LoginModel.Username, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+        <PasswordBox Name="TxtPassword" Width="200"/>
         <Button Content="Login" HorizontalAlignment="Center" Width="200"
-                Command="{Binding LoginCommand}" Margin="10"
+                Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=TxtPassword}" Margin="10"
                 IsDefault="True">
         </Button>
     </StackPanel>

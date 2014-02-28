@@ -71,12 +71,12 @@ public class LeaderboardAdapter extends ArrayAdapter<User> {
         User user = users.get(position);
 
         new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
-                user.getProfilePictureId(), this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+                user.getUserId(), this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
             @Override
             public void onImageRetrieved(Bitmap bitmap) {
                 if(bitmap != null)
                 {
-                    holder.profileImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/2, bitmap.getHeight()/2, false));
+                    holder.profileImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), false));
                 }
             }
         }).execute();

@@ -1,0 +1,2 @@
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\Fakes\FindNDriveInfrastructureDataAccessLayer.fakes : warning : Cannot generate shim for FindNDriveInfrastructureDataAccessLayer.IRepository`1: type is an interface.
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\Fakes\FindNDriveInfrastructureDataAccessLayer.fakes : warning : Cannot generate shim for FindNDriveInfrastructureDataAccessLayer.IUnitOfWork: type is an interface.

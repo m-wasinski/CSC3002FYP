@@ -113,7 +113,7 @@ namespace FindNDriveServices2.Services
             this.notificationManager.SendInstantMessage(
                 new Collection<User> { targetUser },
                 GcmNotificationType.ChatMessage,
-                sendingUser.ProfilePictureId,
+                sendingUser.UserId,
                 sendingUser.UserId,
                 newMessage,
                 newMessage.ChatMessageId);

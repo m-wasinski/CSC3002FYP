@@ -34,11 +34,29 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.0.1\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.0.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -46,6 +64,9 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WebMatrix.WebData, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -91,11 +112,21 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -109,9 +140,17 @@
       <Project>{2fe3e5e1-2d9f-4791-b60f-86fc293a8240}</Project>
       <Name>FindNDriveDomainObjects</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FindNDriveDataAccessLayer\FindNDriveDataAccessLayer.csproj">
+      <Project>{6FEF620A-4B02-48D3-B1ED-A7AEBCC47DEA}</Project>
+      <Name>FindNDriveDataAccessLayer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FindNDriveInfrastructureCore\FindNDriveInfrastructureCore.csproj">
       <Project>{315FFCF8-0595-41A9-AB9A-56495FB93FD7}</Project>
       <Name>FindNDriveInfrastructureCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FindNDriveInfrastructureDataAccessLayer\FindNDriveInfrastructureDataAccessLayer.csproj">
+      <Project>{893FF91F-37FF-4230-BA88-4A0414521633}</Project>
+      <Name>FindNDriveInfrastructureDataAccessLayer</Name>
     </ProjectReference>
     <ProjectReference Include="..\FindNDriveServices2\FindNDriveServices2.csproj">
       <Project>{FC80B470-8A56-4BF8-AFF6-BD33176F79A4}</Project>

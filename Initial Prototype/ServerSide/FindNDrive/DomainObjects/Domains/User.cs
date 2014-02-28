@@ -31,15 +31,8 @@ namespace DomainObjects.Domains
         public int UserId { get; set; }
 
         /// <summary>
-        /// Gets or sets the profile picture id.
-        /// </summary>
-        [DataMember]
-        public int ProfilePictureId { get; set; }
-
-        /// <summary>
         /// Gets or sets the profile image.
         /// </summary>
-        [ForeignKey("ProfilePictureId")]
         public ProfilePicture ProfilePicture { get; set; }
 
         /// <summary>
@@ -103,7 +96,7 @@ namespace DomainObjects.Domains
         /// <summary>
         /// Gets or sets the rating.
         /// </summary>
-        public virtual List<Rating> Rating { get; set; }
+        public virtual ICollection<Rating> Rating { get; set; }
 
         /// <summary>
         /// Gets or sets the last logon.

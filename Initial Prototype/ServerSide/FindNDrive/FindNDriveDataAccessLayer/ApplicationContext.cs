@@ -101,6 +101,7 @@ namespace FindNDriveDataAccessLayer
         {
             Configuration.ProxyCreationEnabled = false;
             Configuration.LazyLoadingEnabled = false;
+            Database.SetInitializer<ApplicationContext>(null);
         }
 
         // Define the model relationships, if C# isn't able to infer them itself
@@ -155,15 +156,19 @@ namespace FindNDriveDataAccessLayer
                    map.ToTable("JourneyMessage_UserId");
                });
 
-            modelBuilder.Entity<User>()
+            /*modelBuilder.Entity<User>()
                .HasMany(_ => _.Rating).WithMany().Map(map =>
                {
                    map.MapLeftKey("UserId");
                    map.MapRightKey("RatingId");
                    map.ToTable("User_Rating");
-               });
+               });*/
 
             modelBuilder.Entity<User>().HasRequired(x => x.ProfilePicture);
+
+            modelBuilder.Entity<Journey>().HasRequired(a => a.Driver);
+
+            modelBuilder.Entity<Journey>().Ignore(t => t.UnreadMessagesCount);
 
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();   
         }

@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>FindNDriveInfrastructureDataAccessLayer.Fakes</name>
+    </assembly>
+    <members>
+        <member name="T:FindNDriveInfrastructureDataAccessLayer.Fakes.ShimEntityFrameworkRepository`1">
+            <summary>Shim type of FindNDriveInfrastructureDataAccessLayer.EntityFrameworkRepository`1</summary>
+        </member>
+        <member name="M:FindNDriveInfrastructureDataAccessLayer.Fakes.ShimEntityFrameworkRepository`1.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:FindNDriveInfrastructureDataAccessLayer.Fakes.ShimEntityFrameworkRepository`1.#ctor(FindNDriveInfrastructureDataAccessLayer.EntityFrameworkRepository{`0})">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:FindNDriveInfrastructureDataAccessLayer.Fakes.ShimEntityFrameworkRepository`1.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:FindNDriveInfrastructureDataAccessLayer.Fakes.ShimEntityFrameworkRepository`1.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:FindNDriveInfrastructureDataAccessLayer.Fakes.ShimEntityFrameworkRepository`1.Bind(FindNDriveInfrastructureDataAccessLayer.IRepository{`0})">
+            <summary>Binds the members of the interface to the shim.</summary>
+        </member>
+        <member name="P:FindNDriveInfrastructureDataAccessLayer.Fakes.ShimEntityFrameworkRepository`1.AddT0">
+            <summary>Sets the shim of EntityFrameworkRepository`1.Add(!0 entity)</summary>
+        </member>
+        <member name="P:FindNDriveInfrastructureDataAccessLayer.Fakes.ShimEntityFrameworkRepository`1.AsQueryable">
+            <summary>Sets the shim of EntityFrameworkRepository`1.AsQueryable()</summary>
+        </member>
+        <member name="P:FindNDriveInfrastructureDataAccessLayer.Fakes.ShimEntityFrameworkRepository`1.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:FindNDriveInfrastructureDataAccessLayer.Fakes.ShimEntityFrameworkRepository`1.ConstructorDbContext">
+            <summary>Sets the shim of EntityFrameworkRepository`1.EntityFrameworkRepository`1(DbContext dbContext)</summary>
+        </member>
+        <member name="P:FindNDriveInfrastructureDataAccessLayer.Fakes.ShimEntityFrameworkRepository`1.FindInt32">
+            <summary>Sets the shim of EntityFrameworkRepository`1.Find(Int32 id)</summary>
+        </member>
+        <member name="P:FindNDriveInfrastructureDataAccessLayer.Fakes.ShimEntityFrameworkRepository`1.RemoveRangeIEnumerableOfT0">
+            <summary>Sets the shim of EntityFrameworkRepository`1.RemoveRange(IEnumerable`1&lt;!0&gt; entity)</summary>
+        </member>
+        <member name="P:FindNDriveInfrastructureDataAccessLayer.Fakes.ShimEntityFrameworkRepository`1.RemoveT0">
+            <summary>Sets the shim of EntityFrameworkRepository`1.Remove(!0 entity)</summary>
+        </member>
+        <member name="T:FindNDriveInfrastructureDataAccessLayer.Fakes.ShimEntityFrameworkRepository`1.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:FindNDriveInfrastructureDataAccessLayer.Fakes.ShimEntityFrameworkRepository`1.AllInstances.AddT0">
+            <summary>Sets the shim of EntityFrameworkRepository`1.Add(!0 entity)</summary>
+        </member>
+        <member name="P:FindNDriveInfrastructureDataAccessLayer.Fakes.ShimEntityFrameworkRepository`1.AllInstances.AsQueryable">
+            <summary>Sets the shim of EntityFrameworkRepository`1.AsQueryable()</summary>
+        </member>
+        <member name="P:FindNDriveInfrastructureDataAccessLayer.Fakes.ShimEntityFrameworkRepository`1.AllInstances.FindInt32">
+            <summary>Sets the shim of EntityFrameworkRepository`1.Find(Int32 id)</summary>
+        </member>
+        <member name="P:FindNDriveInfrastructureDataAccessLayer.Fakes.ShimEntityFrameworkRepository`1.AllInstances.RemoveRangeIEnumerableOfT0">
+            <summary>Sets the shim of EntityFrameworkRepository`1.RemoveRange(IEnumerable`1&lt;!0&gt; entity)</summary>
+        </member>
+        <member name="P:FindNDriveInfrastructureDataAccessLayer.Fakes.ShimEntityFrameworkRepository`1.AllInstances.RemoveT0">
+            <summary>Sets the shim of EntityFrameworkRepository`1.Remove(!0 entity)</summary>
+        </member>
+        <member name="T:FindNDriveInfrastructureDataAccessLayer.Fakes.StubEntityFrameworkRepository`1">
+            <summary>Stub type of FindNDriveInfrastructureDataAccessLayer.EntityFrameworkRepository`1</summary>
+        </member>
+        <member name="M:FindNDriveInfrastructureDataAccessLayer.Fakes.StubEntityFrameworkRepository`1.#ctor(System.Data.Entity.DbContext)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:FindNDriveInfrastructureDataAccessLayer.Fakes.StubEntityFrameworkRepository`1.InitializeStub">
+            <summary>Initializes a new instance of type StubEntityFrameworkRepository</summary>
+        </member>
+        <member name="P:FindNDriveInfrastructureDataAccessLayer.Fakes.StubEntityFrameworkRepository`1.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:FindNDriveInfrastructureDataAccessLayer.Fakes.StubEntityFrameworkRepository`1.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:FindNDriveInfrastructureDataAccessLayer.Fakes.StubEntityFrameworkRepository`1.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
+        <member name="T:FindNDriveInfrastructureDataAccessLayer.Fakes.StubIRepository`1">
+            <summary>Stub type of FindNDriveInfrastructureDataAccessLayer.IRepository`1</summary>
+        </member>
+        <member name="M:FindNDriveInfrastructureDataAccessLayer.Fakes.StubIRepository`1.#ctor">
+            <summary>Initializes a new instance of type StubIRepository</summary>
+        </member>
+        <member name="F:FindNDriveInfrastructureDataAccessLayer.Fakes.StubIRepository`1.AddT0">
+            <summary>Sets the stub of IRepository`1.Add(!0 entity)</summary>
+        </member>
+        <member name="F:FindNDriveInfrastructureDataAccessLayer.Fakes.StubIRepository`1.AsQueryable">
+            <summary>Sets the stub of IRepository`1.AsQueryable()</summary>
+        </member>
+        <member name="F:FindNDriveInfrastructureDataAccessLayer.Fakes.StubIRepository`1.FindInt32">
+            <summary>Sets the stub of IRepository`1.Find(Int32 id)</summary>
+        </member>
+        <member name="M:FindNDriveInfrastructureDataAccessLayer.Fakes.StubIRepository`1.fndidal::FindNDriveInfrastructureDataAccessLayer#IRepository{T}#Add(`0)">
+            <summary>Sets the stub of IRepository`1.Add(!0 entity)</summary>
+        </member>
+        <member name="M:FindNDriveInfrastructureDataAccessLayer.Fakes.StubIRepository`1.fndidal::FindNDriveInfrastructureDataAccessLayer#IRepository{T}#AsQueryable">
+            <summary>Sets the stub of IRepository`1.AsQueryable()</summary>
+        </member>
+        <member name="M:FindNDriveInfrastructureDataAccessLayer.Fakes.StubIRepository`1.fndidal::FindNDriveInfrastructureDataAccessLayer#IRepository{T}#Find(System.Int32)">
+            <summary>Sets the stub of IRepository`1.Find(Int32 id)</summary>
+        </member>
+        <member name="M:FindNDriveInfrastructureDataAccessLayer.Fakes.StubIRepository`1.fndidal::FindNDriveInfrastructureDataAccessLayer#IRepository{T}#Remove(`0)">
+            <summary>Sets the stub of IRepository`1.Remove(!0 entity)</summary>
+        </member>
+        <member name="M:FindNDriveInfrastructureDataAccessLayer.Fakes.StubIRepository`1.fndidal::FindNDriveInfrastructureDataAccessLayer#IRepository{T}#RemoveRange(System.Collections.Generic.IEnumerable{`0})">
+            <summary>Sets the stub of IRepository`1.RemoveRange(IEnumerable`1&lt;!0&gt; entity)</summary>
+        </member>
+        <member name="F:FindNDriveInfrastructureDataAccessLayer.Fakes.StubIRepository`1.RemoveRangeIEnumerableOfT0">
+            <summary>Sets the stub of IRepository`1.RemoveRange(IEnumerable`1&lt;!0&gt; entity)</summary>
+        </member>
+        <member name="F:FindNDriveInfrastructureDataAccessLayer.Fakes.StubIRepository`1.RemoveT0">
+            <summary>Sets the stub of IRepository`1.Remove(!0 entity)</summary>
+        </member>
+        <member name="T:FindNDriveInfrastructureDataAccessLayer.Fakes.StubIUnitOfWork">
+            <summary>Stub type of FindNDriveInfrastructureDataAccessLayer.IUnitOfWork</summary>
+        </member>
+        <member name="M:FindNDriveInfrastructureDataAccessLayer.Fakes.StubIUnitOfWork.#ctor">
+            <summary>Initializes a new instance of type StubIUnitOfWork</summary>
+        </member>
+        <member name="F:FindNDriveInfrastructureDataAccessLayer.Fakes.StubIUnitOfWork.Commit">
+            <summary>Sets the stub of IUnitOfWork.Commit()</summary>
+        </member>
+        <member name="F:FindNDriveInfrastructureDataAccessLayer.Fakes.StubIUnitOfWork.Dispose">
+            <summary>Sets the stub of IDisposable.Dispose()</summary>
+        </member>
+        <member name="M:FindNDriveInfrastructureDataAccessLayer.Fakes.StubIUnitOfWork.fndidal::FindNDriveInfrastructureDataAccessLayer#IUnitOfWork#Commit">
+            <summary>Sets the stub of IUnitOfWork.Commit()</summary>
+        </member>
+        <member name="M:FindNDriveInfrastructureDataAccessLayer.Fakes.StubIUnitOfWork.global::System#IDisposable#Dispose">
+            <summary>Sets the stub of IDisposable.Dispose()</summary>
+        </member>
+    </members>
+</doc>

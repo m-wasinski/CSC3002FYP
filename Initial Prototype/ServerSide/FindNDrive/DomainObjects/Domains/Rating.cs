@@ -38,7 +38,6 @@ namespace DomainObjects.Domains
         /// <summary>
         /// Gets or sets the user.
         /// </summary>
-        [ForeignKey("UserId")]
         public User User { get; set; }
 
         /// <summary>

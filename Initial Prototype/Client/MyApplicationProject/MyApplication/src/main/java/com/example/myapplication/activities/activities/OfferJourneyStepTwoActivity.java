@@ -177,12 +177,14 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
         this.toTextView = (TextView) findViewById(R.id.OfferJourneyStepTwoActivityToTextView);
         this.toTextView.setText("- "+this.journey.GeoAddresses.get(this.journey.GeoAddresses.size()-1).AddressLine);
 
+
         if(this.journey.GeoAddresses.size() > 2)
         {
             addViaPoints();
         }
 
-        setupEventHandlers();
+        // Setup all event handlers for the above UI elements.
+        this.setupEventHandlers();
     }
 
     private void addViaPoints()
@@ -374,7 +376,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
                 journeyFeeTextView.setText("Free (£0.00)");
                 journeyFeeTextView.setError(null);
                 journey.Fee = 0.00;
-                journey.PreferredPaymentMethod = "";
+                journey.PreferredPaymentMethod = null;
                 feeDialog.dismiss();
             }
         });

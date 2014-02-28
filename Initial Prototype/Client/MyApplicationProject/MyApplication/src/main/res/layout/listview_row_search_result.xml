@@ -9,7 +9,7 @@
     <TextView android:id="@+id/ListViewRowSearchResultHeaderTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/RegularEditText"
+        style="@style/RegularTextView"
         android:layout_marginLeft="5dip"/>
 
     <LinearLayout

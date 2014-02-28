@@ -103,7 +103,7 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
         holder.availableSeats.setText(String.valueOf(journey.AvailableSeats));
         holder.statusTextView.setText(statusText);
         holder.creationDateTextView.setText(DateTimeHelper.getSimpleDate(journey.CreationDate));
-        holder.modeTextView.setText(journey.DriverId == this.appManager.getUser().getUserId() ? "Driver" : "Passenger");
+        holder.modeTextView.setText(journey.Driver.getUserId() == this.appManager.getUser().getUserId() ? "Driver" : "Passenger");
         holder.newRequestIcon.setImageResource(journey.UnreadRequestsCount > 0 ? R.drawable.new_notification_myjourney : R.drawable.notification_myjourney);
         holder.unreadRequests.setTypeface(null, journey.UnreadRequestsCount > 0 ? (Typeface.BOLD) : (Typeface.NORMAL));
         holder.unreadRequests.setText(""+journey.UnreadRequestsCount);

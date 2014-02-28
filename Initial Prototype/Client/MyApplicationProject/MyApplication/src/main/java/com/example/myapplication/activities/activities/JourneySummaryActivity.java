@@ -103,14 +103,14 @@ public class JourneySummaryActivity extends BaseActivity implements WCFImageRetr
         this.journeyPetsTextView.setText(Utilities.translateBoolean(this.journey.PetsAllowed));
         this.journeyVehicleTypeTextView.setText(vehicleTypes[this.journey.VehicleType]);
         this.journeySeatsAvailableTextView.setText(String.valueOf(this.journey.AvailableSeats));
-        this.journeyFeeTextView.setText(("£"+new DecimalFormat("0.00").format(this.journey.Fee)) + (this.journey.PreferredPaymentMethod.isEmpty() ? "" : ", " +this.journey.PreferredPaymentMethod));
+        this.journeyFeeTextView.setText(("£"+new DecimalFormat("0.00").format(this.journey.Fee)) + (this.journey.PreferredPaymentMethod == null ? "" : ", " +this.journey.PreferredPaymentMethod));
 
     }
 
     private void getDriverPicture()
     {
         new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), this.getResources().getString(R.string.GetProfilePictureURL),
-                this.journey.DriverId, this.appManager.getAuthorisationHeaders(), this).execute();
+                this.journey.Driver.getUserId(), this.appManager.getAuthorisationHeaders(), this).execute();
     }
 
     @Override

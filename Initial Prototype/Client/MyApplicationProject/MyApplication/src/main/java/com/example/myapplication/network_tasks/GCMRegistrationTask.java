@@ -71,7 +71,7 @@ public class GCMRegistrationTask extends AsyncTask<TextView, String, Boolean> {
 
                 if(i == MAX_ATTEMPTS)
                 {
-                    this.registrationId = "0";
+                    this.registrationId = null;
                     break;
                 }
                 try {
@@ -83,7 +83,7 @@ public class GCMRegistrationTask extends AsyncTask<TextView, String, Boolean> {
                     // Activity finished before we complete - exit.
                     Log.d("", "Thread interrupted: abort remaining retries!");
                     Thread.currentThread().interrupt();
-                    this.registrationId = "0";
+                    this.registrationId = null;
                     return null;
                 }
             }

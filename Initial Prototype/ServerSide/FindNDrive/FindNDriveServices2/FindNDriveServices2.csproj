@@ -133,6 +133,7 @@
     <Compile Include="DTOs\JourneySearchDTO.cs" />
     <Compile Include="DTOs\LoadRangeDTO.cs" />
     <Compile Include="DTOs\LoginDTO.cs" />
+    <Compile Include="DTOs\MultiChoice.cs" />
     <Compile Include="DTOs\NotificationDTO.cs" />
     <Compile Include="DTOs\NotificationMarkerDTO.cs" />
     <Compile Include="DTOs\ProfilePictureUpdaterDTO.cs" />

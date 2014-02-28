@@ -15,6 +15,8 @@ using System.Windows.Shapes;
 
 namespace FindNDriveAdminPanel
 {
+    using FindNDriveAdminPanel.ViewModels;
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -23,6 +25,7 @@ namespace FindNDriveAdminPanel
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new LoginViewModel();
         }
     }
 }

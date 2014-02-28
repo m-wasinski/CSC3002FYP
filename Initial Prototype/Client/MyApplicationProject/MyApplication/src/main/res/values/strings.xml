@@ -88,6 +88,9 @@
     <string name="EnterFeedback">Enter your freedback here</string>
     <string name="RateDriverQuestion">Overall, how would rate the driver?</string>
     <string name="NoRatings">has no ratings.</string>
+    <string name="MoreOptions">More options</string>
+    <string name="Search">Search</string>
+    <string name="DontMind">I don\'t mind</string>
     <string-array name="app_menu_options">
         <item>Home</item>
         <item>My Car Shares</item>

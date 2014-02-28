@@ -30,16 +30,9 @@ namespace DomainObjects.Domains
         public int JourneyId { get; set; }
 
         /// <summary>
-        /// Gets or sets the user id.
-        /// </summary>F
-        [DataMember]
-        public int DriverId { get; set; }
-
-        /// <summary>
         /// Gets or sets the driver.
         /// </summary>
         [DataMember]
-        [ForeignKey("DriverId")]
         public virtual User Driver { get; set; }
 
         /// <summary>

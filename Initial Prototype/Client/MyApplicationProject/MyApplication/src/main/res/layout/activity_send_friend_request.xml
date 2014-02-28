@@ -23,43 +23,45 @@
         android:background="#32B4E4"
         android:layout_marginBottom="10dip"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/SendFriendRequestActivityContentLinearLayout"
+        android:layout_below="@+id/SendFriendRequestActivityBorderLinearLayout"
+        android:orientation="horizontal">
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/AlertDialogSendFriendRequestImageView"
-        android:layout_below="@+id/SendFriendRequestActivityBorderLinearLayout"
+        android:layout_margin="5dip"
+
         android:src="@drawable/user_man"
         android:contentDescription="@string/ProfileIcon" />
 
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@+id/SendFriendRequestActivityBorderLinearLayout"
-        android:id="@+id/AlertDialogSendFriendRequestLinearLayout"
-        android:layout_toRightOf="@+id/AlertDialogSendFriendRequestImageView">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textColor="#000000"
-            android:textSize="18sp"
-            android:text="@string/SendFriendRequestTitle"
-            android:id="@+id/SendFriendRequestActivityHeaderTextView"/>
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/SendFriendRequestActivityMessageEditText"
-            android:hint="@string/EnterYourOwnMessage"/>
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:text="@string/SendFriendRequestTitle"
+        android:layout_gravity="center_vertical"
+        android:id="@+id/SendFriendRequestActivityHeaderTextView"/>
     </LinearLayout>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/SendFriendRequestActivityMessageEditText"
+        android:layout_below="@+id/SendFriendRequestActivityContentLinearLayout"
+        android:hint="@string/EnterYourOwnMessage"/>
 
     <LinearLayout
         android:layout_marginTop="10dip"
         android:layout_width="match_parent"
         android:layout_height="1dip"
         android:orientation="horizontal"
-        android:layout_below="@+id/AlertDialogSendFriendRequestLinearLayout"
+        android:layout_below="@+id/SendFriendRequestActivityMessageEditText"
         android:id="@+id/SendFriendRequestActivityBottomBorderLinearLayout"
         android:background="#000000"/>
 

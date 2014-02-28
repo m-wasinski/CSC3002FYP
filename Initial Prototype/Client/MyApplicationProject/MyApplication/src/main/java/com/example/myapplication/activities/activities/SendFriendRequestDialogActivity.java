@@ -1,10 +1,12 @@
 package com.example.myapplication.activities.activities;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,7 +17,9 @@ import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.FriendRequest;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
+import com.example.myapplication.interfaces.WCFImageRetrieved;
 import com.example.myapplication.interfaces.WCFServiceCallback;
+import com.example.myapplication.network_tasks.WcfPictureServiceTask;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.google.gson.reflect.TypeToken;
 
@@ -25,8 +29,12 @@ import com.google.gson.reflect.TypeToken;
 public class SendFriendRequestDialogActivity extends BaseActivity implements WCFServiceCallback<Boolean, Void> {
 
     private EditText messageEditText;
+
     private Button okButton;
+
     private TextView headerTextView;
+
+    private ImageView profileIconImageView;
 
     private User targetUser;
 
@@ -44,6 +52,9 @@ public class SendFriendRequestDialogActivity extends BaseActivity implements WCF
         this.okButton = (Button) this.findViewById(R.id.SendFriendRequestActivitySendButton);
         this.headerTextView = (TextView) this.findViewById(R.id.SendFriendRequestActivityHeaderTextView);
         this.headerTextView.setText(this.headerTextView.getText().toString() + " " + this.targetUser.getFirstName() + " " + this.targetUser.getLastName() + " ("+this.targetUser.getUserName()+")");
+        this.profileIconImageView = (ImageView) this.findViewById(R.id.AlertDialogSendFriendRequestImageView);
+
+        this.retrieveProfilePicture();
 
         // Setup event handlers.
         this.setupEventHandlers();
@@ -79,5 +90,19 @@ public class SendFriendRequestDialogActivity extends BaseActivity implements WCF
             toast.show();
             this.finish();
         }
+    }
+
+    private void retrieveProfilePicture()
+    {
+        new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), this.getResources().getString(R.string.GetProfilePictureURL),
+                targetUser.getUserId(), this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+            @Override
+            public void onImageRetrieved(Bitmap bitmap) {
+                if(bitmap != null)
+                {
+                    profileIconImageView.setImageBitmap(bitmap);
+                }
+            }
+        }).execute();
     }
 }

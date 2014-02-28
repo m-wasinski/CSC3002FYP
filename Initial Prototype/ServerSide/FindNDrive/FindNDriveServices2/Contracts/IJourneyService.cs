@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ICarShareService.cs" company="">
+// <copyright file="IJourneyService.cs" company="">
 //   
 // </copyright>
 // <summary>
@@ -24,10 +24,10 @@ namespace FindNDriveServices2.Contracts
     public interface IJourneyService
     {
         /// <summary>
-        /// The get all car share listings for user.
+        /// The get all journeys for user.
         /// </summary>
-        /// <param name="id">
-        /// The id.
+        /// <param name="loadRangeDTO">
+        /// The load range dto.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.

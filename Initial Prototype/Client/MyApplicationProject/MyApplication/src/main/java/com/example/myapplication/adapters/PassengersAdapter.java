@@ -61,12 +61,12 @@ public class PassengersAdapter extends ArrayAdapter<User> {
         passengerHolder.nameTextView.setText(passenger.getFirstName() + " " + passenger.getLastName() + " ("+passenger.getUserName()+")");
 
         new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
-                passenger.getProfilePictureId(), this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+                passenger.getUserId(), this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
             @Override
             public void onImageRetrieved(Bitmap bitmap) {
                 if(bitmap != null)
                 {
-                    passengerHolder.profilePicture.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/8, bitmap.getHeight()/8, false));
+                    passengerHolder.profilePicture.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), false));
                 }
             }
         }).execute();

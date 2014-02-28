@@ -93,12 +93,12 @@ public class FriendsAdapter extends ArrayAdapter<User> {
         }).execute();
 
         new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
-                friend.getProfilePictureId(), this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+                friend.getUserId(), this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
             @Override
             public void onImageRetrieved(Bitmap bitmap) {
                 if(bitmap != null)
                 {
-                    holder.profilePicture.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/8, bitmap.getHeight()/8, false));
+                    holder.profilePicture.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), false));
                 }
             }
         }).execute();

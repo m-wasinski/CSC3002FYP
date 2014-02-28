@@ -77,6 +77,7 @@ namespace FindNDriveServices2.Services
         /// The search for journeys.
         /// </summary>
         /// <param name="journeySearchDTO">
+        /// The journey search dto.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
@@ -103,7 +104,7 @@ namespace FindNDriveServices2.Services
                         if (journeySearchDTO.DepartureRadius
                             >= new Haversine().Distance(
                                 geoAddress,
-                                journeySearchDTO.Journey.GeoAddresses.First(),
+                                journeySearchDTO.GeoAddresses.First(),
                                 DistanceType.Miles) && matchDeparture == -1 && matchDestination != geoAddress.Order)
                         {
                             matchDeparture = geoAddress.Order;
@@ -112,7 +113,7 @@ namespace FindNDriveServices2.Services
                         if (journeySearchDTO.DestinationRadius
                             >= new Haversine().Distance(
                                 geoAddress,
-                                journeySearchDTO.Journey.GeoAddresses.Last(),
+                                journeySearchDTO.GeoAddresses.Last(),
                                 DistanceType.Miles) && matchDestination == -1 && matchDeparture != geoAddress.Order)
                         {
                             matchDestination = geoAddress.Order;
@@ -122,16 +123,14 @@ namespace FindNDriveServices2.Services
                     return matchDeparture < matchDestination && matchDeparture != -1 && matchDestination != -1;
                 };
 
-            var journeys =
-                this.findNDriveUnitOfWork.JourneyRepository.AsQueryable().IncludeAll().AsEnumerable().Where(filter).ToList();
+            var journeys = this.findNDriveUnitOfWork.JourneyRepository.AsQueryable().IncludeAll().Where(filter).ToList();
                 
-            /*
             if (journeySearchDTO.SearchByDate)
             {
                 journeys =
                     journeys.Where(
                         _ =>
-                        Math.Abs(_.DateAndTimeOfDeparture.Date.Subtract(journey.DateAndTimeOfDeparture.Date).TotalDays) <= 5).ToList();
+                        Math.Abs(_.DateAndTimeOfDeparture.Date.Subtract(journeySearchDTO.DateAndTimeOfDeparture.Date).TotalDays) <= journeySearchDTO.DateAllowance).ToList();
             }
 
             if (journeySearchDTO.SearchByTime)
@@ -139,35 +138,27 @@ namespace FindNDriveServices2.Services
                 journeys =
                     journeys.Where(
                         _ =>
-                        Math.Abs(_.DateAndTimeOfDeparture.TimeOfDay.Subtract(journey.DateAndTimeOfDeparture.TimeOfDay).TotalHours) <= 1).ToList();
-            }
-
-            if (journey.SmokersAllowed)
-            {
-                journeys = journeys.Where(_ => _.SmokersAllowed).ToList();
-            }
-
-            if (journey.WomenOnly)
-            {
-                journeys = journeys.Where(_ => _.WomenOnly).ToList();
-            }
-
-            if (journey.PetsAllowed)
-            {
-                journeys = journeys.Where(_ => _.PetsAllowed).ToList();
+                        Math.Abs(_.DateAndTimeOfDeparture.TimeOfDay.Subtract(journeySearchDTO.DateAndTimeOfDeparture.TimeOfDay).TotalHours) <= journeySearchDTO.TimeAllowance).ToList();
             }
 
 
-            if (journey.Free)
-            {
-                journeys = journeys.Where(_ => _.Fee == 0.00).ToList();
-            }*/
 
-            return new ServiceResponse<List<Journey>>
+            if (journeySearchDTO.Smokers != MultiChoice.IdontMind)
             {
-                Result = journeys,
-                ServiceResponseCode = ServiceResponseCode.Success
-            };
+                journeys = journeySearchDTO.Smokers == MultiChoice.Yes ? journeys.Where(_ => _.SmokersAllowed).ToList() : journeys.Where(_ => !_.SmokersAllowed).ToList();
+            }
+
+            if (journeySearchDTO.Pets != MultiChoice.IdontMind)
+            {
+                journeys = journeySearchDTO.Pets == MultiChoice.Yes ? journeys.Where(_ => _.PetsAllowed).ToList() : journeys.Where(_ => !_.PetsAllowed).ToList();
+            }
+
+            if ((int)journeySearchDTO.VehicleType != -1)
+            {
+                journeys = journeys.Where(_ => _.VehicleType == journeySearchDTO.VehicleType).ToList();
+            }
+
+            return ServiceResponseBuilder.Success(journeys);
         }
     }
 }

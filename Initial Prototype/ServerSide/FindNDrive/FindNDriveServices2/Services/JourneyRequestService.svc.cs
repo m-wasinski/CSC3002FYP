@@ -133,7 +133,7 @@ namespace FindNDriveServices2.Services
             journey.UnreadRequestsCount += 1;
 
             var targetUser =
-                this.findNDriveUnitOfWork.UserRepository.Find(journey.DriverId);
+                this.findNDriveUnitOfWork.UserRepository.Find(journey.Driver.UserId);
 
             var requestingUser =
                 this.findNDriveUnitOfWork.UserRepository.Find(journeyRequestDTO.UserId);
@@ -165,9 +165,9 @@ namespace FindNDriveServices2.Services
                 journey.GeoAddresses.First().AddressLine, 
                 journey.GeoAddresses.Last().AddressLine);
 
-            this.notificationManager.SendAppNotification(new List<User> { targetUser }, "You have received a new journey request.", receiverMessage, requestingUser.ProfilePictureId, request.JourneyRequestId, NotificationType.Both, NotificationContentType.JourneyRequestReceived, this.random.Next());
+            this.notificationManager.SendAppNotification(new List<User> { targetUser }, "You have received a new journey request.", receiverMessage, requestingUser.UserId, request.JourneyRequestId, NotificationType.Both, NotificationContentType.JourneyRequestReceived, this.random.Next());
 
-            this.notificationManager.SendAppNotification(new List<User> { requestingUser }, "You have sent a new journey request.", senderMessage, targetUser.ProfilePictureId, -1, NotificationType.App, NotificationContentType.JourneyRequestSent, this.random.Next());
+            this.notificationManager.SendAppNotification(new List<User> { requestingUser }, "You have sent a new journey request.", senderMessage, targetUser.UserId, -1, NotificationType.App, NotificationContentType.JourneyRequestSent, this.random.Next());
 
             this.notificationManager.SendGcmTickle(new List<User> { targetUser });
 
@@ -266,7 +266,7 @@ namespace FindNDriveServices2.Services
                 new List<User> { newPassenger }, 
                 journeyRequestDTO.Decision == JourneyRequestDecision.Accepted ? "Journey request accepted" : "Journey request denied",
                 message,
-                journey.Driver.ProfilePictureId, journeyRequestDTO.Decision == JourneyRequestDecision.Accepted ? journey.JourneyId : -1,
+                journey.Driver.UserId, journeyRequestDTO.Decision == JourneyRequestDecision.Accepted ? journey.JourneyId : -1,
                 NotificationType.Both,
                 journeyRequestDTO.Decision == JourneyRequestDecision.Accepted
                     ? NotificationContentType.JourneyRequestAccepted
@@ -287,7 +287,7 @@ namespace FindNDriveServices2.Services
                 new List<User> { journey.Driver },
                 string.Format("You have {0} a journey request.", journeyRequestDTO.Decision == JourneyRequestDecision.Accepted ? "accepted" : "denied"),
                 driversMessage,
-                newPassenger.ProfilePictureId, request.JourneyRequestId,
+                newPassenger.UserId, request.JourneyRequestId,
                 NotificationType.App,
                 journeyRequestDTO.Decision == JourneyRequestDecision.Accepted
                     ? NotificationContentType.JourneyRequestAccepted

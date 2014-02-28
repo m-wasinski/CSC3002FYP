@@ -146,7 +146,7 @@ namespace FindNDriveServices2.Services
                     leavingUser.FirstName,
                     leavingUser.LastName,
                     leavingUser.UserName),
-                leavingUser.ProfilePictureId,
+                leavingUser.UserId,
                 -1,
                 NotificationType.Both,
                 NotificationContentType.RatingReceived,
@@ -160,7 +160,7 @@ namespace FindNDriveServices2.Services
                     driver.FirstName,
                     driver.LastName,
                     driver.UserName),
-                leavingUser.ProfilePictureId,
+                leavingUser.UserId,
                 -1,
                 NotificationType.App,
                 NotificationContentType.RatingLeft,
@@ -184,7 +184,7 @@ namespace FindNDriveServices2.Services
             return ServiceResponseBuilder.Success(ratings);
         }
 
-        public ServiceResponse<List<User>> GetLeaderboard()
+        public ServiceResponse<List<User>> GetLeaderboard(LoadRangeDTO loadRangeDTO)
         {
             if (!this.sessionManager.IsSessionValid())
             {
@@ -194,9 +194,11 @@ namespace FindNDriveServices2.Services
             var rating =
                 this.findNDriveUnitOfWork.UserRepository.AsQueryable()
                     .IncludeAll()
-                    .OrderByDescending(_ => _.AverageRating).ToList();
+                    .OrderByDescending(_ => _.AverageRating)
+                    .Skip(loadRangeDTO.Skip)
+                    .Take(loadRangeDTO.Take);
 
-            return ServiceResponseBuilder.Success(rating);
+            return ServiceResponseBuilder.Success(rating.ToList());
         }
     }
 }

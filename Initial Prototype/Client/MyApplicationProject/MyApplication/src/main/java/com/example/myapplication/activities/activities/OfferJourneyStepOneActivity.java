@@ -368,12 +368,12 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
         this.journey.Private = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING && this.journey.Private;
         this.journey.VehicleType = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.journey.VehicleType : -1;
         this.journey.Fee = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.journey.Fee : -1;
-        this.journey.PreferredPaymentMethod =  this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.journey.PreferredPaymentMethod : "";
+        this.journey.PreferredPaymentMethod =  this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.journey.PreferredPaymentMethod : null;
         this.journey.PaymentOption = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.journey.PaymentOption : -1;
         this.journey.Description = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.journey.Description : "";
         this.journey.DateAndTimeOfDeparture = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ?
                 this.journey.DateAndTimeOfDeparture : DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime());
-        this.journey.DriverId = this.appManager.getUser().getUserId();
+        this.journey.Driver = this.appManager.getUser();
 
         this.proceedToStepTwo();
     }

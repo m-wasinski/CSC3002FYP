@@ -34,11 +34,13 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 
 /**
- * Created by Michal on 27/11/13.
- */
-
+ * Activity which displays a list of all journeys associated with the current user,
+ * both as a driver and passenger.
+ **/
 public class MyJourneysActivity extends BaseActivity implements WCFServiceCallback<ArrayList<Journey>, String>,
         AbsListView.OnScrollListener, AdapterView.OnItemClickListener, TextWatcher {
+
+    private static final String TAG = "My Journeys Activity";
 
     private EditText filterEditText;
 
@@ -63,29 +65,26 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_my_journeys);
+        setContentView(R.layout.activity_my_journeys);
 
         // Initialise local variables.
-        this.myJourneys = new ArrayList<Journey>();
+        myJourneys = new ArrayList<Journey>();
 
-        // Initialise UI elements.
-        this.filterEditText = (EditText) this.findViewById(R.id.ActivityHomeFilterEditText);
-        this.myJourneysListView = (ListView) this.findViewById(R.id.MyCarSharesListView);
-        this.myJourneysListView.setScrollingCacheEnabled(false);
-        this.journeyAdapter = new JourneyAdapter(this, R.layout.listview_row_my_journey, myJourneys, this.appManager);
-        this.journeyAdapter.getFilter().filter(filterEditText.getText().toString());
-        this.myJourneysListView.setAdapter(journeyAdapter);
-        this.progressBar = (ProgressBar) this.findViewById(R.id.ActivityMyJourneysProgressBar);
-        this.noJourneysTextView = (TextView) this.findViewById(R.id.MyCarSharesNoJourneysTextView);
+        // Initialise UI elements and setup event handlers..
+        filterEditText = (EditText) findViewById(R.id.ActivityHomeFilterEditText);
+        filterEditText.addTextChangedListener(this);
 
-        // Setup all event handlers for UI elements.
-        this.setupEventHandlers();
-    }
+        myJourneysListView = (ListView) findViewById(R.id.MyCarSharesListView);
+        myJourneysListView.setOnScrollListener(this);
 
-    private void setupEventHandlers()
-    {
-        this.myJourneysListView.setOnScrollListener(this);
-        this.filterEditText.addTextChangedListener(this);
+        journeyAdapter = new JourneyAdapter(this, R.layout.listview_row_my_journey, myJourneys, appManager);
+        journeyAdapter.getFilter().filter(filterEditText.getText().toString());
+
+        myJourneysListView.setAdapter(journeyAdapter);
+
+        progressBar = (ProgressBar) findViewById(R.id.ActivityMyJourneysProgressBar);
+
+        noJourneysTextView = (TextView) findViewById(R.id.MyCarSharesNoJourneysTextView);
     }
 
     @Override
@@ -94,61 +93,64 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BroadcastTypes.BROADCAST_ACTION_REFRESH);
         registerReceiver(RefreshBroadcastReceiver, intentFilter);
-        this.requestMoreData = this.myJourneysListView.getCount() == 0;
-        this.retrieveJourneys();
+        requestMoreData = myJourneysListView.getCount() == 0;
+        retrieveJourneys();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        this.unregisterReceiver(RefreshBroadcastReceiver);
+        unregisterReceiver(RefreshBroadcastReceiver);
     }
 
-    /*
+    /**
      * Called when list of journeys is retrieved from the server.
-     */
+     **/
     @Override
     public void onServiceCallCompleted(final ServiceResponse<ArrayList<Journey>> serviceResponse, String s) {
 
-        this.progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
 
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
-            Log.i("My Journeys Activity:", "Retrieved " + serviceResponse.Result.size() + " journeys.");
+            Log.i(TAG, "Retrieved " + serviceResponse.Result.size() + " journeys.");
 
-            if(serviceResponse.Result.size() == 0 && this.myJourneysListView.getCount() == 0)
+            if(serviceResponse.Result.size() == 0 && myJourneysListView.getCount() == 0)
             {
-                this.noJourneysTextView.setVisibility(View.VISIBLE);
-                this.myJourneysListView.setVisibility(View.GONE);
+                noJourneysTextView.setVisibility(View.VISIBLE);
+                myJourneysListView.setVisibility(View.GONE);
             }
             else
             {
-                if(!this.requestMoreData)
+                if(!requestMoreData)
                 {
-                    this.myJourneys.clear();
+                    myJourneys.clear();
                 }
                 else
                 {
-                    this.myJourneysListView.setSelectionFromTop(currentScrollIndex, currentScrollTop);
+                    myJourneysListView.setSelectionFromTop(currentScrollIndex, currentScrollTop);
                 }
 
-                this.myJourneys.addAll(serviceResponse.Result);
-                this.journeyAdapter.notifyDataSetInvalidated();
-                this.noJourneysTextView.setVisibility(View.GONE);
-                this.myJourneysListView.setVisibility(View.VISIBLE);
-                this.filterEditText.setEnabled(true);
-                this.myJourneysListView.setOnItemClickListener(this);
-                this.requestMoreData = false;
+                myJourneys.addAll(serviceResponse.Result);
+                journeyAdapter.notifyDataSetChanged();
+                noJourneysTextView.setVisibility(View.GONE);
+                myJourneysListView.setVisibility(View.VISIBLE);
+                filterEditText.setEnabled(true);
+                myJourneysListView.setOnItemClickListener(this);
+                requestMoreData = false;
             }
         }
     }
 
+    /**
+     * Makes a call to the web service to retrieve a list of journeys associated with the current user.
+     **/
     private void retrieveJourneys()
     {
-        this.progressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
         new WcfPostServiceTask<LoadRangeDTO>(this, getResources().getString(R.string.GetAllJourneysURL),
                 new LoadRangeDTO(appManager.getUser().getUserId(),
-                        this.requestMoreData ? myJourneysListView.getCount() : 0, this.requestMoreData ? WcfConstants.JourneysPerCall : myJourneysListView.getCount()),
+                        requestMoreData ? myJourneysListView.getCount() : 0, requestMoreData ? WcfConstants.JourneysPerCall : myJourneysListView.getCount()),
                 new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(),
                 appManager.getAuthorisationHeaders(), this).execute();
     }
@@ -179,20 +181,20 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
             return;
         }
 
-        if (this.previousTotalListViewItemCount == totalItemCount)
+        if (previousTotalListViewItemCount == totalItemCount)
         {
             return;
         }
 
         if(firstVisibleItem + visibleItemCount >= totalItemCount)
         {
-            this.previousTotalListViewItemCount = totalItemCount;
-            this.requestMoreData = true;
-            this.currentScrollIndex = this.myJourneysListView.getFirstVisiblePosition();
-            View v = this.myJourneysListView.getChildAt(0);
-            this.currentScrollTop= (v == null) ? 0 : v.getTop();
+            previousTotalListViewItemCount = totalItemCount;
+            requestMoreData = true;
+            currentScrollIndex = myJourneysListView.getFirstVisiblePosition();
+            View v = myJourneysListView.getChildAt(0);
+            currentScrollTop= (v == null) ? 0 : v.getTop();
 
-            this.retrieveJourneys();
+            retrieveJourneys();
         }
     }
 
@@ -202,8 +204,8 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
         Bundle extras = new Bundle();
         extras.putInt(IntentConstants.NEW_JOURNEY_MESSAGES,Integer.parseInt(((TextView)view.findViewById(R.id.MyCarSharesNumberOfUnreadMessagesTextView)).getText().toString()));
         extras.putInt(IntentConstants.NEW_JOURNEY_REQUESTS,Integer.parseInt(((TextView)view.findViewById(R.id.MyCarSharesNumberOfUnreadRequestsTextView)).getText().toString()));
-        extras.putString(IntentConstants.JOURNEY, gson.toJson(this.myJourneys.get(i)));
-        this.startActivity(new Intent(this, JourneyDetailsActivity.class).putExtras(extras));
+        extras.putString(IntentConstants.JOURNEY, gson.toJson(myJourneys.get(i)));
+        startActivity(new Intent(this, JourneyDetailsActivity.class).putExtras(extras));
     }
 
     @Override
@@ -213,8 +215,7 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
 
     @Override
     public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-        this.journeyAdapter.getFilter().filter(charSequence.toString());
-        this.myJourneysListView.setAdapter(journeyAdapter);
+        journeyAdapter.getFilter().filter(charSequence.toString());
     }
 
     @Override

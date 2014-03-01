@@ -107,12 +107,12 @@ public class SearchMoreOptionsDialogFragment extends DialogFragment implements V
         this.flexibleTimeTableRow = (TableRow) this.view.findViewById(R.id.SearchMoreOptionsFlexibleTimeTableRow);
         this.flexibleTimeTableRow.setVisibility(this.journeySearchDTO.getDepartureTime() == null ? View.GONE : View.VISIBLE);
 
-        view.findViewById(R.id.SearchMoreOptionsActivityDepartureDateTableRow).setOnClickListener(this);
-        view.findViewById(R.id.SearchMoreOptionsActivityDepartureTimeTableRow).setOnClickListener(this);
-        view.findViewById(R.id.SearchMoreOptionsActivitySmokersTableRow).setOnClickListener(this);
-        view.findViewById(R.id.SearchMoreOptionsActivityPetsTableRow).setOnClickListener(this);
-        view.findViewById(R.id.SearchMoreOptionsActivityVehicleTypeTableRow).setOnClickListener(this);
-        view.findViewById(R.id.SearchMoreOptionsActivityFeeTimeTableRow).setOnClickListener(this);
+        this.view.findViewById(R.id.SearchMoreOptionsActivityDepartureDateTableRow).setOnClickListener(this);
+        this.view.findViewById(R.id.SearchMoreOptionsActivityDepartureTimeTableRow).setOnClickListener(this);
+        this.view.findViewById(R.id.SearchMoreOptionsActivitySmokersTableRow).setOnClickListener(this);
+        this.view.findViewById(R.id.SearchMoreOptionsActivityPetsTableRow).setOnClickListener(this);
+        this.view.findViewById(R.id.SearchMoreOptionsActivityVehicleTypeTableRow).setOnClickListener(this);
+        this.view.findViewById(R.id.SearchMoreOptionsActivityFeeTimeTableRow).setOnClickListener(this);
 
         this.dateTextView = (TextView) this.view.findViewById(R.id.SearchMoreOptionsActivityDepartureDateTextView);
         this.dateTextView.setText(this.journeySearchDTO.getDepartureDate() == null ? "I don't mind" : DateTimeHelper.getSimpleDate(this.journeySearchDTO.getDateAndTimeOfDeparture()));

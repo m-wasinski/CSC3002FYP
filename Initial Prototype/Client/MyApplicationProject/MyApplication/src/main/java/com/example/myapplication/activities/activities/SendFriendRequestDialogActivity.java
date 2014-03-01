@@ -40,29 +40,29 @@ public class SendFriendRequestDialogActivity extends BaseActivity implements WCF
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_send_friend_request);
+        setContentView(R.layout.activity_send_friend_request);
 
         //Initialise local variables.
-        this.targetUser = this.gson.fromJson(getIntent().getExtras().getString(IntentConstants.USER), new TypeToken<User>() {}.getType());
+        targetUser = gson.fromJson(getIntent().getExtras().getString(IntentConstants.USER), new TypeToken<User>() {}.getType());
 
         //Initialise UI elements.
-        this.messageEditText = (EditText) this.findViewById(R.id.SendFriendRequestActivityMessageEditText);
-        this.okButton = (Button) this.findViewById(R.id.SendFriendRequestActivitySendButton);
-        this.headerTextView = (TextView) this.findViewById(R.id.SendFriendRequestActivityHeaderTextView);
-        this.headerTextView.setText(this.headerTextView.getText().toString() + " " + this.targetUser.getFirstName() + " " + this.targetUser.getLastName() + " ("+this.targetUser.getUserName()+")");
-        this.profileIconImageView = (ImageView) this.findViewById(R.id.AlertDialogSendFriendRequestImageView);
+        messageEditText = (EditText) findViewById(R.id.SendFriendRequestActivityMessageEditText);
+        okButton = (Button) findViewById(R.id.SendFriendRequestActivitySendButton);
+        headerTextView = (TextView) findViewById(R.id.SendFriendRequestActivityHeaderTextView);
+        headerTextView.setText(headerTextView.getText().toString() + " " + targetUser.getFirstName() + " " + targetUser.getLastName() + " ("+targetUser.getUserName()+")");
+        profileIconImageView = (ImageView) findViewById(R.id.AlertDialogSendFriendRequestImageView);
 
-        this.retrieveProfilePicture();
+        retrieveProfilePicture();
 
         // Setup event handlers.
-        this.setupEventHandlers();
+        setupEventHandlers();
     }
 
     private void setupEventHandlers()
     {
-        this.okButton.setOnClickListener(new View.OnClickListener() {
+        okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 sendFriendRequest();
@@ -73,12 +73,12 @@ public class SendFriendRequestDialogActivity extends BaseActivity implements WCF
     private void sendFriendRequest()
     {
         FriendRequest friendRequest = new FriendRequest();
-        friendRequest.Message = this.messageEditText.getText().toString();
-        friendRequest.TargetUserId = this.targetUser.getUserId();
-        friendRequest.RequestingUserId = this.appManager.getUser().getUserId();
+        friendRequest.Message = messageEditText.getText().toString();
+        friendRequest.TargetUserId = targetUser.getUserId();
+        friendRequest.RequestingUserId = appManager.getUser().getUserId();
 
         new WcfPostServiceTask<FriendRequest>(this,
-                this.getResources().getString(R.string.SendFriendRequestURL), friendRequest,
+                getResources().getString(R.string.SendFriendRequestURL), friendRequest,
                 new TypeToken<ServiceResponse<Boolean>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
     }
 
@@ -88,14 +88,14 @@ public class SendFriendRequestDialogActivity extends BaseActivity implements WCF
         {
             Toast toast = Toast.makeText(this, "Friend request was sent successfully.", Toast.LENGTH_LONG);
             toast.show();
-            this.finish();
+            finish();
         }
     }
 
     private void retrieveProfilePicture()
     {
-        new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), this.getResources().getString(R.string.GetProfilePictureURL),
-                targetUser.getUserId(), this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+        new WcfPictureServiceTask(appManager.getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
+                targetUser.getUserId(), appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
             @Override
             public void onImageRetrieved(Bitmap bitmap) {
                 if(bitmap != null)

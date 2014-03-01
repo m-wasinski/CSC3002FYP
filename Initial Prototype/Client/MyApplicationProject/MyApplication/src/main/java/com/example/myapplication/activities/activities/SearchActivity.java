@@ -43,9 +43,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * Created by Michal on 08/01/14.
- */
-
+ * This activity provides the user with the functionality to search for journeys in the database.
+ * Users can specify the start and end locations of their desired journeys as well as various other advanced options such as Date, Time etc.
+ * For the advanced options, please refer to the SearchMoreOptionsActivity class.
+ **/
 public class SearchActivity extends BaseMapActivity implements WCFServiceCallback<ArrayList<Journey>, String>, OptionsDialogDismissListener, SearchMoreOptionsDialogFragment.sizeChangeListener {
 
     private Button searchResultsButton;
@@ -74,29 +75,29 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_search);
+        setContentView(R.layout.activity_search);
 
         //initialise variables.
-        this.numOfSearchResults = 0;
-        this.searchResults = new ArrayList<Journey>();
-        this.journeySearchDTO = new JourneySearchDTO();
+        numOfSearchResults = 0;
+        searchResults = new ArrayList<Journey>();
+        journeySearchDTO = new JourneySearchDTO();
 
         //Initialise UI elements.
-        this.progressBar = (ProgressBar) this.findViewById(R.id.SearchActivityProgressBar);
-        this.departureRelativeLayout = (RelativeLayout) this.findViewById(R.id.SearchActivityDepartureRelativeLayout);
-        this.destinationRelativeLayout = (RelativeLayout) this.findViewById(R.id.SearchActivityDestinationRelativeLayout);
-        this.departureTextView = (TextView) this.findViewById(R.id.SearchActivityDepartureTextView);
-        this.destinationTextView = (TextView) this.findViewById(R.id.SearchActivityDestinationTextView);
-        this.searchResultsButton = (Button) this.findViewById(R.id.SearchActivityResultsButton);
-        this.departureGPSButton = (Button) this.findViewById(R.id.SearchActivityDepartureGpsButton);
-        this.destinationGPSButton = (Button) this.findViewById(R.id.SearchActivityDestinationGpsButton);
-        this.moreOptionsButton = (Button) this.findViewById(R.id.ActivitySearchMapMoreOptionsButton);
+        progressBar = (ProgressBar) findViewById(R.id.SearchActivityProgressBar);
+        departureRelativeLayout = (RelativeLayout) findViewById(R.id.SearchActivityDepartureRelativeLayout);
+        destinationRelativeLayout = (RelativeLayout) findViewById(R.id.SearchActivityDestinationRelativeLayout);
+        departureTextView = (TextView) findViewById(R.id.SearchActivityDepartureTextView);
+        destinationTextView = (TextView) findViewById(R.id.SearchActivityDestinationTextView);
+        searchResultsButton = (Button) findViewById(R.id.SearchActivityResultsButton);
+        departureGPSButton = (Button) findViewById(R.id.SearchActivityDepartureGpsButton);
+        destinationGPSButton = (Button) findViewById(R.id.SearchActivityDestinationGpsButton);
+        moreOptionsButton = (Button) findViewById(R.id.ActivitySearchMapMoreOptionsButton);
         // Connect all event handlers.
-        this.setupEventHandlers();
+        setupEventHandlers();
 
         try {
             // Loading map
-            this.initialiseMap();
+            initialiseMap();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -158,61 +159,61 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         if(markerType == MarkerType.Departure)
         {
             showDeparturePoint(markerOptions, perimeter);
-            this.departureTextView.setText(markerOptions.getTitle());
+            departureTextView.setText(markerOptions.getTitle());
         }
         else if(markerType == MarkerType.Destination)
         {
             showDestinationPoint(markerOptions, perimeter);
-            this.destinationTextView.setText(markerOptions.getTitle());
+            destinationTextView.setText(markerOptions.getTitle());
         }
     }
 
     private void setupEventHandlers()
     {
-        this.departureRelativeLayout.setOnClickListener(new View.OnClickListener() {
+        departureRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showAddressDialog(MarkerType.Departure, departureMarker, departureRadius);
             }
         });
 
-        this.destinationRelativeLayout.setOnClickListener(new View.OnClickListener() {
+        destinationRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showAddressDialog(MarkerType.Destination, destinationMarker, destinationRadius);
             }
         });
 
-        this.departureGPSButton.setOnClickListener(new View.OnClickListener() {
+        departureGPSButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getCurrentAddress(MarkerType.Departure, locationClient.getLastLocation(), 2);
             }
         });
 
-        this.destinationGPSButton.setOnClickListener(new View.OnClickListener() {
+        destinationGPSButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getCurrentAddress(MarkerType.Destination, locationClient.getLastLocation(), 2);
             }
         });
 
-        this.searchButton = (Button) findViewById(R.id.ActivitySearchMapSearchButton);
-        this.searchButton.setOnClickListener(new View.OnClickListener() {
+        searchButton = (Button) findViewById(R.id.ActivitySearchMapSearchButton);
+        searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 search();
             }
         });
 
-        this.searchResultsButton.setOnClickListener(new View.OnClickListener() {
+        searchResultsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showSearchResultsDialog();
             }
         });
 
-        this.moreOptionsButton.setOnClickListener(new View.OnClickListener() {
+        moreOptionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showExtraOptions();
@@ -222,14 +223,14 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
 
     private void showExtraOptions()
     {
-        this.searchMoreOptionsDialogFragment = new SearchMoreOptionsDialogFragment(SearchActivity.this, this.journeySearchDTO, this, this);
-        this.searchMoreOptionsDialogFragment.show(getFragmentManager(), "");
+        searchMoreOptionsDialogFragment = new SearchMoreOptionsDialogFragment(SearchActivity.this, journeySearchDTO, this, this);
+        searchMoreOptionsDialogFragment.show(getFragmentManager(), "");
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
 
-        if(this.searchMoreOptionsDialogFragment != null)
+        if(searchMoreOptionsDialogFragment != null)
         {
             updateSizeOfOptionsDialog();
         }
@@ -264,7 +265,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
 
     private void search() {
 
-        if(this.departureMarker == null || this.destinationMarker == null)
+        if(departureMarker == null || destinationMarker == null)
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("You must specify departure and destination points.")
@@ -279,36 +280,36 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
             return;
         }
 
-        this.progressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
 
         journeySearchDTO.setGeoAddresses(new ArrayList<GeoAddress>(Arrays.asList(
                 new GeoAddress(departureMarker.getPosition().latitude, departureMarker.getPosition().longitude, departureMarker.getTitle(), 0),
                 new GeoAddress(destinationMarker.getPosition().latitude, destinationMarker.getPosition().longitude, destinationMarker.getTitle(), 1))));
 
-        journeySearchDTO.setDepartureRadius(this.departureRadius.getRadius() / METERS_IN_MILE);
-        journeySearchDTO.setDestinationRadius(this.destinationRadius.getRadius() / METERS_IN_MILE);
+        journeySearchDTO.setDepartureRadius(departureRadius.getRadius() / METERS_IN_MILE);
+        journeySearchDTO.setDestinationRadius(destinationRadius.getRadius() / METERS_IN_MILE);
 
-        // Call the webservice to begin the search.
+        // All good, call the webservice to begin the search.
         new WcfPostServiceTask<JourneySearchDTO>(this, getResources().getString(R.string.SearchForJourneysURL),
                 journeySearchDTO, new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
     }
 
     @Override
     public void onServiceCallCompleted(final ServiceResponse<ArrayList<Journey>> serviceResponse, String parameter) {
-        this.progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
 
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
-            this.numOfSearchResults = serviceResponse.Result.size();
+            numOfSearchResults = serviceResponse.Result.size();
 
-            this.searchResultsButton.setVisibility(View.VISIBLE);
-            this.searchResultsButton.setEnabled(this.numOfSearchResults > 0);
-            this.searchResultsButton.setText(this.numOfSearchResults == 0 ? "No journeys found" : "Hide search results ("+this.numOfSearchResults+")");
+            searchResultsButton.setVisibility(View.VISIBLE);
+            searchResultsButton.setEnabled(numOfSearchResults > 0);
+            searchResultsButton.setText(numOfSearchResults == 0 ? "No journeys found" : "Hide search results ("+numOfSearchResults+")");
 
             if(serviceResponse.Result.size() > 0)
             {
-                this.searchResults = serviceResponse.Result;
-                this.showSearchResultsDialog();
+                searchResults = serviceResponse.Result;
+                showSearchResultsDialog();
             }
         }
     }
@@ -325,7 +326,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         });
         searchResultsDialog.setContentView(R.layout.dialog_search_results);
         ListView resultsListView = (ListView) searchResultsDialog.findViewById(R.id.SearchResultsDialogResultsListView);
-        SearchResultsAdapter adapter = new SearchResultsAdapter(this, R.layout.listview_row_search_result, this.searchResults);
+        SearchResultsAdapter adapter = new SearchResultsAdapter(this, R.layout.listview_row_search_result, searchResults);
         resultsListView.setAdapter(adapter);
 
         resultsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -342,9 +343,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
     {
         Bundle bundle = new Bundle();
         bundle.putString(IntentConstants.JOURNEY, gson.toJson(journey));
-        Intent intent = new Intent(this, SearchResultsJourneyDetailsActivity.class);
-        intent.putExtras(bundle);
-        startActivity(intent);
+        startActivity(new Intent(this, SearchResultsJourneyDetailsActivity.class).putExtras(bundle));
     }
 
     @Override
@@ -375,17 +374,17 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
     public void OnOptionsDialogDismiss(JourneySearchDTO journeySearchDTO) {
         this.journeySearchDTO = journeySearchDTO;
 
-        if(this.searchMoreOptionsDialogFragment != null)
+        if(searchMoreOptionsDialogFragment != null)
         {
-            this.searchMoreOptionsDialogFragment.dismiss();
-            this.searchMoreOptionsDialogFragment = null;
+            searchMoreOptionsDialogFragment.dismiss();
+            searchMoreOptionsDialogFragment = null;
         }
 
     }
 
     @Override
     public void sizeChanged() {
-        if(this.searchMoreOptionsDialogFragment != null)
+        if(searchMoreOptionsDialogFragment != null)
         {
             updateSizeOfOptionsDialog();
         }
@@ -393,19 +392,19 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
 
     private int convertDipToPixels(float dips)
     {
-        return (int) (dips * this.getResources().getDisplayMetrics().density + 0.5f);
+        return (int) (dips * getResources().getDisplayMetrics().density + 0.5f);
     }
 
 
     private void updateSizeOfOptionsDialog()
     {
-        if(this.searchMoreOptionsDialogFragment != null)
+        if(searchMoreOptionsDialogFragment != null)
         {
             int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(ViewGroup.LayoutParams.MATCH_PARENT, View.MeasureSpec.UNSPECIFIED);
             int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(ViewGroup.LayoutParams.WRAP_CONTENT, View.MeasureSpec.UNSPECIFIED);
-            TableLayout tableLayout = (TableLayout) this.searchMoreOptionsDialogFragment.getDialog().getWindow(). findViewById(R.id.SearchMoreOptionsFragmentDialogParentLayout);
+            TableLayout tableLayout = (TableLayout) searchMoreOptionsDialogFragment.getDialog().getWindow(). findViewById(R.id.SearchMoreOptionsFragmentDialogParentLayout);
             tableLayout.measure(widthMeasureSpec, heightMeasureSpec);
-            this.searchMoreOptionsDialogFragment.getDialog().getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, (tableLayout.getMeasuredHeight()+(8*convertDipToPixels(2))));
+            searchMoreOptionsDialogFragment.getDialog().getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, (tableLayout.getMeasuredHeight()+(8*convertDipToPixels(2))));
         }
     }
 }

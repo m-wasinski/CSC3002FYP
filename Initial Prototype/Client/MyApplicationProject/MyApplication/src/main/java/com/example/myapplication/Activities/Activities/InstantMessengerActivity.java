@@ -34,10 +34,11 @@ import java.util.Calendar;
 import java.util.Collections;
 
 /**
- * Created by Michal on 04/01/14.
- */
-public class InstantMessengerActivity extends BaseListActivity  implements AbsListView.OnScrollListener{
-    /** Called when the activity is first created. */
+ * This class acts as the chat window between two users.
+ * It is used to send, receive and view messages as well as view previous conversation history.
+ * Please note that this class only applies to the one-to-one user instant messenger feature of the app.
+ **/
+public class InstantMessengerActivity extends BaseListActivity  implements AbsListView.OnScrollListener, View.OnClickListener{
 
     private ArrayList<ChatMessage> chatMessages;
 
@@ -53,13 +54,16 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
 
     private Button sendButton;
 
+    /* Variables used to keep track of current scroll
+    position when more messages are retrieved from the server.*/
     private int currentScrollIndex;
     private int currentScrollTop;
-
     private int previousTotalListViewItemCount;
     private int previousFirstVisibleItem;
     private int previousVisibleItemCount;
 
+    /*Variables used to determine whether server should be polled for more data
+    and to prevent events from being fired multiple times when user scrolls slowly.*/
     private boolean requestMoreData;
     private boolean callInProgress;
 
@@ -68,12 +72,12 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
     protected void onResume() {
         super.onResume();
 
-        this.progressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BroadcastTypes.BROADCAST_INSTANT_MESSENGER);
         intentFilter.setPriority(1000);
         registerReceiver(MessageReceiver, intentFilter);
-        this.getUnreadMessages();
+        getUnreadMessages();
     }
 
     @Override
@@ -85,59 +89,52 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_instant_messenger);
+        setContentView(R.layout.activity_instant_messenger);
 
         // Extract data from the bundle.
         Bundle extras = getIntent().getExtras();
 
+        // Check if there is a pending notification that must be marked read.
         com.example.myapplication.domain_objects.Notification notification = gson.fromJson(extras.getString(IntentConstants.NOTIFICATION),
                 new TypeToken<com.example.myapplication.domain_objects.Notification>() {}.getType());
 
+        // Go ahead and mark the notification as read if safe to do so.
         if(notification != null)
         {
             new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
-
+                    Log.i(TAG, "Notification successfully marked as read.");
                 }
             });
         }
 
-        ChatMessage chatMessage = this.gson.fromJson(extras.getString(IntentConstants.PAYLOAD) ,new TypeToken<ChatMessage>() {}.getType());
+        // Extract information of the user we are currently chatting with.
+        ChatMessage chatMessage = gson.fromJson(extras.getString(IntentConstants.PAYLOAD) ,new TypeToken<ChatMessage>() {}.getType());
 
-        this.recipientId = chatMessage != null ? chatMessage.SenderId : extras.getInt(IntentConstants.RECIPIENT_ID);
-        this.recipientUserName = chatMessage != null ? chatMessage.SenderUserName : extras.getString(IntentConstants.RECIPIENT_USERNAME);
+        recipientId = chatMessage != null ? chatMessage.SenderId : extras.getInt(IntentConstants.RECIPIENT_ID);
+        recipientUserName = chatMessage != null ? chatMessage.SenderUserName : extras.getString(IntentConstants.RECIPIENT_USERNAME);
 
         // Initialise UI elements.
-        this.actionBar.setTitle("Chat with " + this.recipientUserName);
-        this.progressBar = (ProgressBar) this.findViewById(R.id.ActivityInstantMessengerProgressBar);
-        this.sendButton = (Button) this.findViewById(R.id.InstantMessengerActivityButton);
-        this.messageEditText = (EditText) this.findViewById(R.id.InstantMessengerActivityMessageEditText);
+        actionBar.setTitle("Chat with " + recipientUserName);
+        progressBar = (ProgressBar) findViewById(R.id.ActivityInstantMessengerProgressBar);
+        sendButton = (Button) findViewById(R.id.InstantMessengerActivityButton);
+        messageEditText = (EditText) findViewById(R.id.InstantMessengerActivityMessageEditText);
 
-        // Setup event handlers.
-        this.setupEventHandlers();
+        chatMessages = new ArrayList<ChatMessage>();
+        chatAdapter = new ChatAdapter(this, chatMessages, appManager.getUser().getUserId());
+        setListAdapter(chatAdapter);
+        getAllMessages();
 
-        this.chatMessages = new ArrayList<ChatMessage>();
-        this.chatAdapter = new ChatAdapter(this, chatMessages, appManager.getUser().getUserId());
-        this.setListAdapter(chatAdapter);
-        this.retrieveMessages();
-
-        // For debugging purposes.
-        Log.d(TAG, this.recipientUserName + " " + this.recipientId);
+        sendButton.setOnClickListener(this);
+        getListView().setOnScrollListener(this);
     }
 
-    private void setupEventHandlers()
-    {
-        this.sendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendMessage();
-            }
-        });
-
-        this.getListView().setOnScrollListener(this);
-    }
-
+    /**
+     * Retrieve any unread messages from the server.
+     * This method is called every time the activity is resumed.
+     * Doing so enables user to retrieve unread messages immediately even if GCM notification is late and does not arrive on time.
+     */
     private void getUnreadMessages() {
         new WcfPostServiceTask<ChatMessageRetrieverDTO>(this, getResources().getString(R.string.GetUnreadMessages),
                 new ChatMessageRetrieverDTO(recipientId, appManager.getUser().getUserId(),
@@ -156,43 +153,61 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
         }).execute();
     }
 
+    /**
+     * Called when user presses the send message button.
+     * Establishes connection with the WCF service and call the Messenger Service to send a new message.
+     * A simple validation check if carried out before the message is sent to ensure users don't send blank messages.
+     */
     private void sendMessage()
     {
-        this.progressBar.setVisibility(View.VISIBLE);
+        // Create a new message.
         final ChatMessage newMessage = new ChatMessage(appManager.getUser().getUserId(), recipientId, messageEditText.getText().toString(),
                 DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime()), false, recipientUserName, appManager.getUser().getUserName());
 
-        if(newMessage.MessageBody.length() > 0 )
+        // If the message if blank, return.
+        if(newMessage.MessageBody.length() == 0)
         {
-            this.sendButton.setEnabled(false);
-
-            new WcfPostServiceTask<ChatMessage>(this, getResources().getString(R.string.SendMessageURL), newMessage,
-                    new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
-                    appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
-                @Override
-                public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
-                    if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
-                    {
-                        messageEditText.setText("");
-                        addNewMessage(newMessage);
-                        sendButton.setEnabled(true);
-                    }
-                }
-            }).execute();
+            return;
         }
+
+        // All good, show the progress bar and attempt to send the message.
+        this.progressBar.setVisibility(View.VISIBLE);
+        this.sendButton.setEnabled(false);
+
+        new WcfPostServiceTask<ChatMessage>(this, getResources().getString(R.string.SendMessageURL), newMessage,
+                new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+            @Override
+            public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
+                {
+                    messageEditText.setText("");
+                    addNewMessage(newMessage);
+                    sendButton.setEnabled(true);
+                }
+            }
+        }).execute();
     }
 
+    /**
+     * Adds a new message to the listview. This is where the message becomes visible in the conversation history.
+     * This method is called after all necessary validation checks have been made.
+     **/
     private void addNewMessage(ChatMessage m)
     {
         chatMessages.add(m);
         chatAdapter.notifyDataSetInvalidated();
         getListView().setSelection(chatMessages.size()-1);
-        this.progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
     }
 
-    private void retrieveMessages()
+    /**
+     * Used to retrieve conversation history from the server.
+     * the LoadRangeDTO object is used to reduce the number of items being returned to speed up execution of the query.
+     **/
+    private void getAllMessages()
     {
-        this.callInProgress = true;
+        callInProgress = true;
         new WcfPostServiceTask<ChatMessageRetrieverDTO>(this, getResources().getString(R.string.GetMessagesURL), new ChatMessageRetrieverDTO(appManager.getUser().getUserId(), recipientId,
                 new LoadRangeDTO(appManager.getUser().getUserId(), this.getListView().getCount(),WcfConstants.MessagesPerCall)),
                 new TypeToken<ServiceResponse<ArrayList<ChatMessage>>>() {}.getType(),
@@ -210,9 +225,17 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
         }).execute();
     }
 
+    /**
+     * Called when messages are successfully retrieved from the server.
+     * Before a message can be added to the listview and become visible,
+     * it must be filtered. The listview is scanned to check if a message with this id already exists.
+     * This prevents duplicate messages from being displayed on the screen.
+     * An example of a scenario where it would be possible to receive the same message twice is when
+     * a user relaunches this activity and unread messages are retrieved from the server manually before a late GCM notification arrives.
+     **/
     private void messagesRetrieved(ArrayList<ChatMessage> retrievedMessages)
     {
-        this.progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
 
         ArrayList<ChatMessage> filteredMessages = new ArrayList<ChatMessage>();
 
@@ -221,7 +244,7 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
             filteredMessages.add(chatMessage);
         }
 
-        for(ChatMessage chatMessage : this.chatMessages)
+        for(ChatMessage chatMessage : chatMessages)
         {
             for(ChatMessage chatMessage1 : retrievedMessages)
             {
@@ -232,33 +255,36 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
             }
         }
 
-        if(this.requestMoreData)
+        if(requestMoreData)
         {
             for(int i = 0; i < filteredMessages.size(); i++)
             {
-                this.chatMessages.add(i, filteredMessages.get(i));
+                chatMessages.add(i, filteredMessages.get(i));
             }
         }
         else
         {
-            this.chatMessages.addAll(filteredMessages);
+            chatMessages.addAll(filteredMessages);
         }
 
-        this.chatAdapter.notifyDataSetInvalidated();
+        chatAdapter.notifyDataSetInvalidated();
 
-        if(this.requestMoreData)
+        if(requestMoreData)
         {
-            this.getListView().setSelectionFromTop(currentScrollIndex, currentScrollTop);
+            getListView().setSelectionFromTop(currentScrollIndex, currentScrollTop);
         }
         else
         {
-            this.getListView().setSelection(chatMessages.size());
+            getListView().setSelection(chatMessages.size());
         }
 
-        this.requestMoreData = false;
-        this.callInProgress = false;
+        requestMoreData = false;
+        callInProgress = false;
     }
 
+    /**
+     * Receiver which listens for incoming chat messages.
+     **/
     private final BroadcastReceiver MessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -275,15 +301,21 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
                 }
             }
 
+            // If incoming message happens to be coming from the user we are currently chatting with,
+            // we can abort the broadcast and display the message in the listview.
             if(appManager.getUser().getUserId() == chatMessage.RecipientId && chatMessage.SenderId == recipientId)
             {
                 addNewMessage(chatMessage);
                 markMessageAsRead(chatMessage);
-                this.abortBroadcast();
+                abortBroadcast();
             }
         }
     };
 
+    /**
+     * Any new message that is received is immediately marked as read.
+     * This is to prevent the app from notifying the user of a new message which they have already read.
+     **/
     private void markMessageAsRead(final ChatMessage chatMessage)
     {
         new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.MarkMessageAsReadURL),chatMessage.ChatMessageId,
@@ -306,22 +338,31 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
     @Override
     public void onScroll(AbsListView absListView,  int firstVisibleItem, int visibleItemCount, int totalItemCount)
     {
-        if (this.previousTotalListViewItemCount == totalItemCount || this.previousVisibleItemCount == visibleItemCount || this.callInProgress)
+        if (previousTotalListViewItemCount == totalItemCount || previousVisibleItemCount == visibleItemCount || callInProgress)
         {
             return;
         }
 
         if(firstVisibleItem == 0)
         {
-            Log.i(TAG, "ListView at top!");
-            this.previousTotalListViewItemCount = totalItemCount;
-            this.previousFirstVisibleItem = firstVisibleItem;
-            this.previousVisibleItemCount = visibleItemCount;
-            this.currentScrollIndex = this.getListView().getFirstVisiblePosition();
-            View v = this.getListView().getChildAt(0);
-            this.currentScrollTop= (v == null) ? 0 : v.getTop();
-            this.requestMoreData = true;
-            this.retrieveMessages();
+            previousTotalListViewItemCount = totalItemCount;
+            previousFirstVisibleItem = firstVisibleItem;
+            previousVisibleItemCount = visibleItemCount;
+            currentScrollIndex = getListView().getFirstVisiblePosition();
+            View v = getListView().getChildAt(0);
+            currentScrollTop= (v == null) ? 0 : v.getTop();
+            requestMoreData = true;
+            getAllMessages();
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId())
+        {
+            case R.id.InstantMessengerActivityButton:
+                sendMessage();
+                break;
         }
     }
 }

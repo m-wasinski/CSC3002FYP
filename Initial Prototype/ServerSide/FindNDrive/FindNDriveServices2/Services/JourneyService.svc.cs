@@ -148,15 +148,6 @@ namespace FindNDriveServices2.Services
                 return ServiceResponseBuilder.Unauthorised(new Journey());
             }
 
-
-            var validatedJourney = ValidationHelper.Validate(journeyDTO);
-            Journey newJourney = null;
-
-            if (!validatedJourney.IsValid)
-            {
-                return ServiceResponseBuilder.Failure<Journey>("Validation error.");
-            }
-
             var user =
                 this.findNDriveUnitOfWork.UserRepository.AsQueryable()
                     .IncludeAll()
@@ -167,22 +158,27 @@ namespace FindNDriveServices2.Services
                 return ServiceResponseBuilder.Failure<Journey>("Invalid user id.");
             }
 
-            newJourney = new Journey
-                             {
-                                 AvailableSeats = journeyDTO.AvailableSeats,
-                                 DateAndTimeOfDeparture = journeyDTO.DateAndTimeOfDeparture,
-                                 Description = journeyDTO.Description,
-                                 Driver = user,
-                                 Fee = journeyDTO.Fee,
-                                 Private = journeyDTO.Private,
-                                 SmokersAllowed = journeyDTO.SmokersAllowed,
-                                 VehicleType = journeyDTO.VehicleType,
-                                 PetsAllowed = journeyDTO.PetsAllowed,
-                                 JourneyStatus = JourneyStatus.OK,
-                                 GeoAddresses = journeyDTO.GeoAddresses,
-                                 CreationDate = DateTime.Now,
-                                 PreferredPaymentMethod = journeyDTO.PreferredPaymentMethod
-                             };
+            if (journeyDTO.DateAndTimeOfDeparture < DateTime.Now)
+            {
+                return ServiceResponseBuilder.Failure<Journey>("Invalid date or time!");
+            }
+
+            var newJourney = new Journey
+                                     {
+                                         AvailableSeats = journeyDTO.AvailableSeats,
+                                         DateAndTimeOfDeparture = journeyDTO.DateAndTimeOfDeparture,
+                                         Description = journeyDTO.Description,
+                                         Driver = user,
+                                         Fee = journeyDTO.Fee,
+                                         Private = journeyDTO.Private,
+                                         SmokersAllowed = journeyDTO.SmokersAllowed,
+                                         VehicleType = journeyDTO.VehicleType,
+                                         PetsAllowed = journeyDTO.PetsAllowed,
+                                         JourneyStatus = JourneyStatus.OK,
+                                         GeoAddresses = journeyDTO.GeoAddresses,
+                                         CreationDate = DateTime.Now,
+                                         PreferredPaymentMethod = journeyDTO.PreferredPaymentMethod
+                                     };
 
             this.findNDriveUnitOfWork.JourneyRepository.Add(newJourney);
 

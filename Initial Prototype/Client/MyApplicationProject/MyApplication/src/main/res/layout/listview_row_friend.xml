@@ -23,8 +23,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/FriendListViewRowImage"
         android:paddingLeft="10dip"
-        android:paddingRight="10dip"
-        android:src="@drawable/user_man"/>
+        android:paddingRight="10dip"/>
 
     <TextView
         android:layout_width="wrap_content"

@@ -47,54 +47,54 @@ public class LeaderboardActivity extends BaseActivity implements WCFServiceCallb
     @Override
     protected void onResume() {
         super.onResume();
-        this.requestMoreData = this.leaderboardListView.getCount() == 0;
-        this.retrieveLeaderboard();
+        requestMoreData = leaderboardListView.getCount() == 0;
+        retrieveLeaderboard();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_leaderboard);
+        setContentView(R.layout.activity_leaderboard);
 
         // Initialise local variables.
-        this.leaderboard = new ArrayList<User>();
-        this.leaderboardAdapter = new LeaderboardAdapter(this.appManager, this, R.layout.listview_row_leaderboard, this.leaderboard);
+        leaderboard = new ArrayList<User>();
+        leaderboardAdapter = new LeaderboardAdapter(appManager, this, R.layout.listview_row_leaderboard, leaderboard);
 
         // Initialise UI elements.
-        this.leaderboardListView = (ListView) this.findViewById(R.id.LeaderboardActivityListView);
-        this.progressBar = (ProgressBar) this.findViewById(R.id.LeaderboardActivityProgressBar);
-        this.leaderboardListView.setAdapter(this.leaderboardAdapter);
+        leaderboardListView = (ListView) findViewById(R.id.LeaderboardActivityListView);
+        progressBar = (ProgressBar) findViewById(R.id.LeaderboardActivityProgressBar);
+        leaderboardListView.setAdapter(leaderboardAdapter);
     }
 
     private void retrieveLeaderboard()
     {
-        this.progressBar.setVisibility(View.VISIBLE);
-        new WcfPostServiceTask<LoadRangeDTO>(this, this.getResources().getString(R.string.GetLeaderboardURL),
-                new LoadRangeDTO(this.appManager.getUser().getUserId(), this.requestMoreData ? leaderboardListView.getCount() : 0,
-                        this.requestMoreData ? WcfConstants.LeaderboardPerCall : leaderboardListView.getCount()),
-                new TypeToken<ServiceResponse<ArrayList<User>>>(){}.getType(),this.appManager.getAuthorisationHeaders(), this).execute();
+        progressBar.setVisibility(View.VISIBLE);
+        new WcfPostServiceTask<LoadRangeDTO>(this, getResources().getString(R.string.GetLeaderboardURL),
+                new LoadRangeDTO(appManager.getUser().getUserId(), requestMoreData ? leaderboardListView.getCount() : 0,
+                        requestMoreData ? WcfConstants.LeaderboardPerCall : leaderboardListView.getCount()),
+                new TypeToken<ServiceResponse<ArrayList<User>>>(){}.getType(),appManager.getAuthorisationHeaders(), this).execute();
     }
 
     @Override
     public void onServiceCallCompleted(final ServiceResponse<ArrayList<User>> serviceResponse, Void parameter) {
-        this.progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             Log.i("Leaderboard Activity", "Successfully retrieved leaderboard consisting of: " + serviceResponse.Result.size() + " users.");
 
-            if(!this.requestMoreData)
+            if(!requestMoreData)
             {
-                this.leaderboard.clear();
+                leaderboard.clear();
             }
             else
             {
-                this.leaderboardListView.setSelectionFromTop(currentScrollIndex, currentScrollTop);
+                leaderboardListView.setSelectionFromTop(currentScrollIndex, currentScrollTop);
             }
 
-            this.leaderboard.addAll(serviceResponse.Result);
-            this.leaderboardAdapter.notifyDataSetInvalidated();
-            this.requestMoreData = false;
-            this.leaderboardListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            leaderboard.addAll(serviceResponse.Result);
+            leaderboardAdapter.notifyDataSetInvalidated();
+            requestMoreData = false;
+            leaderboardListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     showPersonMenu(serviceResponse.Result.get(i));
@@ -121,20 +121,20 @@ public class LeaderboardActivity extends BaseActivity implements WCFServiceCallb
             return;
         }
 
-        if (this.previousTotalListViewItemCount == totalItemCount)
+        if (previousTotalListViewItemCount == totalItemCount)
         {
             return;
         }
 
         if(firstVisibleItem + visibleItemCount >= totalItemCount)
         {
-            this.previousTotalListViewItemCount = totalItemCount;
-            this.requestMoreData = true;
-            this.currentScrollIndex = this.leaderboardListView.getFirstVisiblePosition();
-            View v = this.leaderboardListView.getChildAt(0);
-            this.currentScrollTop= (v == null) ? 0 : v.getTop();
+            previousTotalListViewItemCount = totalItemCount;
+            requestMoreData = true;
+            currentScrollIndex = leaderboardListView.getFirstVisiblePosition();
+            View v = leaderboardListView.getChildAt(0);
+            currentScrollTop= (v == null) ? 0 : v.getTop();
 
-            this.retrieveLeaderboard();
+            retrieveLeaderboard();
         }
     }
 }

@@ -25,7 +25,6 @@ public class BaseActivity extends Activity {
     protected Gson gson;
     protected ActionBar actionBar;
     protected final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    protected final String TAG = this.getClass().getSimpleName();
 
     @Override
     public void onBackPressed() {

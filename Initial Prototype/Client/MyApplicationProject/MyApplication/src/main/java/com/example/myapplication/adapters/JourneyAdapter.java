@@ -13,16 +13,10 @@ import android.widget.TextView;
 
 import com.example.myapplication.app_management.AppManager;
 import com.example.myapplication.constants.JourneyStatus;
-import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.Journey;
-import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.dtos.JourneyMessageRetrieverDTO;
 import com.example.myapplication.utilities.DateTimeHelper;
 import com.example.myapplication.R;
-import com.example.myapplication.interfaces.WCFServiceCallback;
-import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.utilities.Utilities;
-import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 
@@ -33,20 +27,21 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
 
     private Context context;
     private int layoutResourceId;
-    private ArrayList<Journey> originalCarShares;
-    private ArrayList<Journey> displayedCarShares;
+    private ArrayList<Journey> originalJourneys;
+    private ArrayList<Journey> displayedJourneys;
     private AppManager appManager;
+
     @Override
     public int getCount() {
-        return displayedCarShares.size();
+        return displayedJourneys.size();
     }
 
-    public JourneyAdapter(Context context, int resource, ArrayList<Journey> carShares, AppManager appManager) {
-        super(context, resource, carShares);
+    public JourneyAdapter(Context context, int resource, ArrayList<Journey> journeys, AppManager appManager) {
+        super(context, resource, journeys);
         this.layoutResourceId = resource;
         this.context = context;
-        this.originalCarShares = carShares;
-        this.displayedCarShares = this.originalCarShares;
+        this.originalJourneys = journeys;
+        this.displayedJourneys = this.originalJourneys;
         this.appManager = appManager;
     }
 
@@ -79,7 +74,7 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
             holder = (JourneyHolder)row.getTag();
         }
 
-        final Journey journey = displayedCarShares.get(position);
+        final Journey journey = displayedJourneys.get(position);
 
         String statusText = "";
 
@@ -121,7 +116,7 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
             @Override
             protected void publishResults(CharSequence constraint,FilterResults results) {
 
-                displayedCarShares = (ArrayList<Journey>) results.values; // has the filtered values
+                displayedJourneys = (ArrayList<Journey>) results.values; // has the filtered values
                 notifyDataSetChanged();  // notifies the data with new filtered values
             }
 
@@ -130,21 +125,21 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
                 FilterResults results = new FilterResults();        // Holds the results of a filtering operation in values
                 ArrayList<Journey> filteredValues = new ArrayList<Journey>();
 
-                if (originalCarShares == null) {
-                    originalCarShares = displayedCarShares; // saves the original data in mOriginalValues
+                if (originalJourneys == null) {
+                    originalJourneys = displayedJourneys; // saves the original data in mOriginalValues
                 }
 
                 if (constraint == null || constraint.length() == 0) {
 
                     // set the Original result to return
-                    results.count = originalCarShares.size();
-                    results.values = originalCarShares;
+                    results.count = originalJourneys.size();
+                    results.values = originalJourneys;
                 } else {
                     constraint = constraint.toString().toLowerCase();
-                    for (int i = 0; i < originalCarShares.size(); i++) {
-                        String data = (originalCarShares.get(i).GeoAddresses.get(0).AddressLine + " " + originalCarShares.get(i).GeoAddresses.get(originalCarShares.get(i).GeoAddresses.size()-1).AddressLine).replace("->", "");
+                    for (int i = 0; i < originalJourneys.size(); i++) {
+                        String data = Utilities.getJourneyHeader(originalJourneys.get(i).GeoAddresses);
                         if (data.toLowerCase().contains(constraint.toString())) {
-                            filteredValues.add(originalCarShares.get(i));
+                            filteredValues.add(originalJourneys.get(i));
                         }
                     }
                     // set the Filtered result to return

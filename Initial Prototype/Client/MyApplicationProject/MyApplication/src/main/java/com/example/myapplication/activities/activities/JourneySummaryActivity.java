@@ -22,9 +22,9 @@ import com.google.gson.reflect.TypeToken;
 import java.text.DecimalFormat;
 
 /**
- * Created by Michal on 19/02/14.
- */
-public class JourneySummaryActivity extends BaseActivity implements WCFImageRetrieved{
+ * This activity displays detailed summary of the current journey.
+ **/
+public class JourneySummaryActivity extends BaseActivity implements WCFImageRetrieved, View.OnClickListener{
 
     private TextView journeyIdTextView;
     private TextView journeyDriverTextView;
@@ -44,80 +44,73 @@ public class JourneySummaryActivity extends BaseActivity implements WCFImageRetr
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        this.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_journey_summary);
+        setContentView(R.layout.activity_journey_summary);
 
         // Initialise local variables.
-        this.journey = gson .fromJson(getIntent().getStringExtra(IntentConstants.JOURNEY), new TypeToken<Journey>(){}.getType());
+        journey = gson .fromJson(getIntent().getStringExtra(IntentConstants.JOURNEY), new TypeToken<Journey>(){}.getType());
 
-        // Initialise UI elements.
-        this.journeyIdTextView = (TextView) this.findViewById(R.id.JourneySummaryJourneyIdTextView);
-        this.journeyDriverTextView = (TextView) this.findViewById(R.id.JourneySummaryJourneyDriverTextView);
-        this.journeyDateTextView = (TextView) this.findViewById(R.id.JourneySummaryJourneyDateTextView);
-        this.journeyTimeTextView = (TextView) this.findViewById(R.id.JourneySummaryJourneyTimeTextView);
-        this.journeySeatsAvailableTextView = (TextView) this.findViewById(R.id.JourneySummaryJourneySeatsTextView);
-        this.journeyPetsTextView = (TextView) this.findViewById(R.id.JourneySummaryJourneyPetsTextView);
-        this.journeySmokersTextView = (TextView) this.findViewById(R.id.JourneySummaryJourneySmokersTextView);
-        this.journeyFeeTextView = (TextView) this.findViewById(R.id.JourneySummaryJourneyFeeTextView);
-        this.journeyVehicleTypeTextView = (TextView) this.findViewById(R.id.JourneySummaryJourneyVehicleTypeTextView);
+        // Initialise UI elements and setup event handlers.
+        journeyIdTextView = (TextView) findViewById(R.id.JourneySummaryJourneyIdTextView);
+        journeyDriverTextView = (TextView) findViewById(R.id.JourneySummaryJourneyDriverTextView);
+        journeyDateTextView = (TextView) findViewById(R.id.JourneySummaryJourneyDateTextView);
+        journeyTimeTextView = (TextView) findViewById(R.id.JourneySummaryJourneyTimeTextView);
+        journeySeatsAvailableTextView = (TextView) findViewById(R.id.JourneySummaryJourneySeatsTextView);
+        journeyPetsTextView = (TextView) findViewById(R.id.JourneySummaryJourneyPetsTextView);
+        journeySmokersTextView = (TextView) findViewById(R.id.JourneySummaryJourneySmokersTextView);
+        journeyFeeTextView = (TextView) findViewById(R.id.JourneySummaryJourneyFeeTextView);
+        journeyVehicleTypeTextView = (TextView) findViewById(R.id.JourneySummaryJourneyVehicleTypeTextView);
 
-        this.driverIconImageView = (ImageView) this.findViewById(R.id.JourneySummaryActivityDriverImageView);
+        driverIconImageView = (ImageView) findViewById(R.id.JourneySummaryActivityDriverImageView);
 
-        this.journeyDriverTableRow = (TableRow) this.findViewById(R.id.JourneySummaryActivityJourneyDriverTableRow);
+        journeyDriverTableRow = (TableRow) findViewById(R.id.JourneySummaryActivityJourneyDriverTableRow);
+        journeyDriverTableRow.setOnClickListener(this);
 
         // Fill in the details.
-        this.fillJourneyDetails();
-
-        // Setup event handlers.
-        this.setupEventHandlers();
+        fillJourneyDetails();
 
         // Retrieve picture of the driver.
-        this.getDriverPicture();
-    }
-
-    private void setupEventHandlers()
-    {
-        this.journeyDriverTableRow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDriverProfileDialog();
-            }
-        });
-    }
-
-    private void showDriverProfileDialog()
-    {
-        DialogCreator.ShowProfileOptionsDialog(this, journey.Driver);
+        getDriverPicture();
     }
 
     private void fillJourneyDetails()
     {
         String[] vehicleTypes = getResources().getStringArray(R.array.vehicle_types);
 
-        this.journeyIdTextView.setText(String.valueOf(this.journey.getJourneyId()));
-        this.journeyDriverTextView.setText(this.journey.Driver.getUserName());
-        this.journeyDateTextView.setText(DateTimeHelper.getSimpleDate(this.journey.DateAndTimeOfDeparture));
-        this.journeyTimeTextView.setText(DateTimeHelper.getSimpleTime(this.journey.DateAndTimeOfDeparture));
-        this.journeySmokersTextView.setText(Utilities.translateBoolean(this.journey.SmokersAllowed));
-        this.journeyPetsTextView.setText(Utilities.translateBoolean(this.journey.PetsAllowed));
-        this.journeyVehicleTypeTextView.setText(vehicleTypes[this.journey.VehicleType]);
-        this.journeySeatsAvailableTextView.setText(String.valueOf(this.journey.AvailableSeats));
-        this.journeyFeeTextView.setText(("£"+new DecimalFormat("0.00").format(this.journey.Fee)) + (this.journey.PreferredPaymentMethod == null ? "" : ", " +this.journey.PreferredPaymentMethod));
+        journeyIdTextView.setText(String.valueOf(journey.getJourneyId()));
+        journeyDriverTextView.setText(journey.Driver.getUserName());
+        journeyDateTextView.setText(DateTimeHelper.getSimpleDate(journey.DateAndTimeOfDeparture));
+        journeyTimeTextView.setText(DateTimeHelper.getSimpleTime(journey.DateAndTimeOfDeparture));
+        journeySmokersTextView.setText(Utilities.translateBoolean(journey.SmokersAllowed));
+        journeyPetsTextView.setText(Utilities.translateBoolean(journey.PetsAllowed));
+        journeyVehicleTypeTextView.setText(vehicleTypes[journey.VehicleType]);
+        journeySeatsAvailableTextView.setText(String.valueOf(journey.AvailableSeats));
+        journeyFeeTextView.setText(("£"+new DecimalFormat("0.00").format(journey.Fee)) + (journey.PreferredPaymentMethod == null ? "" : ", " +journey.PreferredPaymentMethod));
 
     }
 
     private void getDriverPicture()
     {
-        new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), this.getResources().getString(R.string.GetProfilePictureURL),
-                this.journey.Driver.getUserId(), this.appManager.getAuthorisationHeaders(), this).execute();
+        new WcfPictureServiceTask(appManager.getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
+                journey.Driver.getUserId(), appManager.getAuthorisationHeaders(), this).execute();
     }
 
     @Override
     public void onImageRetrieved(Bitmap bitmap) {
         if(bitmap != null)
         {
-            this.driverIconImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/2, bitmap.getHeight()/2, false));
+            driverIconImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/2, bitmap.getHeight()/2, false));
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId())
+        {
+            case R.id.JourneySummaryActivityJourneyDriverTableRow:
+                DialogCreator.ShowProfileOptionsDialog(this, journey.Driver);
+                break;
         }
     }
 }

@@ -25,6 +25,7 @@ namespace DomainObjects.Domains
         /// </summary>
         [DataMember]
         [ConcurrencyCheck]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int ProfilePictureId { get; set; }
 
         /// <summary>

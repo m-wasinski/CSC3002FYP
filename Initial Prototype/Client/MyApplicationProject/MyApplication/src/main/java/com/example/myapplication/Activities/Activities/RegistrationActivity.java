@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import com.example.myapplication.R;
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.constants.ServiceResponseCode;
@@ -26,11 +25,10 @@ import com.google.gson.reflect.TypeToken;
 import static java.util.Arrays.asList;
 
 /**
- * Created by Michal on 12/11/13.
- */
+ * Provides the user with all necessary functionality to register a new account with the system.
+ * It also performs validation before calling the web service to ensure the required information is present and is in the correct format.
+ **/
 public class RegistrationActivity extends BaseActivity implements WCFServiceCallback<User, String>{
-
-    private boolean valuesCorrect;
 
     private EditText userNameEditText;
     private EditText emailAddressEditText;
@@ -43,58 +41,58 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_registration);
-
+        setContentView(R.layout.activity_registration);
 
         // Initialise UI elements.
-        this.progressBar = (ProgressBar) this.findViewById(R.id.RegistrationActivityProgressBar);
-        this.userNameEditText = (EditText) this.findViewById(R.id.UserNameTextField);
-        this.emailAddressEditText = (EditText) this.findViewById(R.id.EmailTextField);
-        this.passwordEditText = (EditText) this.findViewById(R.id.RegistrationPasswordTextField);
-        this.confirmedPasswordEditText = (EditText) this.findViewById(R.id.RegistrationConfirmPasswordTextField);
-        this.registerButton = (Button) this.findViewById(R.id.RegisterNewUserButton);
+        progressBar = (ProgressBar) findViewById(R.id.RegistrationActivityProgressBar);
+        userNameEditText = (EditText) findViewById(R.id.UserNameTextField);
+        emailAddressEditText = (EditText) findViewById(R.id.EmailTextField);
+        passwordEditText = (EditText) findViewById(R.id.RegistrationPasswordTextField);
+        confirmedPasswordEditText = (EditText) findViewById(R.id.RegistrationConfirmPasswordTextField);
+        registerButton = (Button) findViewById(R.id.RegisterNewUserButton);
 
         // Setup all event handlers.
-        this.setupEventHandlers();
+        setupEventHandlers();
     }
 
     void setupEventHandlers()
     {
-        this.registerButton.setOnClickListener(new View.OnClickListener() {
+        registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AttemptToRegister();
             }
         });
 
-        this.emailAddressEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        emailAddressEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
                 if(!hasFocus && !emailAddressEditText.getText().toString().isEmpty())
                     Validators.validateEmailAddress(emailAddressEditText);
             }});
 
-        this.userNameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        userNameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
                 if(!hasFocus && !userNameEditText.getText().toString().isEmpty())
                     Validators.validateUserName(userNameEditText);
             }});
     }
 
+    /**
+     * Validate the information provided by the user and if successful,
+     * call the web service to register a new account.
+     **/
     private void AttemptToRegister() {
 
-        boolean detailsCorrect;
-
-        detailsCorrect = Validators.validateUserName(this.userNameEditText);
-        detailsCorrect = Validators.validateEmailAddress(this.emailAddressEditText);
-        detailsCorrect = Validators.validatePasswords(this.passwordEditText, this.confirmedPasswordEditText);
-
-        if(detailsCorrect)
+        //Perform validation before calling the web service.
+        if(Validators.validatePasswords(passwordEditText, confirmedPasswordEditText) &&
+                Validators.validateEmailAddress(emailAddressEditText) && Validators.validateUserName(userNameEditText))
         {
+            // Validation successful, call the webservice to create a new account.
             progressBar.setVisibility(View.VISIBLE);
 
             new WcfPostServiceTask<RegisterDTO>(this, getResources().getString(R.string.UserRegisterURL),
                     new RegisterDTO(passwordEditText.getText().toString(), confirmedPasswordEditText.getText().toString(),
-                            new User(userNameEditText.getText().toString(),emailAddressEditText.getText().toString(), this.appManager.getRegistrationId())),
+                            new User(userNameEditText.getText().toString(),emailAddressEditText.getText().toString(), appManager.getRegistrationId())),
                     new TypeToken<ServiceResponse<User>>() {}.getType(),
                     asList(new Pair(SessionConstants.REMEMBER_ME, ""+false),
                            new Pair(SessionConstants.DEVICE_ID, appManager.getUniqueDeviceId()),
@@ -103,6 +101,9 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
         }
     }
 
+    /**
+     * Called when a reply from the web service is received.
+     **/
     @Override
     public void onServiceCallCompleted(ServiceResponse<User> serviceResponse, String session) {
 
@@ -111,10 +112,10 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
         if (serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             appManager.setSessionId(session);
-            appManager.setUser(serviceResponse.Result);
+            appManager.login(serviceResponse.Result);
             Toast.makeText(this, "Registered successfully!", Toast.LENGTH_LONG).show();
             startActivity(new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
-            this.finish();
+            finish();
         }
     }
 
@@ -136,7 +137,7 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
 
     private void openLoginActivity()
     {
-        this.startActivity(new Intent(this, LoginActivity.class));
-        this.finish();
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
     }
 }

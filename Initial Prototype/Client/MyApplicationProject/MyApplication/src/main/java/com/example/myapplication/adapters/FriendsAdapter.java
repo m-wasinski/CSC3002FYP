@@ -8,16 +8,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.myapplication.R;
 import com.example.myapplication.app_management.AppManager;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.constants.StatusConstants;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
-import com.example.myapplication.R;
 import com.example.myapplication.dtos.ChatMessageRetrieverDTO;
 import com.example.myapplication.interfaces.WCFImageRetrieved;
 import com.example.myapplication.interfaces.WCFServiceCallback;
@@ -34,20 +35,22 @@ public class FriendsAdapter extends ArrayAdapter<User> {
 
     private Context context;
     private int layoutResourceId;
-    private ArrayList<User> friends;
+    private ArrayList<User> displayedFriendsList;
+    private ArrayList<User> originalFriendsList;
     private AppManager appManager;
 
     public FriendsAdapter(Context context, int resource, AppManager appManager, ArrayList<User> friends) {
         super(context, resource, friends);
         this.context = context;
-        this.layoutResourceId = resource;
+        layoutResourceId = resource;
         this.appManager = appManager;
-        this.friends = friends;
+        originalFriendsList = friends;
+        displayedFriendsList = originalFriendsList;
     }
 
     @Override
     public int getCount() {
-        return this.friends.size();
+        return displayedFriendsList.size();
     }
 
     @Override
@@ -74,12 +77,13 @@ public class FriendsAdapter extends ArrayAdapter<User> {
             holder = (FriendHolder)row.getTag();
         }
 
-        User friend = this.friends.get(position);
+        User friend = displayedFriendsList.get(position);
 
         holder.userNameTextView.setText(friend.getUserName());
         holder.currentOnlineStatus.setImageResource(friend.getStatus() == StatusConstants.Online ? R.drawable.available : R.drawable.unavailable);
-        new WcfPostServiceTask<ChatMessageRetrieverDTO>(this.context, getContext().getResources().getString(R.string.GetUnreadMessagesCountForFriendURL),
-                new ChatMessageRetrieverDTO(friends.get(position).getUserId(), appManager.getUser().getUserId(), null),
+
+        new WcfPostServiceTask<ChatMessageRetrieverDTO>(context, getContext().getResources().getString(R.string.GetUnreadMessagesCountForFriendURL),
+                new ChatMessageRetrieverDTO(displayedFriendsList.get(position).getUserId(), appManager.getUser().getUserId(), null),
                 new TypeToken<ServiceResponse<Integer>>() {}.getType(), appManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {
@@ -92,21 +96,68 @@ public class FriendsAdapter extends ArrayAdapter<User> {
             }
         }).execute();
 
-        new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
-                friend.getUserId(), this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
-            @Override
-            public void onImageRetrieved(Bitmap bitmap) {
-                if(bitmap != null)
-                {
-                    holder.profilePicture.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), false));
+        if(holder.profilePicture.getDrawable() == null)
+        {
+            new WcfPictureServiceTask(appManager.getBitmapLruCache(), context.getResources().getString(R.string.GetProfilePictureURL),
+                    friend.getUserId(), appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+                @Override
+                public void onImageRetrieved(Bitmap bitmap) {
+                    if(bitmap != null)
+                    {
+                        holder.profilePicture.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), false));
+                    }
                 }
-            }
-        }).execute();
+            }).execute();
+        }
 
         return row;
     }
 
-    class FriendHolder
+    @Override
+    public Filter getFilter() {
+        Filter filter = new Filter() {
+
+            @SuppressWarnings("unchecked")
+            @Override
+            protected void publishResults(CharSequence constraint,FilterResults results) {
+
+                displayedFriendsList = (ArrayList<User>) results.values; // has the filtered values
+                notifyDataSetChanged();  // notifies the data with new filtered values
+            }
+
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                FilterResults results = new FilterResults();        // Holds the results of a filtering operation in values
+                ArrayList<User> filteredValues = new ArrayList<User>();
+
+                if (originalFriendsList == null) {
+                    originalFriendsList = displayedFriendsList; // saves the original data in mOriginalValues
+                }
+
+                if (constraint == null || constraint.length() == 0) {
+
+                    // set the Original result to return
+                    results.count = originalFriendsList.size();
+                    results.values = originalFriendsList;
+                } else {
+                    constraint = constraint.toString().toLowerCase();
+                    for (int i = 0; i < originalFriendsList.size(); i++) {
+                        String data = originalFriendsList.get(i).getUserName();
+                        if (data.toLowerCase().contains(constraint.toString())) {
+                            filteredValues.add(originalFriendsList.get(i));
+                        }
+                    }
+                    // set the Filtered result to return
+                    results.count = filteredValues.size();
+                    results.values = filteredValues;
+                }
+                return results;
+            }
+        };
+        return filter;
+    }
+
+    private class FriendHolder
     {
         ImageView profilePicture;
         ImageView currentOnlineStatus;

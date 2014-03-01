@@ -35,9 +35,10 @@ import java.util.Calendar;
 import java.util.Collections;
 
 /**
- * Created by Michal on 07/01/14.
- */
-public class JourneyChatActivity extends BaseListActivity implements AbsListView.OnScrollListener{
+ * The Journey Chat Activity acts as a Journey Chat room, place where all passengers participating in a journey
+ * can talk with each other and exchange messages in real time.
+ **/
+public class JourneyChatActivity extends BaseListActivity implements AbsListView.OnScrollListener, View.OnClickListener{
 
     private ProgressBar progressBar;
 
@@ -49,15 +50,16 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
 
     private JourneyChatAdapter journeyChatAdapter;
 
-    private Button sendButton;
-
+    /* Variables used to keep track of current scroll
+    position when more messages are retrieved from the server.*/
     private int currentScrollIndex;
     private int currentScrollTop;
-
     private int previousTotalListViewItemCount;
     private int previousFirstVisibleItem;
     private int previousVisibleItemCount;
 
+    /*Variables used to determine whether server should be polled for more data
+    and to prevent events from being fired multiple times when user scrolls slowly.*/
     private boolean requestMoreData;
     private boolean callInProgress;
 
@@ -67,13 +69,15 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_journey_chat);
+        setContentView(R.layout.activity_journey_chat);
 
+        // Extract data from the bundle.
         Bundle bundle = getIntent().getExtras();
 
         com.example.myapplication.domain_objects.Notification notification = gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),
                 new TypeToken<com.example.myapplication.domain_objects.Notification>() {}.getType());
 
+        // Check if there is a pending notification that must be marked read.
         if(notification != null)
         {
             new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Boolean, Void>() {
@@ -84,50 +88,40 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
             });
         }
 
+        // Retrieve the id for this journey.
         JourneyMessage journeyMessage = gson.fromJson(bundle.getString(IntentConstants.PAYLOAD), new TypeToken<JourneyMessage>() {}.getType());
-        // Initialise local variables.
-        this.journeyId =  journeyMessage != null ? journeyMessage.JourneyId : bundle.getInt(IntentConstants.JOURNEY);
-        this.journeyMessages = new ArrayList<JourneyMessage>();
-        this.journeyChatAdapter = new JourneyChatAdapter(this, this.journeyMessages, this.appManager.getUser().getUserId());
-        this.setListAdapter(journeyChatAdapter);
+        journeyId =  journeyMessage != null ? journeyMessage.JourneyId : bundle.getInt(IntentConstants.JOURNEY);
+        journeyMessages = new ArrayList<JourneyMessage>();
+        journeyChatAdapter = new JourneyChatAdapter(this, journeyMessages, appManager.getUser().getUserId());
+        setListAdapter(journeyChatAdapter);
 
         // Initialise UI elements.
-        this.progressBar = (ProgressBar) this.findViewById(R.id.JourneyChatActivityProgressBar);
-        this.messageEditText = (EditText) this.findViewById(R.id.JourneyChatActivityMessageEditText);
-        this.sendButton = (Button) this.findViewById(R.id.JourneyChatActivitySendButton);
+        progressBar = (ProgressBar) findViewById(R.id.JourneyChatActivityProgressBar);
+        messageEditText = (EditText) findViewById(R.id.JourneyChatActivityMessageEditText);
+        Button sendButton = (Button) findViewById(R.id.JourneyChatActivitySendButton);
 
         // Setup event handlers.
-        this.setupEventHandlers();
+        sendButton.setOnClickListener(this);
+        getListView().setOnScrollListener(this);
 
-        // Retrieve all messages.
-        this.retrieveAllMessages();
-    }
-
-    private void setupEventHandlers()
-    {
-        this.sendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendMessage();
-            }
-        });
-        this.getListView().setOnScrollListener(this);
+        // Retrieve conversation history for this journey.
+        getAllMessages();
     }
 
     private void sendMessage()
     {
-        if(this.messageEditText.getText().toString().isEmpty())
+        if(messageEditText.getText().toString().isEmpty())
         {
             return;
         }
 
-        this.progressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
 
         final JourneyMessage newMessage = new JourneyMessage(
-                this.journeyId,
-                this.appManager.getUser().getUserName(),
-                this.appManager.getUser().getUserId(),
-                this.messageEditText.getText().toString(),
+                journeyId,
+                appManager.getUser().getUserName(),
+                appManager.getUser().getUserId(),
+                messageEditText.getText().toString(),
                 DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime()));
 
         if(newMessage.MessageBody.length() > 0 )
@@ -151,17 +145,18 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
     protected void onResume() {
         super.onResume();
 
-        this.progressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BroadcastTypes.BROADCAST_JOURNEY_MESSAGE);
         intentFilter.setPriority(1000);
-
-        this.registerReceiver(MessageReceiver, intentFilter);
-
-        this.retrieveUnreadMessages();
+        registerReceiver(MessageReceiver, intentFilter);
+        getUnreadMessages();
     }
 
+    /*
+     * This receiver listens for incoming journey chat messages.
+     */
     private final BroadcastReceiver MessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -172,7 +167,9 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
 
             if(journeyMessage.JourneyId == journeyId)
             {
-                this.abortBroadcast();
+                // If the message happens to be related to the journey of the currently opened chat room,
+                // we can abort the broadcast and display the message in the listview.
+                abortBroadcast();
 
                 for(JourneyMessage message : journeyMessages)
                 {
@@ -188,10 +185,14 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
         }
     };
 
+    /**
+     * Any new message that is received is immediately marked as read.
+     * This is to prevent the app from notifying the user of a new message which they have already read.
+     **/
     private void markMessageAsRead(final JourneyMessage journeyMessage)
     {
         new WcfPostServiceTask<JourneyMessageMarkerDTO>(this, getResources().getString(R.string.MarkJourneyMessageAsReadURL),
-                new JourneyMessageMarkerDTO(this.appManager.getUser().getUserId(), journeyMessage.JourneyMessageId),
+                new JourneyMessageMarkerDTO(appManager.getUser().getUserId(), journeyMessage.JourneyMessageId),
                 new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
                 appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
             @Override
@@ -205,20 +206,28 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
         }).execute();
     }
 
+    /**
+     * Adds a new message to the listview. This is where the message becomes visible in the conversation history.
+     * This method is called after all necessary validation checks have been made.
+     **/
     private void addNewMessage(JourneyMessage journeyMessage)
     {
-        this.journeyMessages.add(journeyMessage);
-        this.journeyChatAdapter.notifyDataSetInvalidated();
-        this.getListView().setSelection(this.journeyMessages.size()-1);
-        this.progressBar.setVisibility(View.GONE);
+        journeyMessages.add(journeyMessage);
+        journeyChatAdapter.notifyDataSetInvalidated();
+        getListView().setSelection(journeyMessages.size()-1);
+        progressBar.setVisibility(View.GONE);
     }
 
-    public void retrieveAllMessages()
+    /**
+     * Used to retrieve conversation history from the server.
+     * the LoadRangeDTO object is used to reduce the number of items being returned to speed up execution of the query.
+     **/
+    public void getAllMessages()
     {
-        this.callInProgress = true;
+        callInProgress = true;
         new WcfPostServiceTask<JourneyMessageRetrieverDTO>(this, getResources().getString(R.string.RetrieveJourneyChatMessagesURL),
-                new JourneyMessageRetrieverDTO(this.journeyId, this.appManager.getUser().getUserId(),
-                        new LoadRangeDTO(appManager.getUser().getUserId(), this.getListView().getCount(),WcfConstants.MessagesPerCall)),
+                new JourneyMessageRetrieverDTO(journeyId, appManager.getUser().getUserId(),
+                        new LoadRangeDTO(appManager.getUser().getUserId(), getListView().getCount(),WcfConstants.MessagesPerCall)),
                 new TypeToken<ServiceResponse<ArrayList<JourneyMessage>>>() {}.getType(),
                 appManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyMessage>, Void>() {
             @Override
@@ -233,10 +242,15 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
         }).execute();
     }
 
-    public void retrieveUnreadMessages()
+    /**
+     * Get any unread messages from the server.
+     * This method is called every time the activity is resumed.
+     * Doing so enables user to retrieve unread messages immediately even if GCM notification is late and does not arrive on time.
+     */
+    public void getUnreadMessages()
     {
         new WcfPostServiceTask<JourneyMessageRetrieverDTO>(this, getResources().getString(R.string.RetrieveUnreadJourneyMessagesURL),
-                new JourneyMessageRetrieverDTO(this.journeyId, this.appManager.getUser().getUserId(),
+                new JourneyMessageRetrieverDTO(journeyId, appManager.getUser().getUserId(),
                         new LoadRangeDTO(appManager.getUser().getUserId(), 0, 0)),
                 new TypeToken<ServiceResponse<ArrayList<JourneyMessage>>>() {}.getType(),
                 appManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyMessage>, Void>() {
@@ -250,14 +264,23 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
             }
         }).execute();
     }
+
     @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(MessageReceiver);
     }
 
+    /**
+     * Called when messages are successfully retrieved from the server.
+     * Before a message can be added to the listview and become visible,
+     * it must be filtered. The listview is scanned to check if a message with this id already exists.
+     * This prevents duplicate messages from being displayed on the screen.
+     * An example of a scenario where it would be possible to receive the same message twice is when
+     * a user relaunches this activity and unread messages are retrieved from the server manually before a late GCM notification arrives.
+     **/
     private void messagesRetrieved(ArrayList<JourneyMessage> retrievedMessages) {
-        this.progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
 
         ArrayList<JourneyMessage> filteredMessages = new ArrayList<JourneyMessage>();
 
@@ -266,7 +289,7 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
             filteredMessages.add(journeyMessage);
         }
 
-        for(JourneyMessage journeyMessage : this.journeyMessages)
+        for(JourneyMessage journeyMessage : journeyMessages)
         {
             for(JourneyMessage journeyMessage1 : retrievedMessages)
             {
@@ -277,31 +300,31 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
             }
         }
 
-        if(this.requestMoreData)
+        if(requestMoreData)
         {
             for(int i = 0; i < filteredMessages.size(); i++)
             {
-                this.journeyMessages.add(i, filteredMessages.get(i));
+                journeyMessages.add(i, filteredMessages.get(i));
             }
         }
         else
         {
-            this.journeyMessages.addAll(filteredMessages);
+            journeyMessages.addAll(filteredMessages);
         }
 
-        this.journeyChatAdapter.notifyDataSetInvalidated();
+        journeyChatAdapter.notifyDataSetInvalidated();
 
-        if(this.requestMoreData)
+        if(requestMoreData)
         {
-            this.getListView().setSelectionFromTop(currentScrollIndex, currentScrollTop);
+            getListView().setSelectionFromTop(currentScrollIndex, currentScrollTop);
         }
         else
         {
-            this.getListView().setSelection(journeyMessages.size());
+            getListView().setSelection(journeyMessages.size());
         }
 
-        this.requestMoreData = false;
-        this.callInProgress = false;
+        requestMoreData = false;
+        callInProgress = false;
     }
 
     @Override
@@ -311,22 +334,31 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
 
     @Override
     public void onScroll(AbsListView absListView,  int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (this.previousTotalListViewItemCount == totalItemCount || this.previousVisibleItemCount == visibleItemCount || this.callInProgress)
+        if (previousTotalListViewItemCount == totalItemCount || previousVisibleItemCount == visibleItemCount || callInProgress)
         {
             return;
         }
 
         if(firstVisibleItem == 0)
         {
-            Log.i(TAG, "ListView at top!");
-            this.previousTotalListViewItemCount = totalItemCount;
-            this.previousFirstVisibleItem = firstVisibleItem;
-            this.previousVisibleItemCount = visibleItemCount;
-            this.currentScrollIndex = this.getListView().getFirstVisiblePosition();
-            View v = this.getListView().getChildAt(0);
-            this.currentScrollTop= (v == null) ? 0 : v.getTop();
-            this.requestMoreData = true;
-            this.retrieveAllMessages();
+            previousTotalListViewItemCount = totalItemCount;
+            previousFirstVisibleItem = firstVisibleItem;
+            previousVisibleItemCount = visibleItemCount;
+            currentScrollIndex = getListView().getFirstVisiblePosition();
+            View v = getListView().getChildAt(0);
+            currentScrollTop= (v == null) ? 0 : v.getTop();
+            requestMoreData = true;
+            getAllMessages();
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId())
+        {
+            case R.id.JourneyChatActivitySendButton:
+                sendMessage();
+                break;
         }
     }
 }

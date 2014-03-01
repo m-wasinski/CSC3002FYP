@@ -169,16 +169,6 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<User> RegisterUser(RegisterDTO register)
         {
-            // Prepare the default profile picture.
-            var img = Image.FromFile(@"C:\\CSC3002FYP\\Initial Prototype\\Resources\\default_picture.png");
-            byte[] arr;
-
-            using (var ms = new MemoryStream())
-            {
-                img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                arr = ms.ToArray();
-            }
-
             // Check if an account with the same username already exists.
             if (WebSecurity.UserExists(register.User.UserName))
             {
@@ -191,6 +181,16 @@ namespace FindNDriveServices2.Services
                     .Any(_ => _.EmailAddress.Equals(register.User.EmailAddress)))
             {
                 return ServiceResponseBuilder.Failure<User>("Account with this email address already exists.");
+            }
+
+            // Prepare the default profile picture.
+            var img = Properties.Resources.default_picture;
+            byte[] arr;
+
+            using (var ms = new MemoryStream())
+            {
+                img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                arr = ms.ToArray();
             }
 
             try
@@ -210,7 +210,8 @@ namespace FindNDriveServices2.Services
                     AverageRating = 0,
                     LastLogon = DateTime.Now,
                     ProfilePicture = new ProfilePicture
-                                         {
+                                         {  
+                                             ProfilePictureId = register.User.UserId,
                                              ProfilePictureBytes = arr
                                          }
                 };

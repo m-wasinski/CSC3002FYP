@@ -71,56 +71,56 @@ public class SearchResultsJourneyDetailsActivity extends BaseMapActivity impleme
 
         if(notification != null)
         {
-            new NotificationProcessor().MarkDelivered(this, this.appManager, notification, new WCFServiceCallback<Boolean, Void>() {
+            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
-                    Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
+                    Log.i(getClass().getSimpleName(), "Notification successfully marked as delivered");
                 }
             });
         }
 
-        this.journey = gson.fromJson(extras.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
+        journey = gson.fromJson(extras.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
 
         DisplayMetrics metrics = new DisplayMetrics();
-        this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int halfScreen = (int) (metrics.heightPixels/2.5f);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, halfScreen);
         layoutParams.setMargins(10, 0, 0, 10);
-        this.mapFragment = ((MapFragment)  getFragmentManager().findFragmentById(R.id.AlertJourneyDetailsMap));
-        this.mapFragment.getView().setLayoutParams(layoutParams);
+        mapFragment = ((MapFragment)  getFragmentManager().findFragmentById(R.id.AlertJourneyDetailsMap));
+        mapFragment.getView().setLayoutParams(layoutParams);
 
         // Initialise UI elements.
-        this.journeyIdTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyIdTextView);
-        this.journeyDriverTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyDriverTextView);
-        this.journeyDateTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyDateTextView);
-        this.journeyTimeTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyTimeTextView);
-        this.journeySeatsAvailableTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneySeatsTextView);
-        this.journeyPetsTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyPetsTextView);
-        this.journeySmokersTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneySmokersTextView);
-        this.journeyFeeTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyFeeTextView);
-        this.journeyHeaderTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyTitleTextView);
-        this.journeyVehicleTypeTextView = (TextView) this.findViewById(R.id.JourneyDetailsActivityJourneyVehicleTypeTextView);
+        journeyIdTextView = (TextView) findViewById(R.id.JourneyDetailsActivityJourneyIdTextView);
+        journeyDriverTextView = (TextView) findViewById(R.id.JourneyDetailsActivityJourneyDriverTextView);
+        journeyDateTextView = (TextView) findViewById(R.id.JourneyDetailsActivityJourneyDateTextView);
+        journeyTimeTextView = (TextView) findViewById(R.id.JourneyDetailsActivityJourneyTimeTextView);
+        journeySeatsAvailableTextView = (TextView) findViewById(R.id.JourneyDetailsActivityJourneySeatsTextView);
+        journeyPetsTextView = (TextView) findViewById(R.id.JourneyDetailsActivityJourneyPetsTextView);
+        journeySmokersTextView = (TextView) findViewById(R.id.JourneyDetailsActivityJourneySmokersTextView);
+        journeyFeeTextView = (TextView) findViewById(R.id.JourneyDetailsActivityJourneyFeeTextView);
+        journeyHeaderTextView = (TextView) findViewById(R.id.JourneyDetailsActivityJourneyTitleTextView);
+        journeyVehicleTypeTextView = (TextView) findViewById(R.id.JourneyDetailsActivityJourneyVehicleTypeTextView);
 
-        this.journeyDriverTableRow = (TableRow) this.findViewById(R.id.JourneyDetailsActivityJourneyDriverTableRow);
+        journeyDriverTableRow = (TableRow) findViewById(R.id.JourneyDetailsActivityJourneyDriverTableRow);
 
-        this.sendRequestButton = (Button) this.findViewById(R.id.JourneyDetailsActivityJourneySendRequestButton);
+        sendRequestButton = (Button) findViewById(R.id.JourneyDetailsActivityJourneySendRequestButton);
 
-        this.journeyMessageToDriverEditText = (EditText) this.findViewById(R.id.JourneyDetailsActivityMessageToDriverEditText);
+        journeyMessageToDriverEditText = (EditText) findViewById(R.id.JourneyDetailsActivityMessageToDriverEditText);
 
         // Fill journey information
-        this.fillJourneyInformation();
+        fillJourneyInformation();
 
         // Setup event handlers.
-        this.setupEventHandlers();
+        setupEventHandlers();
 
         try {
             // Loading map
-            this.initialiseMap();
+            initialiseMap();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        this.googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+        googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
             public void onMapLoaded() {
                 drawDrivingDirectionsOnMap(googleMap, journey.GeoAddresses);
@@ -132,22 +132,22 @@ public class SearchResultsJourneyDetailsActivity extends BaseMapActivity impleme
     {
         String[] vehicleTypes = getResources().getStringArray(R.array.vehicle_types);
 
-        this.journeyHeaderTextView.setText(Utilities.getJourneyHeader(this.journey.GeoAddresses));
-        this.journeyIdTextView.setText(String.valueOf(this.journey.getJourneyId()));
-        this.journeyDriverTextView.setText(this.journey.Driver.getUserName());
-        this.journeyDateTextView.setText(DateTimeHelper.getSimpleDate(this.journey.DateAndTimeOfDeparture));
-        this.journeyTimeTextView.setText(DateTimeHelper.getSimpleTime(this.journey.DateAndTimeOfDeparture));
-        this.journeySmokersTextView.setText(Utilities.translateBoolean(this.journey.SmokersAllowed));
-        this.journeyPetsTextView.setText(Utilities.translateBoolean(this.journey.PetsAllowed));
-        this.journeyVehicleTypeTextView.setText(vehicleTypes[this.journey.VehicleType]);
-        this.journeySeatsAvailableTextView.setText(String.valueOf(this.journey.AvailableSeats));
-        this.journeyFeeTextView.setText(("£"+new DecimalFormat("0.00").format(this.journey.Fee)) + (this.journey.PreferredPaymentMethod == null ? "" : ", " +this.journey.PreferredPaymentMethod));
+        journeyHeaderTextView.setText(Utilities.getJourneyHeader(journey.GeoAddresses));
+        journeyIdTextView.setText(String.valueOf(journey.getJourneyId()));
+        journeyDriverTextView.setText(journey.Driver.getUserName());
+        journeyDateTextView.setText(DateTimeHelper.getSimpleDate(journey.DateAndTimeOfDeparture));
+        journeyTimeTextView.setText(DateTimeHelper.getSimpleTime(journey.DateAndTimeOfDeparture));
+        journeySmokersTextView.setText(Utilities.translateBoolean(journey.SmokersAllowed));
+        journeyPetsTextView.setText(Utilities.translateBoolean(journey.PetsAllowed));
+        journeyVehicleTypeTextView.setText(vehicleTypes[journey.VehicleType]);
+        journeySeatsAvailableTextView.setText(String.valueOf(journey.AvailableSeats));
+        journeyFeeTextView.setText(("£"+new DecimalFormat("0.00").format(journey.Fee)) + (journey.PreferredPaymentMethod == null ? "" : ", " +journey.PreferredPaymentMethod));
     }
 
     private void initialiseMap() {
 
-        if (this.googleMap == null && this.mapFragment != null) {
-            this.googleMap = this.mapFragment.getMap();
+        if (googleMap == null && mapFragment != null) {
+            googleMap = mapFragment.getMap();
 
             if (googleMap == null) {
                 Toast.makeText(this,
@@ -159,14 +159,14 @@ public class SearchResultsJourneyDetailsActivity extends BaseMapActivity impleme
 
     private void setupEventHandlers()
     {
-        this.journeyDriverTableRow.setOnClickListener(new View.OnClickListener() {
+        journeyDriverTableRow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showDriverOptionsDialog();
             }
         });
 
-        this.sendRequestButton.setOnClickListener(new View.OnClickListener() {
+        sendRequestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 sendRequest();
@@ -182,10 +182,10 @@ public class SearchResultsJourneyDetailsActivity extends BaseMapActivity impleme
     private void sendRequest()
     {
         JourneyRequest journeyRequest = new JourneyRequest();
-        journeyRequest.UserId = this.appManager.getUser().getUserId();
-        journeyRequest.User = this.appManager.getUser();
-        journeyRequest.JourneyId = this.journey.getJourneyId();
-        journeyRequest.Message = this.journeyMessageToDriverEditText.getText().toString();
+        journeyRequest.UserId = appManager.getUser().getUserId();
+        journeyRequest.User = appManager.getUser();
+        journeyRequest.JourneyId = journey.getJourneyId();
+        journeyRequest.Message = journeyMessageToDriverEditText.getText().toString();
         journeyRequest.Read = false;
         journeyRequest.Decision = RequestDecision.UNDECIDED;
         journeyRequest.SentOnDate = DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime());

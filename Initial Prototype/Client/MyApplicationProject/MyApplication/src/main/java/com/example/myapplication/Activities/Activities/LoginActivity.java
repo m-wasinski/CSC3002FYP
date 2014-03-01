@@ -1,8 +1,6 @@
 package com.example.myapplication.activities.activities;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,7 +26,7 @@ import com.google.gson.reflect.TypeToken;
 
 import static java.util.Arrays.asList;
 
-public class LoginActivity extends BaseActivity implements WCFServiceCallback<User,String> {
+public class LoginActivity extends BaseActivity implements WCFServiceCallback<User,String>, View.OnClickListener {
 
     private ProgressBar progressBar;
     private LinearLayout keepMeLoggedInLinearLayout;
@@ -36,44 +34,24 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
     private Button registerButton;
     private CheckBox rememberMeCheckbox;
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void onCreate(Bundle savedInstanceState) {
-        this.requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+        requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_login);
 
-        // Initialise local variables.
-        this.progressBar = (ProgressBar) this.findViewById(R.id.LoginActivityProgressBar);
-        this.keepMeLoggedInLinearLayout = (LinearLayout) this.findViewById(R.id.LoginActivityKeepMeLoggedInLinearLayout);
-        this.loginButton = (Button) this.findViewById(R.id.LoginUserButton);
-        this.registerButton = (Button) this.findViewById(R.id.LoginActivityRegisterButton);
-        this.rememberMeCheckbox = (CheckBox) this.findViewById(R.id.RememberMeCheckBox);
+        // Initialise UI elements and setup event handlers.
+        progressBar = (ProgressBar) findViewById(R.id.LoginActivityProgressBar);
 
-        this.setupEventHandlers();
-    }
+        keepMeLoggedInLinearLayout = (LinearLayout) findViewById(R.id.LoginActivityKeepMeLoggedInLinearLayout);
+        keepMeLoggedInLinearLayout.setOnClickListener(this);
 
-    private void setupEventHandlers()
-    {
-        this.loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
+        loginButton = (Button) findViewById(R.id.LoginUserButton);
+        loginButton.setOnClickListener(this);
 
-        this.registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openRegistrationActivity();
-            }
-        });
+        registerButton = (Button) findViewById(R.id.LoginActivityRegisterButton);
+        registerButton.setOnClickListener(this);
 
-        this.keepMeLoggedInLinearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                rememberMeCheckbox.setChecked(!rememberMeCheckbox.isChecked());
-            }
-        });
+        rememberMeCheckbox = (CheckBox) findViewById(R.id.RememberMeCheckBox);
     }
 
     private void attemptLogin()
@@ -86,32 +64,24 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
             return;
         }
 
-        this.progressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
 
         new WcfPostServiceTask<LoginDTO>(this, getResources().getString(R.string.UserManualLoginURL),
                 new LoginDTO(userName.getText().toString(), password.getText().toString(), appManager.getRegistrationId()), new TypeToken<ServiceResponse<User>>() {}.getType(),
-                asList(new Pair(SessionConstants.REMEMBER_ME, ""+this.rememberMeCheckbox.isChecked()), new Pair(SessionConstants.DEVICE_ID, appManager.getUniqueDeviceId()),
+                asList(new Pair(SessionConstants.REMEMBER_ME, ""+rememberMeCheckbox.isChecked()), new Pair(SessionConstants.DEVICE_ID, appManager.getUniqueDeviceId()),
                         new Pair(SessionConstants.UUID, appManager.getUUID())), this).execute();
     }
 
     private boolean validateFields(EditText editText, String value)
     {
-        if(editText.getText().toString().isEmpty())
-        {
-            editText.setError(value + " cannot be empty!");
-        }
-        else
-        {
-            editText.setError(null);
-        }
-
+        editText.setError(editText.getText().toString().isEmpty() ? value + " cannot be empty!" : null);
         return editText.getText().toString().isEmpty();
     }
 
     private void openRegistrationActivity()
     {
-        this.startActivity(new Intent(this, RegistrationActivity.class));
-        this.finish();
+        startActivity(new Intent(this, RegistrationActivity.class));
+        finish();
     }
 
 
@@ -139,10 +109,24 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
         {
             appManager.setSessionId(session);
             appManager.login(serviceResponse.Result);
-            Intent intent = new Intent(this, HomeActivity.class)
-                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
+            startActivity(new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
             finish();
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId())
+        {
+            case R.id.LoginUserButton:
+                attemptLogin();
+                break;
+            case R.id.LoginActivityRegisterButton:
+                openRegistrationActivity();
+                break;
+            case R.id.LoginActivityKeepMeLoggedInLinearLayout:
+                rememberMeCheckbox.setChecked(!rememberMeCheckbox.isChecked());
+                break;
         }
     }
 }

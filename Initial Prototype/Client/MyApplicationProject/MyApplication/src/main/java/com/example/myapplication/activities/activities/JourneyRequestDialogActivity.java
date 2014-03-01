@@ -42,42 +42,42 @@ public class JourneyRequestDialogActivity extends BaseActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_journey_request_dialog);
+        setContentView(R.layout.activity_journey_request_dialog);
 
         // Initialise local variables.
         Bundle bundle = getIntent().getExtras();
 
-        this.notification =  gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),  new TypeToken<Notification>() {}.getType());
+        notification =  gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),  new TypeToken<Notification>() {}.getType());
 
-        this.journeyRequest = gson.fromJson(bundle.getString(IntentConstants.JOURNEY_REQUEST),  new TypeToken<JourneyRequest>() {}.getType());
+        journeyRequest = gson.fromJson(bundle.getString(IntentConstants.JOURNEY_REQUEST),  new TypeToken<JourneyRequest>() {}.getType());
 
-        if(this.notification != null)
+        if(notification != null)
         {
-            new NotificationProcessor().MarkDelivered(this, this.appManager, notification, new WCFServiceCallback<Boolean, Void>() {
+            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
-                    Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
+                    Log.i(getClass().getSimpleName(), "Notification successfully marked as delivered");
                 }
             });
         }
 
         // Initialise UI elements.
-        this.headerTextView = (TextView) this.findViewById(R.id.JourneyRequestDialogActivityHeaderTextView);
-        this.headerTextView.setText("Request from " + journeyRequest.User.getFirstName() + " " + journeyRequest.User.getLastName() + " ("+journeyRequest.User.getUserName()+")");
+        headerTextView = (TextView) findViewById(R.id.JourneyRequestDialogActivityHeaderTextView);
+        headerTextView.setText("Request from " + journeyRequest.User.getFirstName() + " " + journeyRequest.User.getLastName() + " ("+journeyRequest.User.getUserName()+")");
 
-        this.acceptButton = (Button) this.findViewById(R.id.JourneyRequestDialogActivityAcceptButton);
-        this.acceptButton.setEnabled(this.journeyRequest.Decision == JourneyRequestDecisions.Undecided);
+        acceptButton = (Button) findViewById(R.id.JourneyRequestDialogActivityAcceptButton);
+        acceptButton.setEnabled(journeyRequest.Decision == JourneyRequestDecisions.Undecided);
 
-        this.denyButton = (Button) this.findViewById(R.id.JourneyRequestDialogActivityDenyButton);
-        this.denyButton.setEnabled(this.journeyRequest.Decision == JourneyRequestDecisions.Undecided);
+        denyButton = (Button) findViewById(R.id.JourneyRequestDialogActivityDenyButton);
+        denyButton.setEnabled(journeyRequest.Decision == JourneyRequestDecisions.Undecided);
 
-        this.showProfileButton = (Button) this.findViewById(R.id.JourneyRequestDialogActivityShowProfileButton);
-        this.sendFriendRequestButton = (Button) this.findViewById(R.id.JourneyRequestDialogActivitySendFriendRequestButton);
+        showProfileButton = (Button) findViewById(R.id.JourneyRequestDialogActivityShowProfileButton);
+        sendFriendRequestButton = (Button) findViewById(R.id.JourneyRequestDialogActivitySendFriendRequestButton);
 
         // Setup event handlers.
-        this.setupEventHandlers();
+        setupEventHandlers();
 
         // In order to not be too narrow, set the window size based on the screen resolution:
         final int screen_width = getResources().getDisplayMetrics().widthPixels;
@@ -89,21 +89,21 @@ public class JourneyRequestDialogActivity extends BaseActivity{
 
     private void setupEventHandlers()
     {
-        this.acceptButton.setOnClickListener(new View.OnClickListener() {
+        acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 submitDecision(RequestDecision.ACCEPTED);
             }
         });
 
-        this.denyButton.setOnClickListener(new View.OnClickListener() {
+        denyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 submitDecision(RequestDecision.DENIED);
             }
         });
 
-        this.sendFriendRequestButton.setOnClickListener(new View.OnClickListener() {
+        sendFriendRequestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showFriendRequestActivity();
@@ -113,7 +113,7 @@ public class JourneyRequestDialogActivity extends BaseActivity{
 
     private void showFriendRequestActivity()
     {
-        this.startActivity(new Intent(this, SendFriendRequestDialogActivity.class).putExtra(IntentConstants.USER, gson.toJson(this.journeyRequest.User)));
+        startActivity(new Intent(this, SendFriendRequestDialogActivity.class).putExtra(IntentConstants.USER, gson.toJson(journeyRequest.User)));
     }
 
     private void submitDecision(int decision)
@@ -123,10 +123,10 @@ public class JourneyRequestDialogActivity extends BaseActivity{
             return;
         }
 
-        this.journeyRequest.Decision = decision;
+        journeyRequest.Decision = decision;
 
         new WcfPostServiceTask<JourneyRequest>(this, getResources().getString(R.string.ProcessRequestDecisionURL),
-                this.journeyRequest,  new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(),
+                journeyRequest,  new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(),
                 appManager.getAuthorisationHeaders(), new WCFServiceCallback<JourneyRequest, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<JourneyRequest> serviceResponse, Void parameter) {
@@ -142,6 +142,6 @@ public class JourneyRequestDialogActivity extends BaseActivity{
     {
         Toast toast = Toast.makeText(this, "Your decision was submitted successfully.", Toast.LENGTH_LONG);
         toast.show();
-        this.finish();
+        finish();
     }
 }

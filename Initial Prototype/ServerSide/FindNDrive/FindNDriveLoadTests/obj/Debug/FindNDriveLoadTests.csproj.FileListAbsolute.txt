@@ -23,3 +23,4 @@ C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveLoadTests\bin\De
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveLoadTests\obj\Debug\FindNDriveLoadTests.csprojResolveAssemblyReference.cache
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveLoadTests\obj\Debug\FindNDriveLoadTests.dll
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveLoadTests\obj\Debug\FindNDriveLoadTests.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveLoadTests\bin\Debug\Resources\default_picture.png

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="RateDriverURL">https://findndrive.no-ip.co.uk/Services/RatingService.svc/rate</string>
-    <string name="GetUserRatingsURL">https://findndrive.no-ip.co.uk/Services/RatingService.svc/getuserratings</string>
-    <string name="GetLeaderboardURL">https://findndrive.no-ip.co.uk/Services/RatingService.svc/getleaderboard</string>
+    <string name="RateDriverURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/RatingService.svc/rate</string>
+    <string name="GetUserRatingsURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/RatingService.svc/getuserratings</string>
+    <string name="GetLeaderboardURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/RatingService.svc/getleaderboard</string>
 </resources>

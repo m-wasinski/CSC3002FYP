@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="SendRequestURL">https://findndrive.no-ip.co.uk/Services/JourneyRequestService.svc/send</string>
-    <string name="ProcessRequestDecisionURL">https://findndrive.no-ip.co.uk/Services/JourneyRequestService.svc/processdecision</string>
-    <string name="GetRequestsForJourneyURL">https://findndrive.no-ip.co.uk/Services/JourneyRequestService.svc/getforjourney</string>
-    <string name="GetRequestsForUserURL">https://findndrive.no-ip.co.uk/Services/JourneyRequestService.svc/getforuser</string>
-    <string name="GetJourneyRequestURL">https://findndrive.no-ip.co.uk/Services/JourneyRequestService.svc/get</string>
-    <string name="MarkRequestAsReadURL">https://findndrive.no-ip.co.uk/Services/JourneyRequestService.svc/markasread</string>
+    <string name="SendRequestURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyRequestService.svc/send</string>
+    <string name="ProcessRequestDecisionURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyRequestService.svc/processdecision</string>
+    <string name="GetRequestsForJourneyURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyRequestService.svc/getforjourney</string>
+    <string name="GetRequestsForUserURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyRequestService.svc/getforuser</string>
+    <string name="GetJourneyRequestURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyRequestService.svc/get</string>
+    <string name="MarkRequestAsReadURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyRequestService.svc/markasread</string>
 </resources>

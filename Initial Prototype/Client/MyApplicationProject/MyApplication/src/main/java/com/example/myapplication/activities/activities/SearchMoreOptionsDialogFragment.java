@@ -83,7 +83,7 @@ public class SearchMoreOptionsDialogFragment extends DialogFragment implements V
         this.context = context;
         this.journeySearchDTO = journeySearchDTO;
         this.calendar = Calendar.getInstance();
-        
+
         if(this.journeySearchDTO.getDateAndTimeOfDeparture() != null)
         {
             this.calendar.setTime(DateTimeHelper.parseWCFDate(this.journeySearchDTO.getDateAndTimeOfDeparture()));

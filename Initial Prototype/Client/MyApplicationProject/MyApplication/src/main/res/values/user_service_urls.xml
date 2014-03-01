@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="UserAutoLoginURL">https://findndrive.no-ip.co.uk/Services/UserService.svc/autologin</string>
-    <string name="UserManualLoginURL">https://findndrive.no-ip.co.uk/Services/UserService.svc/manuallogin</string>
-    <string name="UserRegisterURL">https://findndrive.no-ip.co.uk/Services/UserService.svc/register</string>
-    <string name="UserLogoutURL">https://findndrive.no-ip.co.uk/Services/UserService.svc/logout</string>
-    <string name="UpdateUserURL">https://findndrive.no-ip.co.uk/Services/UserService.svc/update</string>
-    <string name="UpdateProfilePictureURL">https://findndrive.no-ip.co.uk/Services/UserService.svc/updateProfilePicture</string>
-    <string name="GetProfilePictureURL">https://findndrive.no-ip.co.uk/Services/UserService.svc/getProfilePicture?id=</string>
+    <string name="UserAutoLoginURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/UserService.svc/autologin</string>
+    <string name="UserManualLoginURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/UserService.svc/manuallogin</string>
+    <string name="UserRegisterURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/UserService.svc/register</string>
+    <string name="UserLogoutURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/UserService.svc/logout</string>
+    <string name="UpdateUserURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/UserService.svc/update</string>
+    <string name="UpdateProfilePictureURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/UserService.svc/updateProfilePicture</string>
+    <string name="GetProfilePictureURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/UserService.svc/getProfilePicture?id=</string>
 </resources>

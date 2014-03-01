@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <setParameter name="IIS Web Application Name" value="Default Web Site/FindNDriveServices2_deploy" />
+  <setParameter name="FindNDriveConnectionString-Web.config Connection String" value="Data Source=findndrivedb.c4itfsjh5fjn.eu-west-1.rds.amazonaws.com,1433;Initial Catalog=findndrivedb; User Id=Administrator; password=Kochamzoncie1992;" />
+</parameters>

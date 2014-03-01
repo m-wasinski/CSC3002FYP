@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="GetUnreadMessagesCountURL">https://findndrive.no-ip.co.uk/Services/MessengerService.svc/getunreadcount</string>
-    <string name="GetMessagesURL">https://findndrive.no-ip.co.uk/Services/MessengerService.svc/getall</string>
-    <string name="SendMessageURL">https://findndrive.no-ip.co.uk/Services/MessengerService.svc/send</string>
-    <string name="GetUnreadMessagesCountForFriendURL">https://findndrive.no-ip.co.uk/Services/MessengerService.svc/getunreadcountforfriend</string>
-    <string name="GetUnreadMessages">https://findndrive.no-ip.co.uk/Services/MessengerService.svc/getunread</string>
-    <string name="MarkMessageAsReadURL">https://findndrive.no-ip.co.uk/Services/MessengerService.svc/markread</string>
-    <string name="GetMessageURL">https://findndrive.no-ip.co.uk/Services/MessengerService.svc/get</string>
+    <string name="GetUnreadMessagesCountURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/MessengerService.svc/getunreadcount</string>
+    <string name="GetMessagesURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/MessengerService.svc/getall</string>
+    <string name="SendMessageURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/MessengerService.svc/send</string>
+    <string name="GetUnreadMessagesCountForFriendURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/MessengerService.svc/getunreadcountforfriend</string>
+    <string name="GetUnreadMessages">https://54.72.27.104/FindNDriveServices2_deploy/Services/MessengerService.svc/getunread</string>
+    <string name="MarkMessageAsReadURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/MessengerService.svc/markread</string>
+    <string name="GetMessageURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/MessengerService.svc/get</string>
 </resources>

@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="SearchForJourneysURL">https://findndrive.no-ip.co.uk/Services/SearchService.svc/searchforjourney</string>
+    <string name="SearchForJourneysURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/SearchService.svc/searchforjourney</string>
 </resources>

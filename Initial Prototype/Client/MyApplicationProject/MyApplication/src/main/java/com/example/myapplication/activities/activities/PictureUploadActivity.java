@@ -46,11 +46,14 @@ public class PictureUploadActivity extends BaseActivity implements View.OnClickL
         // Initialise local variables.
         Uri fileUri = Uri.parse(getIntent().getStringExtra("file_uri"));
 
-        // Initialise UI elements.
+        // Initialise UI elements and setup their event handlers..
         ImageView imageView = (ImageView) this.findViewById(R.id.PictureConfirmActivityPictureImageView);
         this.okButton = (Button) this.findViewById(R.id.PictureConfirmActivityOKButton);
         this.cancelButton = (Button) this.findViewById(R.id.PictureConfirmActivityCancelButton);
         this.progressBar = (ProgressBar) this.findViewById(R.id.PictureConfirmActivityProgressBar);
+
+        this.okButton.setOnClickListener(this);
+        this.cancelButton.setOnClickListener(this);
 
         // Decode and resize the bitmap while maintaining aspect ratio.
         int BITMAP_WIDTH = 270;
@@ -58,15 +61,6 @@ public class PictureUploadActivity extends BaseActivity implements View.OnClickL
 
         this.bitmap = Bitmap.createScaledBitmap(decodeFile(fileUri.getPath(), BITMAP_WIDTH, BITMAP_HEIGHT, ScalingLogic.CROP), BITMAP_WIDTH, BITMAP_HEIGHT, false);
         imageView.setImageBitmap(this.bitmap);
-
-        // Setup event handlers.
-        this.setupEventHandlers();
-    }
-
-    private void setupEventHandlers()
-    {
-        this.okButton.setOnClickListener(this);
-        this.cancelButton.setOnClickListener(this);
     }
 
     /**

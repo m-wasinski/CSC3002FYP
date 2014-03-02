@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -40,8 +41,9 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Created by Michal on 19/02/14.
- */
+ * This activity provides the user with the functionality to take a picture using the devices'
+ * built in camera and upload it to the server as a new profile picture.
+ **/
 public class ProfileEditorActivity extends ProfileViewerActivity implements WCFServiceCallback<User, Void> {
 
     private TableRow emailAddressTableRow;
@@ -50,106 +52,98 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
     private TableRow dateOfBirthTableRow;
     private TableRow nameTableRow;
 
-    private ImageView emailImageView;
-    private ImageView genderImageView;
-    private ImageView phoneImageView;
-    private ImageView dateOfBirthImageView;
-    private ImageView nameImageVIew;
-
-    private TextView tapToChangeTextView;
-
     private ProgressBar progressBar;
 
-    private static final String IMAGE_DIRECTORY_NAME = "FindNDrivePictrures";
+    private static final String IMAGE_DIRECTORY_NAME = "FindNDrivePictures";
 
     private Uri fileUri;
 
-    private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
-
-    public static final int MEDIA_TYPE_IMAGE = 1;
+    private final int CAPTURE_IMAGE_REQUEST_CODE = 100;
+    private final int PICK_IMAGE_FROM_GALLERY = 101;
 
     private Boolean setDate = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //Initialise UI elements.
-        this.emailAddressTableRow = (TableRow) this.findViewById(R.id.ProfileViewerActivityEmailAddressTableRow);
-        this.genderTableRow = (TableRow) this.findViewById(R.id.ProfileViewerActivityGenderTableRow);
-        this.phoneNumberTableRow = (TableRow) this.findViewById(R.id.ProfileViewerActivityPhoneNumberTableRow);
-        this.dateOfBirthTableRow = (TableRow) this.findViewById(R.id.ProfileViewerActivityDateOfBirthTableRow);
-        this.nameTableRow = (TableRow) this.findViewById(R.id.ProfileViewerActivityNameTableRow);
+        emailAddressTableRow = (TableRow) findViewById(R.id.ProfileViewerActivityEmailAddressTableRow);
+        genderTableRow = (TableRow) findViewById(R.id.ProfileViewerActivityGenderTableRow);
+        phoneNumberTableRow = (TableRow) findViewById(R.id.ProfileViewerActivityPhoneNumberTableRow);
+        dateOfBirthTableRow = (TableRow) findViewById(R.id.ProfileViewerActivityDateOfBirthTableRow);
+        nameTableRow = (TableRow) findViewById(R.id.ProfileViewerActivityNameTableRow);
 
-        this.emailImageView = (ImageView) this.findViewById(R.id.ProfileViewerActivityEmailAddressArrowImageVIew);
-        this.emailImageView.setVisibility(View.VISIBLE);
+        ImageView emailImageView = (ImageView) findViewById(R.id.ProfileViewerActivityEmailAddressArrowImageVIew);
+        emailImageView.setVisibility(View.VISIBLE);
 
-        this.genderImageView = (ImageView) this.findViewById(R.id.ProfileViewerActivityGenderImageView);
-        this.genderImageView.setVisibility(View.VISIBLE);
+        ImageView genderImageView = (ImageView) findViewById(R.id.ProfileViewerActivityGenderImageView);
+        genderImageView.setVisibility(View.VISIBLE);
 
-        this.phoneImageView = (ImageView) this.findViewById(R.id.ProfileViewerActivityPhoneNumberImageView);
-        this.phoneImageView.setVisibility(View.VISIBLE);
+        ImageView phoneImageView = (ImageView) findViewById(R.id.ProfileViewerActivityPhoneNumberImageView);
+        phoneImageView.setVisibility(View.VISIBLE);
 
-        this.dateOfBirthImageView = (ImageView) this.findViewById(R.id.ProfileViewerActivityDateOfBirthImageView);
-        this.dateOfBirthImageView.setVisibility(View.VISIBLE);
+        ImageView dateOfBirthImageView = (ImageView) findViewById(R.id.ProfileViewerActivityDateOfBirthImageView);
+        dateOfBirthImageView.setVisibility(View.VISIBLE);
 
-        this.nameImageVIew = (ImageView) this.findViewById(R.id.ProfileViewerActivityNameArrowImageVIew);
-        this.nameImageVIew.setVisibility(View.VISIBLE);
+        ImageView nameImageVIew = (ImageView) findViewById(R.id.ProfileViewerActivityNameArrowImageVIew);
+        nameImageVIew.setVisibility(View.VISIBLE);
 
-        this.phoneNumberTableRow.setClickable(true);
-        this.genderTableRow.setClickable(true);
-        this.emailAddressTableRow.setClickable(true);
-        this.dateOfBirthTableRow.setClickable(true);
-        this.nameTableRow.setClickable(true);
+        phoneNumberTableRow.setClickable(true);
+        genderTableRow.setClickable(true);
+        emailAddressTableRow.setClickable(true);
+        dateOfBirthTableRow.setClickable(true);
+        nameTableRow.setClickable(true);
 
-        this.progressBar = (ProgressBar) this.findViewById(R.id.ProfileViewerActivityProgressBar);
+        progressBar = (ProgressBar) findViewById(R.id.ProfileViewerActivityProgressBar);
 
-        this.profileImageView.setClickable(true);
+        profileImageView.setClickable(true);
 
-        this.tapToChangeTextView = (TextView) this.findViewById(R.id.ProfileViewerActivityTapToChangeTextView);
-        this.tapToChangeTextView.setVisibility(View.VISIBLE);
+        TextView tapToChangeTextView = (TextView) findViewById(R.id.ProfileViewerActivityTapToChangeTextView);
+        tapToChangeTextView.setVisibility(View.VISIBLE);
 
         // Setup event handlers for UI elements.
-        this.setupEventHandlers();
+        setupEventHandlers();
     }
 
     private void setupEventHandlers()
     {
-        this.emailAddressTableRow.setOnClickListener(new View.OnClickListener() {
+        emailAddressTableRow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getEmailAddress();
             }
         });
 
-        this.genderTableRow.setOnClickListener(new View.OnClickListener() {
+        genderTableRow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getGender();
             }
         });
 
-        this.dateOfBirthTableRow.setOnClickListener(new View.OnClickListener() {
+        dateOfBirthTableRow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getDateOfBirth();
             }
         });
 
-        this.phoneNumberTableRow.setOnClickListener(new View.OnClickListener() {
+        phoneNumberTableRow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getPhoneNumber();
             }
         });
 
-        this.profileImageView.setOnClickListener(new View.OnClickListener() {
+        profileImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
               showProfilePictureOptionsMenu();
             }
         });
 
-        this.nameTableRow.setOnClickListener(new View.OnClickListener() {
+        nameTableRow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getName();
@@ -171,12 +165,17 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
                         startCameraActivity();
                         break;
                     case 1:
-
+                        startGalleryActivity();
                         break;
                 }
             }
         });
         genderDialog.show();
+    }
+
+    private void startGalleryActivity()
+    {
+        startActivityForResult(new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI), PICK_IMAGE_FROM_GALLERY);
     }
 
     private void getName()
@@ -186,10 +185,10 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
         nameDialog.setTitle("Enter new name.");
 
         final EditText firstNameEditText = (EditText) nameDialog.findViewById(R.id.NameChangerDialogFirstNameEditText);
-        firstNameEditText.setText(this.appManager.getUser().getFirstName());
+        firstNameEditText.setText(appManager.getUser().getFirstName());
 
         final EditText lastNameEditText = (EditText) nameDialog.findViewById(R.id.NameChangerDialogLastNameEditText);
-        lastNameEditText.setText(this.appManager.getUser().getLastName());
+        lastNameEditText.setText(appManager.getUser().getLastName());
 
         Button okButton = (Button) nameDialog.findViewById(R.id.NameChangerDialogOkButton);
         okButton.setOnClickListener(new View.OnClickListener() {
@@ -233,7 +232,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
 
         final EditText emailEditText = (EditText) emailDialog.findViewById(R.id.ProfileEditorDialogEditText);
         emailEditText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        emailEditText.setText(this.appManager.getUser().getEmailAddress());
+        emailEditText.setText(appManager.getUser().getEmailAddress());
 
         Button okButton = (Button) emailDialog.findViewById(R.id.ProfileEditorDialogOkButton);
 
@@ -263,7 +262,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
 
         final EditText phoneEditText = (EditText) phoneNumberDialog.findViewById(R.id.ProfileEditorDialogEditText);
         phoneEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
-        phoneEditText.setText(this.appManager.getUser().getPhoneNumber());
+        phoneEditText.setText(appManager.getUser().getPhoneNumber());
 
         Button okButton = (Button) phoneNumberDialog.findViewById(R.id.ProfileEditorDialogOkButton);
 
@@ -334,7 +333,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
     }
 
     private void saveChanges(UpdateUserDTO updateUserDTO) {
-        this.progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
         new WcfPostServiceTask<UpdateUserDTO>(this, getResources().getString(R.string.UpdateUserURL),
                 updateUserDTO,
                 new TypeToken<ServiceResponse<User>>() {}.getType(),
@@ -343,11 +342,11 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
 
     @Override
     public void onServiceCallCompleted(ServiceResponse<User> serviceResponse, Void parameter) {
-        this.progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
-            this.appManager.setUser(serviceResponse.Result);
-            this.user = serviceResponse.Result;
+            appManager.setUser(serviceResponse.Result);
+            user = serviceResponse.Result;
             super.fillPersonDetails();
             Toast toast = Toast.makeText(this, "Changes to your profile were saved successfully.", Toast.LENGTH_LONG);
             toast.show();
@@ -356,8 +355,8 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
 
     private void startCameraActivity()
     {
-        this.fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
-        this.startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, fileUri), CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
+        fileUri = getOutputMediaFileUri();
+        startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, fileUri), CAPTURE_IMAGE_REQUEST_CODE);
     }
 
     @Override
@@ -373,39 +372,58 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
     }
 
     /**
-     * Receiving activity result method will be called after closing the camera
+     * This method is called after user takes a picture with their
+     * devices' camera and returns back to this activity
      * */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // if the result is capturing Image
-        if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE) {
+
+        if (requestCode == CAPTURE_IMAGE_REQUEST_CODE)
+        {
             if (resultCode == RESULT_OK)
             {
-                this.startActivity(new Intent(this, PictureUploadActivity.class).putExtra("file_uri", fileUri.toString()));
+                startActivity(new Intent(this, PictureUploadActivity.class).putExtra("file_uri", fileUri.toString()));
 
-            } else if (resultCode == RESULT_CANCELED) {
-            } else {
-                // failed to capture image
-                Toast.makeText(getApplicationContext(),
-                        "Sorry! Failed to capture image", Toast.LENGTH_SHORT)
-                        .show();
             }
+            else if (resultCode == RESULT_CANCELED)
+            {
+                // User cancelled taking the picture.
+                Toast.makeText(this,"Taking picture cancelled.", Toast.LENGTH_LONG).show();
+            }
+            else {
+                // Error, failed to capture image.
+                Toast.makeText(this,"Sorry! Failed to capture image", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        if(requestCode == PICK_IMAGE_FROM_GALLERY && resultCode == RESULT_OK)
+        {
+             Uri selectedImage = data.getData();
+             String[] filePathColumn = { MediaStore.Images.Media.DATA };
+             Cursor cursor = getContentResolver().query(selectedImage,filePathColumn, null, null, null);
+             cursor.moveToFirst();
+             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+             String picturePath = cursor.getString(columnIndex);
+             cursor.close();
+             startActivity(new Intent(this, PictureUploadActivity.class).putExtra("file_uri",  picturePath));
         }
     }
 
     /**
      * Creating file uri to store image/video
      */
-    public Uri getOutputMediaFileUri(int type) {
-        return Uri.fromFile(getOutputMediaFile(type));
+    public Uri getOutputMediaFileUri() {
+        return Uri.fromFile(getBlankImageFile());
     }
 
-    /*
-     * returning image / video
-     */
-    private static File getOutputMediaFile(int type) {
+    /**
+     * Returns a blank image file from the devices image directory.
+     * Devices camera then uses this file to write an image to it.
+     * Partially referenced from:
+     **/
+    private File getBlankImageFile() {
 
-        // External sdcard location
+        // Get a hold of the external storage location.
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),IMAGE_DIRECTORY_NAME);
 
         // Create the storage directory if it does not exist
@@ -413,22 +431,11 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
         {
             if (!mediaStorageDir.mkdirs())
             {
-                Log.d(IMAGE_DIRECTORY_NAME, "Oops! Failed create " + IMAGE_DIRECTORY_NAME + " directory");
+                Log.d(IMAGE_DIRECTORY_NAME, "Error, failed create " + IMAGE_DIRECTORY_NAME + " directory");
                 return null;
             }
         }
 
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.UK).format(new Date());
-
-        File mediaFile;
-
-        if (type == MEDIA_TYPE_IMAGE) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
-        } else {
-            return null;
-        }
-
-        return mediaFile;
+        return new File(mediaStorageDir.getPath() + File.separator + "IMG_" + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.UK).format(new Date()) + ".jpg");
     }
 }

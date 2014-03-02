@@ -24,7 +24,7 @@ public class WcfBaseServiceTask extends AsyncTask<Void, Void, Void> {
 
     protected Type type;
 
-    protected final String TAG = this.getClass().getSimpleName();
+
 
     protected WCFServiceCallback wcfServiceCallback;
 

@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.constants.SessionConstants;
+import com.example.myapplication.constants.WcfConstants;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.utilities.SSLSocketFactory;
 import com.example.myapplication.interfaces.WCFServiceCallback;
@@ -38,7 +39,7 @@ public class WcfPostServiceTask<T> extends WcfBaseServiceTask {
 
     private T objectToSerialise;
     private String sessionInformation;
-
+    private final String TAG = "WCF Post Service Task";
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -59,6 +60,15 @@ public class WcfPostServiceTask<T> extends WcfBaseServiceTask {
     @Override
     protected Void doInBackground(Void... voids) {
         try {
+
+           if(WcfConstants.DEV_MODE)
+           {
+               url = url.replace("https://54.72.27.104/FindNDriveServices2_deploy", "https://findndrive.no-ip.co.uk");
+           }
+
+            Log.i(TAG, "Dev mode enabled: " + WcfConstants.DEV_MODE);
+            Log.i(TAG, url);
+
             HttpParams httpParameters = new BasicHttpParams();
             // Set the timeout in milliseconds until a connection is established.
             // The default value is zero, that means the timeout is not used.

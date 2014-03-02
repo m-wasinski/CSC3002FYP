@@ -36,6 +36,7 @@ import static java.util.Arrays.asList;
  */
 public class AppManager extends Application {
 
+
     private User user;
     private String uuid;
     private String sessionId;

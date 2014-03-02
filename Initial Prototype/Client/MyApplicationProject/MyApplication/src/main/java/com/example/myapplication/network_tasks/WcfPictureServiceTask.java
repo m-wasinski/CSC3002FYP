@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.util.LruCache;
 
+import com.example.myapplication.constants.WcfConstants;
 import com.example.myapplication.utilities.SSLSocketFactory;
 import com.example.myapplication.interfaces.WCFImageRetrieved;
 import com.example.myapplication.utilities.Pair;
@@ -64,6 +65,12 @@ public class WcfPictureServiceTask extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
         try {
 
+            if(WcfConstants.DEV_MODE)
+            {
+                url = url.replace("https://54.72.27.104/FindNDriveServices2_deploy", "https://findndrive.no-ip.co.uk");
+            }
+
+            Log.i(TAG, "Dev mode enabled: " + WcfConstants.DEV_MODE);
             Log.i(TAG, "Retrieving image from URL: " + this.url);
 
             this.bitmap = this.bitmapLruCache.get(String.valueOf(this.id));

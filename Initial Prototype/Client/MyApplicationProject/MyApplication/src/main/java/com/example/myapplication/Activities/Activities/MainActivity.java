@@ -9,6 +9,7 @@ import android.view.Menu;
 import com.example.myapplication.R;
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.constants.ServiceResponseCode;
+import com.example.myapplication.constants.WcfConstants;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.interfaces.GCMRegistrationCallback;
@@ -28,7 +29,7 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_main);
-
+        WcfConstants.DEV_MODE =true;
         // Check device for Play Services APK.
         if (!checkPlayServices()) {
             // If this check succeeds, proceed with normal processing.

@@ -28,7 +28,7 @@ import static java.util.Arrays.asList;
  * Provides the user with all necessary functionality to register a new account with the system.
  * It also performs validation before calling the web service to ensure the required information is present and is in the correct format.
  **/
-public class RegistrationActivity extends BaseActivity implements WCFServiceCallback<User, String>{
+public class RegistrationActivity extends BaseActivity implements WCFServiceCallback<User, String>, View.OnClickListener, View.OnFocusChangeListener{
 
     private EditText userNameEditText;
     private EditText emailAddressEditText;
@@ -43,45 +43,27 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
 
-        // Initialise UI elements.
+        // Initialise UI elements and setup all event handlers.
         progressBar = (ProgressBar) findViewById(R.id.RegistrationActivityProgressBar);
+
         userNameEditText = (EditText) findViewById(R.id.UserNameTextField);
+        userNameEditText.setOnFocusChangeListener(this);
+
         emailAddressEditText = (EditText) findViewById(R.id.EmailTextField);
+        emailAddressEditText.setOnFocusChangeListener(this);
+
         passwordEditText = (EditText) findViewById(R.id.RegistrationPasswordTextField);
         confirmedPasswordEditText = (EditText) findViewById(R.id.RegistrationConfirmPasswordTextField);
+
         registerButton = (Button) findViewById(R.id.RegisterNewUserButton);
-
-        // Setup all event handlers.
-        setupEventHandlers();
-    }
-
-    void setupEventHandlers()
-    {
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AttemptToRegister();
-            }
-        });
-
-        emailAddressEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus && !emailAddressEditText.getText().toString().isEmpty())
-                    Validators.validateEmailAddress(emailAddressEditText);
-            }});
-
-        userNameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus && !userNameEditText.getText().toString().isEmpty())
-                    Validators.validateUserName(userNameEditText);
-            }});
+        registerButton.setOnClickListener(this);
     }
 
     /**
      * Validate the information provided by the user and if successful,
      * call the web service to register a new account.
      **/
-    private void AttemptToRegister() {
+    public void AttemptToRegister() {
 
         //Perform validation before calling the web service.
         if(Validators.validatePasswords(passwordEditText, confirmedPasswordEditText) &&
@@ -139,5 +121,29 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
     {
         startActivity(new Intent(this, LoginActivity.class));
         finish();
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId())
+        {
+            case R.id.RegisterNewUserButton:
+                AttemptToRegister();
+        }
+    }
+
+    @Override
+    public void onFocusChange(View view, boolean hasFocus) {
+        switch(view.getId())
+        {
+            case R.id.UserNameTextField:
+                if(!hasFocus && !emailAddressEditText.getText().toString().isEmpty())
+                    Validators.validateEmailAddress(emailAddressEditText);
+                break;
+            case R.id.EmailTextField:
+              if(!hasFocus && !userNameEditText.getText().toString().isEmpty())
+                    Validators.validateUserName(userNameEditText);
+                break;
+        }
     }
 }

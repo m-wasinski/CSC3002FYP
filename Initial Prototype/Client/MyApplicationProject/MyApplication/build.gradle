@@ -19,6 +19,8 @@ android {
     defaultConfig {
         minSdkVersion 10
         targetSdkVersion 18
+        testPackageName "findndrive.test"
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
 
     buildTypes {
@@ -33,4 +35,5 @@ dependencies {
 	compile 'com.android.support:appcompat-v7:+'
 	compile files('libs/gson-2.2.4.jar')
     compile 'com.google.android.gms:play-services:4.0.30'
+    instrumentTestCompile 'junit:junit:3.8'
 }

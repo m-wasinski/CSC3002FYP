@@ -1,8 +1,11 @@
 package com.example.myapplication.activities.activities;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -10,13 +13,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.telephony.TelephonyManager;
 import android.text.InputType;
 import android.util.Log;
+import android.util.Patterns;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -27,18 +36,21 @@ import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.dtos.UpdateUserDTO;
-import com.example.myapplication.utilities.DateTimeHelper;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
+import com.example.myapplication.utilities.DateTimeHelper;
+import com.example.myapplication.utilities.DialogCreator;
 import com.example.myapplication.utilities.Utilities;
 import com.example.myapplication.utilities.Validators;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * This activity provides the user with the functionality to take a picture using the devices'
@@ -151,6 +163,23 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
         });
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.help:
+                DialogCreator.showHelpDialog(this, "Your profile.", getResources().getString(R.string.MyProfileHelp));
+                break;
+            case R.id.action_home:
+                startActivity(new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
+                break;
+            case R.id.logout_menu_option:
+                appManager.logout(true, true);
+                break;
+        }
+        return false;
+    }
+
     private void showProfilePictureOptionsMenu()
     {
         final String items[] = {"Camera","Gallery"};
@@ -236,20 +265,58 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
 
         Button okButton = (Button) emailDialog.findViewById(R.id.ProfileEditorDialogOkButton);
 
+        Pattern emailPattern = Patterns.EMAIL_ADDRESS; // API level 8+
+        Account[] accounts = AccountManager.get(this).getAccounts();
+
+        if(accounts != null)
+        {
+            final ArrayList<String> emails = new ArrayList<String>();
+
+            for (Account account : accounts) {
+                if (emailPattern.matcher(account.name).matches() && !emails.contains(account.name)) {
+                    emails.add(account.name);
+                }
+            }
+
+            if(emails.size() > 0)
+            {
+                TextView message = (TextView) emailDialog.findViewById(R.id.ProfileEditorDialogSelectFromTheFollowing);
+                message.setVisibility(View.VISIBLE);
+                message.setText("Or select from one of the following email addresses:");
+
+                ListView listView = (ListView) emailDialog.findViewById(R.id.ProfileEditorDialogEmailsListView);
+                listView.setVisibility(View.VISIBLE);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, emails);
+                listView.setAdapter(adapter);
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        newEmailAddressEntered(emails.get(i));
+                    }
+                });
+            }
+
+        }
+
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 if(Validators.validateEmailAddress(emailEditText))
                 {
-                    memberEmailAddressTextView.setText(emailEditText.getText().toString());
-                    saveChanges(new UpdateUserDTO(appManager.getUser().getUserId(), null, null, emailEditText.getText().toString(), -1, null, null));
+                    newEmailAddressEntered(emailEditText.getText().toString());
                     emailDialog.dismiss();
                 }
             }
         });
 
         emailDialog.show();
+    }
+
+    private void newEmailAddressEntered(String email)
+    {
+        memberEmailAddressTextView.setText(email);
+        saveChanges(new UpdateUserDTO(appManager.getUser().getUserId(), null, null, email, -1, null, null));
     }
 
     private void getPhoneNumber()
@@ -266,18 +333,44 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
 
         Button okButton = (Button) phoneNumberDialog.findViewById(R.id.ProfileEditorDialogOkButton);
 
+        TelephonyManager telephonyManager = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
+        final String phoneNumber = telephonyManager.getLine1Number();
+
+        if(phoneNumber != null && !phoneNumber.isEmpty())
+        {
+            TextView message = (TextView) phoneNumberDialog.findViewById(R.id.ProfileEditorDialogSelectFromTheFollowing);
+            message.setVisibility(View.VISIBLE);
+            message.setText("The following phone number was found on this device. Click on the number to select it.");
+
+            final Button phoneNumberButton = (Button) phoneNumberDialog.findViewById(R.id.ProfileEditorDialogPhoneNumberButton);
+            phoneNumberButton.setText(phoneNumber);
+            phoneNumberButton.setVisibility(View.VISIBLE);
+            phoneNumberButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    newPhoneNumberEntered(phoneNumberButton.getText().toString());
+                }
+            });
+        }
+
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
                 phoneNumberTextView.setText(phoneEditText.getText().toString());
-                saveChanges(new UpdateUserDTO(appManager.getUser().getUserId(), null, null, null, -1, null, phoneNumberTextView.getText().toString()));
+                newPhoneNumberEntered(phoneEditText.getText().toString());
                 phoneNumberDialog.dismiss();
 
             }
         });
 
         phoneNumberDialog.show();
+    }
+
+    private void newPhoneNumberEntered(String phoneNumber)
+    {
+        phoneNumberTextView.setText(phoneNumber);
+        saveChanges(new UpdateUserDTO(appManager.getUser().getUserId(), null, null, null, -1, null, phoneNumber));
     }
 
     private void getDateOfBirth()

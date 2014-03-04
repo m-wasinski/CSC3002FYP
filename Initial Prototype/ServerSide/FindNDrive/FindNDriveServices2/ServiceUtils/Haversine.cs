@@ -1,4 +1,13 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Haversine.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The distance type to return the results in.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+using System;
 
 namespace FindNDriveServices2
 {
@@ -8,7 +17,10 @@ namespace FindNDriveServices2
     /// The distance type to return the results in.
     /// </summary>
     public enum DistanceType { Miles, Kilometers };
- 
+
+    /// <summary>
+    /// The haversine.
+    /// </summary>
     public class Haversine
     {
          /// <summary>
@@ -19,7 +31,7 @@ namespace FindNDriveServices2
          /// <param name="geoAddress2"></param>
          /// <param name="type"></param>
          /// <returns></returns>
-         public double Distance(GeoAddress geoAddress1, GeoAddress geoAddress2, DistanceType type)
+        public double Distance(GeoAddress geoAddress1, GeoAddress geoAddress2, DistanceType type)
         {
             var r = (type == DistanceType.Miles) ? 3960 : 6371;
 
@@ -41,7 +53,7 @@ namespace FindNDriveServices2
          /// </summary>
          /// <param name=”val”></param>
          /// <returns></returns>
-         private double toRadian(double val)
+        private double toRadian(double val)
         {
             return (Math.PI / 180) * val;
         }

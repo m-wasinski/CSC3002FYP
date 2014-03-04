@@ -79,7 +79,7 @@ public class NotificationsAdapter extends ArrayAdapter<Notification> {
                 public void onImageRetrieved(Bitmap bitmap) {
                     if(bitmap != null)
                     {
-                        holder.contextImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), false));
+                        holder.contextImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/2, bitmap.getHeight()/2, false));
                     }
                 }
             }).execute();
@@ -88,7 +88,7 @@ public class NotificationsAdapter extends ArrayAdapter<Notification> {
         return row;
     }
 
-    class NotificationsHolder
+    private class NotificationsHolder
     {
         ImageView contextImageView;
         ImageView hasActionImageView;

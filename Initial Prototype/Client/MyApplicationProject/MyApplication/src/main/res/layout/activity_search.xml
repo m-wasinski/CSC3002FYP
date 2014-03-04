@@ -5,19 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:duplicateParentState="true"
-        android:background="@drawable/background">
+        android:orientation="vertical">
 
         <fragment
             android:id="@+id/FragmentSearchMap"
             android:name="com.google.android.gms.maps.MapFragment"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_height="match_parent"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -25,6 +22,7 @@
             android:orientation="vertical"
             android:clickable="true"
             android:id="@+id/SearchActivityDepartureRelativeLayout"
+            android:layout_alignParentTop="true"
             android:background="@drawable/home_navigation_selector">
 
             <ImageView
@@ -83,15 +81,19 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dip"
+            android:layout_below="@+id/SearchActivityDepartureRelativeLayout"
             android:background="#B7D8E8"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_below="@+id/SearchActivityDepartureRelativeLayout"
             android:clickable="true"
+            android:visibility="gone"
             android:id="@+id/SearchActivityDestinationRelativeLayout"
             android:background="@drawable/home_navigation_selector"
+            android:layout_marginTop="1dip"
             android:paddingTop="2dip">
 
             <ImageView
@@ -145,39 +147,26 @@
                     android:layout_alignParentRight="true"
                     android:paddingLeft="10dip"/>
             </LinearLayout>
+
         </RelativeLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_alignParentBottom="true"
+            android:background="#80151515">
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/Search"
                 android:id="@+id/ActivitySearchMapSearchButton"
-                style="@style/TransparentButton"
-                android:background="@drawable/button_selector"
-                android:layout_weight="1"/>
+                style="@style/UniversalButtonStyle"
+                android:visibility="gone"
+                android:background="@drawable/button_selector"/>
+        </RelativeLayout>
 
-            <LinearLayout
-                android:layout_width="1dip"
-                android:layout_marginTop="1dip"
-                android:layout_marginBottom="1dip"
-                android:layout_height="match_parent"
-                android:background="#B7D8E8"/>
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Options ..."
-                android:id="@+id/ActivitySearchMapMoreOptionsButton"
-                style="@style/TransparentButton"
-                android:background="@drawable/button_selector"
-                android:layout_weight="1"/>
-        </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
 
     <ProgressBar
         android:id="@+id/SearchActivityProgressBar"
@@ -187,14 +176,5 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:indeterminateDrawable="@drawable/progress"
-        android:visibility="gone"/>
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Show Search Results (0)"
-        android:id="@+id/SearchActivityResultsButton"
-        android:background="@drawable/custom_button_selector"
-        android:textColor="#FFFFFF"
         android:visibility="gone"/>
 </RelativeLayout>

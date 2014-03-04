@@ -1,5 +1,6 @@
 package com.example.myapplication.activities.activities;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
@@ -12,10 +13,9 @@ import com.example.myapplication.R;
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.domain_objects.Journey;
-import com.example.myapplication.utilities.DateTimeHelper;
-import com.example.myapplication.utilities.DialogCreator;
 import com.example.myapplication.interfaces.WCFImageRetrieved;
 import com.example.myapplication.network_tasks.WcfPictureServiceTask;
+import com.example.myapplication.utilities.DateTimeHelper;
 import com.example.myapplication.utilities.Utilities;
 import com.google.gson.reflect.TypeToken;
 
@@ -35,6 +35,7 @@ public class JourneySummaryActivity extends BaseActivity implements WCFImageRetr
     private TextView journeyPetsTextView;
     private TextView journeyFeeTextView;
     private TextView journeyVehicleTypeTextView;
+    private TextView journeyPrivateTextView;
 
     private TableRow journeyDriverTableRow;
 
@@ -61,6 +62,7 @@ public class JourneySummaryActivity extends BaseActivity implements WCFImageRetr
         journeySmokersTextView = (TextView) findViewById(R.id.JourneySummaryJourneySmokersTextView);
         journeyFeeTextView = (TextView) findViewById(R.id.JourneySummaryJourneyFeeTextView);
         journeyVehicleTypeTextView = (TextView) findViewById(R.id.JourneySummaryJourneyVehicleTypeTextView);
+        journeyPrivateTextView = (TextView) findViewById(R.id.JourneySummaryJourneyPrivateTextView);
 
         driverIconImageView = (ImageView) findViewById(R.id.JourneySummaryActivityDriverImageView);
 
@@ -79,21 +81,22 @@ public class JourneySummaryActivity extends BaseActivity implements WCFImageRetr
         String[] vehicleTypes = getResources().getStringArray(R.array.vehicle_types);
 
         journeyIdTextView.setText(String.valueOf(journey.getJourneyId()));
-        journeyDriverTextView.setText(journey.Driver.getUserName());
-        journeyDateTextView.setText(DateTimeHelper.getSimpleDate(journey.DateAndTimeOfDeparture));
-        journeyTimeTextView.setText(DateTimeHelper.getSimpleTime(journey.DateAndTimeOfDeparture));
-        journeySmokersTextView.setText(Utilities.translateBoolean(journey.SmokersAllowed));
-        journeyPetsTextView.setText(Utilities.translateBoolean(journey.PetsAllowed));
-        journeyVehicleTypeTextView.setText(vehicleTypes[journey.VehicleType]);
-        journeySeatsAvailableTextView.setText(String.valueOf(journey.AvailableSeats));
-        journeyFeeTextView.setText(("£"+new DecimalFormat("0.00").format(journey.Fee)) + (journey.PreferredPaymentMethod == null ? "" : ", " +journey.PreferredPaymentMethod));
+        journeyDriverTextView.setText(journey.getDriver().getUserName());
+        journeyDateTextView.setText(DateTimeHelper.getSimpleDate(journey.getDateAndTimeOfDeparture()));
+        journeyTimeTextView.setText(DateTimeHelper.getSimpleTime(journey.getDateAndTimeOfDeparture()));
+        journeySmokersTextView.setText(Utilities.translateBoolean(journey.isSmokersAllowed()));
+        journeyPetsTextView.setText(Utilities.translateBoolean(journey.isPetsAllowed()));
+        journeyPrivateTextView.setText(Utilities.translateBoolean(journey.isPrivate()));
+        journeyVehicleTypeTextView.setText(vehicleTypes[journey.getVehicleType()]);
+        journeySeatsAvailableTextView.setText(String.valueOf(journey.getAvailableSeats()));
+        journeyFeeTextView.setText(("£"+new DecimalFormat("0.00").format(journey.getFee())) + (journey.getPreferredPaymentMethod() == null ? "" : ", " +journey.getPreferredPaymentMethod()));
 
     }
 
     private void getDriverPicture()
     {
         new WcfPictureServiceTask(appManager.getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
-                journey.Driver.getUserId(), appManager.getAuthorisationHeaders(), this).execute();
+                journey.getDriver().getUserId(), appManager.getAuthorisationHeaders(), this).execute();
     }
 
     @Override
@@ -109,7 +112,7 @@ public class JourneySummaryActivity extends BaseActivity implements WCFImageRetr
         switch(view.getId())
         {
             case R.id.JourneySummaryActivityJourneyDriverTableRow:
-                DialogCreator.ShowProfileOptionsDialog(this, journey.Driver);
+                startActivity(new Intent(this, ProfileViewerActivity.class).putExtra(IntentConstants.USER, gson.toJson(journey.getDriver())));
                 break;
         }
     }

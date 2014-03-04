@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace FindNDriveServices2
+namespace FindNDriveServices2.ServiceHostUtils
 {
     using System;
     using System.ServiceModel;
@@ -17,8 +17,12 @@ namespace FindNDriveServices2
     using System.ServiceModel.Dispatcher;
 
     using DomainObjects.Domains;
+
     using FindNDriveDataAccessLayer;
+
     using FindNDriveInfrastructureDataAccessLayer;
+
+    using FindNDriveServices2.ServiceUtils;
 
     using WebMatrix.WebData;
 

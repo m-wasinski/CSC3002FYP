@@ -25,6 +25,12 @@ namespace FindNDriveServices2.DTOs
     public class JourneySearchDTO
     {
         /// <summary>
+        /// Gets or sets the user id.
+        /// </summary>
+        [DataMember]
+        public int UserId { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether search by date.
         /// </summary>
         [DataMember]

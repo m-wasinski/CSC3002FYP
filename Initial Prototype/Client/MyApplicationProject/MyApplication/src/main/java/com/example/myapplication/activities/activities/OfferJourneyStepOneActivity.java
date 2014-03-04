@@ -8,9 +8,11 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,9 +23,11 @@ import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.domain_objects.GeoAddress;
 import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.enums.MarkerType;
-import com.example.myapplication.utilities.DateTimeHelper;
 import com.example.myapplication.google_maps_utilities.GeocoderParams;
+import com.example.myapplication.interfaces.OnDrivingDirectionsRetrrievedListener;
 import com.example.myapplication.network_tasks.GeocoderTask;
+import com.example.myapplication.utilities.DateTimeHelper;
+import com.example.myapplication.utilities.DialogCreator;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -38,7 +42,7 @@ import java.util.Calendar;
 /**
  * Created by Michal on 22/01/14.
  */
-public class OfferJourneyStepOneActivity extends BaseMapActivity {
+public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDrivingDirectionsRetrrievedListener {
 
     private RelativeLayout departureRelativeLayout;
     private RelativeLayout destinationRelativeLayout;
@@ -56,50 +60,69 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
 
     private Journey journey;
 
+    private ProgressBar progressBar;
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_offer_journey_step_one);
+        setContentView(R.layout.activity_offer_journey_step_one);
 
         Bundle bundle = getIntent().getExtras();
-        this.mode = bundle.getInt(IntentConstants.JOURNEY_CREATOR_MODE);
+        mode = bundle.getInt(IntentConstants.JOURNEY_CREATOR_MODE);
 
-        this.journey = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ?
+        journey = mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ?
                 (Journey)gson.fromJson(bundle.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType()) : new Journey();
 
         // Initialise variables.
-        this.wayPoints = new ArrayList<WaypointHolder>();
+        wayPoints = new ArrayList<WaypointHolder>();
 
         //Initialise UI elements.
-        this.stepTwoButton = (Button) this.findViewById(R.id.OfferJourneyStepOneActivityStepTwoButton);
-        this.departureGPSButton = (Button) this.findViewById(R.id.OfferJourneyStepOneActivityDepartureGPSButton);
-        this.destinationGPSButton = (Button) this.findViewById(R.id.OfferJourneyStepOneActivityDestinationGPSButton);
-        this.departureRelativeLayout = (RelativeLayout) this.findViewById(R.id.OfferJourneyStepOneActivityDepartureRelativeLayout);
-        this.destinationRelativeLayout = (RelativeLayout) this.findViewById(R.id.OfferJourneyStepOneActivityDestinationRelativeLayout);
-        this.waypointRelativeLayout = (RelativeLayout) this.findViewById(R.id.OfferJourneyStepOneActivityViaRelativeLayout);
-        this.departureTextView = (TextView) this.findViewById(R.id.OfferJourneyStepOneActivityDepartureTextView);
-        this.destinationTextView = (TextView) this.findViewById(R.id.OfferJourneyStepOneActivityDestinationTextView);
-        this.viaTextView = (TextView) this.findViewById(R.id.OfferJourneyStepOneActivityViaTextView);
-        this.actionBar.setTitle(this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? "Editing journey, step 1" : "Offering journey, step 1");
+        stepTwoButton = (Button) findViewById(R.id.OfferJourneyStepOneActivityStepTwoButton);
+        departureGPSButton = (Button) findViewById(R.id.OfferJourneyStepOneActivityDepartureGPSButton);
+        destinationGPSButton = (Button) findViewById(R.id.OfferJourneyStepOneActivityDestinationGPSButton);
+        departureRelativeLayout = (RelativeLayout) findViewById(R.id.OfferJourneyStepOneActivityDepartureRelativeLayout);
+        destinationRelativeLayout = (RelativeLayout) findViewById(R.id.OfferJourneyStepOneActivityDestinationRelativeLayout);
+        waypointRelativeLayout = (RelativeLayout) findViewById(R.id.OfferJourneyStepOneActivityViaRelativeLayout);
+        departureTextView = (TextView) findViewById(R.id.OfferJourneyStepOneActivityDepartureTextView);
+        destinationTextView = (TextView) findViewById(R.id.OfferJourneyStepOneActivityDestinationTextView);
+        viaTextView = (TextView) findViewById(R.id.OfferJourneyStepOneActivityViaTextView);
+        actionBar.setTitle(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? "Editing journey, step 1" : "Offering journey, step 1");
+        progressBar = (ProgressBar) findViewById(R.id.OfferJourneyStepOneActivityProgressBar);
 
         // Setting up event handlers.
-        this.setupEventHandlers();
+        setupEventHandlers();
 
-        if(this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING)
+        if(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING)
         {
+            destinationRelativeLayout.setVisibility(View.VISIBLE);
+            stepTwoButton.setVisibility(View.VISIBLE);
+
             Location startingLocation = new Location("");
-            startingLocation.setLatitude(this.journey.GeoAddresses.get(0).Latitude);
-            startingLocation.setLongitude(this.journey.GeoAddresses.get(0).Longitude);
+            startingLocation.setLatitude(journey.getGeoAddresses().get(0).Latitude);
+            startingLocation.setLongitude(journey.getGeoAddresses().get(0).Longitude);
 
-            new GeocoderTask(this, this, MarkerType.Departure, 0).execute(new GeocoderParams(this.journey.GeoAddresses.get(0).AddressLine, null));
-            new GeocoderTask(this, this, MarkerType.Destination, 0).execute(new GeocoderParams(this.journey.GeoAddresses.get(this.journey.GeoAddresses.size()-1).AddressLine, null));
+            new GeocoderTask(this, this, MarkerType.Departure, 0).execute(new GeocoderParams(journey.getGeoAddresses().get(0).AddressLine, null));
+            new GeocoderTask(this, this, MarkerType.Destination, 0).execute(new GeocoderParams(journey.getGeoAddresses().get(journey.getGeoAddresses().size()-1).AddressLine, null));
 
-            if(this.journey.GeoAddresses.size() > 2)
+            if(journey.getGeoAddresses().size() > 2)
             {
-                this.viaTextView.setText("");
-                for(int i = 1; i < this.journey.GeoAddresses.size()-1; i++)
+                viaTextView.setText("");
+                for(int i = 1; i < journey.getGeoAddresses().size()-1; i++)
                 {
-                    new GeocoderTask(this, this, MarkerType.Waypoint, i).execute(new GeocoderParams(this.journey.GeoAddresses.get(i).AddressLine, null));
+                    new GeocoderTask(this, this, MarkerType.Waypoint, i).execute(new GeocoderParams(journey.getGeoAddresses().get(i).AddressLine, null));
                 }
             }
         }
@@ -112,10 +135,24 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.help:
+                DialogCreator.showHelpDialog(this,
+                        mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? "Making changes to your journey" : "Offering new journey",
+                        mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? getResources().getString(R.string.EditingJourneyStepOneHelp) :
+                                getResources().getString(R.string.OfferingJourneyStepOneHelp));
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void initialiseMap() {
 
         if (googleMap == null) {
-            this.googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.OfferJourneyStepOneActivityMap)).getMap();
+            googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.OfferJourneyStepOneActivityMap)).getMap();
 
             if (googleMap == null) {
                 Toast.makeText(this,
@@ -142,7 +179,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
 
     private void setupEventHandlers()
     {
-        this.stepTwoButton.setOnClickListener(new View.OnClickListener() {
+        stepTwoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 stepTwoButton.setEnabled(false);
@@ -150,35 +187,35 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
             }
         });
 
-        this.departureRelativeLayout.setOnClickListener(new View.OnClickListener() {
+        departureRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showAddressSelectionDialog(MarkerType.Departure, departureMarker);
             }
         });
 
-        this.destinationRelativeLayout.setOnClickListener(new View.OnClickListener() {
+        destinationRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showAddressSelectionDialog(MarkerType.Destination, destinationMarker);
             }
         });
 
-        this.departureGPSButton.setOnClickListener(new View.OnClickListener() {
+        departureGPSButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getCurrentAddress(MarkerType.Departure, locationClient.getLastLocation(), 0);
             }
         });
 
-        this.destinationGPSButton.setOnClickListener(new View.OnClickListener() {
+        destinationGPSButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getCurrentAddress(MarkerType.Destination, locationClient.getLastLocation(), 0);
             }
         });
 
-        this.waypointRelativeLayout.setOnClickListener(new View.OnClickListener() {
+        waypointRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showWayPointAddressDialog();
@@ -200,7 +237,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
         final EditText fifthWayPointEditText  = (EditText) wayPointDialog.findViewById(R.id.AlertDialogWaypointSelectorFifthWaypointEditText);
         final EditText sixthWayPointEditText  = (EditText) wayPointDialog.findViewById(R.id.AlertDialogWaypointSelectorSixthWaypointEditText);
 
-        for(WaypointHolder waypointHolder : this.wayPoints)
+        for(WaypointHolder waypointHolder : wayPoints)
         {
             if(waypointHolder.geoAddress.Order == 1 && waypointHolder.googleMapMarker != null)
             {
@@ -327,7 +364,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
 
     private void buildJourney()
     {
-        if(this.departureMarker == null || this.destinationMarker == null)
+        if(departureMarker == null || destinationMarker == null)
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("You must specify departure and destination points.")
@@ -338,44 +375,43 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
                         }
                     });
 
-            this.stepTwoButton.setEnabled(true);
+            stepTwoButton.setEnabled(true);
             AlertDialog alert = builder.create();
             alert.show();
             return;
         }
 
-        this.journey.GeoAddresses = new ArrayList<GeoAddress>();
-        this.journey.GeoAddresses.add(new GeoAddress(departureMarker.getPosition().latitude, departureMarker.getPosition().longitude, departureMarker.getTitle(), 0));
+        journey.setGeoAddresses(new ArrayList<GeoAddress>());
+        journey.getGeoAddresses().add(new GeoAddress(departureMarker.getPosition().latitude, departureMarker.getPosition().longitude, departureMarker.getTitle(), 0));
 
-        for(WaypointHolder waypointHolder : this.wayPoints)
+        for(WaypointHolder waypointHolder : wayPoints)
         {
             if(waypointHolder.googleMapMarker != null)
             {
-                this.journey.GeoAddresses.add(waypointHolder.geoAddress);
+                journey.getGeoAddresses().add(waypointHolder.geoAddress);
             }
         }
 
-        this.journey.GeoAddresses.add(new GeoAddress(destinationMarker.getPosition().latitude, destinationMarker.getPosition().longitude, destinationMarker.getTitle(), this.wayPoints.size()+1));
+        journey.getGeoAddresses().add(new GeoAddress(destinationMarker.getPosition().latitude, destinationMarker.getPosition().longitude, destinationMarker.getTitle(), wayPoints.size()+1));
         Log.i("This journey has the following geoaddresses", "\n");
-        for(GeoAddress geoAddress : journey.GeoAddresses)
+        for(GeoAddress geoAddress : journey.getGeoAddresses())
         {
             Log.i("GeoAddress " + geoAddress.Order, " "+geoAddress.Latitude + " " + geoAddress.Longitude + " " + geoAddress.AddressLine);
         }
 
-        this.journey.AvailableSeats  = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.journey.AvailableSeats : 1;
-        this.journey.PetsAllowed = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING && this.journey.PetsAllowed;
-        this.journey.SmokersAllowed = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING && this.journey.SmokersAllowed;
-        this.journey.Private = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING && this.journey.Private;
-        this.journey.VehicleType = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.journey.VehicleType : -1;
-        this.journey.Fee = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.journey.Fee : -1;
-        this.journey.PreferredPaymentMethod =  this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.journey.PreferredPaymentMethod : null;
-        this.journey.PaymentOption = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.journey.PaymentOption : -1;
-        this.journey.Description = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.journey.Description : "";
-        this.journey.DateAndTimeOfDeparture = this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ?
-                this.journey.DateAndTimeOfDeparture : DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime());
-        this.journey.Driver = this.appManager.getUser();
+        journey.setAvailableSeats(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? journey.getAvailableSeats() : 1);
+        journey.setPetsAllowed(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING && journey.isPetsAllowed());
+        journey.setSmokersAllowed(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING && journey.isSmokersAllowed());
+        journey.setPrivate(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING && journey.isPrivate());
+        journey.setVehicleType(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? journey.getVehicleType() : -1);
+        journey.setFee(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? journey.getFee() : -1);
+        journey.setPreferredPaymentMethod(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? journey.getPreferredPaymentMethod() : null);
+        journey.setDescription(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? journey.getDescription() : null);
+        journey.setDateAndTimeOfDeparture(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ?
+                journey.getDateAndTimeOfDeparture() : DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime()));
+        journey.setDriver(appManager.getUser());
 
-        this.proceedToStepTwo();
+        proceedToStepTwo();
     }
 
     private void proceedToStepTwo()
@@ -401,13 +437,34 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
     }
 
     @Override
-    public void onGeoCoderFinished(MarkerOptions address, MarkerType markerType, double perimeter)
+    public void onGeoCoderFinished(MarkerOptions address, MarkerType markerType, Double perimeter)
     {
         super.onGeoCoderFinished(address, markerType, perimeter);
 
         if(address != null)
         {
-            addressEntered(markerType, address, perimeter);
+            if(markerType == MarkerType.Departure)
+            {
+                showDeparturePoint(address, perimeter);
+                departureTextView.setText(address.getTitle());
+            }
+            else if(markerType == MarkerType.Destination)
+            {
+                showDestinationPoint(address, perimeter);
+                destinationTextView.setText(address.getTitle());
+            }else
+            {
+                WaypointHolder waypointHolder = new WaypointHolder();
+                waypointHolder.geoAddress = new GeoAddress(address.getPosition().latitude, address.getPosition().longitude, address.getTitle(), perimeter.intValue());
+                wayPoints.add(waypointHolder);
+                showWaypointOnMap(waypointHolder, address);
+                viaTextView.setText(viaTextView.getText().toString() + address.getTitle() + ", ");
+            }
+
+            destinationRelativeLayout.setVisibility(departureMarker != null ? View.VISIBLE : View.GONE);
+            stepTwoButton.setVisibility(departureMarker != null && destinationMarker != null ? View.VISIBLE : View.GONE);
+
+            drawDrivingDirectionsOnMap();
         }
         else
         {
@@ -425,29 +482,6 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
         }
     }
 
-    private void addressEntered(MarkerType markerType, MarkerOptions markerOptions, Double perimeter)
-    {
-        if(markerType == MarkerType.Departure)
-        {
-            showDeparturePoint(markerOptions, perimeter);
-            this.departureTextView.setText(markerOptions.getTitle());
-        }
-        else if(markerType == MarkerType.Destination)
-        {
-            showDestinationPoint(markerOptions, perimeter);
-            this.destinationTextView.setText(markerOptions.getTitle());
-        }else
-        {
-            WaypointHolder waypointHolder = new WaypointHolder();
-            waypointHolder.geoAddress = new GeoAddress(markerOptions.getPosition().latitude, markerOptions.getPosition().longitude, markerOptions.getTitle(), perimeter.intValue());
-            this.wayPoints.add(waypointHolder);
-            this.showWaypointOnMap(waypointHolder, markerOptions);
-            this.viaTextView.setText(this.viaTextView.getText().toString() + markerOptions.getTitle() + ", ");
-        }
-
-        this.drawDrivingDirectionsOnMap();
-    }
-
     private void drawDrivingDirectionsOnMap()
     {
         if(departureMarker != null && destinationMarker != null)
@@ -457,7 +491,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
             geoAddresses.add(new GeoAddress(destinationMarker.getPosition().latitude, destinationMarker.getPosition().longitude, destinationMarker.getTitle(), 1));
             if(wayPoints.size() > 0)
             {
-                for(WaypointHolder waypointHolder : this.wayPoints)
+                for(WaypointHolder waypointHolder : wayPoints)
                 {
                     if(waypointHolder.geoAddress != null)
                     {
@@ -465,13 +499,19 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity {
                     }
                 }
             }
-            drawDrivingDirectionsOnMap(googleMap, geoAddresses);
+            progressBar.setVisibility(View.VISIBLE);
+            drawDrivingDirectionsOnMap(googleMap, geoAddresses, this);
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        this.stepTwoButton.setEnabled(true);
+        stepTwoButton.setEnabled(true);
+    }
+
+    @Override
+    public void onDrivingDirectionsRetrieved() {
+        progressBar.setVisibility(View.GONE);
     }
 }

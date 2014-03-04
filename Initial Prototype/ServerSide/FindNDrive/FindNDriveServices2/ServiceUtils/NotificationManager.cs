@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace FindNDriveServices2
+namespace FindNDriveServices2.ServiceUtils
 {
     using System;
     using System.Collections.Generic;
@@ -18,6 +18,7 @@ namespace FindNDriveServices2
 
     using DomainObjects.Constants;
     using DomainObjects.Domains;
+
     using FindNDriveDataAccessLayer;
 
     using Newtonsoft.Json;

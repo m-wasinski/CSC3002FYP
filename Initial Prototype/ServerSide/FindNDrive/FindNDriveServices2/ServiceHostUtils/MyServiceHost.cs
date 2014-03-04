@@ -7,12 +7,10 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace FindNDriveServices2
+namespace FindNDriveServices2.ServiceHostUtils
 {
     using System;
     using System.ServiceModel;
-
-    using FindNDriveDataAccessLayer;
 
     /// <summary>
     /// The my service host.

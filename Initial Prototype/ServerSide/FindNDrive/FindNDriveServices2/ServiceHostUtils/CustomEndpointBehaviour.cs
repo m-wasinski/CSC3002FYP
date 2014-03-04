@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace FindNDriveServices2
+namespace FindNDriveServices2.ServiceHostUtils
 {
     using System;
     using System.ServiceModel.Channels;

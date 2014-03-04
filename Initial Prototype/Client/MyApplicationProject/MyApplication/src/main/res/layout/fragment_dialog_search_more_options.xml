@@ -12,10 +12,18 @@
             android:id="@+id/SearchMoreOptionsFragmentDialogParentLayout"
             android:layout_height="wrap_content">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Advanced search"
+                android:textSize="24sp"
+                android:layout_marginLeft="3dip"
+                android:background="#80151515"
+                style="@style/RegularTextView"/>
+
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dip"
                 android:id="@+id/SearchMoreOptionsActivityDepartureDateTableRow"
                 android:background="@drawable/home_navigation_selector"
                 android:clickable="true">

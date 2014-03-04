@@ -23,6 +23,7 @@ namespace FindNDriveServices2.Services
     using FindNDriveServices2.Contracts;
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
+    using FindNDriveServices2.ServiceUtils;
 
     using Microsoft.Practices.ObjectBuilder2;
 
@@ -86,7 +87,14 @@ namespace FindNDriveServices2.Services
         {
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(new List<Journey>());
+                return ServiceResponseBuilder.Unauthorised<List<Journey>>();
+            }
+
+            var requestingUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.UserId == journeySearchDTO.UserId);
+
+            if (requestingUser == null)
+            {
+                return ServiceResponseBuilder.Failure<List<Journey>>("Invalid user id.");
             }
 
             Func<Journey, bool> filter = x => 
@@ -97,6 +105,16 @@ namespace FindNDriveServices2.Services
                     if (x.JourneyStatus == JourneyStatus.Expired || x.DateAndTimeOfDeparture < DateTime.Now || x.JourneyStatus != JourneyStatus.OK)
                     {
                         return false;
+                    }
+
+                    var driver =
+                        this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+                            .IncludeAll()
+                            .FirstOrDefault(_ => _.UserId == x.Driver.UserId);
+
+                    if (driver != null && (x.Private && !driver.Friends.Select(_ => _.UserId).Contains(requestingUser.UserId)))
+                    {
+                         return false;
                     }
 
                     foreach (var geoAddress in x.GeoAddresses)

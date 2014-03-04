@@ -11,9 +11,34 @@
         android:id="@+id/ProfileEditorDialogEditText"
         android:textSize="20sp"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:visibility="gone"
+        android:id="@+id/ProfileEditorDialogSelectFromTheFollowing"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:visibility="gone"
+        android:background="@drawable/alert_button_selector"
+        android:id="@+id/ProfileEditorDialogPhoneNumberButton"/>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip"
+        android:layout_marginBottom="5dip"
+        android:visibility="gone"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/ProfileEditorDialogEmailsListView"/>
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/ProfileEditorDialogOkButton"
+        android:background="@drawable/alert_button_selector"
         android:text="OK"/>
 </LinearLayout>

@@ -3,7 +3,6 @@ package com.example.myapplication.activities.base;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
@@ -11,9 +10,8 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.view.Display;
+import android.util.DisplayMetrics;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 
@@ -26,6 +24,7 @@ import com.example.myapplication.enums.MarkerType;
 import com.example.myapplication.google_maps_utilities.GMapV2Direction;
 import com.example.myapplication.google_maps_utilities.GeocoderParams;
 import com.example.myapplication.interfaces.GeoCoderFinishedCallBack;
+import com.example.myapplication.interfaces.OnDrivingDirectionsRetrrievedListener;
 import com.example.myapplication.network_tasks.GeocoderTask;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -48,12 +47,11 @@ import org.w3c.dom.Document;
 import java.util.ArrayList;
 
 /**
- * Created by Michal on 07/01/14.
- */
+ * Serves as a base activity for all activities implementing Google Maps.
+ **/
 public class BaseMapActivity extends FragmentActivity implements GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener, GeoCoderFinishedCallBack
 {
-    // Google Map
     protected GoogleMap googleMap;
     protected Geocoder geocoder;
     protected LocationListener locationListener;
@@ -70,7 +68,6 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
     protected InputMethodManager inputMethodManager;
     protected ArrayList<WaypointHolder> wayPoints;
     protected LocationClient locationClient;
-
     private Polyline polyline;
 
     @Override
@@ -78,29 +75,27 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
         super.onCreate(savedInstanceState);
 
         // Initialise local variables.
-        this.inputMethodManager = (InputMethodManager) this.getSystemService(INPUT_METHOD_SERVICE);
-        this.appManager = ((AppManager)getApplication());
-        this.gson = new Gson();
-        this.actionBar = getActionBar();
-        this.gMapV2Direction = new GMapV2Direction();
-        this.locationClient = new LocationClient(this, this, this);
-        this.geocoder = new Geocoder(this);
+        inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        appManager = ((AppManager)getApplication());
+        gson = new Gson();
+        actionBar = getActionBar();
+        gMapV2Direction = new GMapV2Direction();
+        locationClient = new LocationClient(this, this, this);
+        geocoder = new Geocoder(this);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.other_menu, menu);
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.other_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
         switch (item.getItemId()) {
             case R.id.action_home:
-                intent = new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
+                startActivity(new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
                 break;
             case R.id.logout_menu_option:
                 appManager.logout(true, true);
@@ -112,25 +107,31 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Responsible for showing the departure point on the map as well as
+     * drawing the radius around the desired location.
+     * We must keep reference to the departure radius and departure marker objects to allow
+     * their removal if the user changes the departure point from one location to another.
+     **/
     protected void showDeparturePoint(MarkerOptions markerOptions, double perimeter)
     {
-        if(this.departureRadius != null)
+        if(departureRadius != null)
         {
-            this.departureRadius.remove();
+            departureRadius.remove();
         }
 
-        if(this.departureMarker != null)
+        if(departureMarker != null)
         {
-            this.departureMarker.remove();
-            this.departureMarker = null;
+            departureMarker.remove();
+            departureMarker = null;
         }
 
         if(markerOptions != null)
         {
-            this.departureMarker = googleMap.addMarker(markerOptions);
+            departureMarker = googleMap.addMarker(markerOptions);
 
-            this.departureMarker.showInfoWindow();
-            this.departureRadius = googleMap.addCircle(new CircleOptions()
+            departureMarker.showInfoWindow();
+            departureRadius = googleMap.addCircle(new CircleOptions()
                     .center(markerOptions.getPosition())
                     .radius(perimeter * 1600)
                     .strokeColor(Color.rgb(15, 94, 135))
@@ -140,25 +141,31 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
         animateCamera();
     }
 
+    /**
+     * Responsible for showing the destination point on the map as well as
+     * drawing the radius around the desired location.
+     * We must keep reference to the destination radius and destination marker objects to allow
+     * their removal if the user changes the departure point from one location to another.
+     **/
     protected void showDestinationPoint(MarkerOptions markerOptions, double perimeter)
     {
-        if(this.destinationRadius != null)
+        if(destinationRadius != null)
         {
-            this.destinationRadius.remove();
+            destinationRadius.remove();
         }
 
-        if(this.destinationMarker != null)
+        if(destinationMarker != null)
         {
-            this.destinationMarker.remove();
-            this.destinationMarker = null;
+            destinationMarker.remove();
+            destinationMarker = null;
         }
 
         if(markerOptions != null)
         {
-            this.destinationMarker = googleMap.addMarker(markerOptions);
+            destinationMarker = googleMap.addMarker(markerOptions);
 
-            this.destinationMarker.showInfoWindow();
-            this.destinationRadius = googleMap.addCircle(new CircleOptions()
+            destinationMarker.showInfoWindow();
+            destinationRadius = googleMap.addCircle(new CircleOptions()
                     .center(markerOptions.getPosition())
                     .radius(perimeter * 1600)
                     .strokeColor(Color.rgb(15, 94, 135))
@@ -168,29 +175,34 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
         animateCamera();
     }
 
+    /**
+     * Responsible for animating the camera and taking all the points currently present on the map into consideration.
+     * The LatLngBounds.Builder calculates the optimal zoom and position to accommodate all the markers present on the map.
+     * Google Map then performs the animation with the help of the LatLngBounds.Builder object.
+     **/
     protected void animateCamera()
     {
         int marker_count = 0;
         Marker marker = null;
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
-        if(this.departureMarker != null)
+        if(departureMarker != null)
         {
             builder.include(departureMarker.getPosition());
-            marker = this.departureMarker;
+            marker = departureMarker;
             marker_count += 1;
         }
 
-        if(this.destinationMarker != null)
+        if(destinationMarker != null)
         {
             builder.include(destinationMarker.getPosition());
-            marker = this.destinationMarker;
+            marker = destinationMarker;
             marker_count += 1;
         }
 
-        if(this.wayPoints != null)
+        if(wayPoints != null)
         {
-            for(WaypointHolder waypointHolder : this.wayPoints)
+            for(WaypointHolder waypointHolder : wayPoints)
             {
                 if(waypointHolder.googleMapMarker != null)
                 {
@@ -209,7 +221,7 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
 
         CameraUpdate cameraUpdate = null;
 
-        if(marker_count == 1)
+        if(marker_count == 1 || ( marker_count == 2 && departureMarker != null && destinationMarker != null && departureMarker.getTitle().equals(destinationMarker.getTitle())))
         {
             if(marker != null)
             {
@@ -218,12 +230,11 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
         }
         else
         {
-            Display display = getWindowManager().getDefaultDisplay();
-            Point size = new Point();
-            display.getSize(size);
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
             LatLngBounds bounds = builder.build();
-            cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 150);
+            cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, metrics.widthPixels, (int)(metrics.heightPixels*0.75f), 0);
         }
 
         if(cameraUpdate != null)
@@ -232,14 +243,20 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
         }
     }
 
+    /**
+     * If location services are available, we want to center the map on our most recently acquired location.
+     **/
     protected void centerMapOnMyLocation() {
-        if(this.locationClient.getLastLocation() != null)
+        if(locationClient.getLastLocation() != null)
         {
-            this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(locationClient.getLastLocation().getLatitude(), locationClient.getLastLocation().getLongitude()), 14));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(locationClient.getLastLocation().getLatitude(), locationClient.getLastLocation().getLongitude()), 14));
         }
     }
 
-    protected void drawDrivingDirectionsOnMap(final GoogleMap map, final ArrayList<GeoAddress> geoAddresses)
+    /**
+     *
+     **/
+    protected void drawDrivingDirectionsOnMap(final GoogleMap map, final ArrayList<GeoAddress> geoAddresses, final OnDrivingDirectionsRetrrievedListener listener)
     {
 
         new AsyncTask<GoogleMap, Journey, Void>(){
@@ -271,8 +288,13 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
                     {
                         builder.include(latLng);
                     }
+
                     LatLngBounds bounds = builder.build();
-                    map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 40));
+                    DisplayMetrics metrics = new DisplayMetrics();
+                    getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+                    map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, metrics.widthPixels, (int)(metrics.heightPixels*0.5f), 0));
+                    listener.onDrivingDirectionsRetrieved();
                 }
             }
 
@@ -287,6 +309,7 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
 
     protected void getCurrentAddress(MarkerType markerType, Location location, double perimeter)
     {
+
         new GeocoderTask(this, this, markerType, perimeter).execute(new GeocoderParams(null, location));
     }
 
@@ -301,7 +324,7 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
     }
 
     @Override
-    public void onGeoCoderFinished(MarkerOptions address, MarkerType markerType, double perimeter) {
+    public void onGeoCoderFinished(MarkerOptions address, MarkerType markerType, Double perimeter) {
 
     }
 
@@ -313,13 +336,13 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
     @Override
     protected void onStart() {
         super.onStart();
-        this.locationClient.connect();
+        locationClient.connect();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        this.locationClient.disconnect();
+        locationClient.disconnect();
     }
 
     protected class WaypointHolder {
@@ -332,10 +355,10 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
 
         public void removeMarker()
         {
-            if(this.googleMapMarker != null)
+            if(googleMapMarker != null)
             {
-                this.googleMapMarker.remove();
-                this.googleMapMarker = null;
+                googleMapMarker.remove();
+                googleMapMarker = null;
             }
         }
     }

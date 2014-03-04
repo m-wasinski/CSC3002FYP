@@ -16,11 +16,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/JourneyRequestListViewRowProfileIcon"
+            android:layout_marginLeft="10dip"
+            android:layout_gravity="center_vertical"
             android:src="@drawable/user_man"/>
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="vertical"
             android:layout_width="0dp"
+            android:layout_marginLeft="10dip"
             android:layout_height="wrap_content"
             android:layout_weight="1">
 

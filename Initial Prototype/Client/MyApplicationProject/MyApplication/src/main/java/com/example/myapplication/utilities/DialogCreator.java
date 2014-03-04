@@ -1,7 +1,6 @@
 package com.example.myapplication.utilities;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,7 +16,7 @@ import com.google.gson.Gson;
  */
 public class DialogCreator {
 
-    public static void ShowProfileOptionsDialog(final Context context, final User user)
+    public static void showProfileOptionsDialog(final Context context, final User user)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
@@ -41,5 +40,21 @@ public class DialogCreator {
         });
 
         builder.show();
+    }
+
+    public static void showHelpDialog(final Context context, String title, String message)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(message)
+                .setCancelable(false)
+                .setTitle(title)
+                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }

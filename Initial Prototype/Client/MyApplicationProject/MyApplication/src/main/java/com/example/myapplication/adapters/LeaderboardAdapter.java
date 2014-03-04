@@ -76,7 +76,7 @@ public class LeaderboardAdapter extends ArrayAdapter<User> {
             public void onImageRetrieved(Bitmap bitmap) {
                 if(bitmap != null)
                 {
-                    holder.profileImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), false));
+                    holder.profileImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/2, bitmap.getHeight()/2, false));
                 }
             }
         }).execute();
@@ -88,7 +88,7 @@ public class LeaderboardAdapter extends ArrayAdapter<User> {
 
         holder.nameTextView.setText(user.getFirstName() + " " + user.getLastName() + " (" + user.getUserName()+")");
         holder.averageScoreTextView.setText(String.valueOf(user.getAverageRating()));
-        holder.positionTextView.setText("#"+String.valueOf(position+1));
+        holder.positionTextView.setText(String.valueOf(position+1));
         return currentRow;
     }
 

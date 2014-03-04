@@ -15,4 +15,9 @@
         android:title="@string/Refresh"
         android:showAsAction="always"/>
 
+    <item android:id="@+id/help"
+        android:title="@string/Help"
+        android:icon="@drawable/help"
+        android:orderInCategory="999"
+        android:showAsAction="always"/>
 </menu>

@@ -1,4 +1,13 @@
-﻿namespace FindNDriveServices2
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="CustomMessageInspector.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The custom message inspector.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace FindNDriveServices2.ServiceHostUtils
 {
     using System;
     using System.ServiceModel;

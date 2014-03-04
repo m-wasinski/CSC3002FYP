@@ -172,8 +172,8 @@
     <Compile Include="Contracts\IRatingService.cs" />
     <Compile Include="Contracts\ISearchService.cs" />
     <Compile Include="Contracts\IUserService.cs" />
-    <Compile Include="CustomEndpointBehaviour.cs" />
-    <Compile Include="CustomMessageInspector.cs" />
+    <Compile Include="ServiceHostUtils\CustomEndpointBehaviour.cs" />
+    <Compile Include="ServiceHostUtils\CustomMessageInspector.cs" />
     <Compile Include="DTOs\ChatMessageDTO.cs" />
     <Compile Include="DTOs\ChatMessageRetrieverDTO.cs" />
     <Compile Include="DTOs\FriendRequestDTO.cs" />
@@ -194,10 +194,11 @@
     <Compile Include="DTOs\RegisterDTO.cs" />
     <Compile Include="DTOs\FriendDTO.cs" />
     <Compile Include="DTOs\UserDTO.cs" />
-    <Compile Include="Haversine.cs" />
-    <Compile Include="MyServiceHost.cs" />
-    <Compile Include="MyServiceHostFactory.cs" />
-    <Compile Include="NotificationManager.cs" />
+    <Compile Include="ServiceUtils\EmailUtils.cs" />
+    <Compile Include="ServiceUtils\Haversine.cs" />
+    <Compile Include="ServiceHostUtils\MyServiceHost.cs" />
+    <Compile Include="ServiceHostUtils\MyServiceHostFactory.cs" />
+    <Compile Include="ServiceUtils\NotificationManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -218,7 +219,7 @@
     <Compile Include="Services\JourneyRequestService.svc.cs">
       <DependentUpon>JourneyRequestService.svc</DependentUpon>
     </Compile>
-    <Compile Include="ServiceResponseBuilder.cs" />
+    <Compile Include="ServiceUtils\ServiceResponseBuilder.cs" />
     <Compile Include="Services\MessengerService.svc.cs">
       <DependentUpon>MessengerService.svc</DependentUpon>
     </Compile>
@@ -234,7 +235,7 @@
     <Compile Include="Services\UserService.svc.cs">
       <DependentUpon>UserService.svc</DependentUpon>
     </Compile>
-    <Compile Include="SessionManager.cs" />
+    <Compile Include="ServiceUtils\SessionManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
@@ -272,6 +273,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

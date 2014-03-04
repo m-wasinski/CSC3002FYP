@@ -37,9 +37,15 @@ public class User {
 
     private String PhoneNumber;
 
+    public int getUnreadMessagesCount() {
+        return UnreadMessagesCount;
+    }
+
     private double AverageRating;
 
     private ArrayList<Rating> Rating;
+
+    private int UnreadMessagesCount;
 
     public ArrayList<Rating> getRating() {
         return Rating;

@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace FindNDriveServices2
+namespace FindNDriveServices2.ServiceUtils
 {
     using System;
     using System.Security.Cryptography;

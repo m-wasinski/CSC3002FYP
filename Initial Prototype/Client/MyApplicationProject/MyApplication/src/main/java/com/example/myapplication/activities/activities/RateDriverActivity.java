@@ -42,28 +42,28 @@ public class RateDriverActivity extends BaseActivity implements WCFServiceCallba
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_rate_driver);
+        setContentView(R.layout.activity_rate_driver);
 
         // Initialise local variables.
-        this.journey = gson.fromJson(getIntent().getStringExtra(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
+        journey = gson.fromJson(getIntent().getStringExtra(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
 
         // Initialise UI elements.
-        this.sendFeedbackButton = (Button) this.findViewById(R.id.RateDriverActivityRateButton);
+        sendFeedbackButton = (Button) findViewById(R.id.RateDriverActivityRateButton);
 
-        this.feedbackEditText = (EditText) this.findViewById(R.id.RateDriverActivityFeedbackEditText);
+        feedbackEditText = (EditText) findViewById(R.id.RateDriverActivityFeedbackEditText);
 
-        this.messageTextView = (TextView) this.findViewById(R.id.RateDriverActivityMessageTextView);
+        messageTextView = (TextView) findViewById(R.id.RateDriverActivityMessageTextView);
 
-        this.starButtons.add(0, new ButtonHolder((Button) this.findViewById(R.id.RateDriverActivityStarOneButton), 1));
-        this.starButtons.add(1, new ButtonHolder((Button) this.findViewById(R.id.RateDriverActivityStarTwoButton), 2));
-        this.starButtons.add(2, new ButtonHolder((Button) this.findViewById(R.id.RateDriverActivityStarThreeButton), 3));
-        this.starButtons.add(3, new ButtonHolder((Button) this.findViewById(R.id.RateDriverActivityStarFourButton), 4));
-        this.starButtons.add(4, new ButtonHolder((Button) this.findViewById(R.id.RateDriverActivityStarFiveButton), 5));
+        starButtons.add(0, new ButtonHolder((Button) findViewById(R.id.RateDriverActivityStarOneButton), 1));
+        starButtons.add(1, new ButtonHolder((Button) findViewById(R.id.RateDriverActivityStarTwoButton), 2));
+        starButtons.add(2, new ButtonHolder((Button) findViewById(R.id.RateDriverActivityStarThreeButton), 3));
+        starButtons.add(3, new ButtonHolder((Button) findViewById(R.id.RateDriverActivityStarFourButton), 4));
+        starButtons.add(4, new ButtonHolder((Button) findViewById(R.id.RateDriverActivityStarFiveButton), 5));
 
         // Setup all event handlers.
-        this.setupEventHandlers();
+        setupEventHandlers();
     }
 
     private void setupEventHandlers()
@@ -78,7 +78,7 @@ public class RateDriverActivity extends BaseActivity implements WCFServiceCallba
             });
         }
 
-        this.sendFeedbackButton.setOnClickListener(new View.OnClickListener() {
+        sendFeedbackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 sendFeedback();
@@ -88,13 +88,13 @@ public class RateDriverActivity extends BaseActivity implements WCFServiceCallba
 
     private void setRating(int index)
     {
-        this.rating = index;
+        rating = index;
 
-        Log.i("Rating Driver: ", "Current rating is: " + this.rating);
+        Log.i("Rating Driver: ", "Current rating is: " + rating);
 
-        for(int i = 0; i < this.starButtons.size(); i++)
+        for(int i = 0; i < starButtons.size(); i++)
         {
-            this.starButtons.get(i).button.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(index > i ? R.drawable.rating : R.drawable.no_rating), null, null);
+            starButtons.get(i).button.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(index > i ? R.drawable.rating : R.drawable.no_rating), null, null);
         }
     }
 
@@ -104,27 +104,27 @@ public class RateDriverActivity extends BaseActivity implements WCFServiceCallba
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             Toast.makeText(this, "Rating submitted successfully!", Toast.LENGTH_LONG).show();
-            this.finish();
+            finish();
         }
 
     }
 
     private void sendFeedback()
     {
-        String message = this.feedbackEditText.getText().toString();
+        String message = feedbackEditText.getText().toString();
 
-        this.feedbackEditText.setError(message.isEmpty() ? "Please enter feedback" : null);
-        this.messageTextView.setError(this.rating == 0 ? "Please select rating" : null);
+        feedbackEditText.setError(message.isEmpty() ? "Please enter feedback" : null);
+        messageTextView.setError(rating == 0 ? "Please select rating" : null);
 
-        if(message.isEmpty() || this.rating == 0)
+        if(message.isEmpty() || rating == 0)
         {
             return;
         }
 
         new WcfPostServiceTask<RatingDTO>(this, getResources().getString(R.string.RateDriverURL),
-                new RatingDTO(this.journey.Driver.getUserId(), this.rating,
-                        this.appManager.getUser().getUserId(), message),
-                new TypeToken<ServiceResponse<Boolean>>(){}.getType(), this.appManager.getAuthorisationHeaders(), this).execute();
+                new RatingDTO(journey.getDriver().getUserId(), rating,
+                        appManager.getUser().getUserId(), message),
+                new TypeToken<ServiceResponse<Boolean>>(){}.getType(), appManager.getAuthorisationHeaders(), this).execute();
     }
 
     private class ButtonHolder

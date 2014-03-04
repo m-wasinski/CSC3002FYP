@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="GetAllJourneysURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyService.svc/getall</string>
-    <string name="CreateNewJourneyURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyService.svc/new</string>
+    <string name="CreateNewJourneyURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyService.svc/create</string>
     <string name="GetSingleJourneyURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyService.svc/getsingle</string>
     <string name="GetManyJourneysURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyService.svc/getmany</string>
     <string name="EditJourneyURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyService.svc/edit</string>

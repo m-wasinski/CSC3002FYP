@@ -24,6 +24,7 @@ namespace FindNDriveServices2.Services
     using FindNDriveServices2.Contracts;
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
+    using FindNDriveServices2.ServiceUtils;
 
     /// <summary>
     /// The rating service.

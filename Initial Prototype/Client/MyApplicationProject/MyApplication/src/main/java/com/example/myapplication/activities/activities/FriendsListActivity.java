@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -22,6 +23,7 @@ import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
+import com.example.myapplication.utilities.DialogCreator;
 import com.example.myapplication.utilities.WakeLocker;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
@@ -106,6 +108,17 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
         unregisterReceiver(InstantMessageReceiver);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.help:
+                DialogCreator.showHelpDialog(this, "Your friends list", getResources().getString(R.string.MyFriendsHelp));
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void retrieveFriendsList()
     {
         new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetFriendsURL), appManager.getUser().getUserId(),
@@ -125,7 +138,7 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
             friendsFilterEditText.setEnabled(serviceResponse.Result.size() != 0);
             friends.clear();
             friends.addAll(serviceResponse.Result);
-            friendsAdapter.notifyDataSetInvalidated();
+            friendsAdapter.notifyDataSetChanged();
         }
     }
 
@@ -160,7 +173,6 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
     @Override
     public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
         friendsAdapter.getFilter().filter(charSequence.toString());
-        //friendsListView.setAdapter(friendsAdapter);
     }
 
     @Override

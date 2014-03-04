@@ -1,6 +1,16 @@
-﻿namespace FindNDriveServices2
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ServiceResponseBuilder.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   Defines the ServiceResponseBuilder type.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace FindNDriveServices2.ServiceUtils
 {
     using System.Collections.Generic;
+
     using FindNDriveServices2.ServiceResponses;
 
     public class ServiceResponseBuilder
@@ -66,12 +76,11 @@
             return new ServiceResponse<T> { ServiceResponseCode = ServiceResponseCode.Unauthorized };
         }
 
-        public static ServiceResponse<T> Unauthorised<T>(string errorMessage)
+        public static ServiceResponse<T> Unauthorised<T>()
         {
             return new ServiceResponse<T>
             {
-                ServiceResponseCode = ServiceResponseCode.Unauthorized,
-                ErrorMessages = new List<string>{errorMessage}
+                ServiceResponseCode = ServiceResponseCode.Unauthorized
             };
         }
     }

@@ -1,19 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
     android:focusable="true"
     android:focusableInTouchMode="true">
-
-    <TextView android:id="@+id/JourneyDetailsActivityJourneyTitleTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5sp"
-        android:background="#80151515"
-        style="@style/LoginFields"/>
 
     <fragment
         android:id="@+id/AlertJourneyDetailsMap"
@@ -24,6 +17,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/AlertJourneyDetailsMap"
         android:orientation="vertical">
 
         <ScrollView
@@ -81,6 +75,7 @@
                         android:src="@drawable/driver_small"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
+                        android:id="@+id/JourneySearchResultsActivityDriverImageView"
                         android:layout_gravity="center_vertical"
                         android:layout_marginRight="10sp"/>
 
@@ -106,8 +101,8 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/downarrow"
-                        android:layout_marginRight="10sp"
+                        android:src="@drawable/right_arrow"
+                        android:layout_marginRight="15dip"
                         android:layout_gravity="center_vertical"/>
 
                 </TableRow>
@@ -395,5 +390,21 @@
         </ScrollView>
     </LinearLayout>
 
+    <TextView android:id="@+id/JourneyDetailsActivityJourneyTitleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:background="#80151515"
+        style="@style/LoginFields"/>
 
-</LinearLayout>
+    <ProgressBar
+        android:id="@+id/JourneyDetailsActivityProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:indeterminateDrawable="@drawable/progress"/>
+
+</RelativeLayout>

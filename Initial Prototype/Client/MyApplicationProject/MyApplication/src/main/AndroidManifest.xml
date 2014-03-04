@@ -9,8 +9,9 @@
         android:targetSdkVersion="19" />
 
     <instrumentation
-        android:targetPackage=".myapplication.tests"
+        android:targetPackage="com.myapplication.tests"
         android:name="android.test.InstrumentationTestRunner" />
+
     <!-- Permission to access the Internet -->
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -40,6 +41,10 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <uses-permission android:name="android.permission.GET_TASKS" />
+
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
     <uses-feature android:name="android.hardware.camera.front" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />

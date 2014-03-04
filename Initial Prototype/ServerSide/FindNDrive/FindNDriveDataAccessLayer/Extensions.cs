@@ -62,7 +62,7 @@ namespace FindNDriveDataAccessLayer
         /// </returns>
         public static IQueryable<JourneyRequest> IncludeAll(this IQueryable<JourneyRequest> queryable)
         {
-            return queryable.Include("User").Include("Journey");
+            return queryable.Include("FromUser").Include("Journey");
         }
 
         /// <summary>
@@ -96,6 +96,11 @@ namespace FindNDriveDataAccessLayer
         public static IQueryable<Notification> IncludeAll(this IQueryable<Notification> queryable)
         {
             return queryable.Include("ProfilePicture");
+        }
+
+        public static IQueryable<FriendRequest> IncludeAll(this IQueryable<FriendRequest> queryable)
+        {
+            return queryable.Include("FromUser").Include("ToUser");
         }
     }
 }

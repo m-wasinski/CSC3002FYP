@@ -27,6 +27,7 @@ namespace FindNDriveServices2.Services
     using FindNDriveServices2.Contracts;
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
+    using FindNDriveServices2.ServiceUtils;
 
     using Newtonsoft.Json;
 
@@ -235,6 +236,13 @@ namespace FindNDriveServices2.Services
 
                 this.sessionManager.GenerateNewSession(newUser.UserId);
 
+                EmailUtils.SendEmail(
+                    new[] { newUser.EmailAddress },
+                    null,
+                    "Welcome to FindNDrive",
+                    string.Format("Hello {0}, welcome to FindNDrive. This is just a short message to let you know that your account was created successfully. You're good to go!", newUser.UserName),
+                    false);
+
                 return ServiceResponseBuilder.Success(newUser);
             }
             catch (Exception)
@@ -314,7 +322,23 @@ namespace FindNDriveServices2.Services
 
             if (!string.IsNullOrWhiteSpace(userDTO.EmailAddress) && !string.Equals(user.EmailAddress, userDTO.EmailAddress))
             {
+                if (
+                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+                    .Any(_ => _.EmailAddress.Equals(userDTO.EmailAddress)))
+                {
+                    return ServiceResponseBuilder.Failure<User>("This email address is already in use.");
+                }
+
                 user.EmailAddress = userDTO.EmailAddress;
+
+                EmailUtils.SendEmail(
+                    new[] { userDTO.EmailAddress },
+                    null,
+                    "FindNDrive email change confirmation.",
+                    string.Format(
+                        "Hi {0}, this is just a short message to let you know that your email address was changed successfully.",
+                        user.UserName),
+                    false);
             }
 
             if ((userDTO.Gender == Gender.Female || userDTO.Gender == Gender.Male) && userDTO.Gender != user.Gender)

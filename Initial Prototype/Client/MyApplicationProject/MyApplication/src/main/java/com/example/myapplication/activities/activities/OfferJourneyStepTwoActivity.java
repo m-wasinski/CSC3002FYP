@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -29,9 +30,10 @@ import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.utilities.DateTimeHelper;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
+import com.example.myapplication.utilities.DateTimeHelper;
+import com.example.myapplication.utilities.DialogCreator;
 import com.example.myapplication.utilities.Utilities;
 import com.google.gson.reflect.TypeToken;
 
@@ -112,55 +114,54 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
         this.journeyTimeRelativeLayout = (RelativeLayout) findViewById(R.id.OfferJourneyStepTwoActivityJourneyTimeRelativeLayout);
         this.journeyTimeTextView = (TextView) findViewById(R.id.OfferJourneyStepTwoActivityJourneyTimeTextView);
         this.journeyTimeTextView.setText(this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ?
-                DateTimeHelper.getSimpleTime(this.journey.DateAndTimeOfDeparture) : this.SELECT_TIME);
+                DateTimeHelper.getSimpleTime(this.journey.getDateAndTimeOfDeparture()) : this.SELECT_TIME);
 
         this.journeyDateRelativeLayout = (RelativeLayout) findViewById(R.id.OfferJourneyStepTwoActivityJourneyDateRelativeLayout);
         this.journeyDateTextView = (TextView) findViewById(R.id.OfferJourneyStepTwoActivityDateTextView);
         this.journeyDateTextView.setText(this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ?
-                DateTimeHelper.getSimpleDate(this.journey.DateAndTimeOfDeparture) :  this.SELECT_DATE);
+                DateTimeHelper.getSimpleDate(this.journey.getDateAndTimeOfDeparture()) :  this.SELECT_DATE);
 
         this.journeyPrivateRelativeLayout = (RelativeLayout) findViewById(R.id.OfferJourneyStepTwoActivityJourneyPrivateRelativeLayout);
 
         this.journeyPrivateCheckbox = (CheckBox) findViewById(R.id.OfferJourneyStepTwoActivityJourneyPrivateCheckbox);
-        this.journeyPrivateCheckbox.setChecked(this.journey.Private);
+        this.journeyPrivateCheckbox.setChecked(this.journey.isPrivate());
 
         this.journeyPrivateTextView = (TextView) findViewById(R.id.OfferJourneyStepTwoActivityPrivateTextView);
-        this.journeyPrivateTextView.setText(Utilities.translateBoolean(this.journey.Private));
+        this.journeyPrivateTextView.setText(Utilities.translateBoolean(this.journey.isPrivate()));
 
         this.journeySmokersRelativeLayout = (RelativeLayout) findViewById(R.id.OfferJourneyStepTwoActivityJourneySmokersRelativeLayout);
 
         this.journeySmokersTextView = (TextView) findViewById(R.id.OfferJourneyStepTwoActivitySmokersTextView);
-        this.journeySmokersTextView.setText(Utilities.translateBoolean(this.journey.SmokersAllowed));
+        this.journeySmokersTextView.setText(Utilities.translateBoolean(this.journey.isSmokersAllowed()));
 
         this.journeySmokersCheckbox = (CheckBox) findViewById(R.id.OfferJourneyStepTwoActivitySmokersCheckBox);
-        this.journeySmokersCheckbox.setChecked(this.journey.SmokersAllowed);
+        this.journeySmokersCheckbox.setChecked(this.journey.isSmokersAllowed());
 
         this.journeyPetsRelativeLayout = (RelativeLayout) findViewById(R.id.OfferJourneyStepTwoActivityJourneyPetsRelativeLayout);
 
         this.journeyPetsTextView = (TextView) findViewById(R.id.OfferJourneyStepTwoActivityPetsTextView);
-        this.journeyPetsTextView.setText(Utilities.translateBoolean(this.journey.PetsAllowed));
+        this.journeyPetsTextView.setText(Utilities.translateBoolean(this.journey.isPetsAllowed()));
 
         this.journeyPetsCheckbox = (CheckBox) findViewById(R.id.OfferJourneyStepTwoActivityPetCheckBox);
-        this.journeyPetsCheckbox.setChecked(this.journey.PetsAllowed);
+        this.journeyPetsCheckbox.setChecked(this.journey.isPetsAllowed());
 
         this.journeyVehicleTypeRelativeLayout = (RelativeLayout) findViewById(R.id.OfferJourneyStepTwoActivityJourneyVehicleTypeRelativeLayout);
 
         this.journeyVehicleTypeTextView = (TextView) findViewById(R.id.OfferJourneyStepTwoActivityVehicleTextView);
-        this.journeyVehicleTypeTextView.setText(this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.vehiclesTypes[this.journey.VehicleType] : this.SELECT_VEHICLE);
+        this.journeyVehicleTypeTextView.setText(this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? this.vehiclesTypes[this.journey.getVehicleType()] : this.SELECT_VEHICLE);
 
         this.journeyAvailableSeatsRelativeLayout = (RelativeLayout) findViewById(R.id.OfferJourneyStepTwoActivityJourneyAvailableSeatsRelativeLayout);
         this.journeyAvailableSeatsTextView = (TextView) findViewById(R.id.OfferJourneyStepTwoActivityAvailableSeatsTextView);
-        this.journeyAvailableSeatsTextView.setText(String.valueOf(this.journey.AvailableSeats));
+        this.journeyAvailableSeatsTextView.setText(String.valueOf(this.journey.getAvailableSeats()));
 
         this.journeyFeeRelativeLayout = (RelativeLayout) findViewById(R.id.OfferJourneyStepTwoActivityJourneyFeeRelativeLayout);
         this.journeyFeeTextView = (TextView) findViewById(R.id.OfferJourneyStepTwoActivityFeeTextView);
         this.journeyFeeTextView.setText(this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ?
-                "£"+new DecimalFormat("0.00").format(this.journey.Fee)+", " + this.paymentOptions[this.journey.PaymentOption] : this.SELECT_FEE);
+                ("£"+new DecimalFormat("0.00").format(this.journey.getFee())+ (journey.getPreferredPaymentMethod() == null ? "": ", " + journey.getPreferredPaymentMethod())) : this.SELECT_FEE);
 
 
         this.journeyCommentsEditText = (EditText) findViewById(R.id.OfferJourneyStepTwoActivityCommentsEditText);
-        this.journeyCommentsEditText.setText(this.mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ?
-                this.journey.Description : "");
+        this.journeyCommentsEditText.setText(journey.getDescription() == null ? "" : journey.getDescription());
 
         this.createButton = (Button) findViewById(R.id.OfferJourneyStepTwoActivityCreateButton);
         this.createButton.setText(this.mode  == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? "Save changes" : "Offer journey");
@@ -171,20 +172,35 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
 
         //set the from address next to minimap.
         this.fromTextView = (TextView) findViewById(R.id.OfferJourneyStepTwoActivityFromTextView);
-        this.fromTextView.setText("- "+this.journey.GeoAddresses.get(0).AddressLine);
+        this.fromTextView.setText("- "+this.journey.getGeoAddresses().get(0).AddressLine);
 
         //set the to address nex to minimap
         this.toTextView = (TextView) findViewById(R.id.OfferJourneyStepTwoActivityToTextView);
-        this.toTextView.setText("- "+this.journey.GeoAddresses.get(this.journey.GeoAddresses.size()-1).AddressLine);
+        this.toTextView.setText("- "+this.journey.getGeoAddresses().get(this.journey.getGeoAddresses().size() - 1).AddressLine);
 
 
-        if(this.journey.GeoAddresses.size() > 2)
+        if(this.journey.getGeoAddresses().size() > 2)
         {
             addViaPoints();
         }
 
         // Setup all event handlers for the above UI elements.
         this.setupEventHandlers();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.help:
+                DialogCreator.showHelpDialog(this,
+                        mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? "Making changes to your journey" : "Offering new journey",
+                        mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ?
+                                getResources().getString(R.string.EditingJourneyStepTwoHelp):
+                                getResources().getString(R.string.OfferingJourneyStepTwoHelp));
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void addViaPoints()
@@ -200,11 +216,11 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         params.setMargins(margin, 0, 0, 0);
 
-        for(int i = 1; i < this.journey.GeoAddresses.size()-1; i++)
+        for(int i = 1; i < this.journey.getGeoAddresses().size()-1; i++)
         {
             TextView waypoint = (TextView)getLayoutInflater().inflate(R.layout.textview_template, null);
             waypoint.setLayoutParams(params);
-            waypoint.setText("- "+this.journey.GeoAddresses.get(i).AddressLine);
+            waypoint.setText("- "+this.journey.getGeoAddresses().get(i).AddressLine);
             viaPointsLinearLayout.addView(waypoint);
         }
     }
@@ -229,7 +245,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 journeyPrivateCheckbox.setChecked(!journeyPrivateCheckbox.isChecked());
-                journey.Private = journeyPrivateCheckbox.isChecked();
+                journey.setPrivate(journeyPrivateCheckbox.isChecked());
                 journeyPrivateTextView.setText(Utilities.translateBoolean(journeyPrivateCheckbox.isChecked()));
             }
         });
@@ -238,7 +254,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 journeySmokersCheckbox.setChecked(!journeySmokersCheckbox.isChecked());
-                journey.SmokersAllowed = journeySmokersCheckbox.isChecked();
+                journey.setSmokersAllowed(journeySmokersCheckbox.isChecked());
                 journeySmokersTextView.setText(Utilities.translateBoolean(journeySmokersCheckbox.isChecked()));
             }
         });
@@ -247,7 +263,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 journeyPetsCheckbox.setChecked(!journeyPetsCheckbox.isChecked());
-                journey.PetsAllowed = journeyPetsCheckbox.isChecked();
+                journey.setPetsAllowed(journeyPetsCheckbox.isChecked());
                 journeyPetsTextView.setText(Utilities.translateBoolean(journeyPetsCheckbox.isChecked()));
             }
         });
@@ -276,7 +292,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
         this.createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createJourney();
+                buildOrEditJourney();
             }
         });
     }
@@ -294,7 +310,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
 
                 journeyDateTextView.setText(simpleDateFormat.format(calendar.getTime()));
                 journeyDateTextView.setError(null);
-                journey.DateAndTimeOfDeparture = DateTimeHelper.convertToWCFDate(calendar.getTime());
+                journey.setDateAndTimeOfDeparture(DateTimeHelper.convertToWCFDate(calendar.getTime()));
 
             }
         } ,calendar
@@ -303,10 +319,10 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
 
         dateDialog.getDatePicker().setMinDate(Calendar.getInstance().getTimeInMillis()- 1000);
 
-        if(this.journey.DateAndTimeOfDeparture != null)
+        if(this.journey.getDateAndTimeOfDeparture() != null)
         {
             Calendar calendar1 = Calendar.getInstance();
-            calendar1.setTime(DateTimeHelper.parseWCFDate(this.journey.DateAndTimeOfDeparture));
+            calendar1.setTime(DateTimeHelper.parseWCFDate(this.journey.getDateAndTimeOfDeparture()));
 
             calendar.set(Calendar.YEAR, calendar1.get(Calendar.YEAR));
             calendar.set(Calendar.MONTH, calendar1.get(Calendar.MONTH));
@@ -328,14 +344,14 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.UK);
                 journeyTimeTextView.setText(sdf.format(calendar.getTime()));
                 journeyTimeTextView.setError(null);
-                journey.DateAndTimeOfDeparture = DateTimeHelper.convertToWCFDate(calendar.getTime());
+                journey.setDateAndTimeOfDeparture(DateTimeHelper.convertToWCFDate(calendar.getTime()));
             }
         }, Calendar.HOUR_OF_DAY, Calendar.MINUTE, true);
 
-        if(this.journey.DateAndTimeOfDeparture != null)
+        if(this.journey.getDateAndTimeOfDeparture() != null)
         {
             Calendar calendar1 = Calendar.getInstance();
-            calendar1.setTime(DateTimeHelper.parseWCFDate(this.journey.DateAndTimeOfDeparture));
+            calendar1.setTime(DateTimeHelper.parseWCFDate(this.journey.getDateAndTimeOfDeparture()));
 
             calendar.set(Calendar.HOUR_OF_DAY, calendar1.get(Calendar.HOUR_OF_DAY));
             calendar.set(Calendar.MINUTE, calendar1.get(Calendar.MINUTE));
@@ -355,7 +371,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
             public void onClick(DialogInterface dialog, int item) {
                 journeyVehicleTypeTextView.setText(vehicleTypes[item]);
                 journeyVehicleTypeTextView.setError(null);
-                journey.VehicleType = item;
+                journey.setVehicleType(item);
             }
         });
         AlertDialog alert = builder.create();
@@ -375,8 +391,8 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
             public void onClick(View view) {
                 journeyFeeTextView.setText("Free (£0.00)");
                 journeyFeeTextView.setError(null);
-                journey.Fee = 0.00;
-                journey.PreferredPaymentMethod = null;
+                journey.setFee(0);
+                journey.setPreferredPaymentMethod(null);
                 feeDialog.dismiss();
             }
         });
@@ -402,8 +418,8 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
                 journeyFeeTextView.setText(feeEditText.getText().toString().equals("") ?
                         "Free (£0.00)" : "£"+ new DecimalFormat("0.00").format(fee) + (cashInHandRadioButton.isChecked() ? ", Cash in hand preferred." : " , Contact driver for payment options."));
 
-                journey.Fee = fee;
-                journey.PreferredPaymentMethod = cashInHandRadioButton.isChecked() ? "Cash in hand preferred." : "Contact driver for payment options.";
+                journey.setFee(fee);
+                journey.setPreferredPaymentMethod(cashInHandRadioButton.isChecked() ? "Cash in hand preferred." : "Contact driver for payment options.");
                 journeyFeeTextView.setError(null);
                 feeDialog.dismiss();
             }
@@ -420,7 +436,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
         builder.setItems(seats, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 journeyAvailableSeatsTextView.setText(seats[item]);
-                journey.AvailableSeats = Integer.parseInt(seats[item]);
+                journey.setAvailableSeats(Integer.parseInt(seats[item]));
             }
         });
         AlertDialog alert = builder.create();
@@ -431,15 +447,15 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
     {
         boolean isValid = true;
 
-        if(this.journey.VehicleType == -1)
+        if(this.journey.getVehicleType() == -1)
         {
-            this.journeyVehicleTypeTextView.setError(this.journey.VehicleType == -1 ? "Please select vehicle type" : null);
+            this.journeyVehicleTypeTextView.setError(this.journey.getVehicleType() == -1 ? "Please select vehicle type" : null);
             isValid = false;
         }
 
-        if(this.journey.Fee == -1)
+        if(this.journey.getFee() == -1)
         {
-            this.journeyFeeTextView.setError(this.journey.Fee == -1 ? "Please enter fee" : null);
+            this.journeyFeeTextView.setError(this.journey.getFee() == -1 ? "Please enter fee" : null);
             isValid = false;
         }
 
@@ -457,32 +473,32 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
 
         if(isValid)
         {
-            this.journey.Description = this.journeyCommentsEditText.getText().toString();
-            this.journey.CreationDate = DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime());
+            this.journey.setDescription(this.journeyCommentsEditText.getText().toString());
         }
 
         return  isValid;
     }
 
-    private void createJourney()
+    private void buildOrEditJourney()
     {
         if(buildAndValidate())
         {
+            createButton.setEnabled(false);
             this.progressBar.setVisibility(View.VISIBLE);
 
             new WcfPostServiceTask<Journey>(this, getResources().getString(this.mode ==
                     IntentConstants.JOURNEY_CREATOR_MODE_CREATING ?
                     R.string.CreateNewJourneyURL : R.string.EditJourneyURL),
                     journey,
-                    new TypeToken<ServiceResponse<Journey>>() {}.getType(),
-                    appManager.getAuthorisationHeaders(), new WCFServiceCallback<Journey, Void>() {
+                    new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
+                    appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
                 @Override
-                public void onServiceCallCompleted(ServiceResponse<Journey> serviceResponse, Void parameter) {
+                public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                     progressBar.setVisibility(View.GONE);
 
                     if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                     {
-                        journeyCreatedSuccessfully();
+                        operationCompletedSuccessfully();
                     }
                 }
             }).execute();
@@ -490,12 +506,10 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
         }
     }
 
-    private void journeyCreatedSuccessfully()
+    private void operationCompletedSuccessfully()
     {
-        Intent intent = new Intent(this, HomeActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-        Toast toast = Toast.makeText(this, "Your journey was created successfully.", Toast.LENGTH_LONG);
-        toast.show();
+        startActivity(new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+        Toast.makeText(this, mode == IntentConstants.JOURNEY_CREATOR_MODE_CREATING ?
+                "Your journey was created successfully." : "Changes to your journey were saved successfully.", Toast.LENGTH_LONG).show();
     }
 }

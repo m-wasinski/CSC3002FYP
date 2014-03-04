@@ -1,5 +1,6 @@
 package com.example.myapplication.activities.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,14 +12,15 @@ import android.widget.ProgressBar;
 import com.example.myapplication.R;
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.adapters.LeaderboardAdapter;
+import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.constants.WcfConstants;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.dtos.LoadRangeDTO;
-import com.example.myapplication.utilities.DialogCreator;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -26,7 +28,8 @@ import java.util.ArrayList;
 /**
  * Created by Michal on 23/02/14.
  */
-public class LeaderboardActivity extends BaseActivity implements WCFServiceCallback<ArrayList<User>, Void>, AbsListView.OnScrollListener{
+public class LeaderboardActivity extends BaseActivity implements WCFServiceCallback<ArrayList<User>, Void>,
+        AbsListView.OnScrollListener, AdapterView.OnItemClickListener{
 
     private ListView leaderboardListView;
 
@@ -43,6 +46,8 @@ public class LeaderboardActivity extends BaseActivity implements WCFServiceCallb
     private boolean requestMoreData;
 
     private int previousTotalListViewItemCount;
+
+    private final String TAG = "Leaderboard Activity";
 
     @Override
     protected void onResume() {
@@ -62,6 +67,7 @@ public class LeaderboardActivity extends BaseActivity implements WCFServiceCallb
 
         // Initialise UI elements.
         leaderboardListView = (ListView) findViewById(R.id.LeaderboardActivityListView);
+        leaderboardListView.setOnItemClickListener(this);
         progressBar = (ProgressBar) findViewById(R.id.LeaderboardActivityProgressBar);
         leaderboardListView.setAdapter(leaderboardAdapter);
     }
@@ -80,7 +86,7 @@ public class LeaderboardActivity extends BaseActivity implements WCFServiceCallb
         progressBar.setVisibility(View.GONE);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
-            Log.i("Leaderboard Activity", "Successfully retrieved leaderboard consisting of: " + serviceResponse.Result.size() + " users.");
+            Log.i(TAG, "Successfully retrieved leaderboard consisting of: " + serviceResponse.Result.size() + " users.");
 
             if(!requestMoreData)
             {
@@ -94,18 +100,7 @@ public class LeaderboardActivity extends BaseActivity implements WCFServiceCallb
             leaderboard.addAll(serviceResponse.Result);
             leaderboardAdapter.notifyDataSetInvalidated();
             requestMoreData = false;
-            leaderboardListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    showPersonMenu(serviceResponse.Result.get(i));
-                }
-            });
         }
-    }
-
-    private void showPersonMenu(User user)
-    {
-        DialogCreator.ShowProfileOptionsDialog(this, user);
     }
 
     @Override
@@ -136,5 +131,10 @@ public class LeaderboardActivity extends BaseActivity implements WCFServiceCallb
 
             retrieveLeaderboard();
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        startActivity(new Intent(this, ProfileViewerActivity.class).putExtra(IntentConstants.USER, new Gson().toJson(leaderboard.get(i))));
     }
 }

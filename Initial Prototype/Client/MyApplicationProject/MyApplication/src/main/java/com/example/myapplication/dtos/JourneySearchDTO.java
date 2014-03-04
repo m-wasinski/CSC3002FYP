@@ -9,6 +9,16 @@ import java.util.ArrayList;
  */
 public class JourneySearchDTO {
 
+    private int UserId;
+
+    public int getUserId() {
+        return UserId;
+    }
+
+    public void setUserId(int userId) {
+        UserId = userId;
+    }
+
     private boolean SearchByDate;
     private boolean SearchByTime;
     private double Fee;

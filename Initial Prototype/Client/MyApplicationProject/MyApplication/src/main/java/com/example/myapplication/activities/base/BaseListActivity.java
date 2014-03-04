@@ -5,7 +5,6 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.example.myapplication.R;
@@ -14,8 +13,10 @@ import com.example.myapplication.app_management.AppManager;
 import com.google.gson.Gson;
 
 /**
- * Created by Michal on 18/01/14.
- */
+ * Serves as a base activity for other activities providing the necessary variables.
+ * This activity is only responsible for instantiation and initialisation of the variables shared by all the
+ * activities which extend this class.
+ **/
 public class BaseListActivity extends ListActivity
 {
     protected AppManager appManager;
@@ -37,21 +38,13 @@ public class BaseListActivity extends ListActivity
         // Initialise local variables.
         this.appManager = ((AppManager)getApplication());
         this.gson = new Gson();
-        //getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
-
         this.actionBar = getActionBar();
-
-        if(actionBar != null)
-        {
-            //actionBar.setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#D9222930")));
-            //actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#B3151515")));
-        }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.other_menu, menu);
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.other_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

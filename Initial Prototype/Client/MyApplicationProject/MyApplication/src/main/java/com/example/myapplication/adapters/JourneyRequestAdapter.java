@@ -66,14 +66,14 @@ public class JourneyRequestAdapter extends ArrayAdapter<JourneyRequest> implemen
 
         final JourneyRequest request = journeyRequests.get(position);
 
-        String repliedOnDate = request.Decision == RequestDecision.UNDECIDED ?
-                "N/A" : DateTimeHelper.getSimpleDate(request.DecidedOnDate) +  " " + DateTimeHelper.getSimpleTime(request.DecidedOnDate);
+        String repliedOnDate = request.getDecision() == RequestDecision.UNDECIDED ?
+                "N/A" : DateTimeHelper.getSimpleDate(request.getDecidedOnDate()) +  " " + DateTimeHelper.getSimpleTime(request.getDecidedOnDate());
 
         String decisionStatus="";
 
-        journeyRequestHolder.parentLayout.setBackgroundColor(request.Read ? Color.rgb(255, 255, 255) : Color.rgb(112, 146, 190));
+        journeyRequestHolder.parentLayout.setBackgroundColor(request.isRead() ? Color.rgb(255, 255, 255) : Color.rgb(222, 162, 22));
 
-        switch(request.Decision)
+        switch(request.getDecision())
         {
             case RequestDecision.UNDECIDED:
                 decisionStatus = "Awaiting decision";
@@ -86,18 +86,18 @@ public class JourneyRequestAdapter extends ArrayAdapter<JourneyRequest> implemen
                 break;
         }
 
-        journeyRequestHolder.nameTextView.setText(request.User.getFirstName() + " " + request.User.getLastName()  + " ("+request.User.getUserName()+")");
-        journeyRequestHolder.receivedOnTextView.setText(DateTimeHelper.getSimpleDate(request.SentOnDate) +  " " + DateTimeHelper.getSimpleTime(request.SentOnDate));
+        journeyRequestHolder.nameTextView.setText(request.getFromUser().getFirstName() + " " + request.getFromUser().getLastName()  + " ("+request.getFromUser().getUserName()+")");
+        journeyRequestHolder.receivedOnTextView.setText(DateTimeHelper.getSimpleDate(request.getSentOnDate()) +  " " + DateTimeHelper.getSimpleTime(request.getSentOnDate()));
         journeyRequestHolder.decidedOnTextView.setText(repliedOnDate);
         journeyRequestHolder.statusTextView.setText(decisionStatus);
 
         new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
-                request.UserId, this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+                request.getFromUser().getUserId(), this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
             @Override
             public void onImageRetrieved(Bitmap bitmap) {
                 if(bitmap != null)
                 {
-                    journeyRequestHolder.profilePicture.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/8, bitmap.getHeight()/8, false));
+                    journeyRequestHolder.profilePicture.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), false));
                 }
             }
         }).execute();

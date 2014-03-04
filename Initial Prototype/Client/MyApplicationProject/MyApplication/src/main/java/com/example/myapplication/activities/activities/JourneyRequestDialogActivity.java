@@ -65,13 +65,13 @@ public class JourneyRequestDialogActivity extends BaseActivity{
 
         // Initialise UI elements.
         headerTextView = (TextView) findViewById(R.id.JourneyRequestDialogActivityHeaderTextView);
-        headerTextView.setText("Request from " + journeyRequest.User.getFirstName() + " " + journeyRequest.User.getLastName() + " ("+journeyRequest.User.getUserName()+")");
+        headerTextView.setText("Request from " + journeyRequest.getFromUser().getFirstName() + " " + journeyRequest.getFromUser().getLastName() + " ("+journeyRequest.getFromUser().getUserName()+")");
 
         acceptButton = (Button) findViewById(R.id.JourneyRequestDialogActivityAcceptButton);
-        acceptButton.setEnabled(journeyRequest.Decision == JourneyRequestDecisions.Undecided);
+        acceptButton.setEnabled(journeyRequest.getDecision() == JourneyRequestDecisions.Undecided);
 
         denyButton = (Button) findViewById(R.id.JourneyRequestDialogActivityDenyButton);
-        denyButton.setEnabled(journeyRequest.Decision == JourneyRequestDecisions.Undecided);
+        denyButton.setEnabled(journeyRequest.getDecision() == JourneyRequestDecisions.Undecided);
 
         showProfileButton = (Button) findViewById(R.id.JourneyRequestDialogActivityShowProfileButton);
         sendFriendRequestButton = (Button) findViewById(R.id.JourneyRequestDialogActivitySendFriendRequestButton);
@@ -113,7 +113,7 @@ public class JourneyRequestDialogActivity extends BaseActivity{
 
     private void showFriendRequestActivity()
     {
-        startActivity(new Intent(this, SendFriendRequestDialogActivity.class).putExtra(IntentConstants.USER, gson.toJson(journeyRequest.User)));
+        startActivity(new Intent(this, SendFriendRequestDialogActivity.class).putExtra(IntentConstants.USER, gson.toJson(journeyRequest.getFromUser())));
     }
 
     private void submitDecision(int decision)
@@ -123,7 +123,7 @@ public class JourneyRequestDialogActivity extends BaseActivity{
             return;
         }
 
-        journeyRequest.Decision = decision;
+        journeyRequest.setDecision(decision);
 
         new WcfPostServiceTask<JourneyRequest>(this, getResources().getString(R.string.ProcessRequestDecisionURL),
                 journeyRequest,  new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(),

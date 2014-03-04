@@ -13,23 +13,144 @@ public class Journey {
         return this.JourneyId;
     }
 
-    public User Driver;
-    public ArrayList<GeoAddress> GeoAddresses;
-    public String Description;
-    public String DateAndTimeOfDeparture;
-    public double Fee;
-    public int AvailableSeats;
-    public ArrayList<User> Participants;
-    public boolean SmokersAllowed;
-    public boolean PetsAllowed;
-    public int VehicleType;
-    public boolean Private;
-    public int UnreadRequestsCount;
-    public int JourneyStatus;
-    public String CreationDate;
-    public int PaymentOption;
-    public String PreferredPaymentMethod;
-    public int UnreadMessagesCount;
+    private User Driver;
+    private ArrayList<GeoAddress> GeoAddresses;
+
+    public void setDriver(User driver) {
+        Driver = driver;
+    }
+
+    public void setDescription(String description) {
+        Description = description;
+    }
+
+    public void setGeoAddresses(ArrayList<GeoAddress> geoAddresses) {
+        GeoAddresses = geoAddresses;
+    }
+
+    public void setDateAndTimeOfDeparture(String dateAndTimeOfDeparture) {
+        DateAndTimeOfDeparture = dateAndTimeOfDeparture;
+    }
+
+    public void setFee(double fee) {
+        Fee = fee;
+    }
+
+    public void setAvailableSeats(int availableSeats) {
+        AvailableSeats = availableSeats;
+    }
+
+    public void setParticipants(ArrayList<User> participants) {
+        Participants = participants;
+    }
+
+    public void setSmokersAllowed(boolean smokersAllowed) {
+        SmokersAllowed = smokersAllowed;
+    }
+
+    public void setVehicleType(int vehicleType) {
+        VehicleType = vehicleType;
+    }
+
+    public void setPetsAllowed(boolean petsAllowed) {
+        PetsAllowed = petsAllowed;
+    }
+
+    public void setPrivate(boolean aPrivate) {
+        Private = aPrivate;
+    }
+
+    public void setUnreadRequestsCount(int unreadRequestsCount) {
+        UnreadRequestsCount = unreadRequestsCount;
+    }
+
+    public void setCreationDate(String creationDate) {
+        CreationDate = creationDate;
+    }
+
+    public void setPreferredPaymentMethod(String preferredPaymentMethod) {
+        PreferredPaymentMethod = preferredPaymentMethod;
+    }
+
+    private String Description;
+    private String DateAndTimeOfDeparture;
+    private double Fee;
+
+    public int getUnreadMessagesCount() {
+        return UnreadMessagesCount;
+    }
+
+    public String getPreferredPaymentMethod() {
+        return PreferredPaymentMethod;
+    }
+
+    public int getJourneyStatus() {
+        return JourneyStatus;
+    }
+
+    public String getCreationDate() {
+        return CreationDate;
+    }
+
+    public boolean isPrivate() {
+        return Private;
+    }
+
+    public int getUnreadRequestsCount() {
+        return UnreadRequestsCount;
+    }
+
+    public int getVehicleType() {
+        return VehicleType;
+    }
+
+    public boolean isPetsAllowed() {
+        return PetsAllowed;
+    }
+
+    public boolean isSmokersAllowed() {
+        return SmokersAllowed;
+    }
+
+    public int getAvailableSeats() {
+        return AvailableSeats;
+    }
+
+    public double getFee() {
+        return Fee;
+    }
+
+    public String getDateAndTimeOfDeparture() {
+        return DateAndTimeOfDeparture;
+    }
+
+    public String getDescription() {
+        return Description;
+    }
+
+    public ArrayList<GeoAddress> getGeoAddresses() {
+        return GeoAddresses;
+    }
+
+    public User getDriver() {
+        return Driver;
+    }
+
+    public ArrayList<User> getParticipants() {
+        return Participants;
+    }
+
+    private int AvailableSeats;
+    private ArrayList<User> Participants;
+    private boolean SmokersAllowed;
+    private boolean PetsAllowed;
+    private int VehicleType;
+    private boolean Private;
+    private int UnreadRequestsCount;
+    private int JourneyStatus;
+    private String CreationDate;
+    private String PreferredPaymentMethod;
+    private int UnreadMessagesCount;
 
     public Journey()
     {

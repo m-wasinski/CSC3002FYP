@@ -2,7 +2,6 @@ package com.example.myapplication.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +10,11 @@ import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.myapplication.app_management.AppManager;
+import com.example.myapplication.R;
 import com.example.myapplication.constants.JourneyStatus;
 import com.example.myapplication.domain_objects.Journey;
+import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.utilities.DateTimeHelper;
-import com.example.myapplication.R;
 import com.example.myapplication.utilities.Utilities;
 
 import java.util.ArrayList;
@@ -29,20 +28,20 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
     private int layoutResourceId;
     private ArrayList<Journey> originalJourneys;
     private ArrayList<Journey> displayedJourneys;
-    private AppManager appManager;
+    private User user;
 
     @Override
     public int getCount() {
         return displayedJourneys.size();
     }
 
-    public JourneyAdapter(Context context, int resource, ArrayList<Journey> journeys, AppManager appManager) {
+    public JourneyAdapter(Context context, int resource, ArrayList<Journey> journeys, User user) {
         super(context, resource, journeys);
         this.layoutResourceId = resource;
         this.context = context;
         this.originalJourneys = journeys;
         this.displayedJourneys = this.originalJourneys;
-        this.appManager = appManager;
+        this.user = user;
     }
 
     @Override
@@ -78,7 +77,7 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
 
         String statusText = "";
 
-        switch(journey.JourneyStatus)
+        switch(journey.getJourneyStatus())
         {
             case JourneyStatus.OK:
                 statusText = "OK";
@@ -92,18 +91,17 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
         }
 
         holder.journeyId.setText(String.valueOf(journey.getJourneyId()));
-        holder.fromTo.setText(Utilities.getJourneyHeader(journey.GeoAddresses));
-        holder.departureDate.setText(DateTimeHelper.getSimpleDate(journey.DateAndTimeOfDeparture));
-        holder.departureTime.setText(DateTimeHelper.getSimpleTime(journey.DateAndTimeOfDeparture));
-        holder.availableSeats.setText(String.valueOf(journey.AvailableSeats));
+        holder.fromTo.setText(Utilities.getJourneyHeader(journey.getGeoAddresses()));
+        holder.departureDate.setText(DateTimeHelper.getSimpleDate(journey.getDateAndTimeOfDeparture()));
+        holder.departureTime.setText(DateTimeHelper.getSimpleTime(journey.getDateAndTimeOfDeparture()));
+        holder.availableSeats.setText(String.valueOf(journey.getAvailableSeats()));
         holder.statusTextView.setText(statusText);
-        holder.creationDateTextView.setText(DateTimeHelper.getSimpleDate(journey.CreationDate));
-        holder.modeTextView.setText(journey.Driver.getUserId() == this.appManager.getUser().getUserId() ? "Driver" : "Passenger");
-        holder.newRequestIcon.setImageResource(journey.UnreadRequestsCount > 0 ? R.drawable.new_notification_myjourney : R.drawable.notification_myjourney);
-        holder.unreadRequests.setTypeface(null, journey.UnreadRequestsCount > 0 ? (Typeface.BOLD) : (Typeface.NORMAL));
-        holder.unreadRequests.setText(""+journey.UnreadRequestsCount);
-        holder.unreadMessages.setText(String.valueOf(journey.UnreadMessagesCount));
-        holder.newMessagesIconView.setImageResource(journey.UnreadMessagesCount > 0 ? R.drawable.new_journey_message : R.drawable.envelope_blue);
+        holder.creationDateTextView.setText(DateTimeHelper.getSimpleDate(journey.getCreationDate()));
+        holder.modeTextView.setText(journey.getDriver().getUserId() == user.getUserId() ? "Driver" : "Passenger");
+        holder.newRequestIcon.setImageResource(journey.getUnreadRequestsCount() > 0 ? R.drawable.new_notification_myjourney : R.drawable.notification_myjourney);
+        holder.unreadRequests.setText(""+journey.getUnreadRequestsCount());
+        holder.unreadMessages.setText(String.valueOf(journey.getUnreadMessagesCount()));
+        holder.newMessagesIconView.setImageResource(journey.getUnreadMessagesCount() > 0 ? R.drawable.new_journey_message : R.drawable.envelope_blue);
 
         return row;
     }
@@ -137,7 +135,7 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
                 } else {
                     constraint = constraint.toString().toLowerCase();
                     for (int i = 0; i < originalJourneys.size(); i++) {
-                        String data = Utilities.getJourneyHeader(originalJourneys.get(i).GeoAddresses);
+                        String data = Utilities.getJourneyHeader(originalJourneys.get(i).getGeoAddresses());
                         if (data.toLowerCase().contains(constraint.toString())) {
                             filteredValues.add(originalJourneys.get(i));
                         }

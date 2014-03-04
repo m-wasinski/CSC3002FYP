@@ -1,10 +1,6 @@
 package com.example.myapplication.activities.activities;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
@@ -21,6 +17,7 @@ import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.dtos.ProfilePictureUpdaterDTO;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
+import com.example.myapplication.utilities.BitmapUtilities;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.ByteArrayOutputStream;
@@ -59,62 +56,11 @@ public class PictureUploadActivity extends BaseActivity implements View.OnClickL
         int BITMAP_WIDTH = 270;
         int BITMAP_HEIGHT = 330;
 
-        this.bitmap = Bitmap.createScaledBitmap(decodeFile(fileUri.getPath(), BITMAP_WIDTH, BITMAP_HEIGHT, ScalingLogic.CROP), BITMAP_WIDTH, BITMAP_HEIGHT, false);
+        this.bitmap = Bitmap.createScaledBitmap(BitmapUtilities.decodeFile(fileUri.getPath(), BITMAP_WIDTH, BITMAP_HEIGHT, BitmapUtilities.ScalingLogic.CROP), BITMAP_WIDTH, BITMAP_HEIGHT, false);
         imageView.setImageBitmap(this.bitmap);
     }
 
-    /**
-     * Decodes the image from specified path.
-     * Credit goes to the original author Andreas Agvard.
-     * Referenced from the following article: http://developer.sonymobile.com/2011/06/27/how-to-scale-images-for-your-android-application/
-     **/
-    public static Bitmap decodeFile(String pathName, int dstWidth, int dstHeight, ScalingLogic scalingLogic)
-    {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(pathName, options);
-        options.inJustDecodeBounds = false;
-        options.inSampleSize = calculateSampleSize(options.outWidth, options.outHeight, dstWidth, dstHeight, scalingLogic);
 
-        return BitmapFactory.decodeFile(pathName, options);
-    }
-
-    /**
-     * Used for calculating sample size for images when resizing in order to preserve their aspect radio.
-     * Credit goes to the original author: Andreas Agvard.
-     * Referenced from the following article: http://developer.sonymobile.com/2011/06/27/how-to-scale-images-for-your-android-application/
-     **/
-    private static int calculateSampleSize(int srcWidth, int srcHeight, int dstWidth, int dstHeight, ScalingLogic scalingLogic)
-    {
-        if (scalingLogic == ScalingLogic.FIT)
-        {
-            final float srcAspect = (float)srcWidth / (float)srcHeight;
-            final float dstAspect = (float)dstWidth / (float)dstHeight;
-
-            if (srcAspect > dstAspect)
-            {
-                return srcWidth / dstWidth;
-            }
-            else
-            {
-                return srcHeight / dstHeight;
-            }
-        }
-        else
-        {
-            final float srcAspect = (float)srcWidth / (float)srcHeight;
-            final float dstAspect = (float)dstWidth / (float)dstHeight;
-
-            if (srcAspect > dstAspect)
-            {
-                return srcHeight / dstHeight;
-            }
-            else
-            {
-                return srcWidth / dstWidth;
-            }
-        }
-    }
 
     /**
      * Converts the bitmap variable into a base64 String and uploads it to the
@@ -173,10 +119,6 @@ public class PictureUploadActivity extends BaseActivity implements View.OnClickL
         }
     }
 
-    private enum ScalingLogic
-    {
-        FIT,
-        CROP
-    }
+
 
 }

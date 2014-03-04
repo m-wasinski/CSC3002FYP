@@ -24,6 +24,7 @@ namespace FindNDriveServices2.Services
     using FindNDriveServices2.Contracts;
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
+    using FindNDriveServices2.ServiceUtils;
 
     /// <summary>
     /// The friends service.
@@ -98,15 +99,15 @@ namespace FindNDriveServices2.Services
                 return ServiceResponseBuilder.Unauthorised(false);
             }
 
-            var receivingUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+            var toUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable()
                 .IncludeAll()
-                .FirstOrDefault(_ => _.UserId == friendRequestDTO.TargetUserId);
+                .FirstOrDefault(_ => _.UserId == friendRequestDTO.ToUser.UserId);
 
-            var requestingUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+            var fromUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable()
                 .IncludeAll()
-                .FirstOrDefault(_ => _.UserId == friendRequestDTO.RequestingUserId);
+                .FirstOrDefault(_ => _.UserId == friendRequestDTO.FromUser.UserId);
 
-            if (receivingUser == null || requestingUser == null)
+            if (toUser == null || fromUser == null)
             {
                 return ServiceResponseBuilder.Failure<bool>("Invalid user id.");
             }
@@ -125,12 +126,12 @@ namespace FindNDriveServices2.Services
 
             if (friendRequestDTO.FriendRequestDecision == FriendRequestDecision.Accepted)
             {
-                var match = receivingUser.Friends.FirstOrDefault(_ => _.UserId == requestingUser.UserId);
+                var match = toUser.Friends.FirstOrDefault(_ => _.UserId == fromUser.UserId);
 
                 if (match == null)
                 {
-                    receivingUser.Friends.Add(requestingUser);
-                    requestingUser.Friends.Add(receivingUser);
+                    toUser.Friends.Add(fromUser);
+                    fromUser.Friends.Add(toUser);
                 }
                 else
                 {
@@ -149,13 +150,13 @@ namespace FindNDriveServices2.Services
 
             // This notification is sent to the user who replied to the friend request.
             this.notificationManager.SendAppNotification(
-                new List<User> { receivingUser },
+                new List<User> { toUser },
                 notificationTitle,
                 string.Format(
                     SenderMessage,
                     targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted ? "accepted" : "denied",
-                    requestingUser.UserName),
-                requestingUser.UserId,
+                    fromUser.UserName),
+                fromUser.UserId,
                 -1,
                 NotificationType.App,
                 targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted
@@ -165,13 +166,13 @@ namespace FindNDriveServices2.Services
 
             // This notification is sent to the user who sent the friend request in the first place.
             this.notificationManager.SendAppNotification(
-                new List<User> { requestingUser },
+                new List<User> { fromUser },
                 notificationTitle,
                 string.Format(
                     ReceiverMessage,
-                    receivingUser.UserName,
+                    toUser.UserName,
                     targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted ? "accepted" : "denied"),
-                receivingUser.UserId,
+                toUser.UserId,
                 -1,
                 NotificationType.Both,
                 targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted
@@ -179,7 +180,7 @@ namespace FindNDriveServices2.Services
                     : NotificationContentType.FriendRequestDenied,
                 this.random.Next());
 
-            this.notificationManager.SendGcmTickle(new Collection<User>{receivingUser});
+            this.notificationManager.SendGcmTickle(new Collection<User>{toUser});
 
             return ServiceResponseBuilder.Success(true);
         }
@@ -200,31 +201,45 @@ namespace FindNDriveServices2.Services
                 return ServiceResponseBuilder.Unauthorised(false);
             }
 
-            var receivingUser =
+            var toUser =
                 this.findNDriveUnitOfWork.UserRepository.AsQueryable()
                     .IncludeAll()
-                    .FirstOrDefault(_ => _.UserId == friendRequestDTO.TargetUserId);
+                    .FirstOrDefault(_ => _.UserId == friendRequestDTO.ToUser.UserId);
 
-            var sendingUser =
+            var fromUser =
                 this.findNDriveUnitOfWork.UserRepository.AsQueryable()
                     .IncludeAll()
-                    .FirstOrDefault(_ => _.UserId == friendRequestDTO.RequestingUserId);
+                    .FirstOrDefault(_ => _.UserId == friendRequestDTO.FromUser.UserId);
 
-            if (receivingUser == null || sendingUser == null)
+            var pendingFriendRequest =
+                this.findNDriveUnitOfWork.FriendRequestsRepository.AsQueryable()
+                    .IncludeAll()
+                    .FirstOrDefault(
+                        _ =>
+                        _.FromUser.UserId == fromUser.UserId && _.ToUser.UserId == toUser.UserId
+                        && _.FriendRequestDecision == FriendRequestDecision.Undecided);
+
+            if (pendingFriendRequest != null)
+            {
+                return ServiceResponseBuilder.Failure<bool>(
+                    "You already have a pending friend request for this person.");
+            }
+
+            if (toUser == null || fromUser == null)
             {
                 return ServiceResponseBuilder.Failure<bool>("Invalid user id.");
             }
 
-            var match = sendingUser.Friends.FirstOrDefault(_ => _.UserId == receivingUser.UserId);
+            var match = fromUser.Friends.FirstOrDefault(_ => _.UserId == toUser.UserId);
 
             if (match != null)
             {
                 return ServiceResponseBuilder.Failure<bool>("This user is already in your list of friends.");
             }
 
-            if (friendRequestDTO.TargetUserId == friendRequestDTO.RequestingUserId)
+            if (friendRequestDTO.FromUser.UserId == friendRequestDTO.ToUser.UserId)
             {
-                return ServiceResponseBuilder.Failure<bool>("You cannot invite yourself to your friends list.");
+                return ServiceResponseBuilder.Failure<bool>("You cannot senda friend request to yourself.");
             }
 
             var friendRequest = new FriendRequest
@@ -232,15 +247,9 @@ namespace FindNDriveServices2.Services
                                         FriendRequestDecision = FriendRequestDecision.Undecided,
                                         SentOnDate = DateTime.Now,
                                         Read = false,
-                                        RequestingUserId = friendRequestDTO.RequestingUserId,
-                                        TargetUserId = friendRequestDTO.TargetUserId,
-                                        Message = friendRequestDTO.Message,
-                                        TargetUserName =
-                                            receivingUser.FirstName + " " + receivingUser.LastName + " ("
-                                            + receivingUser.UserName + ")",
-                                        RequestingUserName =
-                                            sendingUser.FirstName + " " + sendingUser.LastName + " ("
-                                            + sendingUser.UserName + ")"
+                                        FromUser = fromUser,
+                                        ToUser = toUser,
+                                        Message = friendRequestDTO.Message
                                     };
 
             this.findNDriveUnitOfWork.FriendRequestsRepository.Add(friendRequest);
@@ -250,34 +259,34 @@ namespace FindNDriveServices2.Services
             const string SenderMessage = "You sent a friend request to user: {0} {1} ({2})";
 
             this.notificationManager.SendAppNotification(
-                new List<User> { receivingUser },
+                new List<User> { toUser },
                 "New friend request received.",
                 string.Format(
                     ReceiverMessage,
-                    sendingUser.FirstName,
-                    sendingUser.LastName,
-                    sendingUser.UserName),
-                sendingUser.UserId,
+                    fromUser.FirstName,
+                    fromUser.LastName,
+                    fromUser.UserName),
+                fromUser.UserId,
                 friendRequest.FriendRequestId,
                 NotificationType.Both,
                 NotificationContentType.FriendRequestReceived,
                 this.random.Next());
 
             this.notificationManager.SendAppNotification(
-                new List<User> { sendingUser },
+                new List<User> { fromUser },
                 "Friend request sent.",
                 string.Format(
                     SenderMessage,
-                    receivingUser.FirstName,
-                receivingUser.LastName,
-                receivingUser.UserName),
-                receivingUser.UserId,
+                    toUser.FirstName,
+                toUser.LastName,
+                toUser.UserName),
+                toUser.UserId,
                 -1,
                 NotificationType.App,
                 NotificationContentType.FriendRequestSent,
                 this.random.Next());
 
-            this.notificationManager.SendGcmTickle(new List<User> { receivingUser });
+            this.notificationManager.SendGcmTickle(new List<User> { toUser });
             
             return ServiceResponseBuilder.Success(true);
         }
@@ -311,6 +320,12 @@ namespace FindNDriveServices2.Services
                 user
                     .Friends.ToList();
 
+            friends.ForEach(
+                delegate(User u)
+                    {
+                        u.UnreadMessagesCount = this.findNDriveUnitOfWork.ChatMessageRepository.AsQueryable().Count(_ => _.RecipientId == userId && _.SenderId == u.UserId && !_.Read);
+                    });
+
             return ServiceResponseBuilder.Success(friends);
         }
 
@@ -321,7 +336,7 @@ namespace FindNDriveServices2.Services
                 return ServiceResponseBuilder.Unauthorised(new FriendRequest());
             }
 
-            var friendRequest = this.findNDriveUnitOfWork.FriendRequestsRepository.Find(id);
+            var friendRequest = this.findNDriveUnitOfWork.FriendRequestsRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.FriendRequestId == id);
 
             return friendRequest == null ? ServiceResponseBuilder.Failure<FriendRequest>("Friend request with this id does not exist.") : ServiceResponseBuilder.Success(friendRequest);
         }

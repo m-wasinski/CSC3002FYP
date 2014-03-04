@@ -14,7 +14,7 @@
 
         <EditText
             android:layout_width="match_parent"
-            android:hint="Search my journeys"
+            android:hint="Search journeys"
             android:paddingLeft="5sp"
             android:layout_height="?android:attr/actionBarSize"
             android:id="@+id/ActivityHomeFilterEditText"
@@ -24,6 +24,12 @@
             android:textCursorDrawable="@null"
             android:textSize="22sp"
             android:textColor="#0086C9"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:background="#B7D8E8"
+            android:layout_below="@+id/ActivityHomeFilterEditText"/>
 
         <ListView
             android:layout_width="match_parent"

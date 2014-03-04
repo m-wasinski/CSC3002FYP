@@ -23,7 +23,7 @@ namespace FindNDriveDataAccessLayer.Migrations
     using DomainObjects.Constants;
     using DomainObjects.Domains;
 
-    using FindNDriveServices2;
+    using FindNDriveServices2.ServiceUtils;
 
     using WebMatrix.WebData;
 

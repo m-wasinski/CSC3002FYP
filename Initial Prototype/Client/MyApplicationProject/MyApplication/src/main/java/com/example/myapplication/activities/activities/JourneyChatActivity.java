@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Button;
@@ -28,6 +29,7 @@ import com.example.myapplication.utilities.DateTimeHelper;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.notification_management.NotificationProcessor;
+import com.example.myapplication.utilities.DialogCreator;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -106,6 +108,17 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
 
         // Retrieve conversation history for this journey.
         getAllMessages();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.help:
+                DialogCreator.showHelpDialog(this, "Journey chat room", getResources().getString(R.string.JourneyMessengerHelp));
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void sendMessage()

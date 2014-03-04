@@ -1,5 +1,6 @@
 package com.example.myapplication.activities.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +18,6 @@ import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.Rating;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
-import com.example.myapplication.utilities.DialogCreator;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.notification_management.NotificationProcessor;
@@ -114,6 +114,6 @@ public class RatingsActivity extends BaseActivity implements WCFServiceCallback<
 
     private void showPersonDialog(User user)
     {
-        DialogCreator.ShowProfileOptionsDialog(this, user);
+        startActivity(new Intent(this, ProfileViewerActivity.class).putExtra(IntentConstants.USER, gson.toJson(user)));
     }
 }

@@ -12,6 +12,7 @@ namespace FindNDriveServices2.DTOs
     using System.Runtime.Serialization;
 
     using DomainObjects.Constants;
+    using DomainObjects.Domains;
 
     /// <summary>
     /// The friend request dto.
@@ -26,28 +27,16 @@ namespace FindNDriveServices2.DTOs
         public int FriendRequestId { get; set; }
 
         /// <summary>
-        /// Gets or sets the target user id.
-        /// </summary>
-        [DataMember]
-        public int TargetUserId { get; set; }
-
-        /// <summary>
         /// Gets or sets the target user name.
         /// </summary>
         [DataMember]
-        public string TargetUserName { get; set; }
+        public User FromUser { get; set; }
 
         /// <summary>
         /// Gets or sets the requesting user id.
         /// </summary>
         [DataMember]
-        public int RequestingUserId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the requesting user name.
-        /// </summary>
-        [DataMember]
-        public string RequestingUserName { get; set; }
+        public User ToUser { get; set; }
 
         /// <summary>
         /// Gets or sets the message.

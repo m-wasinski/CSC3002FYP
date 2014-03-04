@@ -66,7 +66,7 @@ public class PassengersAdapter extends ArrayAdapter<User> {
             public void onImageRetrieved(Bitmap bitmap) {
                 if(bitmap != null)
                 {
-                    passengerHolder.profilePicture.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), false));
+                    passengerHolder.profilePicture.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/2, bitmap.getHeight()/2, false));
                 }
             }
         }).execute();

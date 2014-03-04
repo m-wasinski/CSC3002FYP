@@ -123,7 +123,7 @@ namespace FindNDriveDataAccessLayer
                     map.ToTable("Journey_User");
                 });
 
-            modelBuilder.Entity<Journey>()
+            /*modelBuilder.Entity<Journey>()
                 .HasMany(_ => _.Requests)
                 .WithMany()
                 .Map(map =>
@@ -131,7 +131,7 @@ namespace FindNDriveDataAccessLayer
                     map.MapLeftKey("JourneyId");
                     map.MapRightKey("JourneyRequestId");
                     map.ToTable("Journey_Request");
-                });
+                });*/
 
             modelBuilder.Entity<User>()
                .HasMany(_ => _.Friends).WithMany().Map(map =>
@@ -169,6 +169,8 @@ namespace FindNDriveDataAccessLayer
             modelBuilder.Entity<Journey>().HasRequired(a => a.Driver);
 
             modelBuilder.Entity<Journey>().Ignore(t => t.UnreadMessagesCount);
+
+            modelBuilder.Entity<User>().Ignore(t => t.UnreadMessagesCount);
 
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();   
         }

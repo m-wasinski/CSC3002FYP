@@ -1,1 +1,1 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="FindNDriveServices2.Services.RatingService" CodeBehind="RatingService.svc.cs" Factory="FindNDriveServices2.MyServiceHostFactory"%>
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="FindNDriveServices2.Services.RatingService" CodeBehind="RatingService.svc.cs" Factory="FindNDriveServices2.ServiceHostUtils.MyServiceHostFactory"%>

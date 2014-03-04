@@ -58,11 +58,11 @@ public class SearchResultsAdapter extends ArrayAdapter<Journey> {
 
         Journey journey = journeys.get(position);
 
-        holder.fromToTextView.setText(Utilities.getJourneyHeader(journey.GeoAddresses));
-        holder.dateTextView.setText(DateTimeHelper.getSimpleDate(journey.DateAndTimeOfDeparture));
-        holder.timeTextView.setText(DateTimeHelper.getSimpleTime(journey.DateAndTimeOfDeparture));
-        holder.seatsLeftTextView.setText(""+journey.AvailableSeats);
-        holder.feeTextView.setText("£" + decimalFormat.format(journey.Fee));
+        holder.fromToTextView.setText(Utilities.getJourneyHeader(journey.getGeoAddresses()));
+        holder.dateTextView.setText(DateTimeHelper.getSimpleDate(journey.getDateAndTimeOfDeparture()));
+        holder.timeTextView.setText(DateTimeHelper.getSimpleTime(journey.getDateAndTimeOfDeparture()));
+        holder.seatsLeftTextView.setText(""+journey.getAvailableSeats());
+        holder.feeTextView.setText("£" + decimalFormat.format(journey.getFee()));
         return currentRow;
     }
 

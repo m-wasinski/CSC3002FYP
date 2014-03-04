@@ -58,7 +58,7 @@
     <string name="SendFriendRequestTitle">You are sending a friend request to: </string>
     <string name="Send">Send</string>
     <string name="ProfileIcon">Profile icon</string>
-    <string name="EnterYourOwnMessage">Enter your own message</string>
+    <string name="EnterYourOwnMessage">Enter message (optional)</string>
     <string name="Username">Username:</string>
     <string name="UserInformation">User information:</string>
     <string name="Gender">Gender: </string>
@@ -91,12 +91,36 @@
     <string name="MoreOptions">More options</string>
     <string name="Search">Search</string>
     <string name="DontMind">I don\'t mind</string>
-    <string-array name="app_menu_options">
-        <item>Home</item>
-        <item>My Car Shares</item>
-        <item>Profile</item>
-        <item>Friends</item>
-    </string-array>
+    <string name="Help">Help</string>
+
+    <string name="OfferingJourneyStepOneHelp">"This screen allows you to specify departure and destination points as well as any optional waypoints for your new journey.\n\nYou can proceed to step two of the journey creation process once the departure and destination points have been specified."</string>
+
+    <string name="EditingJourneyStepOneHelp">"This screen allows you to make changes to departure and destination points of this journey as well as to any optional waypoints.\n\nPlease use the controls provided to make the required changes. Your passengers will be automatically notified by the system of any changes that you make.\n\nOnce you're happy with your changes, press the Step 2 button at the bottom of the screen."</string>
+
+    <string name="OfferingJourneyStepTwoHelp">"This screen allows you to provide more information about your new journey.\n\nPlease use the controls provided to provide the information needed. Once you're finished\n\nhit the Offer Journey button at the bottom of the screen."</string>
+
+    <string name="EditingJourneyStepTwoHelp">"This screen allows you to make changes to all the other aspects of your journey.\n\nPlease use the controls provided to make the required changes. Your passengers will be automatically notified by the system of any changes that you make.\n\nOnce you're happy with your changes, press the Save changes button at the bottom of the screen."</string>
+
+    <string name="HomeScreenHelp">"The home screen is the root of the app. From here, you can go to any other section of the app using the buttons visible on the screen."</string>
+
+    <string name="MyJourneysHelp">"This screen shows the list of all the journeys you are associated with, either as a driver or as a passenger.\n\nYou can click on any of the journeys to be transferred to the details screen from which you can perform more a number of actions using the journey control panel."</string>
+
+    <string name="JourneyDetailsHelp">"This screen allows you to see detailed journey information as well as perform a variety of actions using the journey control panel located at the bottom of the screen."</string>
+
+    <string name="FindJourneysHelp">"This screen allows you to find journeys that match your desired criteria. Please use the provided controls to specify departure and destination points.\n\nThe advanced search options button (Three vertical dots on the right) allows you to specify more advanced search criteria such as date and time of departure etc."</string>
+
+    <string name="MyNotificationsHelp">"This screen shows a list of all your notifications. Orange notifications are new and have not been marked as read.\n\n To mark a notification as read, click on the desired notification."</string>
+
+    <string name="MyFriendsHelp">"This screen shows the list of your friends. The white or green circle indicates their current online status.\n\nClick on one of your friends to begin chat."</string>
+
+    <string name="MyProfileHelp">"This is your profile editor. You can use it to edit your personal details and change your profile picture.\n\nChanges are uploaded to the server and saved automatically."</string>
+
+    <string name="ProfileViewerHelp">"This screen shows details of the person mentioned at the top."</string>
+
+    <string name="InstantMessengerHelp">"This is the in-app instant messenger. You can use it to exchange messages with the person whose name is visible at the top."</string>
+
+    <string name="JourneyMessengerHelp">"This is the in-app journey chat room. All of this journey's passengers can use it to exchange messages. Messages sent in the journey chat room are visible by all other passengers."</string>
+
     <string-array name="vehicle_types">
         <item>Private Car</item>
         <item>Minivan</item>

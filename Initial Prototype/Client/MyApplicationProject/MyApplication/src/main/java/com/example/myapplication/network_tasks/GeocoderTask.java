@@ -29,7 +29,7 @@ import java.util.Locale;
  */
 public class GeocoderTask extends AsyncTask<GeocoderParams, Void, MarkerOptions> {
 
-    private final String TAG = this.getClass().getSimpleName();
+    private final String TAG = "GeocoderTask";
     private Context context;
     private GeoCoderFinishedCallBack listener;
     private MarkerOptions markerOptions;
@@ -137,7 +137,7 @@ public class GeocoderTask extends AsyncTask<GeocoderParams, Void, MarkerOptions>
                 .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
-                        listener.onGeoCoderFinished(null, null, 0);
+                        listener.onGeoCoderFinished(null, null, null);
                     }
                 });
 

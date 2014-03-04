@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -23,8 +24,10 @@ import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.constants.WcfConstants;
 import com.example.myapplication.domain_objects.Journey;
+import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.dtos.LoadRangeDTO;
 import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.utilities.DialogCreator;
 import com.example.myapplication.utilities.WakeLocker;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
@@ -62,10 +65,16 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
 
     private int previousTotalListViewItemCount;
 
+    private User user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_journeys);
+
+        user = gson.fromJson(getIntent().getStringExtra(IntentConstants.USER), new TypeToken<User>(){}.getType());
+
+        setTitle(user != null ? user.getUserName()+"'s journeys" : "Error, could not retrieve user.");
 
         // Initialise local variables.
         myJourneys = new ArrayList<Journey>();
@@ -74,10 +83,11 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
         filterEditText = (EditText) findViewById(R.id.ActivityHomeFilterEditText);
         filterEditText.addTextChangedListener(this);
 
+        //
         myJourneysListView = (ListView) findViewById(R.id.MyCarSharesListView);
         myJourneysListView.setOnScrollListener(this);
 
-        journeyAdapter = new JourneyAdapter(this, R.layout.listview_row_my_journey, myJourneys, appManager);
+        journeyAdapter = new JourneyAdapter(this, R.layout.listview_row_my_journey, myJourneys, user);
         journeyAdapter.getFilter().filter(filterEditText.getText().toString());
 
         myJourneysListView.setAdapter(journeyAdapter);
@@ -95,6 +105,17 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
         registerReceiver(RefreshBroadcastReceiver, intentFilter);
         requestMoreData = myJourneysListView.getCount() == 0;
         retrieveJourneys();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.help:
+                DialogCreator.showHelpDialog(this, "Your journeys.", getResources().getString(R.string.MyJourneysHelp));
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -149,7 +170,7 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
     {
         progressBar.setVisibility(View.VISIBLE);
         new WcfPostServiceTask<LoadRangeDTO>(this, getResources().getString(R.string.GetAllJourneysURL),
-                new LoadRangeDTO(appManager.getUser().getUserId(),
+                new LoadRangeDTO(user.getUserId(),
                         requestMoreData ? myJourneysListView.getCount() : 0, requestMoreData ? WcfConstants.JourneysPerCall : myJourneysListView.getCount()),
                 new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(),
                 appManager.getAuthorisationHeaders(), this).execute();
@@ -205,7 +226,8 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
         extras.putInt(IntentConstants.NEW_JOURNEY_MESSAGES,Integer.parseInt(((TextView)view.findViewById(R.id.MyCarSharesNumberOfUnreadMessagesTextView)).getText().toString()));
         extras.putInt(IntentConstants.NEW_JOURNEY_REQUESTS,Integer.parseInt(((TextView)view.findViewById(R.id.MyCarSharesNumberOfUnreadRequestsTextView)).getText().toString()));
         extras.putString(IntentConstants.JOURNEY, gson.toJson(myJourneys.get(i)));
-        startActivity(new Intent(this, JourneyDetailsActivity.class).putExtras(extras));
+        startActivity(user.getUserId() == appManager.getUser().getUserId() ? new Intent(this, JourneyDetailsActivity.class).putExtras(extras) :
+                new Intent(this, SearchResultsJourneyDetailsActivity.class).putExtras(extras));
     }
 
     @Override

@@ -80,15 +80,21 @@
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        style="@style/LoginFields"
-        android:layout_marginRight="10dip"
-        android:layout_gravity="center_vertical"
-        android:text="Score"
-        android:id="@+id/LeaderboardListviewRowAverageScoreTextView"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/LoginFields"
+            android:layout_marginLeft="15dip"
+            android:layout_gravity="center_vertical"
+            android:text="Score"
+            android:layout_weight="1"
+            android:id="@+id/LeaderboardListviewRowAverageScoreTextView"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="5dip"
+            android:src="@drawable/right_arrow"/>
     </LinearLayout>
 
     <LinearLayout

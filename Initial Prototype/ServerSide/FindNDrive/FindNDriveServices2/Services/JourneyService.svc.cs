@@ -25,6 +25,7 @@ namespace FindNDriveServices2.Services
     using FindNDriveServices2.Contracts;
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
+    using FindNDriveServices2.ServiceUtils;
 
     using Microsoft.Practices.ObjectBuilder2;
 
@@ -141,11 +142,11 @@ namespace FindNDriveServices2.Services
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<Journey> CreateNewJourney(JourneyDTO journeyDTO)
+        public ServiceResponse<bool> CreateNewJourney(JourneyDTO journeyDTO)
         {
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(new Journey());
+                return ServiceResponseBuilder.Unauthorised<bool>();
             }
 
             var user =
@@ -155,12 +156,12 @@ namespace FindNDriveServices2.Services
 
             if (user == null)
             {
-                return ServiceResponseBuilder.Failure<Journey>("Invalid user id.");
+                return ServiceResponseBuilder.Failure<bool>("Invalid user id.");
             }
 
             if (journeyDTO.DateAndTimeOfDeparture < DateTime.Now)
             {
-                return ServiceResponseBuilder.Failure<Journey>("Invalid date or time!");
+                return ServiceResponseBuilder.Failure<bool>("Invalid date or time!");
             }
 
             var newJourney = new Journey
@@ -203,7 +204,7 @@ namespace FindNDriveServices2.Services
             this.notificationManager.SendGcmTickle(
                 user.Friends);
 
-            return ServiceResponseBuilder.Success(newJourney);
+            return ServiceResponseBuilder.Success(true);
         }
 
         /// <summary>
@@ -263,11 +264,11 @@ namespace FindNDriveServices2.Services
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<Journey> ModifyJourney(JourneyDTO journeyDTO)
+        public ServiceResponse<bool> ModifyJourney(JourneyDTO journeyDTO)
         {
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(new Journey());
+                return ServiceResponseBuilder.Unauthorised<bool>();
             }
 
             var journey =
@@ -277,12 +278,12 @@ namespace FindNDriveServices2.Services
 
             if (journey == null)
             {
-                return ServiceResponseBuilder.Failure<Journey>("Invalid journey id");
+                return ServiceResponseBuilder.Failure<bool>("Invalid journey id");
             }
 
             if (journey.JourneyStatus != JourneyStatus.OK)
             {
-                return ServiceResponseBuilder.Failure<Journey>(string.Format("This journey is {0}, you cannot make a change to it.", journey.JourneyStatus == JourneyStatus.Cancelled ? "cancelled" : "expired"));
+                return ServiceResponseBuilder.Failure<bool>(string.Format("This journey is {0}, you cannot make a change to it.", journey.JourneyStatus == JourneyStatus.Cancelled ? "cancelled" : "expired"));
             }
 
             this.findNDriveUnitOfWork.GeoAddressRepository.RemoveRange(journey.GeoAddresses);
@@ -323,7 +324,7 @@ namespace FindNDriveServices2.Services
             this.notificationManager.SendGcmTickle(
                 journey.Participants);
 
-            return ServiceResponseBuilder.Success(journey);
+            return ServiceResponseBuilder.Success(true);
         }
 
         /// <summary>
@@ -335,11 +336,11 @@ namespace FindNDriveServices2.Services
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<bool> CancelJourney(JourneyUserDTO journeyUserDTO)
+        public ServiceResponse<Journey> CancelJourney(JourneyUserDTO journeyUserDTO)
         {
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(false);
+                return ServiceResponseBuilder.Unauthorised<Journey>();
             }
 
             var journey =
@@ -349,24 +350,24 @@ namespace FindNDriveServices2.Services
 
             if (journey == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Journey with this id does not exist.");
+                return ServiceResponseBuilder.Failure<Journey>("Journey with this id does not exist.");
             }
 
             if (journey.JourneyStatus != JourneyStatus.OK)
             {
-                return ServiceResponseBuilder.Failure<bool>(string.Format("You cannot cancel an {0} journey", journey.JourneyStatus == JourneyStatus.Cancelled ? "already cancelled" : "expired"));
+                return ServiceResponseBuilder.Failure<Journey>(string.Format("You cannot cancel an {0} journey", journey.JourneyStatus == JourneyStatus.Cancelled ? "already cancelled" : "expired"));
             }
 
             var user = this.findNDriveUnitOfWork.UserRepository.Find(journeyUserDTO.UserId);
 
             if (user == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("User with this id does not exist.");
+                return ServiceResponseBuilder.Failure<Journey>("User with this id does not exist.");
             }
 
             if (journey.Driver.UserId != user.UserId)
             {
-                return ServiceResponseBuilder.Failure<bool>("You are not allowed to cancel journey in which you are not the driver.");
+                return ServiceResponseBuilder.Failure<Journey>("You are not allowed to cancel journey in which you are not the driver.");
             }
 
             journey.JourneyStatus = JourneyStatus.Cancelled;
@@ -410,7 +411,7 @@ namespace FindNDriveServices2.Services
             this.notificationManager.SendGcmTickle(
                 journey.Participants);
 
-            return ServiceResponseBuilder.Success(true);
+            return ServiceResponseBuilder.Success(journey);
         }
 
         public ServiceResponse<bool> WithdrawFromJourney(JourneyUserDTO journeyUserDTO)

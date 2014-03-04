@@ -1,11 +1,14 @@
 package com.example.myapplication.activities.activities;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.myapplication.R;
@@ -16,61 +19,65 @@ import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.FriendRequest;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.notification_management.NotificationProcessor;
+import com.example.myapplication.interfaces.WCFImageRetrieved;
 import com.example.myapplication.interfaces.WCFServiceCallback;
+import com.example.myapplication.network_tasks.WcfPictureServiceTask;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
+import com.example.myapplication.notification_management.NotificationProcessor;
 import com.google.gson.reflect.TypeToken;
 
 /**
  * Created by Michal on 10/02/14.
  */
-public class ReceivedFriendRequestDialogActivity extends BaseActivity {
+public class ReceivedFriendRequestDialogActivity extends BaseActivity implements View.OnClickListener,
+        WCFServiceCallback<Boolean, Void>, WCFImageRetrieved{
 
-    private Button acceptButton;
-    private Button denyButton;
-
-    private Notification notification;
     private FriendRequest friendRequest;
 
-    private TextView headerTextView;
-    private TextView messageTextView;
+    private ImageView profileImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_friend_request_received);
+        setContentView(R.layout.activity_friend_request_received);
 
         // Initialise local variables.
         Bundle bundle = getIntent().getExtras();
 
-        this.notification =  gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),  new TypeToken<Notification>() {}.getType());
-        this.friendRequest =  gson.fromJson(bundle.getString(IntentConstants.FRIEND_REQUEST), new TypeToken<FriendRequest>() {}.getType());
+        Notification notification = gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),
+                new TypeToken<Notification>() {}.getType());
 
-        if(this.notification != null)
+        friendRequest =  gson.fromJson(bundle.getString(IntentConstants.FRIEND_REQUEST), new TypeToken<FriendRequest>() {}.getType());
+
+        if(notification != null)
         {
-            new NotificationProcessor().MarkDelivered(this, this.appManager, notification, new WCFServiceCallback<Boolean, Void>() {
+            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
-                    Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
+                    Log.i(getClass().getSimpleName(), "Notification successfully marked as delivered");
                 }
             });
         }
 
-        Log.i(this.getClass().getSimpleName(), gson.toJson(friendRequest));
-        // Initialise UI elements.
-        this.acceptButton = (Button) this.findViewById(R.id.FriendRequestReceivedActivityAcceptButton);
-        this.acceptButton.setEnabled(this.friendRequest.FriendRequestDecision == FriendRequestDecisions.Undecided);
-        this.denyButton = (Button) this.findViewById(R.id.FriendRequestReceivedActivityDenyButton);
-        this.denyButton.setEnabled(this.friendRequest.FriendRequestDecision == FriendRequestDecisions.Undecided);
-        this.messageTextView = (TextView) this.findViewById(R.id.FriendRequestReceivedMessageTextView);
+        // Initialise UI elements and setup their event handlers.
+        Button acceptButton = (Button) findViewById(R.id.FriendRequestReceivedActivityAcceptButton);
+        acceptButton.setOnClickListener(this);
+        acceptButton.setEnabled(friendRequest.getFriendRequestDecision() == FriendRequestDecisions.Undecided);
+        Button denyButton = (Button) findViewById(R.id.FriendRequestReceivedActivityDenyButton);
+        denyButton.setOnClickListener(this);
+        denyButton.setEnabled(friendRequest.getFriendRequestDecision() == FriendRequestDecisions.Undecided);
+        TextView messageTextView = (TextView) findViewById(R.id.FriendRequestReceivedMessageTextView);
 
-        this.headerTextView = (TextView) this.findViewById(R.id.FriendRequestReceiverHeaderTextView);
-        this.headerTextView.setText(this.friendRequest.RequestingUserName);
-        this.messageTextView.setText(this.friendRequest.Message == null ? "" : this.friendRequest.Message);
-        // Setup event handlers.
-        this.setupEventHandlers();
+        Button showProfileButton = (Button) findViewById(R.id.FriendRequestReceivedViewProfileButton);
+        showProfileButton.setOnClickListener(this);
+        TextView headerTextView = (TextView) findViewById(R.id.FriendRequestReceiverHeaderTextView);
+        headerTextView.setText(friendRequest.getFromUser().getUserName());
+        messageTextView.setVisibility(friendRequest.getMessage() == null ? View.GONE : View.VISIBLE);
+        messageTextView.setText(friendRequest.getMessage() == null ? "" : friendRequest.getMessage());
 
+        profileImageView = (ImageView) findViewById(R.id.FriendRequestReceivedActivityProfileImageView);
+        retrieveProfilePicture();
         // In order to not be too narrow, set the window size based on the screen resolution:
         final int screen_width = getResources().getDisplayMetrics().widthPixels;
         final int new_window_width = screen_width * 90 / 100;
@@ -79,42 +86,52 @@ public class ReceivedFriendRequestDialogActivity extends BaseActivity {
         getWindow().setAttributes(layout);
     }
 
-    private void setupEventHandlers()
-    {
-        this.acceptButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                submitDecision(FriendRequestDecisions.Accepted);
-            }
-        });
-
-        this.denyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                submitDecision(FriendRequestDecisions.Denied);
-            }
-        });
-    }
-
     private void submitDecision(int decision)
     {
-        this.friendRequest.FriendRequestDecision = decision;
+        friendRequest.setFriendRequestDecision(decision);
 
         new WcfPostServiceTask<FriendRequest>(this,
                 getResources().getString(R.string.ProcessFriendRequestDecisionURL), friendRequest,
-                new TypeToken<ServiceResponse<Boolean>>() {}.getType(), appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
-            @Override
-            public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
-                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
-                {
-                    decisionSubmitted();
-                }
-            }
-        }).execute();
+                new TypeToken<ServiceResponse<Boolean>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
     }
 
-    private void decisionSubmitted()
+    private void retrieveProfilePicture()
     {
-        this.finish();
+        new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
+                friendRequest.getFromUser().getUserId(), this.appManager.getAuthorisationHeaders(), this).execute();
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId())
+        {
+            case R.id.FriendRequestReceivedViewProfileButton:
+                startActivity(new Intent(this, ProfileViewerActivity.class).putExtra(IntentConstants.USER, gson.toJson(friendRequest.getFromUser())));
+                break;
+            case R.id.FriendRequestReceivedActivityAcceptButton:
+                submitDecision(FriendRequestDecisions.Accepted);
+                break;
+            case R.id.FriendRequestReceivedActivityDenyButton:
+                submitDecision(FriendRequestDecisions.Denied);
+                break;
+        }
+    }
+
+    @Override
+    public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter)
+    {
+        if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
+        {
+            finish();
+        }
+    }
+
+
+    @Override
+    public void onImageRetrieved(Bitmap bitmap) {
+        if(bitmap != null)
+        {
+            profileImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/4, bitmap.getHeight()/4, false));
+        }
     }
 }

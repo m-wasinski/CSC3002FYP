@@ -40,17 +40,10 @@ namespace DomainObjects.Domains
         public virtual Journey Journey { get; set; }
 
         /// <summary>
-        /// Gets or sets the user id.
-        /// </summary>
-        [DataMember]
-        public int UserId { get; set; }
-
-        /// <summary>
         /// Gets or sets the user.
         /// </summary>
         [DataMember]
-        [ForeignKey("UserId")]
-        public virtual User User { get; set; }
+        public User FromUser { get; set; }
 
         /// <summary>
         /// Gets or sets the message.

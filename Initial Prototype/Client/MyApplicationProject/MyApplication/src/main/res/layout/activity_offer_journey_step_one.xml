@@ -5,24 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@drawable/background">
-
         <fragment
             android:id="@+id/OfferJourneyStepOneActivityMap"
             android:name="com.google.android.gms.maps.MapFragment"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_height="match_parent"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:clickable="true"
+            android:layout_alignParentTop="true"
             android:paddingTop="2dip"
             android:id="@+id/OfferJourneyStepOneActivityDepartureRelativeLayout"
             android:background="@drawable/home_navigation_selector">
@@ -82,13 +76,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dip"
-            android:background="#B7D8E8"/>
+            android:background="#B7D8E8"
+            android:layout_below="@+id/OfferJourneyStepOneActivityDepartureRelativeLayout"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:clickable="true"
+            android:layout_marginTop="1dip"
+            android:layout_below="@+id/OfferJourneyStepOneActivityDepartureRelativeLayout"
             android:id="@+id/OfferJourneyStepOneActivityViaRelativeLayout"
             android:background="@drawable/home_navigation_selector">
 
@@ -123,13 +120,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dip"
-            android:background="#B7D8E8"/>
+            android:background="#B7D8E8"
+            android:layout_below="@+id/OfferJourneyStepOneActivityViaRelativeLayout"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:clickable="true"
+            android:layout_marginTop="1dip"
+            android:visibility="gone"
+            android:layout_below="@+id/OfferJourneyStepOneActivityViaRelativeLayout"
             android:paddingTop="2dip"
             android:id="@+id/OfferJourneyStepOneActivityDestinationRelativeLayout"
             android:background="@drawable/home_navigation_selector">
@@ -193,15 +194,19 @@
             android:text="@string/StepTwo"
             android:id="@+id/OfferJourneyStepOneActivityStepTwoButton"
             style="@style/UniversalButtonStyle"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone"
             android:background="@drawable/button_selector"/>
 
-    </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
+    <ProgressBar
+        android:id="@+id/OfferJourneyStepOneActivityProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="5sp"
-        android:text="@string/StepOneDescription"
-        style="@style/RegularTextView"
-        android:background="#80151515"/>
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:indeterminateDrawable="@drawable/progress"
+        android:visibility="gone"/>
+
 </RelativeLayout>

@@ -125,5 +125,12 @@ namespace DomainObjects.Domains
         /// </summary>
         [DataMember]
         public double AverageRating { get; set; }
+
+        /// <summary>
+        /// Gets or sets the unread messages count.
+        /// </summary>
+        [DataMember]
+        [NotMapped]
+        public int UnreadMessagesCount { get; set; }
     }
 }

@@ -13,14 +13,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Step 2: journey summary &amp; extra options"
-            style="@style/LoginFields"
-            android:padding="5dp"
-            android:background="#80151515"/>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

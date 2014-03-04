@@ -21,6 +21,12 @@
         android:textSize="22sp"
         android:textColor="#0086C9"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:background="#B7D8E8"
+        android:layout_below="@+id/FriendListActivityFilterEditText"/>
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

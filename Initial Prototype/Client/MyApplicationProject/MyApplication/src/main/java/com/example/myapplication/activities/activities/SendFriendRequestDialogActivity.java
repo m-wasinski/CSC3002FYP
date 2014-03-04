@@ -7,6 +7,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +39,8 @@ public class SendFriendRequestDialogActivity extends BaseActivity implements WCF
 
     private User targetUser;
 
+    private ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -53,6 +56,7 @@ public class SendFriendRequestDialogActivity extends BaseActivity implements WCF
         headerTextView = (TextView) findViewById(R.id.SendFriendRequestActivityHeaderTextView);
         headerTextView.setText(headerTextView.getText().toString() + " " + targetUser.getFirstName() + " " + targetUser.getLastName() + " ("+targetUser.getUserName()+")");
         profileIconImageView = (ImageView) findViewById(R.id.AlertDialogSendFriendRequestImageView);
+        progressBar = (ProgressBar) findViewById(R.id.SendFriendRequestProgressBar);
 
         retrieveProfilePicture();
 
@@ -72,10 +76,12 @@ public class SendFriendRequestDialogActivity extends BaseActivity implements WCF
 
     private void sendFriendRequest()
     {
+        progressBar.setVisibility(View.VISIBLE);
+        okButton.setEnabled(false);
         FriendRequest friendRequest = new FriendRequest();
-        friendRequest.Message = messageEditText.getText().toString();
-        friendRequest.TargetUserId = targetUser.getUserId();
-        friendRequest.RequestingUserId = appManager.getUser().getUserId();
+        friendRequest.setMessage(messageEditText.getText().toString());
+        friendRequest.setToUser(targetUser);
+        friendRequest.setFromUser(appManager.getUser());
 
         new WcfPostServiceTask<FriendRequest>(this,
                 getResources().getString(R.string.SendFriendRequestURL), friendRequest,
@@ -84,10 +90,10 @@ public class SendFriendRequestDialogActivity extends BaseActivity implements WCF
 
     @Override
     public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+        progressBar.setVisibility(View.GONE);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
-            Toast toast = Toast.makeText(this, "Friend request was sent successfully.", Toast.LENGTH_LONG);
-            toast.show();
+            Toast.makeText(this, "Your friend request was sent successfully.", Toast.LENGTH_LONG).show();
             finish();
         }
     }

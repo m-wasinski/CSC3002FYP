@@ -54,8 +54,8 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/new")]
-        ServiceResponse<Journey> CreateNewJourney(JourneyDTO journeyDTO);
+            UriTemplate = "/create")]
+        ServiceResponse<bool> CreateNewJourney(JourneyDTO journeyDTO);
 
         /// <summary>
         /// The get car share by id.
@@ -106,7 +106,7 @@ namespace FindNDriveServices2.Contracts
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/edit")]
-        ServiceResponse<Journey> ModifyJourney(JourneyDTO journeyDTO);
+        ServiceResponse<bool> ModifyJourney(JourneyDTO journeyDTO);
 
         /// <summary>
         /// The withdraw from journey.
@@ -140,6 +140,6 @@ namespace FindNDriveServices2.Contracts
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/cancel")]
-        ServiceResponse<bool> CancelJourney(JourneyUserDTO journeyUserDTO);
+        ServiceResponse<Journey> CancelJourney(JourneyUserDTO journeyUserDTO);
     }
 }

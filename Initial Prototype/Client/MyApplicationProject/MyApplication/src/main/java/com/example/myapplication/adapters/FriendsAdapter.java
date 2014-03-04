@@ -15,16 +15,10 @@ import android.widget.TextView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.app_management.AppManager;
-import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.constants.StatusConstants;
-import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
-import com.example.myapplication.dtos.ChatMessageRetrieverDTO;
 import com.example.myapplication.interfaces.WCFImageRetrieved;
-import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPictureServiceTask;
-import com.example.myapplication.network_tasks.WcfPostServiceTask;
-import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 
@@ -81,20 +75,21 @@ public class FriendsAdapter extends ArrayAdapter<User> {
 
         holder.userNameTextView.setText(friend.getUserName());
         holder.currentOnlineStatus.setImageResource(friend.getStatus() == StatusConstants.Online ? R.drawable.available : R.drawable.unavailable);
+        holder.unreadMessagesCountTextView.setText(String.valueOf(friend.getUnreadMessagesCount()));
+        holder.unreadMessagesCountTextView.setVisibility(friend.getUnreadMessagesCount() > 0 ? View.VISIBLE : View.GONE);
+        holder.parentLayout.setBackgroundColor(friend.getUnreadMessagesCount() > 0 ? Color.parseColor("#80dea516") : Color.parseColor("#80151515"));
 
-        new WcfPostServiceTask<ChatMessageRetrieverDTO>(context, getContext().getResources().getString(R.string.GetUnreadMessagesCountForFriendURL),
+        /*new WcfPostServiceTask<ChatMessageRetrieverDTO>(context, getContext().getResources().getString(R.string.GetUnreadMessagesCountForFriendURL),
                 new ChatMessageRetrieverDTO(displayedFriendsList.get(position).getUserId(), appManager.getUser().getUserId(), null),
                 new TypeToken<ServiceResponse<Integer>>() {}.getType(), appManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {
-                    holder.unreadMessagesCountTextView.setText(String.valueOf(serviceResponse.Result));
-                    holder.unreadMessagesCountTextView.setVisibility(serviceResponse.Result > 0 ? View.VISIBLE : View.GONE);
-                    holder.parentLayout.setBackgroundColor(serviceResponse.Result > 0 ? Color.parseColor("#80dea516") : Color.parseColor("#80151515"));
+
                 }
             }
-        }).execute();
+        }).execute();*/
 
         if(holder.profilePicture.getDrawable() == null)
         {

@@ -23,6 +23,7 @@ namespace FindNDriveServices2.Services
     using FindNDriveServices2.Contracts;
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
+    using FindNDriveServices2.ServiceUtils;
 
     using ConcurrencyMode = System.ServiceModel.ConcurrencyMode;
 
@@ -107,17 +108,18 @@ namespace FindNDriveServices2.Services
 
             // Check if this user is already participating in this journey. If yes, return a failure with appropriate error message.
             var alreadyInJourney =
-                   journey.Participants.FirstOrDefault(_ => _.UserId == journeyRequestDTO.UserId);
+                   journey.Participants.FirstOrDefault(_ => _.UserId == journeyRequestDTO.FromUser.UserId);
 
             if (alreadyInJourney != null)
             {
                 return ServiceResponseBuilder.Failure<JourneyRequest>("You are already one of the passengers in this journey.");
             }
 
-            // Check if this user already has a pending request for this journey. This is to avoid user spamming the driver with request when no decision is made.
+            // Check if this user already has a pending request for this journey. This is to avoid user spamming the driver with another when no decision is made.
             var hasPendingRequest = this.findNDriveUnitOfWork.JourneyRequestRepository.AsQueryable()
                     .IncludeAll()
-                    .FirstOrDefault(_ => _.JourneyId == journey.JourneyId && _.UserId == journeyRequestDTO.UserId && _.Decision == JourneyRequestDecision.Undecided);
+                    .FirstOrDefault(_ => _.JourneyId == journeyRequestDTO.JourneyId && _.FromUser.UserId == journeyRequestDTO.FromUser.UserId 
+                        && _.Decision == JourneyRequestDecision.Undecided);
 
             if (hasPendingRequest != null)
             {
@@ -125,7 +127,7 @@ namespace FindNDriveServices2.Services
             }
 
             // Also check if the user is not trying to join journey in which they are the driver.
-            if (journey.Driver.UserId == journeyRequestDTO.UserId)
+            if (journey.Driver.UserId == journeyRequestDTO.FromUser.UserId)
             {
                 return ServiceResponseBuilder.Failure<JourneyRequest>("You are the driver in this journey.");
             }
@@ -136,14 +138,21 @@ namespace FindNDriveServices2.Services
                 this.findNDriveUnitOfWork.UserRepository.Find(journey.Driver.UserId);
 
             var requestingUser =
-                this.findNDriveUnitOfWork.UserRepository.Find(journeyRequestDTO.UserId);
+                this.findNDriveUnitOfWork.UserRepository.Find(journeyRequestDTO.FromUser.UserId);
 
             if (targetUser == null || requestingUser == null)
             {
                 return ServiceResponseBuilder.Failure<JourneyRequest>("Invalid user id.");
             }
 
-            var request = new JourneyRequest { JourneyId = journeyRequestDTO.JourneyId, UserId = journeyRequestDTO.UserId, Decision = JourneyRequestDecision.Undecided, Read = false, Message = journeyRequestDTO.Message, SentOnDate = journeyRequestDTO.SentOnDate};
+            var request = new JourneyRequest 
+            { 
+                JourneyId = journeyRequestDTO.JourneyId, 
+                Decision = JourneyRequestDecision.Undecided, 
+                FromUser = requestingUser,
+                Read = false, Message = journeyRequestDTO.Message, 
+                SentOnDate = DateTime.Now
+            };
 
             journey.Requests.Add(request);
             this.findNDriveUnitOfWork.Commit();
@@ -190,7 +199,7 @@ namespace FindNDriveServices2.Services
                 return ServiceResponseBuilder.Unauthorised(new JourneyRequest());
             }
 
-            var newPassenger = this.findNDriveUnitOfWork.UserRepository.Find(journeyRequestDTO.UserId);
+            var newPassenger = this.findNDriveUnitOfWork.UserRepository.Find(journeyRequestDTO.FromUser.UserId);
 
             if (newPassenger == null)
             {
@@ -251,7 +260,7 @@ namespace FindNDriveServices2.Services
                     journey.Driver.UserName); 
 
             request.Decision = journeyRequestDTO.Decision;
-            request.DecidedOnDate = journeyRequestDTO.DecidedOnDate;
+            request.DecidedOnDate = DateTime.Now;
             request.Read = true;
 
             if (journey.UnreadRequestsCount > 0)
@@ -343,7 +352,7 @@ namespace FindNDriveServices2.Services
             var requests =
                this.findNDriveUnitOfWork.JourneyRequestRepository.AsQueryable()
                    .IncludeAll()
-                   .Where(_ => _.UserId == id).ToList();
+                   .Where(_ => _.FromUser.UserId == id).ToList();
 
             return ServiceResponseBuilder.Success(requests);
         }

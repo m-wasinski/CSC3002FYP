@@ -7,4 +7,6 @@
     <string name="UpdateUserURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/UserService.svc/update</string>
     <string name="UpdateProfilePictureURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/UserService.svc/updateProfilePicture</string>
     <string name="GetProfilePictureURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/UserService.svc/getProfilePicture?id=</string>
+    <string name="UpdateUserPrivacySettingsURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/UserService.svc/updateprivacy</string>
+    <string name="GetUserURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/UserService.svc/get</string>
 </resources>

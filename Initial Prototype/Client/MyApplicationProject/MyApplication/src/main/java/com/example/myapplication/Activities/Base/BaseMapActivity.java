@@ -79,6 +79,10 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
         appManager = ((AppManager)getApplication());
         gson = new Gson();
         actionBar = getActionBar();
+        if(actionBar != null)
+        {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
         gMapV2Direction = new GMapV2Direction();
         locationClient = new LocationClient(this, this, this);
         geocoder = new Geocoder(this);
@@ -100,8 +104,8 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
             case R.id.logout_menu_option:
                 appManager.logout(true, true);
                 break;
-            default:
-                return super.onOptionsItemSelected(item);
+            case android.R.id.home:
+                finish();
         }
 
         return super.onOptionsItemSelected(item);

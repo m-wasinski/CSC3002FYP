@@ -22,13 +22,25 @@ namespace FindNDriveServices2.DTOs
     /// The journey search dto.
     /// </summary>
     [DataContract]
-    public class JourneySearchDTO
+    public class JourneyTemplateDTO
     {
+        /// <summary>
+        /// Gets or sets the journey template id.
+        /// </summary>
+        [DataMember]
+        public int JourneyTemplateId { get; set; }
+
         /// <summary>
         /// Gets or sets the user id.
         /// </summary>
         [DataMember]
         public int UserId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the alias.
+        /// </summary>
+        [DataMember]
+        public string Alias { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether search by date.
@@ -64,13 +76,13 @@ namespace FindNDriveServices2.DTOs
         /// Gets or sets the pets.
         /// </summary>
         [DataMember]
-        public MultiChoice Pets { get; set; }
+        public bool Pets { get; set; }
 
         /// <summary>
         /// Gets or sets the smokers.
         /// </summary>
         [DataMember]
-        public MultiChoice Smokers { get; set; }
+        public bool Smokers { get; set; }
 
         /// <summary>
         /// Gets or sets the vehicle type.
@@ -103,5 +115,13 @@ namespace FindNDriveServices2.DTOs
         [DataType(DataType.Date)]
         [Column(TypeName = "DateTime2")]
         public DateTime DateAndTimeOfDeparture { get; set; }
+
+        /// <summary>
+        /// Gets or sets the departure date.
+        /// </summary>
+        [DataMember]
+        [DataType(DataType.Date)]
+        [Column(TypeName = "DateTime2")]
+        public DateTime CreationDate { get; set; }
     }
 }

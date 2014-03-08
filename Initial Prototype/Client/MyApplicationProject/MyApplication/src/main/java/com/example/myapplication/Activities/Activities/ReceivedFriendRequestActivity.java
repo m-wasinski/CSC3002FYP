@@ -9,6 +9,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.myapplication.R;
@@ -29,12 +30,17 @@ import com.google.gson.reflect.TypeToken;
 /**
  * Created by Michal on 10/02/14.
  */
-public class ReceivedFriendRequestDialogActivity extends BaseActivity implements View.OnClickListener,
+public class ReceivedFriendRequestActivity extends BaseActivity implements View.OnClickListener,
         WCFServiceCallback<Boolean, Void>, WCFImageRetrieved{
 
     private FriendRequest friendRequest;
 
     private ImageView profileImageView;
+
+    private ProgressBar progressBar;
+
+    private Button acceptButton;
+    private Button denyButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,12 +67,14 @@ public class ReceivedFriendRequestDialogActivity extends BaseActivity implements
         }
 
         // Initialise UI elements and setup their event handlers.
-        Button acceptButton = (Button) findViewById(R.id.FriendRequestReceivedActivityAcceptButton);
+        acceptButton = (Button) findViewById(R.id.FriendRequestReceivedActivityAcceptButton);
         acceptButton.setOnClickListener(this);
         acceptButton.setEnabled(friendRequest.getFriendRequestDecision() == FriendRequestDecisions.Undecided);
-        Button denyButton = (Button) findViewById(R.id.FriendRequestReceivedActivityDenyButton);
+
+        denyButton = (Button) findViewById(R.id.FriendRequestReceivedActivityDenyButton);
         denyButton.setOnClickListener(this);
         denyButton.setEnabled(friendRequest.getFriendRequestDecision() == FriendRequestDecisions.Undecided);
+
         TextView messageTextView = (TextView) findViewById(R.id.FriendRequestReceivedMessageTextView);
 
         Button showProfileButton = (Button) findViewById(R.id.FriendRequestReceivedViewProfileButton);
@@ -75,6 +83,8 @@ public class ReceivedFriendRequestDialogActivity extends BaseActivity implements
         headerTextView.setText(friendRequest.getFromUser().getUserName());
         messageTextView.setVisibility(friendRequest.getMessage() == null ? View.GONE : View.VISIBLE);
         messageTextView.setText(friendRequest.getMessage() == null ? "" : friendRequest.getMessage());
+
+        progressBar = (ProgressBar) findViewById(R.id.FriendRequestReceivedActivityProgressBar);
 
         profileImageView = (ImageView) findViewById(R.id.FriendRequestReceivedActivityProfileImageView);
         retrieveProfilePicture();
@@ -88,6 +98,7 @@ public class ReceivedFriendRequestDialogActivity extends BaseActivity implements
 
     private void submitDecision(int decision)
     {
+        progressBar.setVisibility(View.VISIBLE);
         friendRequest.setFriendRequestDecision(decision);
 
         new WcfPostServiceTask<FriendRequest>(this,
@@ -106,12 +117,17 @@ public class ReceivedFriendRequestDialogActivity extends BaseActivity implements
         switch(view.getId())
         {
             case R.id.FriendRequestReceivedViewProfileButton:
-                startActivity(new Intent(this, ProfileViewerActivity.class).putExtra(IntentConstants.USER, gson.toJson(friendRequest.getFromUser())));
+                Bundle bundle = new Bundle();
+                bundle.putInt(IntentConstants.PROFILE_VIEWER_MODE, IntentConstants.PROFILE_VIEWER_VIEWING);
+                bundle.putInt(IntentConstants.USER, friendRequest.getFromUser().getUserId());
+                startActivity(new Intent(this, ProfileViewerActivity.class).putExtras(bundle));
                 break;
             case R.id.FriendRequestReceivedActivityAcceptButton:
+                acceptButton.setEnabled(false);
                 submitDecision(FriendRequestDecisions.Accepted);
                 break;
             case R.id.FriendRequestReceivedActivityDenyButton:
+                denyButton.setEnabled(false);
                 submitDecision(FriendRequestDecisions.Denied);
                 break;
         }
@@ -120,6 +136,7 @@ public class ReceivedFriendRequestDialogActivity extends BaseActivity implements
     @Override
     public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter)
     {
+        progressBar.setVisibility(View.GONE);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             finish();

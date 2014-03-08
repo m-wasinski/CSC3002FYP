@@ -182,7 +182,7 @@ namespace FindNDriveServices2.ServiceUtils
                     NotificationMessage = string.Empty,
                     NotificationContentType = gcmNotificationType == GcmNotificationType.JourneyChatMessage ?
                                                   NotificationContentType.JourneyChatMessage : NotificationContentType.InstantMessenger,
-                    UserId = offlineUser.UserId,
+                    User = offlineUser,
                     ReceivedOnDate = DateTime.Now,
                     NotificationTitle = "New message",
                     TargetObjectId = targetObjectId
@@ -224,19 +224,18 @@ namespace FindNDriveServices2.ServiceUtils
             foreach (var user in users)
             {
                 this.findNDriveUnitOfWork.NotificationRepository.Add(
-
                     new Notification
-                    {
-                        UserId = user.UserId,
-                        NotificationTitle = notificationTitle,
-                        NotificationMessage = notificationMessage,
-                        CollapsibleKey = collapsibleKey,
-                        NotificationContentType = notificationContentType,
-                        Delivered = false,
-                        ProfilePictureId = profilePicture,
-                        ReceivedOnDate = DateTime.Now,
-                        NotificationType = notificationType,
-                        TargetObjectId = targetObjectId
+                        {
+                            User = user,
+                            NotificationTitle = notificationTitle,
+                            NotificationMessage = notificationMessage,
+                            CollapsibleKey = collapsibleKey,
+                            NotificationContentType = notificationContentType,
+                            Delivered = false,
+                            ProfilePictureId = profilePicture,
+                            ReceivedOnDate = DateTime.Now,
+                            NotificationType = notificationType,
+                            TargetObjectId = targetObjectId
                     });
             }
 

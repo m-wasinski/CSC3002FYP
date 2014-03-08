@@ -5,18 +5,14 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,15 +23,14 @@ import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.GeoAddress;
 import com.example.myapplication.domain_objects.Journey;
+import com.example.myapplication.domain_objects.JourneyTemplate;
 import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.dtos.JourneySearchDTO;
 import com.example.myapplication.enums.MarkerType;
 import com.example.myapplication.google_maps_utilities.GeocoderParams;
-import com.example.myapplication.interfaces.OptionsDialogDismissListener;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.GeocoderTask;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
-import com.example.myapplication.utilities.DialogCreator;
+import com.example.myapplication.factories.DialogFactory;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.Marker;
@@ -48,10 +43,9 @@ import java.util.Arrays;
 /**
  * This activity provides the user with the functionality to search for journeys in the database.
  * Users can specify the start and end locations of their desired journeys as well as various other advanced options such as Date, Time etc.
- * For the advanced options, please refer to the SearchMoreOptionsActivity class.
+ * For the advanced options, please refer to the SearchEditorStepTwoActivity class.
  **/
-public class SearchActivity extends BaseMapActivity implements WCFServiceCallback<ArrayList<Journey>, Void>,
-        OptionsDialogDismissListener, SearchMoreOptionsDialogFragment.sizeChangeListener, View.OnClickListener {
+public class SearchEditorStepOneActivity extends BaseMapActivity implements WCFServiceCallback<ArrayList<Journey>, Void>, View.OnClickListener {
 
     private Button searchButton;
 
@@ -62,19 +56,22 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
     private TextView departureTextView;
     private TextView destinationTextView;
 
-    private JourneySearchDTO journeySearchDTO;
+    private JourneyTemplate journeyTemplate;
 
     private final int METERS_IN_MILE = 1600;
 
-    private SearchMoreOptionsDialogFragment searchMoreOptionsDialogFragment;
+    private int mode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        //initialise variables.
-        journeySearchDTO = new JourneySearchDTO();
+        Bundle bundle = getIntent().getExtras();
+        mode = bundle.getInt(IntentConstants.SEARCH_MODE);
+
+        journeyTemplate = mode == IntentConstants.SEARCH_MODE_NEW ? journeyTemplate = new JourneyTemplate() :
+                (JourneyTemplate) gson.fromJson(bundle.getString(IntentConstants.JOURNEY_SEARCH_DTO), new TypeToken<JourneyTemplate>(){}.getType());
 
         //Initialise UI elements.
         progressBar = (ProgressBar) findViewById(R.id.SearchActivityProgressBar);
@@ -101,27 +98,40 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        switch(mode)
+        {
+            case IntentConstants.SEARCH_MODE_NEW:
+                setTitle("New search");
+                journeyTemplate.setPets(true);
+                journeyTemplate.setSmokers(true);
+                journeyTemplate.setVehicleType(-1);
+                break;
+            case IntentConstants.SEARCH_MODE_FROM_TEMPLATE:
+                setTitle(journeyTemplate.getAlias());
+                break;
+            case IntentConstants.CREATING_NEW_TEMPLATE:
+                setTitle("New template");
+                break;
+        }
+
+        if(mode == IntentConstants.SEARCH_MODE_FROM_TEMPLATE || mode == IntentConstants.EDITING_TEMPLATE)
+        {
+            destinationRelativeLayout.setVisibility(View.VISIBLE);
+            startGeocoderTask(MarkerType.Departure, journeyTemplate.getGeoAddresses().get(0).AddressLine, journeyTemplate.getDepartureRadius());
+            startGeocoderTask(MarkerType.Destination, journeyTemplate.getGeoAddresses().get(1).AddressLine, journeyTemplate.getDestinationRadius());
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId())
         {
-            case R.id.advanced_search:
-                searchMoreOptionsDialogFragment = new SearchMoreOptionsDialogFragment(SearchActivity.this, journeySearchDTO, this, this);
-                searchMoreOptionsDialogFragment.show(getFragmentManager(), "");
-                break;
             case R.id.help:
-                DialogCreator.showHelpDialog(this, "Finding journeys", getResources().getString(R.string.FindJourneysHelp));
+                DialogFactory.getHelpDialog(this, "Finding journeys", getResources().getString(R.string.FindJourneysHelp));
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.search_activity_menu, menu);
-        return super.onCreateOptionsMenu(menu);
     }
 
     /***
@@ -190,17 +200,6 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         new GeocoderTask(this, this, markerType, perimeter).execute(new GeocoderParams(address, null));
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-
-        if(searchMoreOptionsDialogFragment != null)
-        {
-            updateSizeOfOptionsDialog();
-        }
-
-        super.onWindowFocusChanged(hasFocus);
-    }
-
     /**
      * Initialises the map.
      **/
@@ -228,7 +227,7 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
         if(departureMarker == null || destinationMarker == null)
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("You must specify departure and destination points.")
+            builder.setMessage("You must specify departure and destination points to be able to proceed.")
                     .setCancelable(false)
                     .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -240,20 +239,20 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
             return;
         }
 
-        progressBar.setVisibility(View.VISIBLE);
-        searchButton.setEnabled(false);
-
-        // Build the journeySearchDTO object and send it to the web service.
-        journeySearchDTO.setGeoAddresses(new ArrayList<GeoAddress>(Arrays.asList(
+        // Build the journeyTemplate object and send it to the web service.
+        journeyTemplate.setGeoAddresses(new ArrayList<GeoAddress>(Arrays.asList(
                 new GeoAddress(departureMarker.getPosition().latitude, departureMarker.getPosition().longitude, departureMarker.getTitle(), 0),
                 new GeoAddress(destinationMarker.getPosition().latitude, destinationMarker.getPosition().longitude, destinationMarker.getTitle(), 1))));
 
-        journeySearchDTO.setDepartureRadius(departureRadius.getRadius() / METERS_IN_MILE);
-        journeySearchDTO.setDestinationRadius(destinationRadius.getRadius() / METERS_IN_MILE);
-        journeySearchDTO.setUserId(appManager.getUser().getUserId());
-        // All good, call the webservice to begin the search.
-        new WcfPostServiceTask<JourneySearchDTO>(this, getResources().getString(R.string.SearchForJourneysURL),
-                journeySearchDTO, new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
+        journeyTemplate.setDepartureRadius(departureRadius.getRadius() / METERS_IN_MILE);
+        journeyTemplate.setDestinationRadius(destinationRadius.getRadius() / METERS_IN_MILE);
+        journeyTemplate.setUserId(appManager.getUser().getUserId());
+
+        Bundle bundle = new Bundle();
+        bundle.putInt(IntentConstants.SEARCH_MODE, mode);
+        bundle.putString(IntentConstants.JOURNEY_SEARCH_DTO, gson.toJson(journeyTemplate));
+
+        startActivity(new Intent(this, SearchEditorStepTwoActivity.class).putExtras(bundle));
     }
 
     /**
@@ -274,7 +273,21 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
             }
             else
             {
-                Toast.makeText(this, "No journeys found!", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("No journeys matching your criteria were found. Would you like to create a new template and be notified when a journey like this becomes available?")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                createNewTemplate();
+                            }}).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+
+                AlertDialog alert = builder.create();
+                alert.show();
             }
         }
     }
@@ -302,14 +315,14 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
     }
 
     /**
-     * Once user clicks on on the the search results, they are transferred to the SearchResultsJourneyDetailsActivity.
+     * Once user clicks on on the the search results, they are transferred to the SearchResultDetailsActivity.
      * @param journey
      */
     private void showJourneyDetails(Journey journey)
     {
         Bundle bundle = new Bundle();
         bundle.putString(IntentConstants.JOURNEY, gson.toJson(journey));
-        startActivity(new Intent(this, SearchResultsJourneyDetailsActivity.class).putExtras(bundle));
+        startActivity(new Intent(this, SearchResultDetailsActivity.class).putExtras(bundle));
     }
 
     /**
@@ -356,67 +369,21 @@ public class SearchActivity extends BaseMapActivity implements WCFServiceCallbac
             alert.show();
         }
     }
-    /**
-     * Responsible for saving the journeySearchDTO object passed in
-     * from the Advanced search window and dismissing the dialog.
-     *
-     * @param journeySearchDTO - the current journeySearchDTO used to search for journeys.
-     **/
-    @Override
-    public void OnOptionsDialogDismiss(JourneySearchDTO journeySearchDTO) {
-        this.journeySearchDTO = journeySearchDTO;
 
-        if(searchMoreOptionsDialogFragment != null)
-        {
-            searchMoreOptionsDialogFragment.dismiss();
-            searchMoreOptionsDialogFragment = null;
-        }
-
-    }
-
-    /**
-     * Callback used to indicate that size of the advanced search dialog fragment has changed
-     * and that it must be re-measured.
-     **/
-    @Override
-    public void sizeChanged() {
-        if(searchMoreOptionsDialogFragment != null)
-        {
-            updateSizeOfOptionsDialog();
-        }
-    }
-
-    /**
-     * Simple formula to convert dip units (display-independent-pixels) to physical pixels.
-     * This is used in calculating the size of the advanced search window and is part of the workaround described below.
-     *
-     * @param dips - number of dips to be converted to physical pixels.
-     **/
-    private int convertDipToPixels(float dips)
+    private void createNewTemplate()
     {
-        return (int) (dips * getResources().getDisplayMetrics().density + 0.5f);
-    }
-
-    /**
-     * It's a know problem in Android that and instance of a Dialog Fragment window, which in this case is the advanced search window,
-     * do not resize properly to wrap the content and ignore the layout height attribute specified in the xml layout file.
-     * As a workaround to this issue to make sure the window resizes itself properly, I have created a callback which
-     * manually measures and recalculates the size of the window and applies the new values as using the .setLayout() method.
-     **/
-    private void updateSizeOfOptionsDialog()
-    {
-        if(searchMoreOptionsDialogFragment != null)
-        {
-            // To get the correct height, we must first measure the height of the window.
-            int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(ViewGroup.LayoutParams.MATCH_PARENT, View.MeasureSpec.UNSPECIFIED);
-            int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(ViewGroup.LayoutParams.WRAP_CONTENT, View.MeasureSpec.UNSPECIFIED);
-
-            TableLayout tableLayout = (TableLayout) searchMoreOptionsDialogFragment.getDialog().getWindow(). findViewById(R.id.SearchMoreOptionsFragmentDialogParentLayout);
-            tableLayout.measure(widthMeasureSpec, heightMeasureSpec);
-
-            // Apply the new measrued dimensions.
-            searchMoreOptionsDialogFragment.getDialog().getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, (tableLayout.getMeasuredHeight()+(8*convertDipToPixels(2))));
-        }
+        progressBar.setVisibility(View.VISIBLE);
+        new WcfPostServiceTask<JourneyTemplate>(this, getResources().getString(R.string.CreateNewJourneyTemplateURL),
+                journeyTemplate, new TypeToken<ServiceResponse<Boolean>>() {}.getType(), appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+            @Override
+            public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+                progressBar.setVisibility(View.GONE);
+                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
+                {
+                    Toast.makeText(getApplicationContext(), "New template was created successfully.", Toast.LENGTH_LONG).show();
+                }
+            }
+        }).execute();
     }
 
     /**

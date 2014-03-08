@@ -112,6 +112,11 @@ namespace DomainObjects.Constants
         /// <summary>
         /// The rating left.
         /// </summary>
-        RatingLeft = 19
+        RatingLeft = 19,
+
+        /// <summary>
+        /// The journey matching template offered.
+        /// </summary>
+        JourneyMatchingTemplateOffered = 20
     }
 }

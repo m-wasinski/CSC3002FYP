@@ -75,12 +75,12 @@
             android:maxLength="50"/>
 
         <TextView
-            android:id="@+id/infoTxtCredits"
+            android:id="@+id/RegistrationActivityTermsTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textAlignment="center"
+            android:gravity="center_horizontal"
             android:layout_marginTop="20dp"
+            android:background="@drawable/transparent_button_selector"
             android:text="By registering, you agree to the terms and conditions of the service."
             style="@style/ContentBody"/>
 

@@ -41,7 +41,7 @@ import java.text.DecimalFormat;
 /**
  * Created by Michal on 04/02/14.
  */
-public class SearchResultsJourneyDetailsActivity extends BaseMapActivity implements WCFServiceCallback<JourneyRequest, Void>,
+public class SearchResultDetailsActivity extends BaseMapActivity implements WCFServiceCallback<JourneyRequest, Void>,
         OnDrivingDirectionsRetrrievedListener, GoogleMap.OnMapLoadedCallback, WCFImageRetrieved, View.OnClickListener{
 
     private Journey journey;
@@ -141,8 +141,8 @@ public class SearchResultsJourneyDetailsActivity extends BaseMapActivity impleme
         journeyDriverTextView.setText(journey.getDriver().getUserName());
         journeyDateTextView.setText(DateTimeHelper.getSimpleDate(journey.getDateAndTimeOfDeparture()));
         journeyTimeTextView.setText(DateTimeHelper.getSimpleTime(journey.getDateAndTimeOfDeparture()));
-        journeySmokersTextView.setText(Utilities.translateBoolean(journey.isSmokersAllowed()));
-        journeyPetsTextView.setText(Utilities.translateBoolean(journey.isPetsAllowed()));
+        journeySmokersTextView.setText(Utilities.translateBoolean(journey.areSmokersAllowed()));
+        journeyPetsTextView.setText(Utilities.translateBoolean(journey.arePetsAllowed()));
         journeyVehicleTypeTextView.setText(vehicleTypes[journey.getVehicleType()]);
         journeySeatsAvailableTextView.setText(String.valueOf(journey.getAvailableSeats()));
         journeyFeeTextView.setText(("£"+new DecimalFormat("0.00").format(journey.getFee())) + (journey.getPreferredPaymentMethod() == null ? "" : ", " +journey.getPreferredPaymentMethod()));
@@ -220,7 +220,10 @@ public class SearchResultsJourneyDetailsActivity extends BaseMapActivity impleme
                 sendRequest();
                 break;
             case R.id.JourneyDetailsActivityJourneyDriverTableRow:
-                startActivity(new Intent(this, ProfileViewerActivity.class).putExtra(IntentConstants.USER, gson.toJson(journey.getDriver())));
+                Bundle bundle = new Bundle();
+                bundle.putInt(IntentConstants.PROFILE_VIEWER_MODE, IntentConstants.PROFILE_VIEWER_VIEWING);
+                bundle.putInt(IntentConstants.USER, journey.getDriver().getUserId());
+                startActivity(new Intent(this, ProfileViewerActivity.class).putExtras(bundle));
                 break;
         }
     }

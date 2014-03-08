@@ -16,6 +16,8 @@ namespace DomainObjects.Domains
     using System.Runtime.Serialization;
     using DomainObjects.Constants;
 
+    using FindNDriveServices2.DTOs;
+
     /// <summary>
     /// The car share.
     /// </summary>
@@ -65,7 +67,7 @@ namespace DomainObjects.Domains
         /// Gets or sets a value indicating whether pets allowed.
         /// </summary>
         [DataMember]
-        public bool PetsAllowed { get; set; }
+        public bool Pets { get; set; }
 
         /// <summary>
         /// Gets or sets the available seats.
@@ -76,14 +78,13 @@ namespace DomainObjects.Domains
         /// <summary>
         /// Gets or sets the participants.
         /// </summary>
-        [DataMember]
         public virtual ICollection<User> Participants { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether smokers allowed.
         /// </summary>
         [DataMember]
-        public bool SmokersAllowed { get; set; }
+        public bool Smokers { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether private.

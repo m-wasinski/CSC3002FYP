@@ -156,5 +156,38 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare)]
         ServiceResponse<bool> UpdateProfilePicture(ProfilePictureUpdaterDTO profilePictureUpdaterDTO);
+
+        /// <summary>
+        /// The update privacy settings.
+        /// </summary>
+        /// <param name="dto">
+        /// The dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebInvoke(
+            Method = "POST",
+            UriTemplate = "/updateprivacy",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        ServiceResponse<User> UpdatePrivacySettings(PrivacySettingsUpdaterDTO dto);
+
+        /// <summary>
+        /// The get user.
+        /// </summary>
+        /// <param name="dto">
+        /// The dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [WebInvoke(
+            Method = "POST",
+            UriTemplate = "/get",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        ServiceResponse<User> GetUser(UserRetrieverDTO dto);
     }
 }

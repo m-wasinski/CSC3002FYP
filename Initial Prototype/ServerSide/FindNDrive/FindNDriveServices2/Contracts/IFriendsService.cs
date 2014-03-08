@@ -86,5 +86,22 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare)]
         ServiceResponse<FriendRequest> GetFriendRequest(int id);
+
+        /// <summary>
+        /// The delete friend.
+        /// </summary>
+        /// <param name="friendDeletionDTO">
+        /// The friend deletion dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebInvoke(
+            Method = "POST",
+            UriTemplate = "/delete",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        ServiceResponse<bool> DeleteFriend(FriendDeletionDTO friendDeletionDTO);
     }
 }

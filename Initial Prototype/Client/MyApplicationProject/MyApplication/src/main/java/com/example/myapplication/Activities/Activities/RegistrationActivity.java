@@ -16,6 +16,7 @@ import com.example.myapplication.constants.SessionConstants;
 import com.example.myapplication.dtos.RegisterDTO;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
+import com.example.myapplication.factories.DialogFactory;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.utilities.Pair;
@@ -57,6 +58,8 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
 
         registerButton = (Button) findViewById(R.id.RegisterNewUserButton);
         registerButton.setOnClickListener(this);
+
+        findViewById(R.id.RegistrationActivityTermsTextView).setOnClickListener(this);
     }
 
     /**
@@ -71,7 +74,7 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
         {
             // Validation successful, call the webservice to create a new account.
             progressBar.setVisibility(View.VISIBLE);
-
+            registerButton.setEnabled(false);
             new WcfPostServiceTask<RegisterDTO>(this, getResources().getString(R.string.UserRegisterURL),
                     new RegisterDTO(passwordEditText.getText().toString(), confirmedPasswordEditText.getText().toString(),
                             new User(userNameEditText.getText().toString(),emailAddressEditText.getText().toString(), appManager.getRegistrationId())),
@@ -99,6 +102,10 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
             startActivity(new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
             finish();
         }
+        else
+        {
+            registerButton.setEnabled(true);
+        }
     }
 
     @Override
@@ -112,9 +119,9 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
         switch (item.getItemId()) {
             case R.id.login_menu_option:
                 openLoginActivity();
-            default:
-                return true;
         }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void openLoginActivity()
@@ -129,6 +136,10 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
         {
             case R.id.RegisterNewUserButton:
                 AttemptToRegister();
+                break;
+            case R.id.RegistrationActivityTermsTextView:
+                DialogFactory.getTermsAndConditionsDialog(this);
+                break;
         }
     }
 

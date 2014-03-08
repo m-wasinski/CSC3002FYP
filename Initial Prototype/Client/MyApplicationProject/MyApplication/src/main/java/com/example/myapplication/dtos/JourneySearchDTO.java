@@ -24,8 +24,8 @@ public class JourneySearchDTO {
     private double Fee;
     private double DestinationRadius;
 
-    private int Smokers;
-    private int Pets;
+    private boolean Smokers;
+    private boolean Pets;
     private int VehicleType;
     private ArrayList<GeoAddress> GeoAddresses;
 
@@ -129,11 +129,11 @@ public class JourneySearchDTO {
         return DepartureRadius;
     }
 
-    public int getPets() {
+    public boolean getPets() {
         return Pets;
     }
 
-    public int getSmokers() {
+    public boolean getSmokers() {
         return Smokers;
     }
 
@@ -141,11 +141,11 @@ public class JourneySearchDTO {
         return VehicleType;
     }
 
-    public void setSmokers(int smokers) {
+    public void setSmokers(boolean smokers) {
         Smokers = smokers;
     }
 
-    public void setPets(int pets) {
+    public void setPets(boolean pets) {
         Pets = pets;
     }
 

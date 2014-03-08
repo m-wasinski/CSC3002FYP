@@ -17,12 +17,14 @@
         android:layout_height="wrap_content"
         style="@style/LoginFields"
         android:layout_gravity="center_vertical"
+        android:textSize="24sp"
         android:text="#"
         android:id="@+id/LeaderboardListviewRowPositionTextView"/>
 
     <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
         android:id="@+id/LeaderboardListviewRowProfilePictureImageView"
         android:layout_marginLeft="10dip"
         android:src="@drawable/user_man"/>
@@ -77,6 +79,13 @@
                 android:id="@+id/LeaderboardListviewRowStarFiveImageView"/>
 
         </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/LoginFields"
+            android:text="votes: "
+            android:id="@+id/LeaderboardListviewRowVotesTextView"/>
 
     </LinearLayout>
 

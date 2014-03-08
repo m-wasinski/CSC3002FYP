@@ -20,7 +20,6 @@ import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.dtos.LoadRangeDTO;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -135,6 +134,9 @@ public class LeaderboardActivity extends BaseActivity implements WCFServiceCallb
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        startActivity(new Intent(this, ProfileViewerActivity.class).putExtra(IntentConstants.USER, new Gson().toJson(leaderboard.get(i))));
+        Bundle bundle = new Bundle();
+        bundle.putInt(IntentConstants.PROFILE_VIEWER_MODE, IntentConstants.PROFILE_VIEWER_VIEWING);
+        bundle.putInt(IntentConstants.USER, leaderboard.get(i).getUserId());
+        startActivity(new Intent(this, ProfileViewerActivity.class).putExtras(bundle));
     }
 }

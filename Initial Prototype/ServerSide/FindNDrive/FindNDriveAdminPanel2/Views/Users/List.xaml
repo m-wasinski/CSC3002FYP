@@ -4,10 +4,24 @@
            Title="{Binding WindowTitle}"
            Style="{DynamicResource CODE.Framework-Layout-ListPrimarySecondaryFormLayout}">
 
-    <TextBox Width="100" Height="30" mvvm:View.UIElementType="Secondary"></TextBox>
+    <mvvm:View UIElementType="Secondary" Style="{DynamicResource SimpleSearch}">
+
+        <Label>Search Term #1:</Label>
+        <TextBox Text="{Binding SearchTerm1}" />
+        <Label>Search Term #2:</Label>
+        <TextBox Text="{Binding SearchTerm2}" />
+        <Label>Search Term #3:</Label>
+        <TextBox Text="{Binding SearchTerm3}" />
+        <Label>Search Term #4:</Label>
+        <TextBox Text="{Binding SearchTerm4}" />
+        <Label>Search Term #5:</Label>
+        <TextBox Text="{Binding SearchTerm5}" />
+        <Button Command="{Binding SearchCustomers}"
+                Content="{Binding SearchCustomers.Caption}" />
+    </mvvm:View>
 
     <ListBox ItemsSource="{Binding Users}"
-             Style="{DynamicResource CustomerList2}"
+             Style="{DynamicResource CustomerList}"
              c:ListBoxEx.Command="{Binding EditCustomer}"
              mvvm:View.UIElementType="Primary"/>
     

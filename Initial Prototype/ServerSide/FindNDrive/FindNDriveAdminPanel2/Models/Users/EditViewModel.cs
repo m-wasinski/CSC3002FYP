@@ -12,6 +12,7 @@ namespace FindNDriveAdminPanel2.Models.Users
 
     using FindNDriveInfrastructureDataAccessLayer;
 
+
     public class EditViewModel : ViewModel
     {
         private readonly FindNDriveUnitOfWork findNDriveUnitOfWork;
@@ -39,7 +40,7 @@ namespace FindNDriveAdminPanel2.Models.Users
             var geoAddressRepository = new EntityFrameworkRepository<GeoAddress>(dbContext);
             var ratingsRepository = new EntityFrameworkRepository<Rating>(dbContext);
             var profilePictureRepository = new EntityFrameworkRepository<ProfilePicture>(dbContext);
-
+            var journeyTemplateRepository = new EntityFrameworkRepository<JourneyTemplate>(dbContext);
             this.findNDriveUnitOfWork = this.findNDriveUnitOfWork = new FindNDriveUnitOfWork(
                 dbContext,
                 userRepository,
@@ -52,7 +53,8 @@ namespace FindNDriveAdminPanel2.Models.Users
                 journeyMessageRepository,
                 geoAddressRepository,
                 ratingsRepository,
-                profilePictureRepository);
+                profilePictureRepository,
+                journeyTemplateRepository);
 
             Actions.Add(new ViewAction("Save", execute: (a, o) => Save(), category: "Customer"));
             Actions.Add(new CloseCurrentViewAction(this, beginGroup: true, category: "Customer"));
@@ -99,11 +101,11 @@ namespace FindNDriveAdminPanel2.Models.Users
         public string PhoneNumber { get; set; }
         public byte[] ProfilePicture { get; set; }
         public Status Status { get; set; }
-        public Gender Gender { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public Gender? Gender { get; set; }
+        public DateTime? DateOfBirth { get; set; }
 
         public DateTime MemberSince { get; set; }
         public DateTime LastLogon { get; set; }
-        public double AverageRating { get; set; }
+        public double? AverageRating { get; set; }
     }
 }

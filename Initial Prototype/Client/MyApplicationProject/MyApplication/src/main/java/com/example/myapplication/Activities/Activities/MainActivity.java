@@ -29,6 +29,8 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_main);
+        actionBar.setHomeButtonEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
         WcfConstants.DEV_MODE =true;
         // Check device for Play Services APK.
         if (!checkPlayServices()) {
@@ -65,7 +67,7 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        return false;
+        return true;
     }
 
     /**

@@ -65,6 +65,7 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
         }
 
         progressBar.setVisibility(View.VISIBLE);
+        loginButton.setEnabled(false);
 
         new WcfPostServiceTask<LoginDTO>(this, getResources().getString(R.string.UserManualLoginURL),
                 new LoginDTO(userName.getText().toString(), password.getText().toString(), appManager.getRegistrationId()), new TypeToken<ServiceResponse<User>>() {}.getType(),
@@ -96,9 +97,9 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
         switch (item.getItemId()) {
             case R.id.register_menu_option:
                 openRegistrationActivity();
-            default:
-                return true;
         }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -111,6 +112,10 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
             appManager.login(serviceResponse.Result);
             startActivity(new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
             finish();
+        }
+        else
+        {
+            loginButton.setEnabled(true);
         }
     }
 

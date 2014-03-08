@@ -93,52 +93,6 @@
                     android:orientation="vertical"
                     android:layout_marginTop="2sp"
                     android:clickable="true"
-                    android:background="@drawable/home_navigation_selector"
-                    android:id="@+id/OfferJourneyStepTwoActivityJourneyTypeRelativeLayout">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/OfferJourneyStepTwoActivityRepeatImageView"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/repeat"
-                        android:focusable="false"/>
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/downarrow"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="15sp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/OfferJourneyStepTwoActivityJourneyTypeLabel"
-                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityRepeatImageView"
-                        android:text="Regular/One time:"
-                        style="@style/LargeBlueHeader"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/OfferJourneyStepTwoActivityJourneyTypeTextView"
-                        android:text="One time"
-                        android:layout_marginLeft="10sp"
-                        android:layout_toRightOf="@+id/OfferJourneyStepTwoActivityRepeatImageView"
-                        android:layout_below="@+id/OfferJourneyStepTwoActivityJourneyTypeLabel"
-                        style="@style/RegularTextView"
-                        android:singleLine="true"/>
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginTop="2sp"
-                    android:clickable="true"
                     android:id="@+id/OfferJourneyStepTwoActivityJourneyDateRelativeLayout"
                     android:background="@drawable/home_navigation_selector">
 

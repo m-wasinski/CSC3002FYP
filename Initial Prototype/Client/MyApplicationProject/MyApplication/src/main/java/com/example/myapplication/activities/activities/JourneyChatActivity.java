@@ -29,7 +29,7 @@ import com.example.myapplication.utilities.DateTimeHelper;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.notification_management.NotificationProcessor;
-import com.example.myapplication.utilities.DialogCreator;
+import com.example.myapplication.factories.DialogFactory;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -115,7 +115,7 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
         switch (item.getItemId())
         {
             case R.id.help:
-                DialogCreator.showHelpDialog(this, "Journey chat room", getResources().getString(R.string.JourneyMessengerHelp));
+                DialogFactory.getHelpDialog(this, "Journey chat room", getResources().getString(R.string.JourneyMessengerHelp));
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -167,9 +167,9 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
         getUnreadMessages();
     }
 
-    /*
+    /**
      * This receiver listens for incoming journey chat messages.
-     */
+     **/
     private final BroadcastReceiver MessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

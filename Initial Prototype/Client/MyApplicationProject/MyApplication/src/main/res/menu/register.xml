@@ -1,6 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item android:id="@+id/help"
+        android:title="@string/Help"
+        android:icon="@drawable/help"
+        android:showAsAction="ifRoom"/>
+
     <item android:id="@+id/login_menu_option"
         android:title="@string/Login"
         app:showAsAction="never" />
@@ -9,9 +14,4 @@
         android:title="@string/About"
         app:showAsAction="never" />
 
-    <item android:id="@+id/help"
-        android:title="@string/Help"
-        android:icon="@drawable/help"
-        android:orderInCategory="999"
-        android:showAsAction="always"/>
 </menu>

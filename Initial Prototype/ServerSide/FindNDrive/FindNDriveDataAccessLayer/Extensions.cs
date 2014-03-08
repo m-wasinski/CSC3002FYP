@@ -46,9 +46,41 @@ namespace FindNDriveDataAccessLayer
         /// <returns>
         /// The <see cref="IQueryable"/>.
         /// </returns>
+        public static IQueryable<Journey> IncludeSearch(this IQueryable<Journey> queryable)
+        {
+            return
+                queryable.Include("Driver")
+                    .Include("Participants")
+                    .Include("GeoAddresses");
+        }
+
+
+        /// <summary>
+        /// The include all.
+        /// </summary>
+        /// <param name="queryable">
+        /// The queryable.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IQueryable"/>.
+        /// </returns>
         public static IQueryable<User> IncludeAll(this IQueryable<User> queryable)
         {
-            return queryable.Include("Friends").Include("Rating").Include("ProfilePicture");
+            return queryable.Include("Friends").Include("Rating").Include("ProfilePicture").Include("JourneyTemplates").Include("PrivacySettings");
+        }
+
+        /// <summary>
+        /// The include friends.
+        /// </summary>
+        /// <param name="queryable">
+        /// The queryable.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IQueryable"/>.
+        /// </returns>
+        public static IQueryable<User> IncludeFriends(this IQueryable<User> queryable)
+        {
+            return queryable.Include("Friends");
         }
 
         /// <summary>
@@ -101,6 +133,11 @@ namespace FindNDriveDataAccessLayer
         public static IQueryable<FriendRequest> IncludeAll(this IQueryable<FriendRequest> queryable)
         {
             return queryable.Include("FromUser").Include("ToUser");
+        }
+
+        public static IQueryable<JourneyTemplate> IncludeAll(this IQueryable<JourneyTemplate> queryable)
+        {
+            return queryable.Include("User").Include("GeoAddresses");
         }
     }
 }

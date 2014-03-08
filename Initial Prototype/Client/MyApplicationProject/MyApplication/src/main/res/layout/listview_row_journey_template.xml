@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="2sp"
+    android:background="#80151515">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ListViewRowJourneyTemplateFromToTextView"
+        android:layout_toLeftOf="@+id/ListViewRowJourneyTemplateArrowImageView"
+        android:paddingTop="10dip"
+        android:paddingBottom="10dip">
+
+        <TextView android:id="@+id/ListViewRowJourneyTemplateAliasTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:layout_marginTop="10dip"
+            android:layout_marginLeft="5sp"
+            style="@style/RegularTextView"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/ListViewRowJourneyTemplateFromToTextView"
+        android:layout_height="wrap_content"
+        android:id="@+id/ListViewRowJourneyTemplateDateLayout"
+        android:layout_marginTop="5dip"
+        android:gravity="right"
+        android:layout_marginLeft="15dip">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Created: "
+            android:textColor="#32B4E4"
+            android:layout_marginLeft="15dip"/>
+
+        <TextView android:id="@+id/ListViewRowJourneyTemplateCreatedDateTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/ContentBody"/>
+
+    </LinearLayout>
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/right_arrow"
+        android:layout_alignParentRight="true"
+        android:id="@+id/ListViewRowJourneyTemplateArrowImageView"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dip"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:background="#B7D8E8"
+        android:layout_below="@+id/ListViewRowJourneyTemplateDateLayout"/>
+
+</RelativeLayout>

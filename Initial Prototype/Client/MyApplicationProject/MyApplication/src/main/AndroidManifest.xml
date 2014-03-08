@@ -4,14 +4,6 @@
     android:versionCode="1"
     android:versionName="1.0">
 
-    <uses-sdk
-        android:minSdkVersion="11"
-        android:targetSdkVersion="19" />
-
-    <instrumentation
-        android:targetPackage="com.myapplication.tests"
-        android:name="android.test.InstrumentationTestRunner" />
-
     <!-- Permission to access the Internet -->
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -99,7 +91,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".activities.activities.SearchActivity"
+            android:name=".activities.activities.SearchEditorStepOneActivity"
             android:label="Find Journeys"
             android:screenOrientation="portrait"/>
 
@@ -130,7 +122,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".activities.activities.SearchResultsJourneyDetailsActivity"
+            android:name=".activities.activities.SearchResultDetailsActivity"
             android:label="Journey Details"
             android:screenOrientation="portrait"/>
 
@@ -140,13 +132,13 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".activities.activities.SendFriendRequestDialogActivity"
+            android:name=".activities.activities.SendFriendRequestActivity"
             android:label="Send friend request."
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Dialog"/>
 
         <activity
-            android:name=".activities.activities.ReceivedFriendRequestDialogActivity"
+            android:name=".activities.activities.ReceivedFriendRequestActivity"
             android:label="Received friend request."
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Dialog"/>
@@ -179,9 +171,28 @@
             android:screenOrientation="portrait"/>
 
         <activity
+            android:name=".activities.activities.SearchEditorStepTwoActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
             android:name=".activities.activities.LeaderboardActivity"
             android:label="Leaderboard"
             android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".activities.activities.MyJourneyTemplatesActivity"
+            android:label="My Templates"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".activities.activities.SearchTypeActivity"
+            android:label="Find Journeys"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".activities.activities.PrivacySettingsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Dialog"/>
 
         <receiver
             android:name=".google_cloud_messaging.GcmBroadcastReceiver"

@@ -125,6 +125,7 @@ namespace FindNDriveServices2.Services
 
             ratings.Add(ratingDTO.Score);
             driver.AverageRating = ratings.Average();
+            driver.VotesCount += 1;
 
             var newRating = new Rating
                                 {
@@ -185,6 +186,15 @@ namespace FindNDriveServices2.Services
             return ServiceResponseBuilder.Success(ratings);
         }
 
+        /// <summary>
+        /// The get leaderboard.
+        /// </summary>
+        /// <param name="loadRangeDTO">
+        /// The load range dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         public ServiceResponse<List<User>> GetLeaderboard(LoadRangeDTO loadRangeDTO)
         {
             if (!this.sessionManager.IsSessionValid())
@@ -192,14 +202,23 @@ namespace FindNDriveServices2.Services
                 return ServiceResponseBuilder.Unauthorised(new List<User>());
             }
 
-            var rating =
-                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                    .IncludeAll()
-                    .OrderByDescending(_ => _.AverageRating)
-                    .Skip(loadRangeDTO.Skip)
-                    .Take(loadRangeDTO.Take);
+            var users = (from user in this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+                                           .IncludeAll()
+                                           .OrderByDescending(_ => _.AverageRating)
+                                           .Skip(loadRangeDTO.Skip)
+                                           .Take(loadRangeDTO.Take).ToList()
+                         select
+                             new User
+                                 {
+                                     UserId = user.UserId,
+                                     FirstName = user.FirstName,
+                                     LastName = user.LastName,
+                                     UserName = user.UserName,
+                                     AverageRating = user.AverageRating,
+                                     VotesCount = user.VotesCount
+                                 }).ToList();
 
-            return ServiceResponseBuilder.Success(rating.ToList());
+            return ServiceResponseBuilder.Success(users);
         }
     }
 }

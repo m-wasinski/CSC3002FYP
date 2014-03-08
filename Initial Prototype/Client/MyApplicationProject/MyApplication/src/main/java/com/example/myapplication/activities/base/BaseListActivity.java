@@ -39,6 +39,10 @@ public class BaseListActivity extends ListActivity
         this.appManager = ((AppManager)getApplication());
         this.gson = new Gson();
         this.actionBar = getActionBar();
+        if(actionBar != null)
+        {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
@@ -59,8 +63,8 @@ public class BaseListActivity extends ListActivity
             case R.id.logout_menu_option:
                 appManager.logout(true, true);
                 break;
-            default:
-                return super.onOptionsItemSelected(item);
+            case android.R.id.home:
+                finish();
         }
 
         return super.onOptionsItemSelected(item);

@@ -27,7 +27,7 @@ import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.dtos.LoadRangeDTO;
 import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.utilities.DialogCreator;
+import com.example.myapplication.factories.DialogFactory;
 import com.example.myapplication.utilities.WakeLocker;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
@@ -112,7 +112,7 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
         switch (item.getItemId())
         {
             case R.id.help:
-                DialogCreator.showHelpDialog(this, "Your journeys.", getResources().getString(R.string.MyJourneysHelp));
+                DialogFactory.getHelpDialog(this, "Your journeys.", getResources().getString(R.string.MyJourneysHelp));
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -227,7 +227,7 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
         extras.putInt(IntentConstants.NEW_JOURNEY_REQUESTS,Integer.parseInt(((TextView)view.findViewById(R.id.MyCarSharesNumberOfUnreadRequestsTextView)).getText().toString()));
         extras.putString(IntentConstants.JOURNEY, gson.toJson(myJourneys.get(i)));
         startActivity(user.getUserId() == appManager.getUser().getUserId() ? new Intent(this, JourneyDetailsActivity.class).putExtras(extras) :
-                new Intent(this, SearchResultsJourneyDetailsActivity.class).putExtras(extras));
+                new Intent(this, SearchResultDetailsActivity.class).putExtras(extras));
     }
 
     @Override

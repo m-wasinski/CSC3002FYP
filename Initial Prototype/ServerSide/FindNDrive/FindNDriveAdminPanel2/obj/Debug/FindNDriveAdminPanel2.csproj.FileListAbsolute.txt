@@ -58,10 +58,8 @@ C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\obj\
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\obj\Debug\Themes\Metro\Metro-Fonts.baml
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\obj\Debug\Themes\Metro\Metro.baml
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\obj\Debug\Views\Users\Edit.baml
-C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\obj\Debug\Views\Users\List.Default.baml
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\obj\Debug\Views\Users\List.Metro.baml
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\obj\Debug\Views\Users\List.baml
-C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\obj\Debug\Views\Users\Search.Default.baml
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\obj\Debug\Views\Users\Search.Metro.baml
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\obj\Debug\Views\Users\Search.baml
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\obj\Debug\Views\User\Login.baml
@@ -73,3 +71,7 @@ C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\obj\
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\obj\Debug\FindNDriveAdminPanel2.csproj.GenerateResource.Cache
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\obj\Debug\FindNDriveAdminPanel2.exe
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\obj\Debug\FindNDriveAdminPanel2.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\bin\Debug\_ExternalComponents.dll
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\bin\Debug\_ExternalComponents.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveAdminPanel2\obj\Debug\FindNDriveAdminPanel2_MarkupCompile.lref

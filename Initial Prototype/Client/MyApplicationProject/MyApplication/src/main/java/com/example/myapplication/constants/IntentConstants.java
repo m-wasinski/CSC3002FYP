@@ -3,7 +3,8 @@ package com.example.myapplication.constants;
 /**
  * Created by Michal on 28/01/14.
  */
-public class IntentConstants {
+public class IntentConstants
+{
     public static final String GCM_NOTIFICATION_TYPE = "notificationType";
     public static final String NOTIFICATION_TITLE = "notification_title";
     public static final String NOTIFICATION_ID = "notification_id";
@@ -24,8 +25,20 @@ public class IntentConstants {
     public static final String NEW_JOURNEY_REQUESTS = "new_journey_requests";
 
     public static final String JOURNEY_CREATOR_MODE = "journey_creator_mode";
+    public static final String SEARCH_MODE = "search_mode";
+
     public static final int JOURNEY_CREATOR_MODE_EDITING = 0;
     public static final int JOURNEY_CREATOR_MODE_CREATING = 1;
 
+    public static final int SEARCH_MODE_NEW = 0;
+    public static final int SEARCH_MODE_FROM_TEMPLATE = 1;
+    public static final int CREATING_NEW_TEMPLATE = 2;
+    public static final int EDITING_TEMPLATE = 3;
+
     public static final String NOTIFICATION = "notification";
+
+    public static final String PROFILE_VIEWER_MODE = "profile_viewer_mode";
+
+    public static final int PROFILE_VIEWER_VIEWING = 1;
+    public static final int PROFILE_VIEWER_EDITING = 2;
 }

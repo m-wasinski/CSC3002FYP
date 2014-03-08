@@ -13,5 +13,5 @@
         android:title="@string/Help"
         android:icon="@drawable/help"
         android:orderInCategory="999"
-        android:showAsAction="always"/>
+        android:showAsAction="ifRoom"/>
 </menu>

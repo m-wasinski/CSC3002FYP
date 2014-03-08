@@ -25,7 +25,7 @@ namespace FindNDriveServices2.Contracts
         /// <summary>
         /// The search for journeys.
         /// </summary>
-        /// <param name="journeySearchDTO">
+        /// <param name="journeyTemplateDTO">
         /// The journey Search DTO.
         /// </param>
         /// <returns>
@@ -37,6 +37,6 @@ namespace FindNDriveServices2.Contracts
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/searchforjourney")]
-        ServiceResponse<List<Journey>> SearchForJourneys(JourneySearchDTO journeySearchDTO);
+        ServiceResponse<List<Journey>> SearchForJourneys(JourneyTemplateDTO journeyTemplateDTO);
     }
 }

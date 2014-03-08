@@ -16,8 +16,8 @@ import com.example.myapplication.activities.activities.JourneyDetailsActivity;
 import com.example.myapplication.activities.activities.JourneyRequestDialogActivity;
 import com.example.myapplication.activities.activities.MyNotificationsActivity;
 import com.example.myapplication.activities.activities.RatingsActivity;
-import com.example.myapplication.activities.activities.ReceivedFriendRequestDialogActivity;
-import com.example.myapplication.activities.activities.SearchResultsJourneyDetailsActivity;
+import com.example.myapplication.activities.activities.ReceivedFriendRequestActivity;
+import com.example.myapplication.activities.activities.SearchResultDetailsActivity;
 import com.example.myapplication.app_management.AppManager;
 import com.example.myapplication.broadcast_receivers.NotificationDeleteReceiver;
 import com.example.myapplication.constants.BroadcastTypes;
@@ -59,13 +59,13 @@ public class NotificationProcessor
 
                 new NotificationObjectRetriever<FriendRequest>().processNotification(context.getResources().getString(R.string.GetFriendRequestURL),
                         notification.TargetObjectId, new TypeToken<ServiceResponse<FriendRequest>>() {}.getType(),
-                        context, appManager, notification, ReceivedFriendRequestDialogActivity.class, IntentConstants.FRIEND_REQUEST, listener);
+                        context, appManager, notification, ReceivedFriendRequestActivity.class, IntentConstants.FRIEND_REQUEST, listener);
 
                 break;
             case NotificationContentTypes.NOTIFICATION_FRIEND_OFFERED_NEW_JOURNEY:
                 new NotificationObjectRetriever<Journey>().processNotification(context.getResources().getString(R.string.GetSingleJourneyURL),
                         notification.TargetObjectId, new TypeToken<ServiceResponse<Journey>>() {}.getType(),
-                        context, appManager, notification, SearchResultsJourneyDetailsActivity.class, IntentConstants.JOURNEY, listener);
+                        context, appManager, notification, SearchResultDetailsActivity.class, IntentConstants.JOURNEY, listener);
                 break;
             case NotificationContentTypes.NOTIFICATION_FRIEND_REQUEST_ACCEPTED:
 
@@ -119,6 +119,11 @@ public class NotificationProcessor
             case NotificationContentTypes.NOTIFICATION_RATING_RECEIVED:
                 new NotificationDisplayManager<User>().showNotification(appManager, context, notification, appManager.getUser(), RatingsActivity.class, IntentConstants.USER);
                 break;
+            case NotificationContentTypes.NOTIFICATION_JOURNEY_MATCHING_TEMPLATE_OFFERED:
+                new NotificationObjectRetriever<Journey>().processNotification(context.getResources().getString(R.string.GetSingleJourneyURL),
+                        notification.TargetObjectId, new TypeToken<ServiceResponse<Journey>>() {}.getType(),
+                        context, appManager, notification, SearchResultDetailsActivity.class, IntentConstants.JOURNEY, listener);
+                break;
         }
     }
 
@@ -160,6 +165,7 @@ public class NotificationProcessor
                             Bundle bundle = new Bundle();
                             bundle.putString(intentConstant, gson.toJson(serviceResponse.Result));
                             bundle.putString(IntentConstants.NOTIFICATION, gson.toJson(notification));
+                            ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(notification.CollapsibleKey);
                             listener.onNotificationTargetRetrieved(new Intent(context, pendingIntentClass).putExtras(bundle));
                         }
                         else

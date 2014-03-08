@@ -76,7 +76,7 @@ public class RatingsAdapter  extends ArrayAdapter<Rating>{
             public void onImageRetrieved(Bitmap bitmap) {
                 if(bitmap != null)
                 {
-                    holder.leftByImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/8, bitmap.getHeight()/8, false));
+                    holder.leftByImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/2, bitmap.getHeight()/2, false));
                 }
             }
         }).execute();

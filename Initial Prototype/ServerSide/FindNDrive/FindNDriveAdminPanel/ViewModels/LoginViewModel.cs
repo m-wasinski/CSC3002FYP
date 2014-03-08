@@ -52,7 +52,7 @@
             var geoAddressRepository = new EntityFrameworkRepository<GeoAddress>(dbContext);
             var ratingsRepository = new EntityFrameworkRepository<Rating>(dbContext);
             var profilePictureRepository = new EntityFrameworkRepository<ProfilePicture>(dbContext);
-
+            var journeyTemplateRepository = new EntityFrameworkRepository<JourneyTemplate>(dbContext);
             this.findNDriveUnitOfWork = new FindNDriveUnitOfWork(
                 dbContext,
                 userRepository,
@@ -65,7 +65,8 @@
                 journeyMessageRepository,
                 geoAddressRepository,
                 ratingsRepository,
-                profilePictureRepository);
+                profilePictureRepository,
+                journeyTemplateRepository);
         }
 
         public bool CanLogin

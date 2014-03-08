@@ -68,13 +68,13 @@ namespace DomainObjects.Domains
         [DataMember]
         [DataType(DataType.Date)]
         [Column(TypeName = "DateTime2")]
-        public DateTime DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
 
         /// <summary>
         /// Gets or sets the gender.
         /// </summary>
         [DataMember]
-        public virtual Gender Gender { get; set; }
+        public virtual Gender? Gender { get; set; }
 
         /// <summary>
         /// Gets or sets the gcm registration id.
@@ -124,7 +124,7 @@ namespace DomainObjects.Domains
         /// Gets or sets the average rating.
         /// </summary>
         [DataMember]
-        public double AverageRating { get; set; }
+        public double? AverageRating { get; set; }
 
         /// <summary>
         /// Gets or sets the unread messages count.
@@ -132,5 +132,33 @@ namespace DomainObjects.Domains
         [DataMember]
         [NotMapped]
         public int UnreadMessagesCount { get; set; }
+
+        /// <summary>
+        /// Gets or sets the journey templates.
+        /// </summary>
+        public virtual List<JourneyTemplate> JourneyTemplates { get; set; }
+
+        /// <summary>
+        /// Gets or sets the notifications.
+        /// </summary>
+        public virtual List<Notification> Notifications { get; set; }
+
+        /// <summary>
+        /// Gets or sets the privacy settings.
+        /// </summary>
+        [DataMember]
+        public PrivacySettings PrivacySettings { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether journeys visible.
+        /// </summary>
+        [DataMember]
+        public bool JourneysVisible { get; set; }
+
+        /// <summary>
+        /// Gets or sets the votes count.
+        /// </summary>
+        [DataMember]
+        public int VotesCount { get; set; }
     }
 }

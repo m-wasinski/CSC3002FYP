@@ -7,9 +7,11 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myapplication.R;
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.JourneyRequestDecisions;
@@ -20,25 +22,21 @@ import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
-import com.example.myapplication.R;
 import com.example.myapplication.notification_management.NotificationProcessor;
 import com.google.gson.reflect.TypeToken;
 
 /**
  * Created by Michal on 02/01/14.
  */
-public class JourneyRequestDialogActivity extends BaseActivity{
+public class JourneyRequestDialogActivity extends BaseActivity implements View.OnClickListener, WCFServiceCallback<JourneyRequest, Void>{
 
     private JourneyRequest journeyRequest;
 
-    private TextView headerTextView;
+    private ProgressBar progressBar;
 
     private Button acceptButton;
-    private Button denyButton;
-    private Button showProfileButton;
-    private Button sendFriendRequestButton;
 
-    private Notification notification;
+    private Button denyButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +47,7 @@ public class JourneyRequestDialogActivity extends BaseActivity{
         // Initialise local variables.
         Bundle bundle = getIntent().getExtras();
 
-        notification =  gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),  new TypeToken<Notification>() {}.getType());
+        Notification notification = gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION), new TypeToken<Notification>() {}.getType());
 
         journeyRequest = gson.fromJson(bundle.getString(IntentConstants.JOURNEY_REQUEST),  new TypeToken<JourneyRequest>() {}.getType());
 
@@ -64,20 +62,28 @@ public class JourneyRequestDialogActivity extends BaseActivity{
         }
 
         // Initialise UI elements.
-        headerTextView = (TextView) findViewById(R.id.JourneyRequestDialogActivityHeaderTextView);
-        headerTextView.setText("Request from " + journeyRequest.getFromUser().getFirstName() + " " + journeyRequest.getFromUser().getLastName() + " ("+journeyRequest.getFromUser().getUserName()+")");
 
+        //TextViews.
+        TextView headerTextView = (TextView) findViewById(R.id.JourneyRequestDialogActivityHeaderTextView);
+        headerTextView.setText("Request from " + journeyRequest.getFromUser().getFirstName() + " " + journeyRequest.getFromUser().getLastName() + " (" + journeyRequest.getFromUser().getUserName() + ")");
+
+        // Buttons
         acceptButton = (Button) findViewById(R.id.JourneyRequestDialogActivityAcceptButton);
+        acceptButton.setOnClickListener(this);
         acceptButton.setEnabled(journeyRequest.getDecision() == JourneyRequestDecisions.Undecided);
 
         denyButton = (Button) findViewById(R.id.JourneyRequestDialogActivityDenyButton);
+        denyButton.setOnClickListener(this);
         denyButton.setEnabled(journeyRequest.getDecision() == JourneyRequestDecisions.Undecided);
 
-        showProfileButton = (Button) findViewById(R.id.JourneyRequestDialogActivityShowProfileButton);
-        sendFriendRequestButton = (Button) findViewById(R.id.JourneyRequestDialogActivitySendFriendRequestButton);
+        Button showProfileButton = (Button) findViewById(R.id.JourneyRequestDialogActivityShowProfileButton);
+        showProfileButton.setOnClickListener(this);
 
-        // Setup event handlers.
-        setupEventHandlers();
+        Button sendFriendRequestButton = (Button) findViewById(R.id.JourneyRequestDialogActivitySendFriendRequestButton);
+        sendFriendRequestButton.setOnClickListener(this);
+
+        // Progressbar
+        progressBar = (ProgressBar) findViewById(R.id.JourneyRequestDialogActivityProgressBar);
 
         // In order to not be too narrow, set the window size based on the screen resolution:
         final int screen_width = getResources().getDisplayMetrics().widthPixels;
@@ -87,37 +93,9 @@ public class JourneyRequestDialogActivity extends BaseActivity{
         getWindow().setAttributes(layout);
     }
 
-    private void setupEventHandlers()
-    {
-        acceptButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                submitDecision(RequestDecision.ACCEPTED);
-            }
-        });
-
-        denyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                submitDecision(RequestDecision.DENIED);
-            }
-        });
-
-        sendFriendRequestButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showFriendRequestActivity();
-            }
-        });
-    }
-
-    private void showFriendRequestActivity()
-    {
-        startActivity(new Intent(this, SendFriendRequestDialogActivity.class).putExtra(IntentConstants.USER, gson.toJson(journeyRequest.getFromUser())));
-    }
-
     private void submitDecision(int decision)
     {
+        progressBar.setVisibility(View.VISIBLE);
         if(decision == RequestDecision.UNDECIDED)
         {
             return;
@@ -127,21 +105,40 @@ public class JourneyRequestDialogActivity extends BaseActivity{
 
         new WcfPostServiceTask<JourneyRequest>(this, getResources().getString(R.string.ProcessRequestDecisionURL),
                 journeyRequest,  new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback<JourneyRequest, Void>() {
-            @Override
-            public void onServiceCallCompleted(ServiceResponse<JourneyRequest> serviceResponse, Void parameter) {
-                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
-                {
-                    decisionSubmittedSuccessfully();
-                }
-            }
-        }).execute();
+                appManager.getAuthorisationHeaders(), this).execute();
     }
 
-    private void decisionSubmittedSuccessfully()
-    {
-        Toast toast = Toast.makeText(this, "Your decision was submitted successfully.", Toast.LENGTH_LONG);
-        toast.show();
-        finish();
+    @Override
+    public void onClick(View view) {
+        switch(view.getId())
+        {
+            case R.id.JourneyRequestDialogActivityAcceptButton:
+                acceptButton.setEnabled(false);
+                submitDecision(RequestDecision.ACCEPTED);
+                break;
+            case R.id.JourneyRequestDialogActivityDenyButton:
+                acceptButton.setEnabled(false);
+                submitDecision(RequestDecision.DENIED);
+                break;
+            case R.id.JourneyRequestDialogActivityShowProfileButton:
+                Bundle bundle = new Bundle();
+                bundle.putInt(IntentConstants.PROFILE_VIEWER_MODE, IntentConstants.PROFILE_VIEWER_VIEWING);
+                bundle.putInt(IntentConstants.USER, journeyRequest.getFromUser().getUserId());
+                startActivity(new Intent(this, ProfileViewerActivity.class).putExtras(bundle));
+                break;
+            case R.id.JourneyRequestDialogActivitySendFriendRequestButton:
+                startActivity(new Intent(this, SendFriendRequestActivity.class).putExtra(IntentConstants.USER, gson.toJson(journeyRequest.getFromUser())));
+                break;
+        }
+    }
+
+    @Override
+    public void onServiceCallCompleted(ServiceResponse<JourneyRequest> serviceResponse, Void parameter) {
+        progressBar.setVisibility(View.GONE);
+        if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
+        {
+            Toast.makeText(this, "Your decision was submitted successfully.", Toast.LENGTH_LONG).show();
+            finish();
+        }
     }
 }

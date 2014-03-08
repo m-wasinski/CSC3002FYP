@@ -24,8 +24,6 @@ public class WcfBaseServiceTask extends AsyncTask<Void, Void, Void> {
 
     protected Type type;
 
-
-
     protected WCFServiceCallback wcfServiceCallback;
 
     protected List<Pair> httpHeaders;

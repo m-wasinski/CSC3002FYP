@@ -172,9 +172,9 @@ namespace FindNDriveServices2.Services
                                          Driver = user,
                                          Fee = journeyDTO.Fee,
                                          Private = journeyDTO.Private,
-                                         SmokersAllowed = journeyDTO.SmokersAllowed,
+                                         Smokers = journeyDTO.Smokers,
                                          VehicleType = journeyDTO.VehicleType,
-                                         PetsAllowed = journeyDTO.PetsAllowed,
+                                         Pets = journeyDTO.Pets,
                                          JourneyStatus = JourneyStatus.OK,
                                          GeoAddresses = journeyDTO.GeoAddresses,
                                          CreationDate = DateTime.Now,
@@ -203,6 +203,18 @@ namespace FindNDriveServices2.Services
 
             this.notificationManager.SendGcmTickle(
                 user.Friends);
+
+            var interestedUsers =
+               SearchUtils.SearchForTemplates(newJourney, this.findNDriveUnitOfWork).Select(_ => _.User).ToList();
+
+            this.notificationManager.SendAppNotification(
+               interestedUsers,
+               string.Format("New journey found!."),"Journey matching your criteria has just been offered.", newJourney.Driver.UserId, newJourney.JourneyId,
+               NotificationType.Both,
+               NotificationContentType.FriendOfferedNewJourney, random.Next());
+
+            this.notificationManager.SendGcmTickle(
+               interestedUsers);
 
             return ServiceResponseBuilder.Success(true);
         }
@@ -294,9 +306,9 @@ namespace FindNDriveServices2.Services
             journey.Description = journeyDTO.Description;
             journey.Fee = journeyDTO.Fee;
             journey.Private = journeyDTO.Private;
-            journey.SmokersAllowed = journeyDTO.SmokersAllowed;
+            journey.Smokers = journeyDTO.Smokers;
             journey.VehicleType = journeyDTO.VehicleType;
-            journey.PetsAllowed = journeyDTO.PetsAllowed;
+            journey.Pets = journeyDTO.Pets;
             journey.JourneyStatus = journeyDTO.JourneyStatus;
             journey.PreferredPaymentMethod = journeyDTO.PreferredPaymentMethod;
 
@@ -490,6 +502,30 @@ namespace FindNDriveServices2.Services
                 new List<User> { journey.Driver });
 
             return ServiceResponseBuilder.Success(true);
+        }
+
+
+        public ServiceResponse<List<User>> GetPassengers(int journeyId)
+        {
+            if (!this.sessionManager.IsSessionValid())
+            {
+                return ServiceResponseBuilder.Unauthorised<List<User>>();
+            }
+
+            var journey =
+                this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
+                    .IncludeAll()
+                    .FirstOrDefault(_ => _.JourneyId == journeyId);
+
+            if (journey == null)
+            {
+                return ServiceResponseBuilder.Failure<List<User>>("Invalid journey id.");
+            }
+
+            var users =
+                (from user in journey.Participants select new User { UserId = user.UserId, FirstName = user.FirstName, LastName = user.LastName, UserName = user.UserName }).ToList(); 
+
+            return ServiceResponseBuilder.Success(users.ToList());
         }
     }
 }

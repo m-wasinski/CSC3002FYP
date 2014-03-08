@@ -1,8 +1,6 @@
 package com.example.myapplication.activities.activities;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,12 +24,14 @@ import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.domain_objects.JourneyRequest;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.dtos.JourneyUserDTO;
+import com.example.myapplication.factories.DialogFactory;
+import com.example.myapplication.interfaces.Interfaces;
 import com.example.myapplication.interfaces.OnDrivingDirectionsRetrrievedListener;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.notification_management.NotificationProcessor;
-import com.example.myapplication.utilities.DialogCreator;
 import com.example.myapplication.utilities.Utilities;
 import com.google.android.gms.maps.MapFragment;
 import com.google.gson.reflect.TypeToken;
@@ -53,13 +53,9 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
     private int newRequestsCount;
 
     private Button showRequestsButton;
-    private Button showPassengersButton;
     private Button enterChatButton;
     private Button makeChangeButton;
     private Button cancelJourneyButton;
-    private Button summaryButton;
-    private Button withdrawFromJourneyButton;
-    private Button rateDriverButton;
     private ProgressBar progressBar;
 
     TextView statusTextView;
@@ -102,7 +98,7 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
         showRequestsButton.setVisibility(journey.getDriver().getUserId() == appManager.getUser().getUserId() ? View.VISIBLE : View.GONE);
 
         // The journey passengers button.
-        showPassengersButton = (Button) findViewById(R.id.MyJourneyDetailsActivityShowPassengersButton);
+        Button showPassengersButton = (Button) findViewById(R.id.MyJourneyDetailsActivityShowPassengersButton);
         showPassengersButton.setOnClickListener(this);
 
         // The journey chat room button.
@@ -122,19 +118,19 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
         cancelJourneyButton.setOnClickListener(this);
 
         // The withdraw from journey button.
-        withdrawFromJourneyButton = (Button) findViewById(R.id.MyJourneyDetailsActivityWithdrawFromJourneyButton);
+        Button withdrawFromJourneyButton = (Button) findViewById(R.id.MyJourneyDetailsActivityWithdrawFromJourneyButton);
         withdrawFromJourneyButton.setEnabled(journey.getDriver().getUserId() != appManager.getUser().getUserId() && journey.getJourneyStatus() == JourneyStatus.OK);
         withdrawFromJourneyButton.setVisibility(journey.getDriver().getUserId() != appManager.getUser().getUserId() ? View.VISIBLE : View.GONE);
         withdrawFromJourneyButton.setOnClickListener(this);
 
         // The rate driver button.
-        rateDriverButton = (Button) findViewById(R.id.MyJourneyDetailsActivityRateDriverButton);
+        Button rateDriverButton = (Button) findViewById(R.id.MyJourneyDetailsActivityRateDriverButton);
         rateDriverButton.setEnabled(!(journey.getDriver().getUserId() == appManager.getUser().getUserId()));
         rateDriverButton.setVisibility(!(journey.getDriver().getUserId() == appManager.getUser().getUserId()) ? View.VISIBLE : View.GONE);
         rateDriverButton.setOnClickListener(this);
 
         // The journey summary button.
-        summaryButton = (Button) findViewById(R.id.MyJourneyDetailsActivityShowSummaryButton);
+        Button summaryButton = (Button) findViewById(R.id.MyJourneyDetailsActivityShowSummaryButton);
         summaryButton.setOnClickListener(this);
 
         progressBar = (ProgressBar) findViewById(R.id.JourneyDetailsActivityProgressBar);
@@ -173,7 +169,7 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
         switch (item.getItemId())
         {
             case R.id.help:
-                DialogCreator.showHelpDialog(this, "Journey details.", getResources().getString(R.string.JourneyDetailsHelp));
+                DialogFactory.getHelpDialog(this, "Journey details.", getResources().getString(R.string.JourneyDetailsHelp));
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -233,72 +229,32 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
         }
     }
 
-    private void showRateDriverActivity()
-    {
-        startActivity(new Intent(this, RateDriverActivity.class).putExtra(IntentConstants.JOURNEY, gson.toJson(journey)));
-    }
-
-    private void showSummaryActivity()
-    {
-        startActivity(new Intent(this, JourneySummaryActivity.class).putExtra(IntentConstants.JOURNEY, gson.toJson(journey)));
-    }
-
+    /**
+     * Asks the user to confirm their decision regarding leaving current journey.
+     */
     private void showWithdrawQuestionDialog()
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setTitle("Leave journey?");
-        builder.setMessage("Are you sure you want to withdraw yourself from this journey? You will be removed from the list of passengers.");
-
-        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int which) {
-                withdrawFromJourney();
-                dialog.dismiss();
-            }
-
-        });
-
-        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-
+        DialogFactory.getYesNoDialog(this, "Leave journey?",
+                "Are you sure you want to withdraw yourself from this journey? You will be removed from the list of passengers.",
+                new Interfaces.YesNoDialogPositiveButtonListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Do nothing
-                dialog.dismiss();
+            public void positiveButtonClicked() {
+                withdrawFromJourney();
             }
         });
-
-        AlertDialog alert = builder.create();
-        alert.show();
     }
 
+    /**
+     * Displays dialog allowing driver to confirm their decision regarding cancelling this journey.
+     */
     private void showCancelJourneyDialog()
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setTitle("Cancel journey?");
-        builder.setMessage("Are you sure you want to cancel this journey?");
-
-        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int which) {
-                cancelJourney();
-                dialog.dismiss();
-            }
-
-        });
-
-        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-
+        DialogFactory.getYesNoDialog(this, "Cancel journey?", "Are you sure you want to cancel this journey?", new Interfaces.YesNoDialogPositiveButtonListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Do nothing
-                dialog.dismiss();
+            public void positiveButtonClicked() {
+                cancelJourney();
             }
         });
-
-        AlertDialog alert = builder.create();
-        alert.show();
     }
 
     private void enterChatRoom() {
@@ -308,15 +264,19 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
         newMessagesCount = 0;
     }
 
-
+    /**
+     * Retrieves list of all journey requests for this journey from the web service.
+     */
     private void retrieveJourneyRequests()
     {
+        progressBar.setVisibility(View.VISIBLE);
         new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetRequestsForJourneyURL),
                 journey.getJourneyId(),
                 new TypeToken<ServiceResponse<ArrayList<JourneyRequest>>>() {}.getType(),
                 appManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyRequest>, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<ArrayList<JourneyRequest>> serviceResponse, Void parameter) {
+                progressBar.setVisibility(View.GONE);
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {
                     showRequests(serviceResponse.Result);
@@ -325,6 +285,11 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
         }).execute();
     }
 
+    /**
+     * Displays the list of all the requests for this journey in a separate dialog.
+     *
+     * @param requests - Arraylist of Journey Requests to be displayed.
+     */
     private void showRequests(final ArrayList<JourneyRequest> requests)
     {
         // Show the journey requests dialog.
@@ -344,8 +309,10 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     newRequestsCount = 0;
-                    showRequestDialog(requests.get(i));
                     requestsDialog.dismiss();
+                    Bundle bundle = new Bundle();
+                    bundle.putString(IntentConstants.JOURNEY_REQUEST, gson.toJson(requests.get(i)));
+                    startActivity(new Intent(JourneyDetailsActivity.this, JourneyRequestDialogActivity.class).putExtras(bundle));
                 }
             });
         }
@@ -353,34 +320,35 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
         requestsDialog.show();
     }
 
-    private void showRequestDialog(JourneyRequest journeyRequest)
-    {
-        Bundle bundle = new Bundle();
-        bundle.putString(IntentConstants.JOURNEY_REQUEST, gson.toJson(journeyRequest));
-        startActivity(new Intent(this, JourneyRequestDialogActivity.class).putExtras(bundle));
-    }
-
-    private void showPassengers()
+    /**
+     * Responsible for displaying a dialog window with the list of passengers participating in this journey.
+     *
+     * @param passengers - Arraylist of Users.
+     */
+    private void showPassengers(final ArrayList<User> passengers)
     {
         // Show the journey requests dialog.
         final Dialog passengersDialog = new Dialog(this);
         passengersDialog.setContentView(R.layout.dialog_show_passengers);
         passengersDialog.setTitle("Passengers");
         ListView passengersListView = (ListView) passengersDialog.findViewById(R.id.AlertDialogShowPassengersListView);
-        passengersListView.setVisibility(journey.getParticipants().size() == 0 ? View.GONE : View.VISIBLE);
+        passengersListView.setVisibility(passengers.size() == 0 ? View.GONE : View.VISIBLE);
         TextView noPassengers = (TextView) passengersDialog.findViewById(R.id.AlertDialogShowPassengersNoPassengersTextView);
-        noPassengers.setVisibility(journey.getParticipants().size() == 0 ? View.VISIBLE : View.GONE);
+        noPassengers.setVisibility(passengers.size() == 0 ? View.VISIBLE : View.GONE);
 
-        if(journey.getParticipants().size() > 0)
+        if(passengers.size() > 0)
         {
-            PassengersAdapter adapter = new PassengersAdapter(appManager, this, R.layout.listview_row_journey_passengers, journey.getParticipants());
+            PassengersAdapter adapter = new PassengersAdapter(appManager, this, R.layout.listview_row_journey_passengers, passengers);
             passengersListView.setAdapter(adapter);
             passengersListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
             {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l)
                 {
-                    startActivity(new Intent(passengersDialog.getContext(), ProfileViewerActivity.class).putExtra(IntentConstants.USER, gson.toJson(journey.getParticipants().get(i))));
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(IntentConstants.PROFILE_VIEWER_MODE, IntentConstants.PROFILE_VIEWER_VIEWING);
+                    bundle.putInt(IntentConstants.USER, passengers.get(i).getUserId());
+                    startActivity(new Intent(JourneyDetailsActivity.this, ProfileViewerActivity.class).putExtras(bundle));
                 }
             });
         }
@@ -388,28 +356,31 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
         passengersDialog.show();
     }
 
+    /**
+     * Starts a new ServiceTask whose responsibility is to remove the current user from the list of passengers.
+     **/
     private void withdrawFromJourney()
     {
+        progressBar.setVisibility(View.VISIBLE);
         new WcfPostServiceTask<JourneyUserDTO>(this, getResources().getString(R.string.WithdrawFromJourneyURL),
                 new JourneyUserDTO(journey.getJourneyId(), appManager.getUser().getUserId()),
                 new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
                 appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+                progressBar.setVisibility(View.GONE);
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {
-                    successfullyWithdrawnFromJourney();
+                    Toast.makeText(JourneyDetailsActivity.this, "You have been successfully withdrawn from this journey.", Toast.LENGTH_LONG).show();
+                    finish();
                 }
             }
         }).execute();
     }
 
-    private void successfullyWithdrawnFromJourney()
-    {
-        Toast.makeText(this, "You have been successfully withdrawn from this journey.", Toast.LENGTH_LONG).show();
-        finish();
-    }
-
+    /**
+     * Calls the web service to cancel the current journey.
+     **/
     private void cancelJourney()
     {
         progressBar.setVisibility(View.VISIBLE);
@@ -419,6 +390,7 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
                 appManager.getAuthorisationHeaders(), new WCFServiceCallback<Journey, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Journey> serviceResponse, Void parameter) {
+                progressBar.setVisibility(View.GONE);
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {
                     successfullyCancelledJourney(serviceResponse.Result);
@@ -427,6 +399,9 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
         }).execute();
     }
 
+    /**
+     * Called upon successful journey cancellation.
+     **/
     private void successfullyCancelledJourney(Journey journey)
     {
         progressBar.setVisibility(View.GONE);
@@ -437,6 +412,27 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
         statusTextView.setText("Cancelled");
     }
 
+    /**
+     * Calls the web service to retrieve the list of passengers participating in this journey.
+     **/
+    private void getPassengers()
+    {
+        progressBar.setVisibility(View.VISIBLE);
+        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetPassengersURL),
+                journey.getJourneyId(),
+                new TypeToken<ServiceResponse<ArrayList<User>>>() {}.getType(),
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<User>, Void>() {
+            @Override
+            public void onServiceCallCompleted(final ServiceResponse<ArrayList<User>> serviceResponse, Void parameter) {
+                progressBar.setVisibility(View.GONE);
+                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
+                {
+                    showPassengers(serviceResponse.Result);
+                }
+            }
+        }).execute();
+    }
+
     @Override
     public void onClick(View view) {
         switch(view.getId())
@@ -445,7 +441,7 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
                 retrieveJourneyRequests();
                 break;
             case R.id.MyJourneyDetailsActivityShowPassengersButton:
-                showPassengers();
+                getPassengers();
                 break;
             case R.id.MyJourneyDetailsActivityEnterChatButton:
                 enterChatRoom();
@@ -460,14 +456,17 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
                 showCancelJourneyDialog();
                 break;
             case R.id.MyJourneyDetailsActivityRateDriverButton:
-                showRateDriverActivity();
+                startActivity(new Intent(this, RateDriverActivity.class).putExtra(IntentConstants.JOURNEY, gson.toJson(journey)));
                 break;
             case R.id.MyJourneyDetailsActivityShowSummaryButton:
-                showSummaryActivity();
+                startActivity(new Intent(this, JourneySummaryActivity.class).putExtra(IntentConstants.JOURNEY, gson.toJson(journey)));
                 break;
         }
     }
 
+    /**
+     * Starts the first step of the journey editor giving driver the ability to make changes to the current journey.
+     **/
     private void startEditor()
     {
         Bundle bundle = new Bundle();

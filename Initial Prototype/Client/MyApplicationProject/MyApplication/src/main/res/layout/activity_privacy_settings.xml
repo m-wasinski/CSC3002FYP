@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:requiresFadingEdge="vertical">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:paddingTop="10dip"
+                android:clickable="true"
+                android:paddingBottom="10dip"
+                android:id="@+id/PrivacySettingsActivityEmailAddressTableRow"
+                android:background="@drawable/home_navigation_selector">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Email Address:"
+                    android:layout_weight="1"
+                    style="@style/LargeBlueHeader"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/PrivacySettingsActivityEmailAddressTextView"
+                    android:paddingLeft="10dip"
+                    android:text="private"
+                    android:layout_weight="1"
+                    style="@style/RegularTextView"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/downarrow"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:layout_marginTop="2sp"
+                android:paddingTop="10dip"
+                android:paddingBottom="10dip"
+                android:id="@+id/PrivacySettingsActivityGenderTableRow"
+                android:background="@drawable/home_navigation_selector">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gender:"
+                    android:layout_weight="1"
+                    style="@style/LargeBlueHeader"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/PrivacySettingsActivityGenderTextView"
+                    android:paddingLeft="10dip"
+                    android:text="private"
+                    android:layout_weight="1"
+                    style="@style/RegularTextView"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/downarrow"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:clickable="true"
+                android:paddingTop="10dip"
+                android:paddingBottom="10dip"
+                android:id="@+id/PrivacySettingsActivityDateOfBirthTableRow"
+                android:background="@drawable/home_navigation_selector">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Date of Birth:"
+                    android:layout_weight="1"
+                    style="@style/LargeBlueHeader"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/PrivacySettingsActivityDateOfBirthTextView"
+                    android:paddingLeft="10dip"
+                    android:text="private"
+                    android:layout_weight="1"
+                    style="@style/RegularTextView"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/downarrow"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:clickable="true"
+                android:paddingTop="10dip"
+                android:paddingBottom="10dip"
+                android:id="@+id/PrivacySettingsActivityPhoneNumberTableRow"
+                android:background="@drawable/home_navigation_selector">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Phone number:"
+                    style="@style/LargeBlueHeader"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/PrivacySettingsActivityPhoneNumberTextView"
+                    android:paddingLeft="10dip"
+                    android:layout_weight="1"
+                    android:text="private"
+                    style="@style/RegularTextView"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/downarrow"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:paddingTop="10dip"
+                android:paddingBottom="10dip"
+                android:background="@drawable/home_navigation_selector"
+                android:id="@+id/PrivacySettingsActivityRatingTableRow"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rating:"
+                    android:layout_weight="1"
+                    style="@style/LargeBlueHeader"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/PrivacySettingsActivityRatingsTextView"
+                    android:paddingLeft="10dip"
+                    android:layout_weight="1"
+                    android:text="private"
+                    style="@style/RegularTextView"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/downarrow"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:paddingTop="10dip"
+                android:paddingBottom="10dip"
+                android:background="@drawable/home_navigation_selector"
+                android:id="@+id/PrivacySettingsActivityJourneysTableRow"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Journeys:"
+                    android:layout_weight="1"
+                    style="@style/LargeBlueHeader"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/PrivacySettingsActivityJourneysTextView"
+                    android:paddingLeft="10dip"
+                    android:text="private"
+                    android:layout_weight="1"
+                    style="@style/RegularTextView"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/downarrow"
+                    android:layout_gravity="center_vertical"/>
+
+            </TableRow>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save changes"
+                android:minHeight="50dip"
+                android:id="@+id/PrivacySettingsActivitySaveChangesButton"
+                android:layout_marginTop="2dip"
+                android:background="@drawable/button_selector"
+                style="@style/UniversalButtonStyle"/>
+
+        </TableLayout>
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/PrivacySettingsActivityProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:indeterminateDrawable="@drawable/progress"
+        android:visibility="gone"/>
+
+</RelativeLayout>

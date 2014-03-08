@@ -378,6 +378,14 @@ namespace FindNDriveServices2.Services
                    .IncludeAll()
                    .FirstOrDefault(_ => _.JourneyRequestId == id);
 
+            request.FromUser = new User
+                                   {
+                                       UserId = request.FromUser.UserId,
+                                       UserName = request.FromUser.UserName,
+                                       FirstName = request.FromUser.FirstName,
+                                       LastName = request.FromUser.LastName
+                                   };
+
             return request == null ? ServiceResponseBuilder.Failure<JourneyRequest>("Request with this id does not exist.") : ServiceResponseBuilder.Success(request);
         }
     }

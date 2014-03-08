@@ -27,11 +27,11 @@ import com.google.gson.reflect.TypeToken;
 /**
  * Created by Michal on 10/02/14.
  */
-public class SendFriendRequestDialogActivity extends BaseActivity implements WCFServiceCallback<Boolean, Void> {
+public class SendFriendRequestActivity extends BaseActivity implements WCFServiceCallback<Boolean, Void>, View.OnClickListener {
 
     private EditText messageEditText;
 
-    private Button okButton;
+    private Button sendRequestButton;
 
     private TextView headerTextView;
 
@@ -52,32 +52,21 @@ public class SendFriendRequestDialogActivity extends BaseActivity implements WCF
 
         //Initialise UI elements.
         messageEditText = (EditText) findViewById(R.id.SendFriendRequestActivityMessageEditText);
-        okButton = (Button) findViewById(R.id.SendFriendRequestActivitySendButton);
+        sendRequestButton = (Button) findViewById(R.id.SendFriendRequestActivitySendButton);
+        sendRequestButton.setOnClickListener(this);
         headerTextView = (TextView) findViewById(R.id.SendFriendRequestActivityHeaderTextView);
         headerTextView.setText(headerTextView.getText().toString() + " " + targetUser.getFirstName() + " " + targetUser.getLastName() + " ("+targetUser.getUserName()+")");
         profileIconImageView = (ImageView) findViewById(R.id.AlertDialogSendFriendRequestImageView);
         progressBar = (ProgressBar) findViewById(R.id.SendFriendRequestProgressBar);
 
         retrieveProfilePicture();
-
-        // Setup event handlers.
-        setupEventHandlers();
-    }
-
-    private void setupEventHandlers()
-    {
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendFriendRequest();
-            }
-        });
     }
 
     private void sendFriendRequest()
     {
+        sendRequestButton.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
-        okButton.setEnabled(false);
+        sendRequestButton.setEnabled(false);
         FriendRequest friendRequest = new FriendRequest();
         friendRequest.setMessage(messageEditText.getText().toString());
         friendRequest.setToUser(targetUser);
@@ -110,5 +99,16 @@ public class SendFriendRequestDialogActivity extends BaseActivity implements WCF
                 }
             }
         }).execute();
+    }
+
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId())
+        {
+            case R.id.SendFriendRequestActivitySendButton:
+                sendFriendRequest();
+                break;
+        }
     }
 }

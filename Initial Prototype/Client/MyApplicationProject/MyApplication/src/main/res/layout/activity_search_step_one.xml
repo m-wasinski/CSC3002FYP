@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_margin="10sp"
+        android:padding="15sp"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:background="@drawable/home_navigation_selector"
+        android:id="@+id/SearchStepOneActivityNewSearchLayout">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/search"
+            android:layout_gravity="center"
+            style="@style/TransparentButton"
+            android:focusable="false"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start new search"
+            android:textSize="30sp"
+            style="@style/LoginFields"
+            android:focusable="false"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textSize="30sp"
+        android:textColor="#FFFFFF"
+        android:text="OR"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/SearchStepOneActivityTemplateLayout"
+        android:orientation="vertical"
+        android:layout_margin="10sp"
+        android:gravity="center"
+        android:padding="15sp"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:background="@drawable/home_navigation_selector">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/template"
+            android:layout_gravity="center"
+            style="@style/TransparentButton"
+            android:focusable="false"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search using template"
+            android:textSize="30sp"
+            android:gravity="bottom"
+            android:layout_gravity="center"
+            style="@style/LoginFields"
+            android:focusable="false"/>
+    </LinearLayout>
+
+</LinearLayout>

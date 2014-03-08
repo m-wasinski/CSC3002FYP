@@ -17,15 +17,9 @@
         IdontMind = 0,
 
         /// <summary>
-        /// The yes.
-        /// </summary>
-        [EnumMember(Value = "Yes")]
-        Yes = 1,
-
-        /// <summary>
         /// The no.
         /// </summary>
         [EnumMember(Value = "No")]
-        No = 2
+        No = 1
     }
 }

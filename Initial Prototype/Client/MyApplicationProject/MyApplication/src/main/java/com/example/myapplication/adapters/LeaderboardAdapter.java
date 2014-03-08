@@ -60,6 +60,7 @@ public class LeaderboardAdapter extends ArrayAdapter<User> {
             holder.profileImageView = (ImageView) currentRow.findViewById(R.id.LeaderboardListviewRowProfilePictureImageView);
             holder.nameTextView = (TextView) currentRow.findViewById(R.id.LeaderboardListviewRowNameTextView);
             holder.averageScoreTextView = (TextView) currentRow.findViewById(R.id.LeaderboardListviewRowAverageScoreTextView);
+            holder.votesTextView = (TextView) currentRow.findViewById(R.id.LeaderboardListviewRowVotesTextView);
 
             currentRow.setTag(holder);
         }
@@ -89,6 +90,7 @@ public class LeaderboardAdapter extends ArrayAdapter<User> {
         holder.nameTextView.setText(user.getFirstName() + " " + user.getLastName() + " (" + user.getUserName()+")");
         holder.averageScoreTextView.setText(String.valueOf(user.getAverageRating()));
         holder.positionTextView.setText(String.valueOf(position+1));
+        holder.votesTextView.setText("Votes: " + user.getVotesCount());
         return currentRow;
     }
 
@@ -104,5 +106,6 @@ public class LeaderboardAdapter extends ArrayAdapter<User> {
         TextView positionTextView;
         TextView nameTextView;
         TextView averageScoreTextView;
+        TextView votesTextView;
     }
 }

@@ -17,6 +17,7 @@
             android:orientation="vertical"
             android:clickable="true"
             android:layout_alignParentTop="true"
+            android:layout_marginTop="10dip"
             android:paddingTop="2dip"
             android:id="@+id/OfferJourneyStepOneActivityDepartureRelativeLayout"
             android:background="@drawable/home_navigation_selector">
@@ -191,7 +192,7 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/StepTwo"
+            android:text="Next"
             android:id="@+id/OfferJourneyStepOneActivityStepTwoButton"
             style="@style/UniversalButtonStyle"
             android:layout_alignParentBottom="true"

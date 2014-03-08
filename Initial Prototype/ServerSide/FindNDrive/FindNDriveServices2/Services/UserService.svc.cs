@@ -214,7 +214,21 @@ namespace FindNDriveServices2.Services
                                          {  
                                              ProfilePictureId = register.User.UserId,
                                              ProfilePictureBytes = arr
-                                         }
+                                         },
+                                         PrivacySettings = new PrivacySettings
+                                                               {
+                                                                   DateOfBirthPrivacyLevel = PrivacyLevel.Private,
+                                                                   EmailPrivacyLevel = PrivacyLevel.Private,
+                                                                   GenderPrivacyLevel = PrivacyLevel.Private,
+                                                                   JourneysPrivacyLevel = PrivacyLevel.Everyone,
+                                                                   PhoneNumberPrivacyLevel = PrivacyLevel.Private,
+                                                                   RatingPrivacyLevel = PrivacyLevel.Everyone
+                                                               },
+                                                               VotesCount = 0,
+                                                               DateOfBirth = null,
+                                                               Gender = Gender.NotAvailable,
+                                                               PhoneNumber = null,
+                                                               Status = Status.Online                                               
                 };
 
                 // Check if another user has been logged on on the same device before.
@@ -409,7 +423,92 @@ namespace FindNDriveServices2.Services
 
             return ServiceResponseBuilder.Success(true);
         }
-    }
 
+        public ServiceResponse<User> UpdatePrivacySettings(PrivacySettingsUpdaterDTO dto)
+        {
+            if (!this.sessionManager.IsSessionValid())
+            {
+                return ServiceResponseBuilder.Unauthorised<User>();
+            }
+
+            var user =
+                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+                    .IncludeAll()
+                    .FirstOrDefault(_ => _.UserId == dto.UserId);
+
+            if (user == null)
+            {
+                return ServiceResponseBuilder.Failure<User>("User with this id does not exist.");
+            }
+
+            user.PrivacySettings.EmailPrivacyLevel = dto.EmailPrivacyLevel;
+            user.PrivacySettings.GenderPrivacyLevel = dto.GenderPrivacyLevel;
+            user.PrivacySettings.DateOfBirthPrivacyLevel = dto.DateOfBirthPrivacyLevel;
+            user.PrivacySettings.PhoneNumberPrivacyLevel = dto.PhoneNumberPrivacyLevel;
+            user.PrivacySettings.RatingPrivacyLevel = dto.RatingPrivacyLevel;
+            user.PrivacySettings.JourneysPrivacyLevel = dto.JourneysPrivacyLevel;
+
+            this.findNDriveUnitOfWork.Commit();
+
+            return ServiceResponseBuilder.Success(user);
+        }
+
+        public ServiceResponse<User> GetUser(UserRetrieverDTO dto)
+        {
+            if (!this.sessionManager.IsSessionValid())
+            {
+                return ServiceResponseBuilder.Unauthorised<User>();
+            }
+
+            var retrievingUser =
+                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+                    .IncludeAll()
+                    .FirstOrDefault(_ => _.UserId == dto.RetrievingUserId);
+
+            if (retrievingUser == null)
+            {
+                return ServiceResponseBuilder.Failure<User>("User with this id does not exist.");
+            }
+
+            var targetUser =
+                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+                    .IncludeAll()
+                    .FirstOrDefault(_ => _.UserId == dto.TargetUserId);
+
+            if (targetUser == null)
+            {
+                return ServiceResponseBuilder.Failure<User>("User with this id does not exist.");
+            }
+
+            var friend = targetUser.Friends.Select(_ => _.UserId).Contains(retrievingUser.UserId);
+
+            return ServiceResponseBuilder.Success(new User()
+                                            {
+                                                UserId = targetUser.UserId,
+                                                UserName = targetUser.UserName,
+                                                FirstName = targetUser.FirstName,
+                                                LastName = targetUser.LastName,
+                                                LastLogon = targetUser.LastLogon,
+                                                MemberSince = targetUser.MemberSince,
+
+                                                AverageRating = targetUser.PrivacySettings.RatingPrivacyLevel == PrivacyLevel.Everyone ? targetUser.AverageRating : 
+                                                targetUser.PrivacySettings.RatingPrivacyLevel == PrivacyLevel.FriendsOnly && friend ? targetUser.AverageRating : -1,
+
+                                                EmailAddress = targetUser.PrivacySettings.EmailPrivacyLevel == PrivacyLevel.Everyone ? targetUser.EmailAddress :
+                                                targetUser.PrivacySettings.RatingPrivacyLevel == PrivacyLevel.FriendsOnly && friend ? targetUser.EmailAddress : null,
+
+                                                Gender = targetUser.PrivacySettings.GenderPrivacyLevel == PrivacyLevel.Everyone ? targetUser.Gender :
+                                                targetUser.PrivacySettings.GenderPrivacyLevel == PrivacyLevel.FriendsOnly && friend ? targetUser.Gender : Gender.NotAvailable,
+
+                                                DateOfBirth = targetUser.PrivacySettings.DateOfBirthPrivacyLevel == PrivacyLevel.Everyone ? targetUser.DateOfBirth :
+                                                targetUser.PrivacySettings.DateOfBirthPrivacyLevel == PrivacyLevel.FriendsOnly && friend ? targetUser.DateOfBirth : null,
+
+                                                PhoneNumber = targetUser.PrivacySettings.PhoneNumberPrivacyLevel == PrivacyLevel.Everyone ? targetUser.PhoneNumber :
+                                                targetUser.PrivacySettings.PhoneNumberPrivacyLevel == PrivacyLevel.FriendsOnly && friend ? targetUser.PhoneNumber : null,
+
+                                                JourneysVisible = targetUser.PrivacySettings.JourneysPrivacyLevel == PrivacyLevel.Everyone || (targetUser.PrivacySettings.JourneysPrivacyLevel == PrivacyLevel.FriendsOnly && friend),
+                                            });
+        }
+    }
 }
 

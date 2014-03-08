@@ -40,12 +40,8 @@ public class Journey {
         AvailableSeats = availableSeats;
     }
 
-    public void setParticipants(ArrayList<User> participants) {
-        Participants = participants;
-    }
-
     public void setSmokersAllowed(boolean smokersAllowed) {
-        SmokersAllowed = smokersAllowed;
+        Smokers = smokersAllowed;
     }
 
     public void setVehicleType(int vehicleType) {
@@ -53,19 +49,11 @@ public class Journey {
     }
 
     public void setPetsAllowed(boolean petsAllowed) {
-        PetsAllowed = petsAllowed;
+        Pets = petsAllowed;
     }
 
     public void setPrivate(boolean aPrivate) {
         Private = aPrivate;
-    }
-
-    public void setUnreadRequestsCount(int unreadRequestsCount) {
-        UnreadRequestsCount = unreadRequestsCount;
-    }
-
-    public void setCreationDate(String creationDate) {
-        CreationDate = creationDate;
     }
 
     public void setPreferredPaymentMethod(String preferredPaymentMethod) {
@@ -104,12 +92,12 @@ public class Journey {
         return VehicleType;
     }
 
-    public boolean isPetsAllowed() {
-        return PetsAllowed;
+    public boolean arePetsAllowed() {
+        return Pets;
     }
 
-    public boolean isSmokersAllowed() {
-        return SmokersAllowed;
+    public boolean areSmokersAllowed() {
+        return Smokers;
     }
 
     public int getAvailableSeats() {
@@ -136,14 +124,10 @@ public class Journey {
         return Driver;
     }
 
-    public ArrayList<User> getParticipants() {
-        return Participants;
-    }
-
     private int AvailableSeats;
     private ArrayList<User> Participants;
-    private boolean SmokersAllowed;
-    private boolean PetsAllowed;
+    private boolean Smokers;
+    private boolean Pets;
     private int VehicleType;
     private boolean Private;
     private int UnreadRequestsCount;

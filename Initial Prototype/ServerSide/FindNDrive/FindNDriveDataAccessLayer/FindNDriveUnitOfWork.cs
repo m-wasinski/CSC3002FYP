@@ -83,7 +83,12 @@ namespace FindNDriveDataAccessLayer
         /// <summary>
         /// Gets or sets the profile pictures repository.
         /// </summary>
-        public IRepository<ProfilePicture> ProfilePicturesRepository { get; set; } 
+        public IRepository<ProfilePicture> ProfilePicturesRepository { get; set; }
+
+        /// <summary>
+        /// Gets or sets the journey template repository.
+        /// </summary>
+        public IRepository<JourneyTemplate> JourneyTemplateRepository { get; set; } 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FindNDriveUnitOfWork"/> class.
@@ -130,7 +135,8 @@ namespace FindNDriveDataAccessLayer
             IRepository<JourneyMessage> journeyMessageRepository,
             IRepository<GeoAddress> geoAddressRepository,
             IRepository<Rating> ratingsRepository,
-            IRepository<ProfilePicture> profilePicturesRepository)
+            IRepository<ProfilePicture> profilePicturesRepository,
+            IRepository<JourneyTemplate> journeyTemplateRepository)
         {
             this._dbContext = dbContext;
             this.UserRepository = userRepository;
@@ -144,6 +150,8 @@ namespace FindNDriveDataAccessLayer
             this.GeoAddressRepository = geoAddressRepository;
             this.RatingsRepository = ratingsRepository;
             this.ProfilePicturesRepository = profilePicturesRepository;
+            this.JourneyMessageRepository = journeyMessageRepository;
+            this.JourneyTemplateRepository = journeyTemplateRepository;
         }
 
         /// <summary>

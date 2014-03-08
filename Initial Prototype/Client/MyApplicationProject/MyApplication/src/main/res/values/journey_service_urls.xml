@@ -7,4 +7,5 @@
     <string name="EditJourneyURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyService.svc/edit</string>
     <string name="CancelJourneyURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyService.svc/cancel</string>
     <string name="WithdrawFromJourneyURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyService.svc/withdraw</string>
+    <string name="GetPassengersURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyService.svc/getpassengers</string>
 </resources>

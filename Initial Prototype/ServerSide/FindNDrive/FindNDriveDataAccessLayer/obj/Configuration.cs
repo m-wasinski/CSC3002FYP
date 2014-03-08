@@ -103,7 +103,17 @@ namespace FindNDriveDataAccessLayer.Migrations
                 {
                     ProfilePictureBytes = arr,
                     ProfilePictureId = 1
-                }
+                },
+                PrivacySettings = new PrivacySettings
+                                      {
+                                          DateOfBirthPrivacyLevel = PrivacyLevel.Private,
+                                          GenderPrivacyLevel = PrivacyLevel.Private,
+                                          EmailPrivacyLevel = PrivacyLevel.Private,
+                                          JourneysPrivacyLevel = PrivacyLevel.Private,
+                                          PhoneNumberPrivacyLevel = PrivacyLevel.Private,
+                                          RatingPrivacyLevel = PrivacyLevel.Private,
+                                      },
+               PhoneNumber = "N/A"              
             };
 
             context.User.AddOrUpdate(_ => _.UserId, administrator);
@@ -157,6 +167,17 @@ namespace FindNDriveDataAccessLayer.Migrations
                                          ProfilePictureBytes = arr,
                                          ProfilePictureId = 2
                                      }
+                                     ,
+                PrivacySettings = new PrivacySettings
+                {
+                    DateOfBirthPrivacyLevel = PrivacyLevel.Everyone,
+                    GenderPrivacyLevel = PrivacyLevel.Everyone,
+                    EmailPrivacyLevel = PrivacyLevel.Everyone,
+                    JourneysPrivacyLevel = PrivacyLevel.Everyone,
+                    PhoneNumberPrivacyLevel = PrivacyLevel.Everyone,
+                    RatingPrivacyLevel = PrivacyLevel.Everyone,
+                },
+                PhoneNumber = "N/A"              
             };
 
             context.User.AddOrUpdate(_ => _.UserId, participant1);
@@ -190,6 +211,17 @@ namespace FindNDriveDataAccessLayer.Migrations
                     ProfilePictureBytes = arr,
                     ProfilePictureId = 3
                 }
+                ,
+                PrivacySettings = new PrivacySettings
+                {
+                    DateOfBirthPrivacyLevel = PrivacyLevel.Everyone,
+                    GenderPrivacyLevel = PrivacyLevel.Everyone,
+                    EmailPrivacyLevel = PrivacyLevel.Everyone,
+                    JourneysPrivacyLevel = PrivacyLevel.Everyone,
+                    PhoneNumberPrivacyLevel = PrivacyLevel.Everyone,
+                    RatingPrivacyLevel = PrivacyLevel.Everyone,
+                },
+                PhoneNumber = "N/A"              
             };
 
             context.User.AddOrUpdate(_ => _.UserId, participant2);
@@ -223,8 +255,19 @@ namespace FindNDriveDataAccessLayer.Migrations
                     ProfilePictureBytes = arr,
                     ProfilePictureId = 4
                 }
+                ,
+                PrivacySettings = new PrivacySettings
+                {
+                    DateOfBirthPrivacyLevel = PrivacyLevel.Everyone,
+                    GenderPrivacyLevel = PrivacyLevel.Everyone,
+                    EmailPrivacyLevel = PrivacyLevel.Everyone,
+                    JourneysPrivacyLevel = PrivacyLevel.Everyone,
+                    PhoneNumberPrivacyLevel = PrivacyLevel.Everyone,
+                    RatingPrivacyLevel = PrivacyLevel.Everyone,
+                },
+                PhoneNumber = "N/A"              
             };
-
+            context.User.AddOrUpdate(_ => _.UserId, driver);
             context.SaveChanges();
 
             WebSecurity.CreateUserAndAccount(driver.UserName, "p");
@@ -250,7 +293,7 @@ namespace FindNDriveDataAccessLayer.Migrations
              
             context.SaveChanges();
 
-            var geoAddress1 = new GeoAddress { AddressLine = "Dublin City Centre", Latitude = 53.3478, Longitude = -6.2597, Order = 0};
+            /*var geoAddress1 = new GeoAddress { AddressLine = "Dublin City Centre", Latitude = 53.3478, Longitude = -6.2597, Order = 0};
             var geoAddress2 = new GeoAddress { AddressLine = "Warrenpoint City Centre", Latitude = 54.09900, Longitude = -6.24900, Order = 1 };
             var geoAddress3 = new GeoAddress { AddressLine = "Belfast City Centre", Latitude = 54.5970, Longitude = -5.9300, Order = 2};
 
@@ -265,7 +308,7 @@ namespace FindNDriveDataAccessLayer.Migrations
                             Description = "Free ride to Dublin!",
                             Fee = 0.00,
                             Driver = driver,
-                            SmokersAllowed = false,
+                            //Smokers = false,
                             JourneyStatus = JourneyStatus.OK,
                             CreationDate = DateTime.Now.Subtract(TimeSpan.FromDays(i)),
                             PreferredPaymentMethod = string.Empty,
@@ -287,7 +330,7 @@ namespace FindNDriveDataAccessLayer.Migrations
                         Description = "London to Manchester",
                         Fee = 0.00,
                         Driver = driver,
-                        SmokersAllowed = false,
+                        //Smokers = false,
                         JourneyStatus = JourneyStatus.OK,
                         CreationDate = DateTime.Now,
                         PreferredPaymentMethod = string.Empty,
@@ -295,7 +338,7 @@ namespace FindNDriveDataAccessLayer.Migrations
                     });
             }
 
-            context.SaveChanges();
+            context.SaveChanges();*/
         }
 
         private void AddNotifications(ApplicationContext context)
@@ -305,8 +348,8 @@ namespace FindNDriveDataAccessLayer.Migrations
                 context.Notifications.AddOrUpdate(
                     new Notification()
                         {
-                            UserId = 4,
-                            ProfilePictureId = 4,
+                            UserId = 3,
+                            ProfilePictureId = 3,
                             NotificationType = NotificationType.App,
                             ReceivedOnDate = DateTime.Now,
                             NotificationMessage =

@@ -141,5 +141,13 @@ namespace FindNDriveServices2.Contracts
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/cancel")]
         ServiceResponse<Journey> CancelJourney(JourneyUserDTO journeyUserDTO);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/getpassengers")]
+        ServiceResponse<List<User>> GetPassengers(int journeyId);
     }
 }

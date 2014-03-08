@@ -58,14 +58,6 @@ namespace FindNDriveServices2.Services
         /// <summary>
         /// Initializes a new instance of the <see cref="FriendsService"/> class.
         /// </summary>
-        public FriendsService()
-        {
-            
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FriendsService"/> class.
-        /// </summary>
         /// <param name="findNDriveUnitOfWork">
         /// The find n drive unit of work.
         /// </param>
@@ -307,18 +299,26 @@ namespace FindNDriveServices2.Services
                 return ServiceResponseBuilder.Unauthorised(new List<User>());
             }
 
-            var user = this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                .IncludeAll()
+            var currentUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+                .IncludeFriends()
                 .FirstOrDefault(_ => _.UserId == userId);
 
-            if (user == null)
+            if (currentUser == null)
             {
                 return ServiceResponseBuilder.Failure<List<User>>("Invalid user id");
             }
 
-            var friends =
-                user
-                    .Friends.ToList();
+            var friends = (from user in currentUser.Friends.ToList()
+                            select
+                             new User
+                             {
+                                 UserId = user.UserId,
+                                 FirstName = user.FirstName,
+                                 LastName = user.LastName,
+                                 UserName = user.UserName,
+                                 Status = user.Status,
+                                 UnreadMessagesCount = 0
+                             }).ToList();
 
             friends.ForEach(
                 delegate(User u)
@@ -337,8 +337,56 @@ namespace FindNDriveServices2.Services
             }
 
             var friendRequest = this.findNDriveUnitOfWork.FriendRequestsRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.FriendRequestId == id);
+            
+            if (friendRequest == null)
+            {
+                return ServiceResponseBuilder.Failure<FriendRequest>("Invalid friend request id");
+            }
 
-            return friendRequest == null ? ServiceResponseBuilder.Failure<FriendRequest>("Friend request with this id does not exist.") : ServiceResponseBuilder.Success(friendRequest);
+            friendRequest.FromUser = new User
+                                         {
+                                             UserId = friendRequest.FromUser.UserId,
+                                             UserName = friendRequest.FromUser.UserName,
+                                             FirstName = friendRequest.FromUser.FirstName,
+                                             LastName = friendRequest.FromUser.LastName
+                                         };
+            return ServiceResponseBuilder.Success(friendRequest);
+        }
+
+        public ServiceResponse<bool> DeleteFriend(FriendDeletionDTO friendDeletionDTO)
+        {
+            if (!this.sessionManager.IsSessionValid())
+            {
+                return ServiceResponseBuilder.Unauthorised<bool>();
+            }
+
+            var firstUser =
+                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+                    .IncludeFriends()
+                    .FirstOrDefault(_ => _.UserId == friendDeletionDTO.UserId);
+
+            var secondUser =
+                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+                    .IncludeFriends()
+                    .FirstOrDefault(_ => _.UserId == friendDeletionDTO.FriendId);
+
+            if (firstUser == null || secondUser == null)
+            {
+                return ServiceResponseBuilder.Failure<bool>("Invalid user id");
+            }
+
+            if (!firstUser.Friends.Select(_ => _.UserId).Contains(secondUser.UserId) ||
+                !secondUser.Friends.Select(_ => _.UserId).Contains(firstUser.UserId))
+            {
+                return ServiceResponseBuilder.Failure<bool>("Invalid friend id");
+            }
+
+            firstUser.Friends.Remove(secondUser);
+            secondUser.Friends.Remove(firstUser);
+
+            this.findNDriveUnitOfWork.Commit();
+
+            return ServiceResponseBuilder.Success(true);
         }
     }
 }

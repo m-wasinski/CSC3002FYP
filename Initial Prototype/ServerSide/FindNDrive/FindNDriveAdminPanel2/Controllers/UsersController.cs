@@ -27,5 +27,11 @@ namespace FindNDriveAdminPanel2.Controllers
             model.LoadData(id);
             return View(model);
         }
+
+        public ActionResult Search(List<User> users, string windowTitle)
+        {
+            var model = new SearchViewModel(users, windowTitle);
+            return View(model);
+        }
     }
 }

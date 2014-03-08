@@ -29,6 +29,12 @@ namespace DomainObjects.Constants
         /// Represents a female person.
         /// </summary>
         [EnumMember(Value = "Female")]
-        Female = 2
+        Female = 2,
+
+        /// <summary>
+        /// The not available.
+        /// </summary>
+        [EnumMember(Value = "Not Available")]
+        NotAvailable = 3
     }
 }

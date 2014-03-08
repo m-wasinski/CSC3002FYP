@@ -84,8 +84,8 @@ public class JourneySummaryActivity extends BaseActivity implements WCFImageRetr
         journeyDriverTextView.setText(journey.getDriver().getUserName());
         journeyDateTextView.setText(DateTimeHelper.getSimpleDate(journey.getDateAndTimeOfDeparture()));
         journeyTimeTextView.setText(DateTimeHelper.getSimpleTime(journey.getDateAndTimeOfDeparture()));
-        journeySmokersTextView.setText(Utilities.translateBoolean(journey.isSmokersAllowed()));
-        journeyPetsTextView.setText(Utilities.translateBoolean(journey.isPetsAllowed()));
+        journeySmokersTextView.setText(Utilities.translateBoolean(journey.areSmokersAllowed()));
+        journeyPetsTextView.setText(Utilities.translateBoolean(journey.arePetsAllowed()));
         journeyPrivateTextView.setText(Utilities.translateBoolean(journey.isPrivate()));
         journeyVehicleTypeTextView.setText(vehicleTypes[journey.getVehicleType()]);
         journeySeatsAvailableTextView.setText(String.valueOf(journey.getAvailableSeats()));
@@ -112,7 +112,10 @@ public class JourneySummaryActivity extends BaseActivity implements WCFImageRetr
         switch(view.getId())
         {
             case R.id.JourneySummaryActivityJourneyDriverTableRow:
-                startActivity(new Intent(this, ProfileViewerActivity.class).putExtra(IntentConstants.USER, gson.toJson(journey.getDriver())));
+                Bundle bundle = new Bundle();
+                bundle.putInt(IntentConstants.PROFILE_VIEWER_MODE, IntentConstants.PROFILE_VIEWER_VIEWING);
+                bundle.putInt(IntentConstants.USER, journey.getDriver().getUserId());
+                startActivity(new Intent(this, ProfileViewerActivity.class).putExtras(bundle));
                 break;
         }
     }

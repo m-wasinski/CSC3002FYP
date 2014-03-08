@@ -153,6 +153,7 @@
     <Content Include="Services\JourneyChatService.svc" />
     <Content Include="Services\JourneyService.svc" />
     <Content Include="Services\JourneyRequestService.svc" />
+    <Content Include="Services\JourneyTemplateService.svc" />
     <Content Include="Services\MessengerService.svc" />
     <Content Include="Services\NotificationService.svc" />
     <Content Include="Services\RatingService.svc" />
@@ -166,12 +167,16 @@
     <Compile Include="Contracts\IJourneyService.cs" />
     <Compile Include="Contracts\IFriendsService.cs" />
     <Compile Include="Contracts\IJourneyChatService.cs" />
+    <Compile Include="Contracts\IJourneyTemplateService.cs" />
     <Compile Include="Contracts\IMessengerService.cs" />
     <Compile Include="Contracts\INotificationService.cs" />
     <Compile Include="Contracts\IJourneyRequestService.cs" />
     <Compile Include="Contracts\IRatingService.cs" />
     <Compile Include="Contracts\ISearchService.cs" />
     <Compile Include="Contracts\IUserService.cs" />
+    <Compile Include="DTOs\FriendDeletionDTO.cs" />
+    <Compile Include="DTOs\PrivacySettingsUpdaterDTO.cs" />
+    <Compile Include="DTOs\UserRetrieverDTO.cs" />
     <Compile Include="ServiceHostUtils\CustomEndpointBehaviour.cs" />
     <Compile Include="ServiceHostUtils\CustomMessageInspector.cs" />
     <Compile Include="DTOs\ChatMessageDTO.cs" />
@@ -183,7 +188,7 @@
     <Compile Include="DTOs\JourneyMessageRetrieverDTO.cs" />
     <Compile Include="DTOs\JourneyUserDTO.cs" />
     <Compile Include="DTOs\JourneyRequestDTO.cs" />
-    <Compile Include="DTOs\JourneySearchDTO.cs" />
+    <Compile Include="DTOs\JourneyTemplateDTO.cs" />
     <Compile Include="DTOs\LoadRangeDTO.cs" />
     <Compile Include="DTOs\LoginDTO.cs" />
     <Compile Include="DTOs\MultiChoice.cs" />
@@ -194,10 +199,15 @@
     <Compile Include="DTOs\RegisterDTO.cs" />
     <Compile Include="DTOs\FriendDTO.cs" />
     <Compile Include="DTOs\UserDTO.cs" />
+    <Compile Include="Services\JourneyTemplateService.svc.cs">
+      <DependentUpon>JourneyTemplateService.svc</DependentUpon>
+    </Compile>
     <Compile Include="ServiceUtils\EmailUtils.cs" />
     <Compile Include="ServiceUtils\Haversine.cs" />
     <Compile Include="ServiceHostUtils\MyServiceHost.cs" />
     <Compile Include="ServiceHostUtils\MyServiceHostFactory.cs" />
+    <Compile Include="ServiceUtils\PrivacyHelper.cs" />
+    <Compile Include="ServiceUtils\SearchUtils.cs" />
     <Compile Include="ServiceUtils\NotificationManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

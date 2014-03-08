@@ -27,7 +27,7 @@ import com.example.myapplication.interfaces.NotificationTargetRetrieved;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.notification_management.NotificationProcessor;
-import com.example.myapplication.utilities.DialogCreator;
+import com.example.myapplication.factories.DialogFactory;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -227,7 +227,7 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
         switch (item.getItemId())
         {
             case R.id.help:
-                DialogCreator.showHelpDialog(this, "Your notifications.", getResources().getString(R.string.MyNotificationsHelp));
+                DialogFactory.getHelpDialog(this, "Your notifications.", getResources().getString(R.string.MyNotificationsHelp));
                 break;
         }
         return super.onOptionsItemSelected(item);

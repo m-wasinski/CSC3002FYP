@@ -123,5 +123,11 @@ namespace FindNDriveServices2.DTOs
         /// </summary>
         [DataMember]
         public double AverageRating { get; set; }
+
+        /// <summary>
+        /// Gets or sets the privacy settings.
+        /// </summary>
+        [DataMember]
+        public PrivacySettings PrivacySettings { get; set; }
     }
 }

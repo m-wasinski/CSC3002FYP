@@ -81,6 +81,11 @@ namespace FindNDriveDataAccessLayer
         public DbSet<ProfilePicture> ProfilePictures { get; set; }
 
         /// <summary>
+        /// Gets or sets the journey templates.
+        /// </summary>
+        public DbSet<JourneyTemplate> JourneyTemplates { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ApplicationContext"/> class.
         /// </summary>
         public ApplicationContext()
@@ -156,21 +161,25 @@ namespace FindNDriveDataAccessLayer
                    map.ToTable("JourneyMessage_UserId");
                });
 
-            /*modelBuilder.Entity<User>()
-               .HasMany(_ => _.Rating).WithMany().Map(map =>
+            modelBuilder.Entity<JourneyTemplate>()
+               .HasMany(_ => _.GeoAddresses).WithMany().Map(map =>
                {
-                   map.MapLeftKey("UserId");
-                   map.MapRightKey("RatingId");
-                   map.ToTable("User_Rating");
-               });*/
+                   map.MapLeftKey("JourneyTemplateId");
+                   map.MapRightKey("GeoAddressId");
+                   map.ToTable("JourneyTemplate_GeoAddress");
+               });
 
             modelBuilder.Entity<User>().HasRequired(x => x.ProfilePicture);
 
             modelBuilder.Entity<Journey>().HasRequired(a => a.Driver);
 
+            modelBuilder.Entity<User>().HasRequired(a => a.PrivacySettings);
+
             modelBuilder.Entity<Journey>().Ignore(t => t.UnreadMessagesCount);
 
             modelBuilder.Entity<User>().Ignore(t => t.UnreadMessagesCount);
+
+            modelBuilder.Entity<User>().Ignore(t => t.JourneysVisible);
 
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();   
         }

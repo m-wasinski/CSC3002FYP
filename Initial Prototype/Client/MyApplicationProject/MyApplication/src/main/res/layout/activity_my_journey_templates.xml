@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:hint="Search templates"
+            android:paddingLeft="5sp"
+            android:layout_height="?android:attr/actionBarSize"
+            android:id="@+id/MyJourneyTemplatesActivityFilterEditText"
+            android:enabled="false"
+            android:background="#80151515"
+            android:singleLine="true"
+            android:textCursorDrawable="@null"
+            android:textSize="22sp"
+            android:textColor="#0086C9"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:background="#B7D8E8"
+            android:layout_below="@+id/MyJourneyTemplatesActivityFilterEditText"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/MyJourneyTemplatesActivityFilterEditText"
+            android:orientation="vertical">
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:id="@+id/MyJourneyTemplatesActivityListView"
+                android:layout_marginTop="1dip"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Create new template"
+                android:id="@+id/MyJourneyTemplatesActivityCreateNewButton"
+                style="@style/UniversalButtonStyle"
+                android:background="@drawable/button_selector"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/LargeTextField"
+            android:text="No templates to display."
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:id="@+id/MyJourneyTemplatesActivityNoTemplatesTextView"
+            android:layout_gravity="center_horizontal"/>
+
+        <ProgressBar
+            android:id="@+id/MyJourneyTemplatesActivityProgressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:indeterminateDrawable="@drawable/progress"
+            android:visibility="gone">
+        </ProgressBar>
+
+</RelativeLayout>

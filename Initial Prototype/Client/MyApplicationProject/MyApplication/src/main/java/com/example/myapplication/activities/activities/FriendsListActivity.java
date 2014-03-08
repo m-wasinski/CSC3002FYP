@@ -1,7 +1,9 @@
 package com.example.myapplication.activities.activities;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -15,6 +17,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.myapplication.R;
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.adapters.FriendsAdapter;
 import com.example.myapplication.constants.BroadcastTypes;
@@ -23,12 +28,14 @@ import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
-import com.example.myapplication.utilities.DialogCreator;
-import com.example.myapplication.utilities.WakeLocker;
+import com.example.myapplication.dtos.FriendDeletionDTO;
+import com.example.myapplication.factories.DialogFactory;
+import com.example.myapplication.factories.ServiceTaskFactory;
+import com.example.myapplication.interfaces.Interfaces;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
-import com.example.myapplication.R;
 import com.example.myapplication.notification_management.NotificationProcessor;
+import com.example.myapplication.utilities.WakeLocker;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -37,9 +44,8 @@ import java.util.ArrayList;
  * Responsible for displaying list of current user's friends.
  * Uses FriendsAdapter to display data retrieved from the web service in an organised fashion.
  */
-public class FriendsListActivity extends BaseActivity implements WCFServiceCallback<ArrayList<User>, String>, TextWatcher, AdapterView.OnItemClickListener {
-
-    private ListView friendsListView;
+public class FriendsListActivity extends BaseActivity implements WCFServiceCallback<ArrayList<User>, Void>, TextWatcher,
+        AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private ProgressBar progressBar;
 
@@ -83,9 +89,10 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
         friends = new ArrayList<User>();
         friendsAdapter = new FriendsAdapter(this, R.layout.listview_row_friend, appManager, friends);
 
-        friendsListView = (ListView) findViewById(R.id.FriendListActivityFriendsListView);
+        ListView friendsListView = (ListView) findViewById(R.id.FriendListActivityFriendsListView);
         friendsListView.setAdapter(friendsAdapter);
         friendsListView.setOnItemClickListener(this);
+        friendsListView.setOnItemLongClickListener(this);
 
         noFriendsTextView = (TextView) findViewById(R.id.FriendsListActivityNoFriendsTextView);
 
@@ -113,7 +120,7 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
         switch (item.getItemId())
         {
             case R.id.help:
-                DialogCreator.showHelpDialog(this, "Your friends list", getResources().getString(R.string.MyFriendsHelp));
+                DialogFactory.getHelpDialog(this, "Your friends list", getResources().getString(R.string.MyFriendsHelp));
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -121,15 +128,14 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
 
     private void retrieveFriendsList()
     {
-        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetFriendsURL), appManager.getUser().getUserId(),
-                new TypeToken<ServiceResponse<ArrayList<User>>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
+        ServiceTaskFactory.getFriendsList(this, appManager.getAuthorisationHeaders(), appManager.getUser().getUserId(), this).execute();
     }
 
     /**
      * Called when friends list have been retrieved from the server.
      **/
     @Override
-    public void onServiceCallCompleted(final ServiceResponse<ArrayList<User>> serviceResponse, String parameter) {
+    public void onServiceCallCompleted(final ServiceResponse<ArrayList<User>> serviceResponse, Void v) {
         progressBar.setVisibility(View.GONE);
 
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -183,5 +189,52 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         showInstantMessengerActivity(friends.get(i));
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
+        final String items[] = {"Show profile", "Start chat", "Delete from friends list"};
+        final AlertDialog.Builder ab=new AlertDialog.Builder(this);
+        ab.setTitle(friends.get(i).getUserName());
+
+        ab.setItems(items, new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface d, int choice) {
+                switch (choice)
+                {
+                    case 0:
+                        Bundle bundle = new Bundle();
+                        bundle.putInt(IntentConstants.PROFILE_VIEWER_MODE, IntentConstants.PROFILE_VIEWER_VIEWING);
+                        bundle.putInt(IntentConstants.USER, friends.get(i).getUserId());
+                        startActivity(new Intent(FriendsListActivity.this, ProfileViewerActivity.class).putExtras(bundle));
+                        break;
+                    case 1:
+                        showInstantMessengerActivity(friends.get(i));
+                        break;
+                    case 2:
+                        DialogFactory.getYesNoDialog(ab.getContext(), "Delete " + friends.get(i).getUserName()+"?", "Are you sure you want to delete "
+                                + friends.get(i).getUserName() + " from your list of friends?", new Interfaces.YesNoDialogPositiveButtonListener() {
+                            @Override
+                            public void positiveButtonClicked() {
+                                progressBar.setVisibility(View.VISIBLE);
+                                new WcfPostServiceTask<FriendDeletionDTO>(FriendsListActivity.this, getResources().getString(R.string.DeleteFriendURL),
+                                        new FriendDeletionDTO(appManager.getUser().getUserId(), friends.get(i).getUserId()), new TypeToken<ServiceResponse<Boolean>>(){}.getType(), appManager.getAuthorisationHeaders(), new WCFServiceCallback() {
+                                    @Override
+                                    public void onServiceCallCompleted(ServiceResponse serviceResponse, Object parameter) {
+                                        progressBar.setVisibility(View.GONE);
+                                        if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
+                                            {
+                                                Toast.makeText(FriendsListActivity.this, friends.get(i).getUserName()+" was successfully deleted from your friends list." ,Toast.LENGTH_LONG).show();
+                                                retrieveFriendsList();
+                                            }
+                                    }
+                                }).execute();
+                            }
+                        });
+                }
+            }
+        });
+        ab.show();
+        return true;
     }
 }

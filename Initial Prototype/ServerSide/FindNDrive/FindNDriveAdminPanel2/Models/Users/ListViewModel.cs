@@ -15,11 +15,11 @@ namespace FindNDriveAdminPanel2.Models.Users
 
     using FindNDriveInfrastructureDataAccessLayer;
 
+
     public class SearchViewModel : ListViewModel
     {
-      
-        public SearchViewModel()
-            : base(null, "Search Results", false)
+
+        public SearchViewModel(List<User> users, string windowTitle) : base(users, windowTitle, true)
         {
             SearchCustomers = new ViewAction("Search", execute: (a, o) => Search());
         }
@@ -28,8 +28,7 @@ namespace FindNDriveAdminPanel2.Models.Users
 
         public void Search()
         {
-            // TODO: Perform actual search here... but for now we just load the fake data
-            LoadCustomers(null);
+            
         }
 
         // Example search terms
@@ -43,9 +42,10 @@ namespace FindNDriveAdminPanel2.Models.Users
     public class ListViewModel : ViewModel
     {
         private readonly FindNDriveUnitOfWork findNDriveUnitOfWork;
-
+        public IViewAction SearchCustomers { get; set; }
         public ListViewModel(List<User> users,  string windowTItle, bool loadCustomers = true)
         {
+            
             WindowTitle = windowTItle;
             var dbContext = new ApplicationContext();
             var userRepository = new EntityFrameworkRepository<User>(dbContext);
@@ -59,7 +59,7 @@ namespace FindNDriveAdminPanel2.Models.Users
             var geoAddressRepository = new EntityFrameworkRepository<GeoAddress>(dbContext);
             var ratingsRepository = new EntityFrameworkRepository<Rating>(dbContext);
             var profilePictureRepository = new EntityFrameworkRepository<ProfilePicture>(dbContext);
-
+            var journeyTemplateRepository = new EntityFrameworkRepository<JourneyTemplate>(dbContext);
             this.findNDriveUnitOfWork = new FindNDriveUnitOfWork(
                 dbContext,
                 userRepository,
@@ -72,18 +72,25 @@ namespace FindNDriveAdminPanel2.Models.Users
                 journeyMessageRepository,
                 geoAddressRepository,
                 ratingsRepository,
-                profilePictureRepository);
+                profilePictureRepository,
+                journeyTemplateRepository);
 
             this.Users = new ObservableCollection<UserInformation>();
             
             if (loadCustomers)
             {
-                LoadCustomers(users);
+                
             }
-
+            LoadCustomers(users);
             Actions.Add(new CloseCurrentViewAction(this, beginGroup: true));
             EditCustomer = new ViewAction("Edit", execute: (a, o) => LaunchEdit(o as UserInformation));
             ListFriends = new ViewAction("Edit", execute: (a, o) => LaunchEdit(o as UserInformation));
+            SearchCustomers = new ViewAction("Search", execute: (a, o) => Search());
+        }
+
+        private void Search()
+        {
+            throw new NotImplementedException();
         }
 
         public IViewAction EditCustomer { get; set; }

@@ -5,4 +5,5 @@
     <string name="ProcessFriendRequestDecisionURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/FriendsService.svc/processdecision</string>
     <string name="MarkFriendRequestAsReadURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/FriendsService.svc/markasread</string>
     <string name="GetFriendRequestURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/FriendsService.svc/getrequest</string>
+    <string name="DeleteFriendURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/FriendsService.svc/delete</string>
 </resources>

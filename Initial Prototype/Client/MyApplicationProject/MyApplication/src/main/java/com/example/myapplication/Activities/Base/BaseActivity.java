@@ -11,7 +11,6 @@ import android.view.MenuItem;
 
 import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.HomeActivity;
-import com.example.myapplication.activities.activities.LeaderboardActivity;
 import com.example.myapplication.app_management.AppManager;
 import com.google.gson.Gson;
 
@@ -51,6 +50,10 @@ public class BaseActivity extends Activity {
         appManager = ((AppManager)getApplication());
         gson = new Gson();
         actionBar = getActionBar();
+        if(actionBar != null)
+        {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
@@ -68,11 +71,8 @@ public class BaseActivity extends Activity {
             case R.id.logout_menu_option:
                 appManager.logout(true, true);
                 break;
-            case R.id.action_show_leaderboard:
-                startActivity(new Intent(this, LeaderboardActivity.class));
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
+            case android.R.id.home:
+                finish();
         }
 
         return super.onOptionsItemSelected(item);

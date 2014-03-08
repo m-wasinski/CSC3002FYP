@@ -33,7 +33,7 @@ import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.utilities.DateTimeHelper;
-import com.example.myapplication.utilities.DialogCreator;
+import com.example.myapplication.factories.DialogFactory;
 import com.example.myapplication.utilities.Utilities;
 import com.google.gson.reflect.TypeToken;
 
@@ -132,18 +132,18 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
         this.journeySmokersRelativeLayout = (RelativeLayout) findViewById(R.id.OfferJourneyStepTwoActivityJourneySmokersRelativeLayout);
 
         this.journeySmokersTextView = (TextView) findViewById(R.id.OfferJourneyStepTwoActivitySmokersTextView);
-        this.journeySmokersTextView.setText(Utilities.translateBoolean(this.journey.isSmokersAllowed()));
+        this.journeySmokersTextView.setText(Utilities.translateBoolean(this.journey.areSmokersAllowed()));
 
         this.journeySmokersCheckbox = (CheckBox) findViewById(R.id.OfferJourneyStepTwoActivitySmokersCheckBox);
-        this.journeySmokersCheckbox.setChecked(this.journey.isSmokersAllowed());
+        this.journeySmokersCheckbox.setChecked(this.journey.areSmokersAllowed());
 
         this.journeyPetsRelativeLayout = (RelativeLayout) findViewById(R.id.OfferJourneyStepTwoActivityJourneyPetsRelativeLayout);
 
         this.journeyPetsTextView = (TextView) findViewById(R.id.OfferJourneyStepTwoActivityPetsTextView);
-        this.journeyPetsTextView.setText(Utilities.translateBoolean(this.journey.isPetsAllowed()));
+        this.journeyPetsTextView.setText(Utilities.translateBoolean(this.journey.arePetsAllowed()));
 
         this.journeyPetsCheckbox = (CheckBox) findViewById(R.id.OfferJourneyStepTwoActivityPetCheckBox);
-        this.journeyPetsCheckbox.setChecked(this.journey.isPetsAllowed());
+        this.journeyPetsCheckbox.setChecked(this.journey.arePetsAllowed());
 
         this.journeyVehicleTypeRelativeLayout = (RelativeLayout) findViewById(R.id.OfferJourneyStepTwoActivityJourneyVehicleTypeRelativeLayout);
 
@@ -193,10 +193,10 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
         switch (item.getItemId())
         {
             case R.id.help:
-                DialogCreator.showHelpDialog(this,
+                DialogFactory.getHelpDialog(this,
                         mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? "Making changes to your journey" : "Offering new journey",
                         mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ?
-                                getResources().getString(R.string.EditingJourneyStepTwoHelp):
+                                getResources().getString(R.string.EditingJourneyStepTwoHelp) :
                                 getResources().getString(R.string.OfferingJourneyStepTwoHelp));
                 break;
         }
@@ -499,6 +499,10 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
                     if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                     {
                         operationCompletedSuccessfully();
+                    }
+                    else
+                    {
+                        createButton.setEnabled(true);
                     }
                 }
             }).execute();

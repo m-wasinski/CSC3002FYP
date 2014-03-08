@@ -27,7 +27,7 @@ import com.example.myapplication.google_maps_utilities.GeocoderParams;
 import com.example.myapplication.interfaces.OnDrivingDirectionsRetrrievedListener;
 import com.example.myapplication.network_tasks.GeocoderTask;
 import com.example.myapplication.utilities.DateTimeHelper;
-import com.example.myapplication.utilities.DialogCreator;
+import com.example.myapplication.factories.DialogFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -140,7 +140,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
         switch (item.getItemId())
         {
             case R.id.help:
-                DialogCreator.showHelpDialog(this,
+                DialogFactory.getHelpDialog(this,
                         mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? "Making changes to your journey" : "Offering new journey",
                         mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? getResources().getString(R.string.EditingJourneyStepOneHelp) :
                                 getResources().getString(R.string.OfferingJourneyStepOneHelp));
@@ -400,8 +400,8 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
         }
 
         journey.setAvailableSeats(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? journey.getAvailableSeats() : 1);
-        journey.setPetsAllowed(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING && journey.isPetsAllowed());
-        journey.setSmokersAllowed(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING && journey.isSmokersAllowed());
+        journey.setPetsAllowed(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING && journey.arePetsAllowed());
+        journey.setSmokersAllowed(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING && journey.areSmokersAllowed());
         journey.setPrivate(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING && journey.isPrivate());
         journey.setVehicleType(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? journey.getVehicleType() : -1);
         journey.setFee(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? journey.getFee() : -1);

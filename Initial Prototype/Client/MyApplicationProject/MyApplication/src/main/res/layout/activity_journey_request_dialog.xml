@@ -1,57 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FFFFFF">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/LargeBlueHeader"
-        android:paddingTop="20dip"
-        android:background="#FFFFFF"
-        android:id="@+id/JourneyRequestDialogActivityHeaderTextView"/>
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
-        android:layout_marginTop="10dip"
-        android:layout_width="match_parent"
-        android:layout_height="2dip"
-        android:background="#32B4E4"/>
-
-    <Button
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/alert_button_selector"
-        android:minHeight="50dip"
-        android:text="@string/Accept"
-        android:id="@+id/JourneyRequestDialogActivityAcceptButton"/>
+        android:background="#FFFFFF">
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/alert_button_selector"
-        android:minHeight="50dip"
-        android:layout_marginTop="1dip"
-        android:text="@string/Deny"
-        android:id="@+id/JourneyRequestDialogActivityDenyButton"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/LargeBlueHeader"
+            android:paddingTop="20dip"
+            android:background="#FFFFFF"
+            android:id="@+id/JourneyRequestDialogActivityHeaderTextView"/>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="1dip"
-        android:background="@drawable/alert_button_selector"
-        android:minHeight="50dip"
-        android:text="@string/ShowProfile"
-        android:id="@+id/JourneyRequestDialogActivityShowProfileButton"/>
+        <LinearLayout
+            android:layout_marginTop="10dip"
+            android:layout_width="match_parent"
+            android:layout_height="2dip"
+            android:background="#32B4E4"/>
 
-    <Button
-        android:layout_width="match_parent"
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/alert_button_selector"
+            android:minHeight="50dip"
+            android:text="@string/Accept"
+            android:id="@+id/JourneyRequestDialogActivityAcceptButton"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/alert_button_selector"
+            android:minHeight="50dip"
+            android:layout_marginTop="1dip"
+            android:text="@string/Deny"
+            android:id="@+id/JourneyRequestDialogActivityDenyButton"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dip"
+            android:background="@drawable/alert_button_selector"
+            android:minHeight="50dip"
+            android:text="@string/ShowProfile"
+            android:id="@+id/JourneyRequestDialogActivityShowProfileButton"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dip"
+            android:background="@drawable/alert_button_selector"
+            android:minHeight="50dip"
+            android:text="@string/SendFriendRequest"
+            android:id="@+id/JourneyRequestDialogActivitySendFriendRequestButton"/>
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/JourneyRequestDialogActivityProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="1dip"
-        android:background="@drawable/alert_button_selector"
-        android:minHeight="50dip"
-        android:text="@string/SendFriendRequest"
-        android:id="@+id/JourneyRequestDialogActivitySendFriendRequestButton"/>
-</LinearLayout>
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:indeterminateDrawable="@drawable/progress"
+        android:visibility="gone"/>
+
+</RelativeLayout>

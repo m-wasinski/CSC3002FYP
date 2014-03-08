@@ -6,8 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,14 +21,11 @@ import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
-import com.example.myapplication.interfaces.WCFImageRetrieved;
+import com.example.myapplication.factories.DialogFactory;
+import com.example.myapplication.factories.ServiceTaskFactory;
 import com.example.myapplication.interfaces.WCFServiceCallback;
-import com.example.myapplication.network_tasks.WcfPictureServiceTask;
-import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.notification_management.NotificationProcessor;
-import com.example.myapplication.utilities.DialogCreator;
 import com.example.myapplication.utilities.WakeLocker;
-import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,7 +34,7 @@ import java.util.Calendar;
  *Home Activity is the screen that the user sees immediately after logging in.
  *It is the 'home page' of the application which can only be instantiated once.
  */
-public class HomeActivity extends BaseActivity implements View.OnClickListener, WCFImageRetrieved {
+public class HomeActivity extends BaseActivity implements View.OnClickListener {
 
     private ImageView notificationsImageView;
     private ImageView friendsImageView;
@@ -54,7 +49,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         setContentView(R.layout.activity_home);
 
         //Initialise local variables.
-        actionBar.setTitle(" Hi " + appManager.getUser().getUserName());
+        actionBar.setTitle(appManager.getUser().getUserName());
+        actionBar.setHomeButtonEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
 
         /*
          * Alarm manager is used to trigger a task every 5 minutes.
@@ -74,17 +71,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         findViewById(R.id.ActivityHomeFriendsLayout).setOnClickListener(this);
         findViewById(R.id.ActivityHomeMyOfferJourneyLayout).setOnClickListener(this);
         findViewById(R.id.ActivityHomeMyProfileLayout).setOnClickListener(this);
+        findViewById(R.id.ActivityHomeLeaderboardLayout).setOnClickListener(this);
+        findViewById(R.id.ActivityHomeTemplatesLayout).setOnClickListener(this);
+
         notificationsImageView = (ImageView) findViewById(R.id.HomeActivityNotificationsImageView);
         friendsImageView =(ImageView) findViewById(R.id.HomeActivityFriendsImageView);
         progressBar = (ProgressBar) findViewById(R.id.HomeActivityProgressBar);
 
 
-    }
-
-    private void retrieveProfilePicture()
-    {
-        new WcfPictureServiceTask(appManager.getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
-                appManager.getUser().getUserId(), appManager.getAuthorisationHeaders(), this).execute();
     }
 
     @Override
@@ -109,7 +103,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 refreshInformation();
                 break;
             case R.id.help:
-                DialogCreator.showHelpDialog(this, "Home Screen", getResources().getString(R.string.HomeScreenHelp));
+                DialogFactory.getHelpDialog(this, "Home Screen", getResources().getString(R.string.HomeScreenHelp));
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -131,7 +125,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         intentFilter.addAction(BroadcastTypes.BROADCAST_ACTION_REFRESH);
         registerReceiver(GCMReceiver, intentFilter);
         refreshInformation();
-        retrieveProfilePicture();
         retrieveDeviceNotifications();
     }
 
@@ -140,29 +133,28 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         progressBar.setVisibility(View.VISIBLE);
         refreshedItems = 0;
 
-        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetUnreadAppNotificationsCountURL), appManager.getUser().getUserId(),
-                new TypeToken<ServiceResponse<Integer>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
+        ServiceTaskFactory.getUnreadAppNotificationsCount(this, appManager.getAuthorisationHeaders(), appManager.getUser().getUserId(), new WCFServiceCallback<Integer, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {
-                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
-                {
-                    notificationCountRetrieved(serviceResponse.Result);
+                if (serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS) {
+                    refreshedItems += 1;
+                    progressBar.setVisibility(refreshedItems >= 2 ? View.GONE : View.VISIBLE);
+                    notificationsImageView.setImageResource(serviceResponse.Result == 0 ? R.drawable.home_activity_notification : R.drawable.home_activity_notification_new);
                 }
             }
         }).execute();
 
-        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetUnreadMessagesCountURL), appManager.getUser().getUserId(),
-                new TypeToken<ServiceResponse<Integer>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
+        ServiceTaskFactory.getUnreadMessagesCount(this, appManager.getAuthorisationHeaders(), appManager.getUser().getUserId(), new WCFServiceCallback<Integer, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {
-                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
-                {
-                    unreadMessagesCountRetrieved(serviceResponse.Result);
+                if (serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS) {
+                    refreshedItems += 1;
+                    progressBar.setVisibility(refreshedItems >= 2 ? View.GONE : View.VISIBLE);
+                    friendsImageView.setImageResource(serviceResponse.Result == 0 ? R.drawable.home_activity_friends : R.drawable.home_activity_friends_new_message);
                 }
             }
         }).execute();
+
     }
 
     /**
@@ -171,13 +163,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
      **/
     private void retrieveDeviceNotifications()
     {
-        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetDeviceNotificationsURL), appManager.getUser().getUserId(),
-                new TypeToken<ServiceResponse<ArrayList<Notification>>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<Notification>, Void>() {
+        ServiceTaskFactory.getDeviceNotifications(this, appManager.getAuthorisationHeaders(), appManager.getUser().getUserId(), new WCFServiceCallback<ArrayList<Notification>, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<ArrayList<Notification>> serviceResponse, Void parameter) {
-                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
-                {
+                if (serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS) {
                     deviceNotificationsRetrieved(serviceResponse.Result);
                 }
             }
@@ -193,20 +182,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }
     };
 
-    private void notificationCountRetrieved(int count)
-    {
-        refreshedItems += 1;
-        progressBar.setVisibility(refreshedItems >= 2 ? View.GONE : View.VISIBLE);
-        notificationsImageView.setImageResource(count == 0 ? R.drawable.home_activity_notification : R.drawable.home_activity_notification_new);
-    }
-
-    private void unreadMessagesCountRetrieved(int count)
-    {
-        refreshedItems += 1;
-        progressBar.setVisibility(refreshedItems >= 2 ? View.GONE : View.VISIBLE);
-        friendsImageView.setImageResource(count == 0 ? R.drawable.home_activity_friends : R.drawable.home_activity_friends_new_message);
-    }
-
     private void deviceNotificationsRetrieved(ArrayList<Notification> notifications)
     {
         NotificationProcessor notificationProcessor = new NotificationProcessor();
@@ -219,13 +194,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void onClick(View view) {
+        Bundle bundle = new Bundle();
         switch(view.getId())
         {
             case R.id.ActivityHomeMyJourneysLayout:
                 startActivity(new Intent(this, MyJourneysActivity.class).putExtra(IntentConstants.USER, gson.toJson(appManager.getUser())));
                 break;
             case R.id.ActivityHomeSearchLayout:
-                startActivity(new Intent(this, SearchActivity.class));
+                startActivity(new Intent(this, SearchTypeActivity.class));
                 break;
             case R.id.ActivityHomeNotificationsLayout:
                 startActivity(new Intent(this, MyNotificationsActivity.class));
@@ -234,22 +210,22 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 startActivity(new Intent(this, FriendsListActivity.class));
                 break;
             case R.id.ActivityHomeMyOfferJourneyLayout:
-                Bundle bundle = new Bundle();
                 bundle.putInt(IntentConstants.JOURNEY_CREATOR_MODE, IntentConstants.JOURNEY_CREATOR_MODE_CREATING);
                 startActivity( new Intent(this, OfferJourneyStepOneActivity.class).putExtras(bundle));
                 break;
             case R.id.ActivityHomeMyProfileLayout:
-                startActivity(new Intent(this, ProfileEditorActivity.class).putExtra(IntentConstants.USER, gson.toJson(appManager.getUser())));
-                        break;
-        }
-    }
+                Bundle bundle1 = new Bundle();
+                bundle.putInt(IntentConstants.PROFILE_VIEWER_MODE, IntentConstants.PROFILE_VIEWER_EDITING);
+                startActivity(new Intent(this, ProfileEditorActivity.class).putExtras(bundle1));
+                break;
+            case R.id.ActivityHomeLeaderboardLayout:
+                startActivity(new Intent(this, LeaderboardActivity.class));
+                break;
+            case R.id.ActivityHomeTemplatesLayout:
+                bundle.putInt(IntentConstants.SEARCH_MODE, IntentConstants.EDITING_TEMPLATE);
+                startActivity(new Intent(this, MyJourneyTemplatesActivity.class).putExtras(bundle));
+                break;
 
-    @Override
-    public void onImageRetrieved(Bitmap bitmap) {
-        if(bitmap != null)
-        {
-            BitmapDrawable icon = new BitmapDrawable(getResources() ,bitmap);
-            actionBar.setIcon(icon);
         }
     }
 }

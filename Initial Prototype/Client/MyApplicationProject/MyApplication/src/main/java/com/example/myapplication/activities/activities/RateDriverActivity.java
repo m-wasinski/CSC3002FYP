@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +24,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 
 /**
- * Created by Michal on 21/02/14.
+ * Provides user with the ability to rate the driver.
  */
 public class RateDriverActivity extends BaseActivity implements WCFServiceCallback<Boolean, Void>
 {
@@ -39,6 +40,10 @@ public class RateDriverActivity extends BaseActivity implements WCFServiceCallba
     private int rating = 0;
 
     private Journey journey;
+
+    private ProgressBar progressBar;
+
+    private String TAG = "Rate Driver Activity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +66,8 @@ public class RateDriverActivity extends BaseActivity implements WCFServiceCallba
         starButtons.add(2, new ButtonHolder((Button) findViewById(R.id.RateDriverActivityStarThreeButton), 3));
         starButtons.add(3, new ButtonHolder((Button) findViewById(R.id.RateDriverActivityStarFourButton), 4));
         starButtons.add(4, new ButtonHolder((Button) findViewById(R.id.RateDriverActivityStarFiveButton), 5));
+
+        progressBar = (ProgressBar) findViewById(R.id.RateDriverActivityProgressBar);
 
         // Setup all event handlers.
         setupEventHandlers();
@@ -90,7 +97,7 @@ public class RateDriverActivity extends BaseActivity implements WCFServiceCallba
     {
         rating = index;
 
-        Log.i("Rating Driver: ", "Current rating is: " + rating);
+        Log.i(TAG, "Current rating is: " + rating);
 
         for(int i = 0; i < starButtons.size(); i++)
         {
@@ -101,12 +108,12 @@ public class RateDriverActivity extends BaseActivity implements WCFServiceCallba
     @Override
     public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter)
     {
+        progressBar.setVisibility(View.GONE);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             Toast.makeText(this, "Rating submitted successfully!", Toast.LENGTH_LONG).show();
             finish();
         }
-
     }
 
     private void sendFeedback()
@@ -121,6 +128,8 @@ public class RateDriverActivity extends BaseActivity implements WCFServiceCallba
             return;
         }
 
+        progressBar.setVisibility(View.VISIBLE);
+        sendFeedbackButton.setEnabled(false);
         new WcfPostServiceTask<RatingDTO>(this, getResources().getString(R.string.RateDriverURL),
                 new RatingDTO(journey.getDriver().getUserId(), rating,
                         appManager.getUser().getUserId(), message),

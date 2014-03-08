@@ -17,7 +17,7 @@ public class User {
 
     private String LastName;
 
-    private int Gender;
+    private Integer Gender;
 
     private String DateOfBirth;
 
@@ -43,9 +43,21 @@ public class User {
 
     private double AverageRating;
 
+    private int VotesCount;
+
+    public int getVotesCount() {
+        return VotesCount;
+    }
+
     private ArrayList<Rating> Rating;
 
     private int UnreadMessagesCount;
+
+    private Boolean JourneysVisible;
+
+    public Boolean getJourneysVisible() {
+        return JourneysVisible;
+    }
 
     public ArrayList<Rating> getRating() {
         return Rating;
@@ -87,7 +99,7 @@ public class User {
         return LastName;
     }
 
-    public int getGender() {
+    public Integer getGender() {
         return Gender;
     }
 
@@ -101,6 +113,12 @@ public class User {
 
     public int getStatus() {
         return Status;
+    }
+
+    private PrivacySettings PrivacySettings;
+
+    public PrivacySettings getPrivacySettings() {
+        return PrivacySettings;
     }
 
     /*
@@ -119,7 +137,5 @@ public class User {
         this.UserName = userName;
         this.EmailAddress = email;
         this.GCMRegistrationID = gcmRegistrationId;
-
-        //DateOfBirth = "/Date("+dob+")/";
     }
 }

@@ -3,9 +3,6 @@ package com.example.myapplication.utilities;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.view.View;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 
 import com.example.myapplication.domain_objects.GeoAddress;
 
@@ -33,7 +30,7 @@ public class Utilities {
             return "Female";
         }
 
-        return "N/A";
+        return "Private";
     }
 
     public static String getJourneyHeader(ArrayList<GeoAddress> addresses)

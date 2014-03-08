@@ -17,6 +17,7 @@ import android.telephony.TelephonyManager;
 import android.text.InputType;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -39,7 +40,7 @@ import com.example.myapplication.dtos.UpdateUserDTO;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.utilities.DateTimeHelper;
-import com.example.myapplication.utilities.DialogCreator;
+import com.example.myapplication.factories.DialogFactory;
 import com.example.myapplication.utilities.Utilities;
 import com.example.myapplication.utilities.Validators;
 import com.google.gson.reflect.TypeToken;
@@ -73,12 +74,15 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
     private final int CAPTURE_IMAGE_REQUEST_CODE = 100;
     private final int PICK_IMAGE_FROM_GALLERY = 101;
 
+    private User user;
+
     private Boolean setDate = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        userId = appManager.getUser().getUserId();
         //Initialise UI elements.
         emailAddressTableRow = (TableRow) findViewById(R.id.ProfileViewerActivityEmailAddressTableRow);
         genderTableRow = (TableRow) findViewById(R.id.ProfileViewerActivityGenderTableRow);
@@ -168,7 +172,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
         switch (item.getItemId())
         {
             case R.id.help:
-                DialogCreator.showHelpDialog(this, "Your profile.", getResources().getString(R.string.MyProfileHelp));
+                DialogFactory.getHelpDialog(this, "Your profile.", getResources().getString(R.string.MyProfileHelp));
                 break;
             case R.id.action_home:
                 startActivity(new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
@@ -176,6 +180,11 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
             case R.id.logout_menu_option:
                 appManager.logout(true, true);
                 break;
+            case android.R.id.home:
+                finish();
+                break;
+            case R.id.privacy_settings:
+                startActivity(new Intent(this, PrivacySettingsActivity.class));
         }
         return false;
     }
@@ -319,6 +328,12 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
         saveChanges(new UpdateUserDTO(appManager.getUser().getUserId(), null, null, email, -1, null, null));
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.profile_editor_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     private void getPhoneNumber()
     {
         // Show the address dialog.
@@ -440,7 +455,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
         {
             appManager.setUser(serviceResponse.Result);
             user = serviceResponse.Result;
-            super.fillPersonDetails();
+            super.fillPersonDetails(serviceResponse.Result);
             Toast toast = Toast.makeText(this, "Changes to your profile were saved successfully.", Toast.LENGTH_LONG);
             toast.show();
         }
@@ -450,6 +465,12 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
     {
         fileUri = getOutputMediaFileUri();
         startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, fileUri), CAPTURE_IMAGE_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fillPersonDetails(appManager.getUser());
     }
 
     @Override

@@ -114,6 +114,9 @@ public class RatingsActivity extends BaseActivity implements WCFServiceCallback<
 
     private void showPersonDialog(User user)
     {
-        startActivity(new Intent(this, ProfileViewerActivity.class).putExtra(IntentConstants.USER, gson.toJson(user)));
+        Bundle bundle = new Bundle();
+        bundle.putInt(IntentConstants.PROFILE_VIEWER_MODE, IntentConstants.PROFILE_VIEWER_VIEWING);
+        bundle.putInt(IntentConstants.USER, user.getUserId());
+        startActivity(new Intent(this, ProfileViewerActivity.class).putExtras(bundle));
     }
 }

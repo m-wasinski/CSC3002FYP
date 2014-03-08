@@ -21,6 +21,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:clickable="true"
+            android:layout_marginTop="10dip"
             android:id="@+id/SearchActivityDepartureRelativeLayout"
             android:layout_alignParentTop="true"
             android:background="@drawable/home_navigation_selector">
@@ -159,7 +160,7 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/Search"
+                android:text="Next"
                 android:id="@+id/ActivitySearchMapSearchButton"
                 style="@style/UniversalButtonStyle"
                 android:visibility="gone"

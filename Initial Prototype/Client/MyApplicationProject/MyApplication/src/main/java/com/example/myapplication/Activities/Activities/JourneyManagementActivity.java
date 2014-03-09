@@ -45,7 +45,7 @@ import java.util.ArrayList;
  * Passengers for example, cannot cancel the journey while drivers can or
  * Passengers can withdraw themselves from a journey while drivers cannot.
  **/
-public class JourneyDetailsActivity extends BaseMapActivity implements View.OnClickListener, OnDrivingDirectionsRetrrievedListener{
+public class JourneyManagementActivity extends BaseMapActivity implements View.OnClickListener, OnDrivingDirectionsRetrrievedListener{
 
     private Journey journey;
 
@@ -60,12 +60,12 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
 
     TextView statusTextView;
 
-    private final String TAG = "Journey Details Activity";
+    private final String TAG = "Journey Management Activity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_journey_details);
+        setContentView(R.layout.activity_journey_management);
 
         // Extract data from the bundle.
         Bundle extras = getIntent().getExtras();
@@ -210,12 +210,20 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
         }).execute();
     }
 
+    /**
+     * Called after most-up-to-date journey object is retrieved from the web service.
+     * Overwrites the global journey object with the latest version retrieved from the web service.
+     * @param journey - most-up-to-date journey object.
+     */
     private void journeyRetrieved(Journey journey)
     {
         this.journey = journey;
         super.drawDrivingDirectionsOnMap(googleMap, journey.getGeoAddresses(), this);
     }
 
+    /**
+     * Initialises Gooogle Map.
+     */
     private void initialiseMap() {
 
         if (googleMap == null) {
@@ -257,6 +265,9 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
         });
     }
 
+    /**
+     * Starts the journey chat room activity.
+     */
     private void enterChatRoom() {
         Bundle bundle = new Bundle();
         bundle.putInt(IntentConstants.JOURNEY, journey.getJourneyId());
@@ -312,7 +323,7 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
                     requestsDialog.dismiss();
                     Bundle bundle = new Bundle();
                     bundle.putString(IntentConstants.JOURNEY_REQUEST, gson.toJson(requests.get(i)));
-                    startActivity(new Intent(JourneyDetailsActivity.this, JourneyRequestDialogActivity.class).putExtras(bundle));
+                    startActivity(new Intent(JourneyManagementActivity.this, JourneyRequestDialogActivity.class).putExtras(bundle));
                 }
             });
         }
@@ -348,7 +359,7 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
                     Bundle bundle = new Bundle();
                     bundle.putInt(IntentConstants.PROFILE_VIEWER_MODE, IntentConstants.PROFILE_VIEWER_VIEWING);
                     bundle.putInt(IntentConstants.USER, passengers.get(i).getUserId());
-                    startActivity(new Intent(JourneyDetailsActivity.this, ProfileViewerActivity.class).putExtras(bundle));
+                    startActivity(new Intent(JourneyManagementActivity.this, ProfileViewerActivity.class).putExtras(bundle));
                 }
             });
         }
@@ -371,7 +382,7 @@ public class JourneyDetailsActivity extends BaseMapActivity implements View.OnCl
                 progressBar.setVisibility(View.GONE);
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {
-                    Toast.makeText(JourneyDetailsActivity.this, "You have been successfully withdrawn from this journey.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(JourneyManagementActivity.this, "You have been successfully withdrawn from this journey.", Toast.LENGTH_LONG).show();
                     finish();
                 }
             }

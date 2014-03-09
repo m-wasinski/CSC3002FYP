@@ -83,9 +83,12 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
         }
 
         // Initialise UI elements and local variables.
+
+        // The progress bar.
         progressBar = (ProgressBar) findViewById(R.id.FriendListActivityProgressBar);
         progressBar.setVisibility(View.VISIBLE);
 
+        // Listview and adapter.
         friends = new ArrayList<User>();
         friendsAdapter = new FriendsAdapter(this, R.layout.listview_row_friend, appManager, friends);
 
@@ -96,6 +99,7 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
 
         noFriendsTextView = (TextView) findViewById(R.id.FriendsListActivityNoFriendsTextView);
 
+        // Filter edittext.
         friendsFilterEditText = (EditText) findViewById(R.id.FriendListActivityFilterEditText);
         friendsFilterEditText.addTextChangedListener(this);
     }
@@ -202,16 +206,16 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
             public void onClick(DialogInterface d, int choice) {
                 switch (choice)
                 {
-                    case 0:
+                    case 0: // Showing friend's profile.
                         Bundle bundle = new Bundle();
                         bundle.putInt(IntentConstants.PROFILE_VIEWER_MODE, IntentConstants.PROFILE_VIEWER_VIEWING);
                         bundle.putInt(IntentConstants.USER, friends.get(i).getUserId());
                         startActivity(new Intent(FriendsListActivity.this, ProfileViewerActivity.class).putExtras(bundle));
                         break;
-                    case 1:
+                    case 1: // Starting chat activity.
                         showInstantMessengerActivity(friends.get(i));
                         break;
-                    case 2:
+                    case 2: // Deleting a friend from list.
                         DialogFactory.getYesNoDialog(ab.getContext(), "Delete " + friends.get(i).getUserName()+"?", "Are you sure you want to delete "
                                 + friends.get(i).getUserName() + " from your list of friends?", new Interfaces.YesNoDialogPositiveButtonListener() {
                             @Override

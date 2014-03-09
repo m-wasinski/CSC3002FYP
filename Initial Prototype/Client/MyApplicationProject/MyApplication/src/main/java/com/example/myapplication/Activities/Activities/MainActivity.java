@@ -21,6 +21,10 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.gson.reflect.TypeToken;
 import java.util.UUID;
 
+/**
+ * Main Activity starts the application. Contacts the web service to see if user has established a permanent session earlier and attempts to auto-login.
+ * It also performs the necessary checks for the availability of Google Play services.
+ */
 public class MainActivity extends BaseActivity implements WCFServiceCallback<User, Void>, GCMRegistrationCallback {
 
     private final String TAG = "Main Activity";

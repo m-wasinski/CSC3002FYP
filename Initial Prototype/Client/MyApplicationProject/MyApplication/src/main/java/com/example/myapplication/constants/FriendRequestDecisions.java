@@ -1,7 +1,7 @@
 package com.example.myapplication.constants;
 
 /**
- * Created by Michal on 12/02/14.
+ * Contains a the possible types of friend request decisions.
  */
 public class FriendRequestDecisions
 {

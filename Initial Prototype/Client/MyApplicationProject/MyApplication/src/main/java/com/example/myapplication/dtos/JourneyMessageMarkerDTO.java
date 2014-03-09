@@ -1,11 +1,11 @@
 package com.example.myapplication.dtos;
 
 /**
- * Created by Michal on 13/02/14.
+ * Used to mark journey messages as read by the current user.
  */
 public class JourneyMessageMarkerDTO {
-    public int UserId;
-    public int JourneyMessageId;
+    private int UserId;
+    private int JourneyMessageId;
 
     public JourneyMessageMarkerDTO(int userId, int journeyMesssageId) {
         this.UserId = userId;

@@ -114,8 +114,8 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
         // Extract information of the user we are currently chatting with.
         ChatMessage chatMessage = gson.fromJson(extras.getString(IntentConstants.PAYLOAD) ,new TypeToken<ChatMessage>() {}.getType());
 
-        recipientId = chatMessage != null ? chatMessage.SenderId : extras.getInt(IntentConstants.RECIPIENT_ID);
-        recipientUserName = chatMessage != null ? chatMessage.SenderUserName : extras.getString(IntentConstants.RECIPIENT_USERNAME);
+        recipientId = chatMessage != null ? chatMessage.getSenderId() : extras.getInt(IntentConstants.RECIPIENT_ID);
+        recipientUserName = chatMessage != null ? chatMessage.getSenderUserName() : extras.getString(IntentConstants.RECIPIENT_USERNAME);
 
         // Initialise UI elements.
         actionBar.setTitle("Chat with " + recipientUserName);
@@ -178,7 +178,7 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
                 DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime()), false, recipientUserName, appManager.getUser().getUserName());
 
         // If the message if blank, return.
-        if(newMessage.MessageBody.length() == 0)
+        if(newMessage.getMessageBody().length() == 0)
         {
             return;
         }
@@ -261,7 +261,7 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
         {
             for(ChatMessage chatMessage1 : retrievedMessages)
             {
-                if(chatMessage1.ChatMessageId == chatMessage.ChatMessageId)
+                if(chatMessage1.getChatMessageId() == chatMessage.getChatMessageId())
                 {
                     filteredMessages.remove(chatMessage1);
                 }
@@ -308,7 +308,7 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
 
             for(ChatMessage message : chatMessages)
             {
-                if(message.ChatMessageId == chatMessage.ChatMessageId)
+                if(message.getChatMessageId() == chatMessage.getChatMessageId())
                 {
                     return;
                 }
@@ -316,7 +316,7 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
 
             // If incoming message happens to be coming from the user we are currently chatting with,
             // we can abort the broadcast and display the message in the listview.
-            if(appManager.getUser().getUserId() == chatMessage.RecipientId && chatMessage.SenderId == recipientId)
+            if(appManager.getUser().getUserId() == chatMessage.getRecipientId() && chatMessage.getSenderId() == recipientId)
             {
                 addNewMessage(chatMessage);
                 markMessageAsRead(chatMessage);
@@ -331,14 +331,14 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
      **/
     private void markMessageAsRead(final ChatMessage chatMessage)
     {
-        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.MarkMessageAsReadURL),chatMessage.ChatMessageId,
+        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.MarkMessageAsReadURL),chatMessage.getChatMessageId(),
                 new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
                 appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {
-                    Log.i(TAG, "Message no: " + chatMessage.ChatMessageId + " successfully marked as read.");
+                    Log.i(TAG, "Message no: " + chatMessage.getChatMessageId() + " successfully marked as read.");
                 }
 
             }

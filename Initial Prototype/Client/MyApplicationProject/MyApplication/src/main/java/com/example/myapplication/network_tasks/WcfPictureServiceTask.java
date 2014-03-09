@@ -29,7 +29,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 /**
- * Created by Michal on 20/02/14.
+ * Used to retrieve picture from the web service.
  */
 public class WcfPictureServiceTask extends AsyncTask<Void, Void, Void> {
 

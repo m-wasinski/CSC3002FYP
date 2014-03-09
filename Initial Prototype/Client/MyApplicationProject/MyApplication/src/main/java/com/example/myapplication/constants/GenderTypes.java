@@ -1,7 +1,7 @@
 package com.example.myapplication.constants;
 
 /**
- * Created by Michal on 05/01/14.
+ * Contains possible gender types.
  */
 public class GenderTypes
 {

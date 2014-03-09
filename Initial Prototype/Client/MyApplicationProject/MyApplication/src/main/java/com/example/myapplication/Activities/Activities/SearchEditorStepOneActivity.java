@@ -65,13 +65,13 @@ public class SearchEditorStepOneActivity extends BaseMapActivity implements WCFS
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
+        setContentView(R.layout.activity_search_editor_step_one);
 
         Bundle bundle = getIntent().getExtras();
         mode = bundle.getInt(IntentConstants.SEARCH_MODE);
 
         journeyTemplate = mode == IntentConstants.SEARCH_MODE_NEW ? journeyTemplate = new JourneyTemplate() :
-                (JourneyTemplate) gson.fromJson(bundle.getString(IntentConstants.JOURNEY_SEARCH_DTO), new TypeToken<JourneyTemplate>(){}.getType());
+                (JourneyTemplate) gson.fromJson(bundle.getString(IntentConstants.JOURNEY_TEMPLATE), new TypeToken<JourneyTemplate>(){}.getType());
 
         //Initialise UI elements.
         progressBar = (ProgressBar) findViewById(R.id.SearchActivityProgressBar);
@@ -118,8 +118,8 @@ public class SearchEditorStepOneActivity extends BaseMapActivity implements WCFS
         if(mode == IntentConstants.SEARCH_MODE_FROM_TEMPLATE || mode == IntentConstants.EDITING_TEMPLATE)
         {
             destinationRelativeLayout.setVisibility(View.VISIBLE);
-            startGeocoderTask(MarkerType.Departure, journeyTemplate.getGeoAddresses().get(0).AddressLine, journeyTemplate.getDepartureRadius());
-            startGeocoderTask(MarkerType.Destination, journeyTemplate.getGeoAddresses().get(1).AddressLine, journeyTemplate.getDestinationRadius());
+            startGeocoderTask(MarkerType.Departure, journeyTemplate.getGeoAddresses().get(0).getAddressLine(), journeyTemplate.getDepartureRadius());
+            startGeocoderTask(MarkerType.Destination, journeyTemplate.getGeoAddresses().get(1).getAddressLine(), journeyTemplate.getDestinationRadius());
         }
     }
 
@@ -250,7 +250,7 @@ public class SearchEditorStepOneActivity extends BaseMapActivity implements WCFS
 
         Bundle bundle = new Bundle();
         bundle.putInt(IntentConstants.SEARCH_MODE, mode);
-        bundle.putString(IntentConstants.JOURNEY_SEARCH_DTO, gson.toJson(journeyTemplate));
+        bundle.putString(IntentConstants.JOURNEY_TEMPLATE, gson.toJson(journeyTemplate));
 
         startActivity(new Intent(this, SearchEditorStepTwoActivity.class).putExtras(bundle));
     }

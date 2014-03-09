@@ -14,7 +14,8 @@ import java.io.IOException;
 import java.util.Random;
 
 /**
- * Created by Michal on 30/12/13.
+ * Used to create a new async task which register the user's device with Google Cloud Messaging (GCM).
+ * GCM is required in order for notifications and the instant messenger as well as journey chat to work properly.
  */
 public class GCMRegistrationTask extends AsyncTask<TextView, String, Boolean> {
 

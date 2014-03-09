@@ -92,7 +92,7 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
 
         // Retrieve the id for this journey.
         JourneyMessage journeyMessage = gson.fromJson(bundle.getString(IntentConstants.PAYLOAD), new TypeToken<JourneyMessage>() {}.getType());
-        journeyId =  journeyMessage != null ? journeyMessage.JourneyId : bundle.getInt(IntentConstants.JOURNEY);
+        journeyId =  journeyMessage != null ? journeyMessage.getJourneyId() : bundle.getInt(IntentConstants.JOURNEY);
         journeyMessages = new ArrayList<JourneyMessage>();
         journeyChatAdapter = new JourneyChatAdapter(this, journeyMessages, appManager.getUser().getUserId());
         setListAdapter(journeyChatAdapter);
@@ -137,7 +137,7 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
                 messageEditText.getText().toString(),
                 DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime()));
 
-        if(newMessage.MessageBody.length() > 0 )
+        if(newMessage.getMessageBody().length() > 0 )
         {
             new WcfPostServiceTask<JourneyMessage>(this, getResources().getString(R.string.SendJourneyChatMessageURL), newMessage,
                     new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
@@ -178,7 +178,7 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
 
             JourneyMessage journeyMessage = gson.fromJson(bundle.getString(IntentConstants.PAYLOAD), new TypeToken<JourneyMessage>() {}.getType());
 
-            if(journeyMessage.JourneyId == journeyId)
+            if(journeyMessage.getJourneyId() == journeyId)
             {
                 // If the message happens to be related to the journey of the currently opened chat room,
                 // we can abort the broadcast and display the message in the listview.
@@ -186,7 +186,7 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
 
                 for(JourneyMessage message : journeyMessages)
                 {
-                    if(message.JourneyMessageId == journeyMessage.JourneyMessageId)
+                    if(message.getJourneyMessageId() == journeyMessage.getJourneyMessageId())
                     {
                         return;
                     }
@@ -205,14 +205,14 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
     private void markMessageAsRead(final JourneyMessage journeyMessage)
     {
         new WcfPostServiceTask<JourneyMessageMarkerDTO>(this, getResources().getString(R.string.MarkJourneyMessageAsReadURL),
-                new JourneyMessageMarkerDTO(appManager.getUser().getUserId(), journeyMessage.JourneyMessageId),
+                new JourneyMessageMarkerDTO(appManager.getUser().getUserId(), journeyMessage.getJourneyMessageId()),
                 new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
                 appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {
-                    Log.i(TAG, "Message no: " + journeyMessage.JourneyMessageId + " successfully marked as read.");
+                    Log.i(TAG, "Message no: " + journeyMessage.getJourneyMessageId() + " successfully marked as read.");
                 }
 
             }
@@ -306,7 +306,7 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
         {
             for(JourneyMessage journeyMessage1 : retrievedMessages)
             {
-                if(journeyMessage1.JourneyMessageId == journeyMessage.JourneyMessageId)
+                if(journeyMessage1.getJourneyMessageId() == journeyMessage.getJourneyMessageId())
                 {
                     filteredMessages.remove(journeyMessage1);
                 }

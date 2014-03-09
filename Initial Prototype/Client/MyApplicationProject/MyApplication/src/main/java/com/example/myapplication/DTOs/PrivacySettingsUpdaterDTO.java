@@ -1,7 +1,7 @@
 package com.example.myapplication.dtos;
 
 /**
- * Created by Michal on 07/03/14.
+ * DTO object used to update user's privacy settings.
  */
 public class PrivacySettingsUpdaterDTO {
 

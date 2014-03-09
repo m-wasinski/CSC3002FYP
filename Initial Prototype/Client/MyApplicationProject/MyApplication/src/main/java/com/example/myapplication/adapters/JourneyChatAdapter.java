@@ -63,9 +63,9 @@ public class JourneyChatAdapter extends BaseAdapter {
         else
             holder = (ViewHolder) view.getTag();
 
-        holder.message.setText(message.MessageBody);
-        holder.date.setText(DateTimeHelper.getSimpleDate(message.SentOnDate) + " " + DateTimeHelper.getSimpleTime(message.SentOnDate));
-        holder.sender.setText(message.SenderId == this.userId ? "You: " : message.SenderUsername+": ");
+        holder.message.setText(message.getMessageBody());
+        holder.date.setText(DateTimeHelper.getSimpleDate(message.getSentOnDate()) + " " + DateTimeHelper.getSimpleTime(message.getSentOnDate()));
+        holder.sender.setText(message.getSenderId() == this.userId ? "You: " : message.getSenderUsername()+": ");
 
         return view;
     }

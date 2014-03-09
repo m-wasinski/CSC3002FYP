@@ -16,7 +16,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 /**
- * Created by Michal on 20/02/14.
+ * Serves as a base class for the WcfGetServiceTask and WcfPostServiceTask.
  */
 public class WcfBaseServiceTask extends AsyncTask<Void, Void, Void> {
 

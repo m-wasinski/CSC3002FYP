@@ -1,20 +1,48 @@
 package com.example.myapplication.domain_objects;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
- * Created by Michal on 07/01/14.
+ * Represents a Journey Chat Room message object.
  */
 public class JourneyMessage {
 
-    public int JourneyMessageId;
-    public int JourneyId;
-    public int SenderId;
-    public String SenderUsername;
-    public String MessageBody;
-    public String SentOnDate;
-    public ArrayList<User> SeenBy;
+    private int JourneyMessageId;
+    private int JourneyId;
+    private int SenderId;
+    private String SenderUsername;
+
+    public String getMessageBody() {
+        return MessageBody;
+    }
+
+    public ArrayList<User> getSeenBy() {
+        return SeenBy;
+    }
+
+    public String getSentOnDate() {
+        return SentOnDate;
+    }
+
+    public String getSenderUsername() {
+        return SenderUsername;
+    }
+
+    public int getJourneyId() {
+        return JourneyId;
+    }
+
+    public int getJourneyMessageId() {
+        return JourneyMessageId;
+    }
+
+    public int getSenderId() {
+        return SenderId;
+    }
+
+    private String MessageBody;
+    private String SentOnDate;
+    private ArrayList<User> SeenBy;
 
     public JourneyMessage(int journeyId, String senderUsername, int senderId, String messageBody, String sentOnDate) {
         this.JourneyId = journeyId;

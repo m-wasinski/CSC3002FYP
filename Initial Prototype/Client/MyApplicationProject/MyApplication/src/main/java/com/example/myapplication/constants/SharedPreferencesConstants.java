@@ -1,7 +1,7 @@
 package com.example.myapplication.constants;
 
 /**
- * Created by Michal on 13/01/14.
+ * TAG used when writing to and reading from shared preferences.
  */
 public class SharedPreferencesConstants
 {

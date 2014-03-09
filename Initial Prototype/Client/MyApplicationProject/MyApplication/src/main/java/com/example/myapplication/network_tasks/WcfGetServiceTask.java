@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by Michal on 20/02/14.
+ * As a proof that the app can be easily converted into a more REST-ful architecture, I have crated this class which makes proper use of the http GET verb.
  */
 public class WcfGetServiceTask extends WcfBaseServiceTask {
 

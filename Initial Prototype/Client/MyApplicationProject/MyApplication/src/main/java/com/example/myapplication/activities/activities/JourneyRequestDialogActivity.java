@@ -15,7 +15,6 @@ import com.example.myapplication.R;
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.constants.IntentConstants;
 import com.example.myapplication.constants.JourneyRequestDecisions;
-import com.example.myapplication.constants.RequestDecision;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.JourneyRequest;
 import com.example.myapplication.domain_objects.Notification;
@@ -26,7 +25,8 @@ import com.example.myapplication.notification_management.NotificationProcessor;
 import com.google.gson.reflect.TypeToken;
 
 /**
- * Created by Michal on 02/01/14.
+ * Activity used to display a journey request sent by another user.
+ * Gives current user the ability to accept, deny or view the profile of the person who sent the request.
  */
 public class JourneyRequestDialogActivity extends BaseActivity implements View.OnClickListener, WCFServiceCallback<JourneyRequest, Void>{
 
@@ -51,6 +51,7 @@ public class JourneyRequestDialogActivity extends BaseActivity implements View.O
 
         journeyRequest = gson.fromJson(bundle.getString(IntentConstants.JOURNEY_REQUEST),  new TypeToken<JourneyRequest>() {}.getType());
 
+        // Check if this activity was started from a notification. If so, mark it as read.
         if(notification != null)
         {
             new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Boolean, Void>() {
@@ -70,11 +71,11 @@ public class JourneyRequestDialogActivity extends BaseActivity implements View.O
         // Buttons
         acceptButton = (Button) findViewById(R.id.JourneyRequestDialogActivityAcceptButton);
         acceptButton.setOnClickListener(this);
-        acceptButton.setEnabled(journeyRequest.getDecision() == JourneyRequestDecisions.Undecided);
+        acceptButton.setEnabled(journeyRequest.getDecision() == JourneyRequestDecisions.UNDECIDED);
 
         denyButton = (Button) findViewById(R.id.JourneyRequestDialogActivityDenyButton);
         denyButton.setOnClickListener(this);
-        denyButton.setEnabled(journeyRequest.getDecision() == JourneyRequestDecisions.Undecided);
+        denyButton.setEnabled(journeyRequest.getDecision() == JourneyRequestDecisions.UNDECIDED);
 
         Button showProfileButton = (Button) findViewById(R.id.JourneyRequestDialogActivityShowProfileButton);
         showProfileButton.setOnClickListener(this);
@@ -93,16 +94,23 @@ public class JourneyRequestDialogActivity extends BaseActivity implements View.O
         getWindow().setAttributes(layout);
     }
 
+    /**
+     * Sets the decision accepted/denied and triggers a new call to the web service to process it.
+     *
+     * @param decision
+     */
     private void submitDecision(int decision)
     {
         progressBar.setVisibility(View.VISIBLE);
-        if(decision == RequestDecision.UNDECIDED)
+        if(decision == JourneyRequestDecisions.UNDECIDED)
         {
             return;
         }
 
+        // Set the decision.
         journeyRequest.setDecision(decision);
 
+        // Call the web service to process it.
         new WcfPostServiceTask<JourneyRequest>(this, getResources().getString(R.string.ProcessRequestDecisionURL),
                 journeyRequest,  new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(),
                 appManager.getAuthorisationHeaders(), this).execute();
@@ -114,11 +122,11 @@ public class JourneyRequestDialogActivity extends BaseActivity implements View.O
         {
             case R.id.JourneyRequestDialogActivityAcceptButton:
                 acceptButton.setEnabled(false);
-                submitDecision(RequestDecision.ACCEPTED);
+                submitDecision(JourneyRequestDecisions.ACCEPTED);
                 break;
             case R.id.JourneyRequestDialogActivityDenyButton:
-                acceptButton.setEnabled(false);
-                submitDecision(RequestDecision.DENIED);
+                denyButton.setEnabled(false);
+                submitDecision(JourneyRequestDecisions.DENIED);
                 break;
             case R.id.JourneyRequestDialogActivityShowProfileButton:
                 Bundle bundle = new Bundle();
@@ -132,6 +140,12 @@ public class JourneyRequestDialogActivity extends BaseActivity implements View.O
         }
     }
 
+    /**
+     * Called after response to this request is processed by the web service.
+     *
+     * @param serviceResponse
+     * @param parameter
+     */
     @Override
     public void onServiceCallCompleted(ServiceResponse<JourneyRequest> serviceResponse, Void parameter) {
         progressBar.setVisibility(View.GONE);

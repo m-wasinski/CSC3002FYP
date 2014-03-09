@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Created by Michal on 04/02/14.
+ * Async Task which uses Geocoder behind the scenes to translate addresses into latitude and longitude values and vice-versa.
  */
 public class GeocoderTask extends AsyncTask<GeocoderParams, Void, MarkerOptions> {
 
@@ -51,6 +51,7 @@ public class GeocoderTask extends AsyncTask<GeocoderParams, Void, MarkerOptions>
         // Create a list to contain the result address
         List<Address> addresses = null;
         try {
+            //If primary Geocoder is not present, the app will fall back on its secondary or backup Geocoder which calls Google Web API to translate the address.
             if(Geocoder.isPresent())
             {
                 addresses = geocoderParams[0].getLocation() != null ? geocoder.getFromLocation(geocoderParams[0].getLocation().getLatitude(), geocoderParams[0].getLocation().getLongitude(), 1)

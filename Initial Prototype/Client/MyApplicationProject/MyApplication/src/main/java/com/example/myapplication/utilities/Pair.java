@@ -1,7 +1,7 @@
 package com.example.myapplication.utilities;
 
 /**
- * Created by Michal on 05/01/14.
+ * Used by the AppManager to store HTTP authorisation headers.
  */
 public class Pair {
 

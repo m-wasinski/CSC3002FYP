@@ -1,10 +1,9 @@
 package com.example.myapplication.google_maps_utilities;
 
-import java.io.InputStream;
-import java.util.ArrayList;
+import android.util.Log;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import com.example.myapplication.domain_objects.GeoAddress;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -16,11 +15,17 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.example.myapplication.domain_objects.GeoAddress;
-import com.google.android.gms.maps.model.LatLng;
+import java.io.InputStream;
+import java.util.ArrayList;
 
-import android.util.Log;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
+/**
+ * Used to retrieve driving directions and route for a given set of latitude and longitude points from the Google Map.
+ * Originally, this class has been developed by user akexorcist from Stackoverflow: http://stackoverflow.com/users/1276302/akexorcist
+ * I have used his original code and modified it to be compatible with multiple waypoints.
+ */
 public class GMapV2Direction {
     public final static String MODE_DRIVING = "driving";
     public final static String MODE_WALKING = "walking";
@@ -33,7 +38,7 @@ public class GMapV2Direction {
         String waypoints = "";
         for(int i = 1; i < geoAddresses.size()-1; i++)
         {
-            waypoints = waypoints + geoAddresses.get(i).Latitude + "," + geoAddresses.get(i).Longitude;
+            waypoints = waypoints + geoAddresses.get(i).getLatitude() + "," + geoAddresses.get(i).getLongitude();
             if(i < geoAddresses.size()-2)
             {
                 waypoints = waypoints +"%7C";
@@ -41,8 +46,8 @@ public class GMapV2Direction {
         }
 
         String url = "http://maps.googleapis.com/maps/api/directions/xml?"
-                + "origin=" + geoAddresses.get(0).Latitude + "," + geoAddresses.get(0).Longitude
-                + "&destination=" + geoAddresses.get(geoAddresses.size()-1).Latitude +","+geoAddresses.get(geoAddresses.size()-1).Longitude
+                + "origin=" + geoAddresses.get(0).getLatitude() + "," + geoAddresses.get(0).getLongitude()
+                + "&destination=" + geoAddresses.get(geoAddresses.size()-1).getLatitude() +","+geoAddresses.get(geoAddresses.size()-1).getLongitude()
                 + "&waypoints=" + waypoints
                 + "&sensor=false&units=metric&mode=driving";
 

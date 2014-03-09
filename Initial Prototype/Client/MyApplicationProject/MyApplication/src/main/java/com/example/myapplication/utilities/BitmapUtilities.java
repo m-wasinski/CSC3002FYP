@@ -5,7 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 
 /**
- * Created by Michal on 02/03/14.
+ * A set of utilities to perform bitmap manipulations.
  */
 public class BitmapUtilities
 {

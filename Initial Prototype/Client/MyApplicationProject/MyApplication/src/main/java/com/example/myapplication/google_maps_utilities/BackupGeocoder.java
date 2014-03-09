@@ -13,18 +13,13 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.io.InputStream;
 import java.util.Locale;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 /**
- * Created by Michal on 12/02/14.
+ * Should the primary Geocoder be unavailable for whatever reason, the app will fall back on this backup Geocoder which will call the
+ * Google's web API to decode the address supplied by the user.
  */
 public class BackupGeocoder {
 

@@ -226,7 +226,7 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
         extras.putInt(IntentConstants.NEW_JOURNEY_MESSAGES,Integer.parseInt(((TextView)view.findViewById(R.id.MyCarSharesNumberOfUnreadMessagesTextView)).getText().toString()));
         extras.putInt(IntentConstants.NEW_JOURNEY_REQUESTS,Integer.parseInt(((TextView)view.findViewById(R.id.MyCarSharesNumberOfUnreadRequestsTextView)).getText().toString()));
         extras.putString(IntentConstants.JOURNEY, gson.toJson(myJourneys.get(i)));
-        startActivity(user.getUserId() == appManager.getUser().getUserId() ? new Intent(this, JourneyDetailsActivity.class).putExtras(extras) :
+        startActivity(user.getUserId() == appManager.getUser().getUserId() ? new Intent(this, JourneyManagementActivity.class).putExtras(extras) :
                 new Intent(this, SearchResultDetailsActivity.class).putExtras(extras));
     }
 

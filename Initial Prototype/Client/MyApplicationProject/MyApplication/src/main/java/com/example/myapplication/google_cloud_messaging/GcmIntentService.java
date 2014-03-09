@@ -27,11 +27,11 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 
 /**
- * Created by Michal on 30/12/13.
+ * Service called by the GcmBroadcastReceiver, responsible for processing GCM notifications.
  */
 public class GcmIntentService extends IntentService {
 
-    private final String TAG = this.getClass().getSimpleName();
+    private final String TAG = "GCM Intent Service.";
 
     public GcmIntentService() {
         super("GcmIntentService");
@@ -39,8 +39,6 @@ public class GcmIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-
-        Log.d(TAG, "GCM Intent Service called.");
 
         Bundle extras = intent.getExtras();
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
@@ -52,17 +50,7 @@ public class GcmIntentService extends IntentService {
 
         if (!extras.isEmpty())
         {
-            if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType))
-            {
-               // sendNotification("Send error: " + intent.getExtras().getString("contentTitle"), intent.getExtras().getString("message"));
-            }
-            else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType))
-            {
-                //sendNotification("Deleted messages on server: " +
-                //        intent.getExtras().getString("contentTitle"), intent.getExtras().getString("message"));
-                // If it's a regular GCM message, do some work.
-            }
-            else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType))
+            if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType))
             {
                 int requestType = Integer.parseInt(intent.getExtras().getString(IntentConstants.GCM_NOTIFICATION_TYPE));
 
@@ -124,6 +112,15 @@ public class GcmIntentService extends IntentService {
         }
     }
 
+    /**
+     * This is exactly the reason why task killers should not be used in an Android app.
+     *
+     * If used suddenly kills the app, it will never get the chance to log out and set current user's status to offline.
+     * This will unfortunately not prevent notifications from arriving, despite all app data being already wiped from the device.
+     * We can detect this and display an anonymous notification asking the user to log in.
+     * @param context
+     * @param appManager
+     */
     private void displayAnonymousNotification(Context context, AppManager appManager)
     {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

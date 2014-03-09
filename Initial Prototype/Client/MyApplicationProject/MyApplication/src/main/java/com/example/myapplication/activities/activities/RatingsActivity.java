@@ -26,7 +26,8 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 
 /**
- * Created by Michal on 21/02/14.
+ * Displays a list of all ratings that have been left for the designated user.
+ *
  */
 public class RatingsActivity extends BaseActivity implements WCFServiceCallback<ArrayList<Rating>, Void> {
 
@@ -34,76 +35,67 @@ public class RatingsActivity extends BaseActivity implements WCFServiceCallback<
 
     private ListView ratingsListView;
 
-    private RatingsAdapter ratingsAdapter;
-
     private ProgressBar progressBar;
 
     private TextView noRatingsTextView;
 
     private String TAG = "Ratings Activity";
 
-    private ArrayList<Rating> ratings;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_ratings);
+        setContentView(R.layout.activity_ratings);
 
         // Initialise local variables.
         Bundle bundle = getIntent().getExtras();
 
-        this.user = gson.fromJson(bundle.getString(IntentConstants.USER), new TypeToken<User>(){}.getType());
-        this.ratings = new ArrayList<Rating>();
+        user = gson.fromJson(bundle.getString(IntentConstants.USER), new TypeToken<User>(){}.getType());
 
-        if(bundle != null)
+        Notification notification =  gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),  new TypeToken<Notification>() {}.getType());
+
+        if(notification != null)
         {
-            Notification notification =  gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),  new TypeToken<Notification>() {}.getType());
-
-            if(notification != null)
-            {
-                new NotificationProcessor().MarkDelivered(this, this.appManager, notification, new WCFServiceCallback<Boolean, Void>() {
-                    @Override
-                    public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
-                        Log.i(this.getClass().getSimpleName(), "Notification successfully marked as delivered");
-                    }
-                });
-            }
+            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Boolean, Void>() {
+                @Override
+                public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+                    Log.i(TAG, "Notification successfully marked as delivered");
+                }
+            });
         }
-
         // Initialise UI elements.
-        this.ratingsListView = (ListView) this.findViewById(R.id.RatingsActivityListView);
-        this.noRatingsTextView = (TextView) this.findViewById(R.id.RatingsActivityNoRatingsTextView);
-        this.actionBar.setTitle(this.user.getUserName() + "'s ratings");
-        this.progressBar = (ProgressBar) this.findViewById(R.id.RatingsActivityProgressBar);
+        ratingsListView = (ListView) findViewById(R.id.RatingsActivityListView);
+        noRatingsTextView = (TextView) findViewById(R.id.RatingsActivityNoRatingsTextView);
+        actionBar.setTitle(user.getUserName() + "'s ratings");
+        progressBar = (ProgressBar) findViewById(R.id.RatingsActivityProgressBar);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        this.retrieveRatings();
+        retrieveRatings();
     }
 
     private void retrieveRatings()
     {
-        this.progressBar.setVisibility(View.VISIBLE);
-        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetUserRatingsURL), this.user.getUserId(), new TypeToken<ServiceResponse<ArrayList<Rating>>>(){}.getType(),
-                this.appManager.getAuthorisationHeaders(), this).execute();
+        progressBar.setVisibility(View.VISIBLE);
+        new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetUserRatingsURL), user.getUserId(), new TypeToken<ServiceResponse<ArrayList<Rating>>>(){}.getType(),
+                appManager.getAuthorisationHeaders(), this).execute();
     }
 
     @Override
     public void onServiceCallCompleted(final ServiceResponse<ArrayList<Rating>> serviceResponse, Void parameter) {
 
-        this.progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             Log.i(TAG, "retrieved " + serviceResponse.Result.size() + " ratings");
 
-            this.noRatingsTextView.setVisibility(serviceResponse.Result.size() == 0 ? View.VISIBLE : View.GONE);
-            this.noRatingsTextView.setText(serviceResponse.Result.size() == 0 ? this.user.getUserName() + " has no ratings." : "");
-            this.ratingsAdapter = new RatingsAdapter(this, R.layout.listview_row_rating, serviceResponse.Result, this.appManager);
-            this.ratingsListView.setAdapter(ratingsAdapter);
+            noRatingsTextView.setVisibility(serviceResponse.Result.size() == 0 ? View.VISIBLE : View.GONE);
+            noRatingsTextView.setText(serviceResponse.Result.size() == 0 ? user.getUserName() + " has no ratings." : "");
+            RatingsAdapter ratingsAdapter = new RatingsAdapter(this, R.layout.listview_row_rating, serviceResponse.Result, appManager);
+            ratingsListView.setAdapter(ratingsAdapter);
 
-            this.ratingsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            ratingsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     showPersonDialog(serviceResponse.Result.get(i).getFromUser());

@@ -37,8 +37,6 @@ public class JourneySummaryActivity extends BaseActivity implements WCFImageRetr
     private TextView journeyVehicleTypeTextView;
     private TextView journeyPrivateTextView;
 
-    private TableRow journeyDriverTableRow;
-
     private Journey journey;
 
     private ImageView driverIconImageView;
@@ -66,7 +64,7 @@ public class JourneySummaryActivity extends BaseActivity implements WCFImageRetr
 
         driverIconImageView = (ImageView) findViewById(R.id.JourneySummaryActivityDriverImageView);
 
-        journeyDriverTableRow = (TableRow) findViewById(R.id.JourneySummaryActivityJourneyDriverTableRow);
+        TableRow journeyDriverTableRow = (TableRow) findViewById(R.id.JourneySummaryActivityJourneyDriverTableRow);
         journeyDriverTableRow.setOnClickListener(this);
 
         // Fill in the details.
@@ -76,6 +74,9 @@ public class JourneySummaryActivity extends BaseActivity implements WCFImageRetr
         getDriverPicture();
     }
 
+    /**
+     * Populates the UI controls with appropriate journey information stored in the journey object.
+     **/
     private void fillJourneyDetails()
     {
         String[] vehicleTypes = getResources().getStringArray(R.array.vehicle_types);
@@ -93,12 +94,19 @@ public class JourneySummaryActivity extends BaseActivity implements WCFImageRetr
 
     }
 
+    /**
+     * Retrieves profile picture of the journey driver.
+     */
     private void getDriverPicture()
     {
         new WcfPictureServiceTask(appManager.getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
                 journey.getDriver().getUserId(), appManager.getAuthorisationHeaders(), this).execute();
     }
 
+    /**
+     * Called after driver's profile picture has been retrieved from the web service.
+     * @param bitmap
+     */
     @Override
     public void onImageRetrieved(Bitmap bitmap) {
         if(bitmap != null)

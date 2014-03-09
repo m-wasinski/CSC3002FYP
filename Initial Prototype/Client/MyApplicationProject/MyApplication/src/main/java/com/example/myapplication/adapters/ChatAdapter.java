@@ -53,13 +53,13 @@ public class ChatAdapter extends BaseAdapter {
         else
             holder = (ViewHolder) convertView.getTag();
 
-        holder.message.setText(message.MessageBody);
-        holder.date.setText(DateTimeHelper.getSimpleDate(message.SentOnDate) + " " + DateTimeHelper.getSimpleTime(message.SentOnDate));
+        holder.message.setText(message.getMessageBody());
+        holder.date.setText(DateTimeHelper.getSimpleDate(message.getSentOnDate()) + " " + DateTimeHelper.getSimpleTime(message.getSentOnDate()));
         LayoutParams layoutParams = (LayoutParams) holder.message.getLayoutParams();
         LayoutParams layoutParams1 = (LayoutParams) holder.date.getLayoutParams();
 
         //Check whether message is mine to show green background and align to right
-        if(message.SenderId == this.userId)
+        if(message.getSenderId() == this.userId)
         {
             holder.message.setTextColor(Color.parseColor("#32B4E4"));
             layoutParams.gravity = Gravity.RIGHT;

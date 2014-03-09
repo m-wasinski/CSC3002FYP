@@ -3,7 +3,6 @@ package com.example.myapplication.activities.activities;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,7 +22,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -37,10 +35,12 @@ import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
 import com.example.myapplication.dtos.UpdateUserDTO;
+import com.example.myapplication.factories.DialogFactory;
+import com.example.myapplication.interfaces.Interfaces;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
+import com.example.myapplication.utilities.CustomDateTimePicker;
 import com.example.myapplication.utilities.DateTimeHelper;
-import com.example.myapplication.factories.DialogFactory;
 import com.example.myapplication.utilities.Utilities;
 import com.example.myapplication.utilities.Validators;
 import com.google.gson.reflect.TypeToken;
@@ -73,10 +73,6 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
 
     private final int CAPTURE_IMAGE_REQUEST_CODE = 100;
     private final int PICK_IMAGE_FROM_GALLERY = 101;
-
-    private User user;
-
-    private Boolean setDate = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,21 +195,17 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
             public void onClick(DialogInterface d, int choice) {
                 switch (choice)
                 {
-                    case 0:
-                        startCameraActivity();
+                    case 0: // Start the camera.
+                        fileUri = getOutputMediaFileUri();
+                        startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, fileUri), CAPTURE_IMAGE_REQUEST_CODE);
                         break;
-                    case 1:
-                        startGalleryActivity();
+                    case 1: // Open up the gallery and let user choose their picture.
+                        startActivityForResult(new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI), PICK_IMAGE_FROM_GALLERY);
                         break;
                 }
             }
         });
         genderDialog.show();
-    }
-
-    private void startGalleryActivity()
-    {
-        startActivityForResult(new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI), PICK_IMAGE_FROM_GALLERY);
     }
 
     private void getName()
@@ -232,6 +224,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressBar.setVisibility(View.VISIBLE);
                 saveChanges(new UpdateUserDTO(appManager.getUser().getUserId(), firstNameEditText.getText().toString(), lastNameEditText.getText().toString(),
                         null, -1, null, null));
                 nameDialog.dismiss();
@@ -252,6 +245,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
 
                 if(choice == 0 || choice == 1)
                 {
+                    progressBar.setVisibility(View.VISIBLE);
                     memberGenderTextView.setText(Utilities.translateGender(choice+1));
                     saveChanges(new UpdateUserDTO(appManager.getUser().getUserId(), null, null, null, choice+1, null, null));
                 }
@@ -324,6 +318,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
 
     private void newEmailAddressEntered(String email)
     {
+        progressBar.setVisibility(View.VISIBLE);
         memberEmailAddressTextView.setText(email);
         saveChanges(new UpdateUserDTO(appManager.getUser().getUserId(), null, null, email, -1, null, null));
     }
@@ -384,60 +379,36 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
 
     private void newPhoneNumberEntered(String phoneNumber)
     {
+        progressBar.setVisibility(View.VISIBLE);
         phoneNumberTextView.setText(phoneNumber);
         saveChanges(new UpdateUserDTO(appManager.getUser().getUserId(), null, null, null, -1, null, phoneNumber));
     }
 
     private void getDateOfBirth()
     {
-        final Calendar calendar = Calendar.getInstance();
+        final Calendar calendar = DateTimeHelper.getCalendar();
 
-        final DatePickerDialog dateDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener(){
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        if(appManager.getUser().getDateOfBirth() != null)
+        {
+            calendar.setTime(DateTimeHelper.parseWCFDate(appManager.getUser().getDateOfBirth()));
+        }
 
-                if(setDate)
-                {
-                    calendar.set(Calendar.YEAR, year);
-                    calendar.set(Calendar.MONTH, monthOfYear);
-                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        new CustomDateTimePicker().showDatePickerDialog(this, calendar, new Interfaces.DateSelectedListener() {
+            @Override
+            public void dateSelected(Calendar c) {
+                if (c != null) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    calendar.set(Calendar.YEAR, c.get(Calendar.YEAR));
+                    calendar.set(Calendar.MONTH, c.get(Calendar.MONTH));
+                    calendar.set(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH));
 
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMMM-yyyy", Locale.UK);
 
                     dateOfBirthTextVIew.setText(simpleDateFormat.format(calendar.getTime()));
                     saveChanges(new UpdateUserDTO(appManager.getUser().getUserId(), null, null, null, -1, DateTimeHelper.convertToWCFDate(calendar.getTime()), null));
                 }
-
             }
-        } ,calendar
-                .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH));
-
-        dateDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialogInterface) {
-                setDate = false;
-                dateDialog.dismiss();
-            }
-        });
-
-        dateDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                setDate = false;
-                dateDialog.dismiss();
-            }
-        });
-
-        dateDialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Done", new DatePickerDialog.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // user set new date
-                setDate = true;
-            }
-        });
-
-        dateDialog.show();
+        }, false, false);
     }
 
     private void saveChanges(UpdateUserDTO updateUserDTO) {
@@ -454,17 +425,9 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             appManager.setUser(serviceResponse.Result);
-            user = serviceResponse.Result;
             super.fillPersonDetails(serviceResponse.Result);
-            Toast toast = Toast.makeText(this, "Changes to your profile were saved successfully.", Toast.LENGTH_LONG);
-            toast.show();
+            Toast.makeText(this, "Changes to your profile were saved successfully.", Toast.LENGTH_LONG).show();
         }
-    }
-
-    private void startCameraActivity()
-    {
-        fileUri = getOutputMediaFileUri();
-        startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, fileUri), CAPTURE_IMAGE_REQUEST_CODE);
     }
 
     @Override

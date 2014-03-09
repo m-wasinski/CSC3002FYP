@@ -25,8 +25,9 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 
 /**
- * Created by Michal on 23/02/14.
- */
+ * Displays the system-wide leaderboard consisting of all users currently registered in the system.
+ * Leaderboard is sorted in descending order putting users with highest scores on top.
+ **/
 public class LeaderboardActivity extends BaseActivity implements WCFServiceCallback<ArrayList<User>, Void>,
         AbsListView.OnScrollListener, AdapterView.OnItemClickListener{
 
@@ -71,6 +72,9 @@ public class LeaderboardActivity extends BaseActivity implements WCFServiceCallb
         leaderboardListView.setAdapter(leaderboardAdapter);
     }
 
+    /**
+     * Calls the web service to retrieve current leaderboard.
+     */
     private void retrieveLeaderboard()
     {
         progressBar.setVisibility(View.VISIBLE);
@@ -80,6 +84,12 @@ public class LeaderboardActivity extends BaseActivity implements WCFServiceCallb
                 new TypeToken<ServiceResponse<ArrayList<User>>>(){}.getType(),appManager.getAuthorisationHeaders(), this).execute();
     }
 
+    /**
+     * Called after the most up-to-date leaderboard has been retrieved from the server.
+     *
+     * @param serviceResponse - the Result property containing the actual arraylist of user objects sorted in descending order.
+     * @param parameter
+     */
     @Override
     public void onServiceCallCompleted(final ServiceResponse<ArrayList<User>> serviceResponse, Void parameter) {
         progressBar.setVisibility(View.GONE);

@@ -3,12 +3,34 @@ package com.example.myapplication.domain_objects;
 /**
  * Created by Michal on 09/01/14.
  */
-public class GeoAddress {
-    public double Latitude;
-    public double Longitude;
-    public int Order;
-    public int JourneyId;
-    public String AddressLine;
+public class GeoAddress
+{
+    private double Latitude;
+    private double Longitude;
+    private int Order;
+    private int JourneyId;
+
+    public String getAddressLine() {
+        return AddressLine;
+    }
+
+    public int getJourneyId() {
+        return JourneyId;
+    }
+
+    public int getOrder() {
+        return Order;
+    }
+
+    public double getLatitude() {
+        return Latitude;
+    }
+
+    public double getLongitude() {
+        return Longitude;
+    }
+
+    private String AddressLine;
 
     public GeoAddress(double Latitude, double Longitude, String AddressLine, int order)
     {

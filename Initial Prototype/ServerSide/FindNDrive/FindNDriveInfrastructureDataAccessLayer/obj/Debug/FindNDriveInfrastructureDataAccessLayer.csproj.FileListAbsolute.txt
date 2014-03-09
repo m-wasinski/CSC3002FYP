@@ -17,3 +17,4 @@ C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveInfrastructureDa
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveInfrastructureDataAccessLayer\bin\Debug\EntityFramework.SqlServer.xml
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveInfrastructureDataAccessLayer\obj\Debug\FindNDriveInfrastructureDataAccessLayer.dll
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveInfrastructureDataAccessLayer\obj\Debug\FindNDriveInfrastructureDataAccessLayer.pdb
+C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveInfrastructureDataAccessLayer\obj\Debug\FindNDriveInfrastructureDataAccessLayer.csprojResolveAssemblyReference.cache

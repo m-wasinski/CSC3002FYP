@@ -1,7 +1,7 @@
 package com.example.myapplication.constants;
 
 /**
- * Created by Michal on 24/02/14.
+ * Contains the possible list of WCF constants used when calling the WCF web service.
  */
 public class WcfConstants
 {

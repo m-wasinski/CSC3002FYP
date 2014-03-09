@@ -1,7 +1,8 @@
 package com.example.myapplication.dtos;
 
 /**
- * Created by Michal on 20/02/14.
+ * DTO object used to update user's profile picture.
+ * When sending to the WCF web service, picture is stored as a base64 String object.
  */
 public class ProfilePictureUpdaterDTO {
     private int UserId;

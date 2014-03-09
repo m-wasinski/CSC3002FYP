@@ -6,9 +6,7 @@ import android.widget.EditText;
 
 import com.example.myapplication.R;
 
-/**
- * Created by Michal on 02/03/14.
- */
+
 public class RegistrationActivityTests extends ActivityInstrumentationTestCase2<com.example.myapplication.activities.activities.RegistrationActivity>
 {
     private com.example.myapplication.activities.activities.RegistrationActivity registrationActivity;

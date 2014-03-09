@@ -32,8 +32,8 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 
 /**
- * Created by Michal on 05/03/14.
- */
+ * Displays list of all journey templates created by the currently logged in user.
+ **/
 public class MyJourneyTemplatesActivity extends BaseActivity implements WCFServiceCallback<ArrayList<JourneyTemplate>, Void>,
         AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, View.OnClickListener, Interfaces.TemplateNameListener, TextWatcher {
 
@@ -81,6 +81,9 @@ public class MyJourneyTemplatesActivity extends BaseActivity implements WCFServi
         retrieveTemplates();
     }
 
+    /**
+     * Calls the web service to retrieve the list of template for this user.
+     */
     private void retrieveTemplates()
     {
         progressBar.setVisibility(View.VISIBLE);
@@ -89,6 +92,12 @@ public class MyJourneyTemplatesActivity extends BaseActivity implements WCFServi
                 appManager.getAuthorisationHeaders(), this).execute();
     }
 
+    /**
+     * Called after this user's list of templates has been successfully retrieved from the server.
+     *
+     * @param serviceResponse
+     * @param parameter
+     */
     @Override
     public void onServiceCallCompleted(ServiceResponse<ArrayList<JourneyTemplate>> serviceResponse, Void parameter) {
         progressBar.setVisibility(View.GONE);
@@ -107,7 +116,7 @@ public class MyJourneyTemplatesActivity extends BaseActivity implements WCFServi
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Bundle bundle = new Bundle();
         bundle.putInt(IntentConstants.SEARCH_MODE, mode);
-        bundle.putString(IntentConstants.JOURNEY_SEARCH_DTO, gson.toJson(journeyTemplates.get(i)));
+        bundle.putString(IntentConstants.JOURNEY_TEMPLATE, gson.toJson(journeyTemplates.get(i)));
         startActivity(new Intent(this, SearchEditorStepOneActivity.class).putExtras(bundle));
     }
 
@@ -159,7 +168,7 @@ public class MyJourneyTemplatesActivity extends BaseActivity implements WCFServi
 
         Bundle bundle = new Bundle();
         bundle.putInt(IntentConstants.SEARCH_MODE, IntentConstants.CREATING_NEW_TEMPLATE);
-        bundle.putString(IntentConstants.JOURNEY_SEARCH_DTO, gson.toJson(journeyTemplate));
+        bundle.putString(IntentConstants.JOURNEY_TEMPLATE, gson.toJson(journeyTemplate));
 
         startActivity(new Intent(this, SearchEditorStepOneActivity.class).putExtras(bundle));
     }

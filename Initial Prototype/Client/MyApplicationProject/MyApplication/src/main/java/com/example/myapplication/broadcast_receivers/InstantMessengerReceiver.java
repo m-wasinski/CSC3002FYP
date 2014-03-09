@@ -69,9 +69,9 @@ public class InstantMessengerReceiver extends BroadcastReceiver {
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.logo)
                         .setLargeIcon(bitmap != null ? Bitmap.createScaledBitmap(bitmap, 128, 128, false) : BitmapFactory.decodeResource(context.getResources(), R.drawable.logo))
-                        .setContentTitle("Message from " + chatMessage.SenderUserName)
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(chatMessage.MessageBody))
-                        .setContentText(chatMessage.MessageBody);
+                        .setContentTitle("Message from " + chatMessage.getSenderUserName())
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(chatMessage.getMessageBody()))
+                        .setContentText(chatMessage.getMessageBody());
 
         mBuilder.setContentIntent(contentIntent);
         Notification deviceNotification = mBuilder.build();

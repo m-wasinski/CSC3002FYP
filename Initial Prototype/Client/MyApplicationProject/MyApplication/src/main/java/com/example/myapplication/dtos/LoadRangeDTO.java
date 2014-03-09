@@ -1,7 +1,7 @@
 package com.example.myapplication.dtos;
 
 /**
- * Created by Michal on 17/01/14.
+ * DTO object used in the process of loading items from the web service in increments.
  */
 public class LoadRangeDTO {
 

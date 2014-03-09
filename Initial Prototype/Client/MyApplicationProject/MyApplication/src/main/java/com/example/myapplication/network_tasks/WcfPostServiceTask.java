@@ -32,7 +32,11 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by Michal on 05/01/14.
+ * Probably the most important class within the app.
+ * The use of generics makes it universal and enables it to be used to serialise and deserialise objects of any type.
+ *
+ * The purpose of this class is to call the WCF web service and retrieve a given object/list of objects from it.
+ * Parameters required by the WCF's methods are serialised using Google's GSON library and sent in the message body.
  */
 @SuppressWarnings("unchecked")
 public class WcfPostServiceTask<T> extends WcfBaseServiceTask {

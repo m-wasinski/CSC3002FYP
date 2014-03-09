@@ -1,7 +1,8 @@
 package com.example.myapplication.dtos;
 
 /**
- * Created by Michal on 07/03/14.
+ * DTO object used to retrieve another user's information from the web service.
+ * We need the id's of both, the target and the requesting user to determine the relationship between them to protect the target user's privacy.
  */
 public class UserRetrieverDTO {
     private int RetrievingUserId;

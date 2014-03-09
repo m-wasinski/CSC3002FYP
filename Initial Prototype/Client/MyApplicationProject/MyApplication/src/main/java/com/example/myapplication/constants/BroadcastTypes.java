@@ -1,7 +1,7 @@
 package com.example.myapplication.constants;
 
 /**
- * Created by Michal on 14/02/14.
+ * Contains the possible types of broadcast types that take place within the app.
  */
 public class BroadcastTypes
 {

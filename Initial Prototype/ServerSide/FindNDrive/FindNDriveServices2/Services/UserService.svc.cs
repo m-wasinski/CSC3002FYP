@@ -10,6 +10,7 @@
 namespace FindNDriveServices2.Services
 {
     using System;
+    using System.Data.Entity;
     using System.Drawing;
     using System.IO;
     using System.Linq;
@@ -93,7 +94,7 @@ namespace FindNDriveServices2.Services
             }
 
             var userId = WebSecurity.GetUserId(login.UserName);
-            var loggedInUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.UserId == userId);
+            var loggedInUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable().Include(_ => _.PrivacySettings).FirstOrDefault(_ => _.UserId == userId);
 
             if (loggedInUser == null)
             {
@@ -145,7 +146,7 @@ namespace FindNDriveServices2.Services
                 return ServiceResponseBuilder.Failure<User>("MANUAL LOGIN");
             }
 
-            var loggedInUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.UserId == userId);
+            var loggedInUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable().Include(_ => _.PrivacySettings).FirstOrDefault(_ => _.UserId == userId);
 
             if (loggedInUser == null)
             {
@@ -315,9 +316,7 @@ namespace FindNDriveServices2.Services
                 return ServiceResponseBuilder.Unauthorised(new User());
             }
 
-            var user = this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                   .IncludeAll()
-                   .FirstOrDefault(_ => _.UserId == userDTO.UserId);
+            var user = this.findNDriveUnitOfWork.UserRepository.AsQueryable().FirstOrDefault(_ => _.UserId == userDTO.UserId);
 
             if (user == null)
             {
@@ -433,7 +432,7 @@ namespace FindNDriveServices2.Services
 
             var user =
                 this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                    .IncludeAll()
+                    .Include(_ => _.PrivacySettings)
                     .FirstOrDefault(_ => _.UserId == dto.UserId);
 
             if (user == null)
@@ -471,9 +470,7 @@ namespace FindNDriveServices2.Services
             }
 
             var targetUser =
-                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                    .IncludeAll()
-                    .FirstOrDefault(_ => _.UserId == dto.TargetUserId);
+                this.findNDriveUnitOfWork.UserRepository.AsQueryable().Include(_ => _.Friends).Include(_ => _.PrivacySettings).FirstOrDefault(_ => _.UserId == dto.TargetUserId);
 
             if (targetUser == null)
             {

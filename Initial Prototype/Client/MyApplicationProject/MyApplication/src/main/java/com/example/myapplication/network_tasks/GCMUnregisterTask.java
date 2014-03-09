@@ -12,8 +12,12 @@ import java.io.IOException;
 import java.util.Random;
 
 /**
- * Created by Michal on 30/12/13.
- */
+ * Async Task which unregisters the user's device from the Google Cloud Messaging (GCM) service.
+ *
+ * This is currently not used anywhere within the app since unregistering a device should rarely be done.
+ * Unregistering does not take place immediately but is rather a process which takes up to several hours to complete.
+ * This causes even an unregistered device to still receive notifications.
+ **/
 public class GCMUnregisterTask extends AsyncTask<TextView, String, Boolean> {
 
     private GoogleCloudMessaging gcm;

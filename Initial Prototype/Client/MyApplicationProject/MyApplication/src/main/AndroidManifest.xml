@@ -127,7 +127,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".activities.activities.JourneyDetailsActivity"
+            android:name=".activities.activities.JourneyManagementActivity"
             android:label="Journey Details"
             android:screenOrientation="portrait"/>
 

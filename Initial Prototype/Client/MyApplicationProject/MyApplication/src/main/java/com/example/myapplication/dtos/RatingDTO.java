@@ -1,7 +1,7 @@
 package com.example.myapplication.dtos;
 
 /**
- * Created by Michal on 21/02/14.
+ * Used when a user submits a new rating for driver of one of the journeys they participated in.
  */
 public class RatingDTO {
     private int UserId;

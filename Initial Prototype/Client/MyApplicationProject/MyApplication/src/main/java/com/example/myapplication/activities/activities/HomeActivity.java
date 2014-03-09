@@ -128,6 +128,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         retrieveDeviceNotifications();
     }
 
+    /**
+     * Calls the web service to refresh the unread notification and message counters.
+     */
     private void refreshInformation()
     {
         progressBar.setVisibility(View.VISIBLE);
@@ -182,6 +185,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         }
     };
 
+    /**
+     * Called after device notifications have been retrieved from the web service.
+     *
+     * @param notifications - Arraylist of notification objects.
+     */
     private void deviceNotificationsRetrieved(ArrayList<Notification> notifications)
     {
         NotificationProcessor notificationProcessor = new NotificationProcessor();

@@ -1,7 +1,7 @@
 package com.example.myapplication.dtos;
 
 /**
- * Created by Michal on 08/03/14.
+ * DTO object used when deleting a friend from user's list of friends.
  */
 public class FriendDeletionDTO
 {

@@ -25,15 +25,13 @@ import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.google.gson.reflect.TypeToken;
 
 /**
- * Created by Michal on 10/02/14.
+ * Provides user with all necessary functionality to send a new friend request to another user of the system.
  */
 public class SendFriendRequestActivity extends BaseActivity implements WCFServiceCallback<Boolean, Void>, View.OnClickListener {
 
     private EditText messageEditText;
 
     private Button sendRequestButton;
-
-    private TextView headerTextView;
 
     private ImageView profileIconImageView;
 
@@ -54,14 +52,17 @@ public class SendFriendRequestActivity extends BaseActivity implements WCFServic
         messageEditText = (EditText) findViewById(R.id.SendFriendRequestActivityMessageEditText);
         sendRequestButton = (Button) findViewById(R.id.SendFriendRequestActivitySendButton);
         sendRequestButton.setOnClickListener(this);
-        headerTextView = (TextView) findViewById(R.id.SendFriendRequestActivityHeaderTextView);
-        headerTextView.setText(headerTextView.getText().toString() + " " + targetUser.getFirstName() + " " + targetUser.getLastName() + " ("+targetUser.getUserName()+")");
+        TextView headerTextView = (TextView) findViewById(R.id.SendFriendRequestActivityHeaderTextView);
+        headerTextView.setText(headerTextView.getText().toString() + " " + targetUser.getFirstName() + " " + targetUser.getLastName() + " (" + targetUser.getUserName() + ")");
         profileIconImageView = (ImageView) findViewById(R.id.AlertDialogSendFriendRequestImageView);
         progressBar = (ProgressBar) findViewById(R.id.SendFriendRequestProgressBar);
 
         retrieveProfilePicture();
     }
 
+    /**
+     * Calls the web service with the required FriendRequest object.
+     */
     private void sendFriendRequest()
     {
         sendRequestButton.setEnabled(false);
@@ -77,8 +78,14 @@ public class SendFriendRequestActivity extends BaseActivity implements WCFServic
                 new TypeToken<ServiceResponse<Boolean>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
     }
 
+    /**
+     * Called after retrieving reply from the web service.
+     *
+     * @param serviceResponse - service response from the web service.
+     * @param parameter
+     */
     @Override
-    public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+    public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter)     {
         progressBar.setVisibility(View.GONE);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
@@ -87,6 +94,9 @@ public class SendFriendRequestActivity extends BaseActivity implements WCFServic
         }
     }
 
+    /**
+     * Retrieves profile picture for the user whom the friend request is being sent to.
+     */
     private void retrieveProfilePicture()
     {
         new WcfPictureServiceTask(appManager.getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),

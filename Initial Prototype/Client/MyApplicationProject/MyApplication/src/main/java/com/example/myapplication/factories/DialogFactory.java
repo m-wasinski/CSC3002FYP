@@ -144,4 +144,11 @@ public class DialogFactory {
         AlertDialog alert = builder.create();
         alert.show();
     }
+
+    public static void getDateDialog(final Context context, String date, Interfaces.DateSelectedListener listener)
+    {
+        boolean setDate;
+
+
+    }
 }

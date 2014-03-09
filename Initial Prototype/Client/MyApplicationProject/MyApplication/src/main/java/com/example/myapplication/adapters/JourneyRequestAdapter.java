@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.myapplication.app_management.AppManager;
-import com.example.myapplication.constants.RequestDecision;
+import com.example.myapplication.constants.JourneyRequestDecisions;
 import com.example.myapplication.domain_objects.JourneyRequest;
 import com.example.myapplication.utilities.DateTimeHelper;
 import com.example.myapplication.R;
@@ -66,7 +66,7 @@ public class JourneyRequestAdapter extends ArrayAdapter<JourneyRequest> implemen
 
         final JourneyRequest request = journeyRequests.get(position);
 
-        String repliedOnDate = request.getDecision() == RequestDecision.UNDECIDED ?
+        String repliedOnDate = request.getDecision() == JourneyRequestDecisions.UNDECIDED ?
                 "N/A" : DateTimeHelper.getSimpleDate(request.getDecidedOnDate()) +  " " + DateTimeHelper.getSimpleTime(request.getDecidedOnDate());
 
         String decisionStatus="";
@@ -75,13 +75,13 @@ public class JourneyRequestAdapter extends ArrayAdapter<JourneyRequest> implemen
 
         switch(request.getDecision())
         {
-            case RequestDecision.UNDECIDED:
+            case JourneyRequestDecisions.UNDECIDED:
                 decisionStatus = "Awaiting decision";
                 break;
-            case RequestDecision.DENIED:
+            case JourneyRequestDecisions.DENIED:
                 decisionStatus = "Denied";
                 break;
-            case RequestDecision.ACCEPTED:
+            case JourneyRequestDecisions.ACCEPTED:
                 decisionStatus = "Accepted";
                 break;
         }

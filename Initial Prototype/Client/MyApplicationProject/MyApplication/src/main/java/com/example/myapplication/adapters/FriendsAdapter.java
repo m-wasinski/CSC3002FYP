@@ -23,7 +23,7 @@ import com.example.myapplication.network_tasks.WcfPictureServiceTask;
 import java.util.ArrayList;
 
 /**
- * Created by Michal on 04/01/14.
+ * FriendsAdapter arranges and displays information of this user's friends in a listview.
  */
 public class FriendsAdapter extends ArrayAdapter<User> {
 
@@ -79,18 +79,6 @@ public class FriendsAdapter extends ArrayAdapter<User> {
         holder.unreadMessagesCountTextView.setVisibility(friend.getUnreadMessagesCount() > 0 ? View.VISIBLE : View.GONE);
         holder.parentLayout.setBackgroundColor(friend.getUnreadMessagesCount() > 0 ? Color.parseColor("#80dea516") : Color.parseColor("#80151515"));
 
-        /*new WcfPostServiceTask<ChatMessageRetrieverDTO>(context, getContext().getResources().getString(R.string.GetUnreadMessagesCountForFriendURL),
-                new ChatMessageRetrieverDTO(displayedFriendsList.get(position).getUserId(), appManager.getUser().getUserId(), null),
-                new TypeToken<ServiceResponse<Integer>>() {}.getType(), appManager.getAuthorisationHeaders(), new WCFServiceCallback<Integer, Void>() {
-            @Override
-            public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {
-                if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
-                {
-
-                }
-            }
-        }).execute();*/
-
         if(holder.profilePicture.getDrawable() == null)
         {
             new WcfPictureServiceTask(appManager.getBitmapLruCache(), context.getResources().getString(R.string.GetProfilePictureURL),
@@ -99,7 +87,7 @@ public class FriendsAdapter extends ArrayAdapter<User> {
                 public void onImageRetrieved(Bitmap bitmap) {
                     if(bitmap != null)
                     {
-                        holder.profilePicture.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), false));
+                        holder.profilePicture.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/2, bitmap.getHeight()/2, false));
                     }
                 }
             }).execute();
@@ -110,7 +98,7 @@ public class FriendsAdapter extends ArrayAdapter<User> {
 
     @Override
     public Filter getFilter() {
-        Filter filter = new Filter() {
+        return new Filter() {
 
             @SuppressWarnings("unchecked")
             @Override
@@ -136,10 +124,10 @@ public class FriendsAdapter extends ArrayAdapter<User> {
                     results.values = originalFriendsList;
                 } else {
                     constraint = constraint.toString().toLowerCase();
-                    for (int i = 0; i < originalFriendsList.size(); i++) {
-                        String data = originalFriendsList.get(i).getUserName();
+                    for (User anOriginalFriendsList : originalFriendsList) {
+                        String data = anOriginalFriendsList.getUserName();
                         if (data.toLowerCase().contains(constraint.toString())) {
-                            filteredValues.add(originalFriendsList.get(i));
+                            filteredValues.add(anOriginalFriendsList);
                         }
                     }
                     // set the Filtered result to return
@@ -149,7 +137,6 @@ public class FriendsAdapter extends ArrayAdapter<User> {
                 return results;
             }
         };
-        return filter;
     }
 
     private class FriendHolder

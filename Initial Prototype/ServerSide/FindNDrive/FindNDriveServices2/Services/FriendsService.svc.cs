@@ -12,6 +12,7 @@ namespace FindNDriveServices2.Services
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Data.Entity;
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
@@ -92,12 +93,10 @@ namespace FindNDriveServices2.Services
             }
 
             var toUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                .IncludeAll()
-                .FirstOrDefault(_ => _.UserId == friendRequestDTO.ToUser.UserId);
+                .Include(_ => _.Friends).FirstOrDefault(_ => _.UserId == friendRequestDTO.ToUser.UserId);
 
             var fromUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                .IncludeAll()
-                .FirstOrDefault(_ => _.UserId == friendRequestDTO.FromUser.UserId);
+                .Include(_ => _.Friends).FirstOrDefault(_ => _.UserId == friendRequestDTO.FromUser.UserId);
 
             if (toUser == null || fromUser == null)
             {
@@ -195,13 +194,11 @@ namespace FindNDriveServices2.Services
 
             var toUser =
                 this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                    .IncludeAll()
-                    .FirstOrDefault(_ => _.UserId == friendRequestDTO.ToUser.UserId);
+                    .Include(_ => _.Friends).FirstOrDefault(_ => _.UserId == friendRequestDTO.ToUser.UserId);
 
             var fromUser =
                 this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                    .IncludeAll()
-                    .FirstOrDefault(_ => _.UserId == friendRequestDTO.FromUser.UserId);
+                    .Include(_ => _.Friends).FirstOrDefault(_ => _.UserId == friendRequestDTO.FromUser.UserId);
 
             var pendingFriendRequest =
                 this.findNDriveUnitOfWork.FriendRequestsRepository.AsQueryable()
@@ -231,7 +228,7 @@ namespace FindNDriveServices2.Services
 
             if (friendRequestDTO.FromUser.UserId == friendRequestDTO.ToUser.UserId)
             {
-                return ServiceResponseBuilder.Failure<bool>("You cannot senda friend request to yourself.");
+                return ServiceResponseBuilder.Failure<bool>("You cannot send a friend request to yourself.");
             }
 
             var friendRequest = new FriendRequest
@@ -362,13 +359,11 @@ namespace FindNDriveServices2.Services
 
             var firstUser =
                 this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                    .IncludeFriends()
-                    .FirstOrDefault(_ => _.UserId == friendDeletionDTO.UserId);
+                    .Include(_ => _.Friends).FirstOrDefault(_ => _.UserId == friendDeletionDTO.UserId);
 
             var secondUser =
                 this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                    .IncludeFriends()
-                    .FirstOrDefault(_ => _.UserId == friendDeletionDTO.FriendId);
+                    .Include(_ => _.Friends).FirstOrDefault(_ => _.UserId == friendDeletionDTO.FriendId);
 
             if (firstUser == null || secondUser == null)
             {

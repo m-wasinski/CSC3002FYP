@@ -30,7 +30,8 @@ import com.example.myapplication.utilities.Utilities;
 import com.google.gson.Gson;
 
 /**
- * Created by Michal on 19/02/14.
+ * This activity is used to display profile information of the user whose id is passed in the bundle.
+ * User's information is retrieved from the server for privacy considerations.
  */
 public class ProfileViewerActivity extends BaseActivity implements WCFImageRetrieved, WCFServiceCallback<User,Void> {
 
@@ -58,6 +59,11 @@ public class ProfileViewerActivity extends BaseActivity implements WCFImageRetri
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * The onResume method checks what mode this activity has been launched in.
+     * If the mode is set to viewing, it means we are viewing another users' profile and the information about them should be retrieved from the web service.
+     *
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -122,7 +128,11 @@ public class ProfileViewerActivity extends BaseActivity implements WCFImageRetri
         return super.onOptionsItemSelected(item);
     }
 
-
+    /**
+     * After user's information has been successfully retrieved from the web service, it's time to display it in the activity.
+     *
+     * @param user - user object retrieved from the web service.
+     */
     protected void fillPersonDetails(final User user)
     {
         setTitle(user.getUserName());
@@ -136,6 +146,7 @@ public class ProfileViewerActivity extends BaseActivity implements WCFImageRetri
         ratingTextView.setText(String.valueOf(user.getAverageRating() == -1 ? "Private" :  String.valueOf(user.getAverageRating())));
         journeysTextView.setText(user.getJourneysVisible() ? ("View " + user.getUserName() + "'s journeys.") : "Private");
 
+        // If the users' privacy settings allow us to view their rating, setup the event handler.
         if(user.getAverageRating() != -1)
         {
             findViewById(R.id.ProfileViewerActivityRatingTableRow).setOnClickListener(new View.OnClickListener() {
@@ -148,7 +159,7 @@ public class ProfileViewerActivity extends BaseActivity implements WCFImageRetri
             });
         }
 
-
+        // Same goes for the journeys.
         if(user.getJourneysVisible())
         {
             findViewById(R.id.ProfileViewerActivityJourneysTableRow).setOnClickListener(new View.OnClickListener() {
@@ -170,12 +181,20 @@ public class ProfileViewerActivity extends BaseActivity implements WCFImageRetri
         });
     }
 
+    /**
+     * Start a new service task to retrieve this user's profile picture.
+     */
     private void getProfilePicture()
     {
         new WcfPictureServiceTask(appManager.getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
                 userId, appManager.getAuthorisationHeaders(), this).execute();
     }
 
+    /**
+     * Called after the user's picture was successfully retrieved from the web service.
+     *
+     * @param bitmap - picture retrieved from the service in form of a bitmap.
+     */
     @Override
     public void onImageRetrieved(Bitmap bitmap)
     {
@@ -190,6 +209,12 @@ public class ProfileViewerActivity extends BaseActivity implements WCFImageRetri
         }
     }
 
+    /**
+     * Called after user's information has been successfully retrieved from the web service.
+     *
+     * @param serviceResponse
+     * @param parameter
+     */
     @Override
     public void onServiceCallCompleted(ServiceResponse<User> serviceResponse, Void parameter) {
         detailsRetriever = null;

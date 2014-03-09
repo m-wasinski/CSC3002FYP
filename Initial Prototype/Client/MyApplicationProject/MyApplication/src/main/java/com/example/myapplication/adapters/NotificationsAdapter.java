@@ -65,16 +65,16 @@ public class NotificationsAdapter extends ArrayAdapter<Notification> {
 
         Notification notification = notifications.get(position);
 
-        holder.parentRelativeLayout.setBackgroundColor(notification.Delivered ?  Color.parseColor("#80151515") : Color.parseColor("#80dea516"));
-        holder.hasActionImageView.setVisibility(notification.TargetObjectId == -1 ? View.GONE : View.VISIBLE);
-        holder.dateTextView.setText(DateTimeHelper.getSimpleDate(notification.ReceivedOnDate) + " " + DateTimeHelper.getSimpleTime(notification.ReceivedOnDate));
-        holder.notificationHeaderTextView.setText(notification.NotificationTitle);
-        holder.messageTextView.setText(notification.NotificationMessage);
+        holder.parentRelativeLayout.setBackgroundColor(notification.getDelivered() ?  Color.parseColor("#80151515") : Color.parseColor("#80dea516"));
+        holder.hasActionImageView.setVisibility(notification.getTargetObjectId() == -1 ? View.GONE : View.VISIBLE);
+        holder.dateTextView.setText(DateTimeHelper.getSimpleDate(notification.getReceivedOnDate()) + " " + DateTimeHelper.getSimpleTime(notification.getReceivedOnDate()));
+        holder.notificationHeaderTextView.setText(notification.getNotificationTitle());
+        holder.messageTextView.setText(notification.getNotificationMessage());
 
-        if(notification.ProfilePictureId != -1)
+        if(notification.getProfilePictureId() != -1)
         {
             new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), this.context.getResources().getString(R.string.GetProfilePictureURL),
-                    notification.ProfilePictureId, this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+                    notification.getProfilePictureId(), this.appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
                 @Override
                 public void onImageRetrieved(Bitmap bitmap) {
                     if(bitmap != null)

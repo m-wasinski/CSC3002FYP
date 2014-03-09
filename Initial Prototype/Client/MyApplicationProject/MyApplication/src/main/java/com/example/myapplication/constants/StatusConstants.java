@@ -1,7 +1,7 @@
 package com.example.myapplication.constants;
 
 /**
- * Created by Michal on 20/01/14.
+ * List all possible user status variations.
  */
 public class StatusConstants
 {

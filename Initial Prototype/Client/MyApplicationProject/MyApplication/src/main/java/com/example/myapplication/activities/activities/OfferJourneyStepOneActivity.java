@@ -40,7 +40,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
- * Created by Michal on 22/01/14.
+ * First step in the journey creation/editing process consists of specifying start and end locations for the journey as well as any optional waypoints in between.
+ * This activity aims at providing all the necessary functionality for the user to specify the above locations with the help of Google Map and Geocoder.
  */
 public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDrivingDirectionsRetrrievedListener {
 
@@ -61,6 +62,8 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
     private Journey journey;
 
     private ProgressBar progressBar;
+
+    private final String TAG = "JourneyEditorStepOne";
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -105,24 +108,27 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
         // Setting up event handlers.
         setupEventHandlers();
 
+        // If the current mode is set to editing, we must draw all of the locations stored in the journey object on the map.
         if(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING)
         {
             destinationRelativeLayout.setVisibility(View.VISIBLE);
             stepTwoButton.setVisibility(View.VISIBLE);
 
             Location startingLocation = new Location("");
-            startingLocation.setLatitude(journey.getGeoAddresses().get(0).Latitude);
-            startingLocation.setLongitude(journey.getGeoAddresses().get(0).Longitude);
+            startingLocation.setLatitude(journey.getGeoAddresses().get(0).getLatitude());
+            startingLocation.setLongitude(journey.getGeoAddresses().get(0).getLongitude());
 
-            new GeocoderTask(this, this, MarkerType.Departure, 0).execute(new GeocoderParams(journey.getGeoAddresses().get(0).AddressLine, null));
-            new GeocoderTask(this, this, MarkerType.Destination, 0).execute(new GeocoderParams(journey.getGeoAddresses().get(journey.getGeoAddresses().size()-1).AddressLine, null));
+            // Draw the start and destination points on the map.
+            new GeocoderTask(this, this, MarkerType.Departure, 0).execute(new GeocoderParams(journey.getGeoAddresses().get(0).getAddressLine(), null));
+            new GeocoderTask(this, this, MarkerType.Destination, 0).execute(new GeocoderParams(journey.getGeoAddresses().get(journey.getGeoAddresses().size()-1).getAddressLine(), null));
 
+            // Draw any optional waypoints on the map.
             if(journey.getGeoAddresses().size() > 2)
             {
                 viaTextView.setText("");
                 for(int i = 1; i < journey.getGeoAddresses().size()-1; i++)
                 {
-                    new GeocoderTask(this, this, MarkerType.Waypoint, i).execute(new GeocoderParams(journey.getGeoAddresses().get(i).AddressLine, null));
+                    new GeocoderTask(this, this, MarkerType.Waypoint, i).execute(new GeocoderParams(journey.getGeoAddresses().get(i).getAddressLine(), null));
                 }
             }
         }
@@ -149,19 +155,26 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Initialises Google Map present in this activity.
+     */
     private void initialiseMap() {
 
         if (googleMap == null) {
             googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.OfferJourneyStepOneActivityMap)).getMap();
 
             if (googleMap == null) {
-                Toast.makeText(this,
-                        "Sorry! unable to create maps", Toast.LENGTH_SHORT)
-                        .show();
+                Toast.makeText(this, "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+    /**
+     * Responsible for placing new waypoint on the map.
+     *
+     * @param waypointHolder
+     * @param markerOptions
+     */
     private void showWaypointOnMap(WaypointHolder waypointHolder, MarkerOptions markerOptions)
     {
         if(markerOptions != null)
@@ -239,32 +252,32 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
 
         for(WaypointHolder waypointHolder : wayPoints)
         {
-            if(waypointHolder.geoAddress.Order == 1 && waypointHolder.googleMapMarker != null)
+            if(waypointHolder.geoAddress.getOrder() == 1 && waypointHolder.googleMapMarker != null)
             {
                 firstWayPointEditText.setText(waypointHolder.googleMapMarker.getTitle());
             }
 
-            if(waypointHolder.geoAddress.Order == 2 && waypointHolder.googleMapMarker != null)
+            if(waypointHolder.geoAddress.getOrder() == 2 && waypointHolder.googleMapMarker != null)
             {
                 secondWayPointEditText.setText(waypointHolder.googleMapMarker.getTitle());
             }
 
-            if(waypointHolder.geoAddress.Order == 3 && waypointHolder.googleMapMarker != null)
+            if(waypointHolder.geoAddress.getOrder() == 3 && waypointHolder.googleMapMarker != null)
             {
                 thirdWayPointEditText.setText(waypointHolder.googleMapMarker.getTitle());
             }
 
-            if(waypointHolder.geoAddress.Order == 4 && waypointHolder.googleMapMarker != null)
+            if(waypointHolder.geoAddress.getOrder() == 4 && waypointHolder.googleMapMarker != null)
             {
                 fourthWayPointEditText.setText(waypointHolder.googleMapMarker.getTitle());
             }
 
-            if(waypointHolder.geoAddress.Order == 5 && waypointHolder.googleMapMarker != null)
+            if(waypointHolder.geoAddress.getOrder() == 5 && waypointHolder.googleMapMarker != null)
             {
                 fifthWayPointEditText.setText(waypointHolder.googleMapMarker.getTitle());
             }
 
-            if(waypointHolder.geoAddress.Order == 6 && waypointHolder.googleMapMarker != null)
+            if(waypointHolder.geoAddress.getOrder() == 6 && waypointHolder.googleMapMarker != null)
             {
                 sixthWayPointEditText.setText(waypointHolder.googleMapMarker.getTitle());
             }
@@ -357,17 +370,31 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
         addressSelectorDialog.show();
     }
 
+    /**
+     * Called after user has entered an address into the address dialog.
+     * This starts a new Geocoder task to retrieve latitude and longitude points for this address.
+     *
+     * @param markerType - Departure/Destination/Waypoint?
+     * @param address - String entered by the user.
+     * @param order - used to specify the order of the address to be retrieved. For example, Departure = 0, Waypoint #1 = 1, Waypoint #2 = 2, Destination  = 3
+     */
     private void addressDialogClosed(MarkerType markerType, String address, double order)
     {
         new GeocoderTask(this, this, markerType, order).execute(new GeocoderParams(address, null));
     }
 
+    /**
+     * Called after used clicks on the next button/
+     * This function is responsible for building the journey object,
+     * taking a snapshot of the map and loading the step two activity of the journey editor.
+     */
     private void buildJourney()
     {
+        // Check if the required minimum number of points on the map have been specified.
         if(departureMarker == null || destinationMarker == null)
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("You must specify departure and destination points.")
+            builder.setMessage("You must specify departure and destination points before proceeding.")
                     .setCancelable(false)
                     .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -381,9 +408,11 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
             return;
         }
 
+        // Add all GeoAddresses specified by the user. Start at the departure address.
         journey.setGeoAddresses(new ArrayList<GeoAddress>());
         journey.getGeoAddresses().add(new GeoAddress(departureMarker.getPosition().latitude, departureMarker.getPosition().longitude, departureMarker.getTitle(), 0));
 
+        // Go through any optional waypoints.
         for(WaypointHolder waypointHolder : wayPoints)
         {
             if(waypointHolder.googleMapMarker != null)
@@ -392,13 +421,16 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
             }
         }
 
+        // And finally, add the destination address.
         journey.getGeoAddresses().add(new GeoAddress(destinationMarker.getPosition().latitude, destinationMarker.getPosition().longitude, destinationMarker.getTitle(), wayPoints.size()+1));
-        Log.i("This journey has the following geoaddresses", "\n");
+        Log.i(TAG, "This journey has the following geoaddresses \n");
         for(GeoAddress geoAddress : journey.getGeoAddresses())
         {
-            Log.i("GeoAddress " + geoAddress.Order, " "+geoAddress.Latitude + " " + geoAddress.Longitude + " " + geoAddress.AddressLine);
+            Log.i("GeoAddress " + geoAddress.getOrder(), " "+geoAddress.getLatitude() + " " + geoAddress.getLongitude() + " " + geoAddress.getAddressLine());
         }
 
+        // If the current mode is set to editing, we must preserve all the other properties that were specified in this journey.
+        // Else if the current mode is set to creating, we initialise the new journey object with default values.
         journey.setAvailableSeats(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? journey.getAvailableSeats() : 1);
         journey.setPetsAllowed(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING && journey.arePetsAllowed());
         journey.setSmokersAllowed(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING && journey.areSmokersAllowed());
@@ -411,15 +443,11 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
                 journey.getDateAndTimeOfDeparture() : DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime()));
         journey.setDriver(appManager.getUser());
 
-        proceedToStepTwo();
-    }
-
-    private void proceedToStepTwo()
-    {
+        // Take a snapshot of the current map view.
         googleMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
             @Override
             public void onSnapshotReady(Bitmap bitmap) {
-                int h = getApplicationContext().getResources().getDisplayMetrics().heightPixels / 3;
+                int h = OfferJourneyStepOneActivity.this.getResources().getDisplayMetrics().heightPixels / 3;
                 int w = (int) (h * bitmap.getWidth() / ((double) bitmap.getHeight()));
 
                 bitmap = Bitmap.createScaledBitmap(bitmap, w, h, true);
@@ -436,11 +464,19 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
         });
     }
 
+    /**
+     * Called after Geocoder completes is task and returns an address.
+     *
+     * @param address
+     * @param markerType
+     * @param perimeter
+     */
     @Override
     public void onGeoCoderFinished(MarkerOptions address, MarkerType markerType, Double perimeter)
     {
         super.onGeoCoderFinished(address, markerType, perimeter);
 
+        // Address found, check the type of location the user was looking for.
         if(address != null)
         {
             if(markerType == MarkerType.Departure)
@@ -466,10 +502,10 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
 
             drawDrivingDirectionsOnMap();
         }
-        else
+        else // Address was not found
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Could not retrieve current location. Please enter it manually.")
+            builder.setMessage("Could not retrieve location.")
                     .setCancelable(false)
                     .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -482,6 +518,10 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
         }
     }
 
+    /**
+     * If the required points have been plotted on the map, it's time to draw the driving route by calling Google Web API.
+     * Directions are automatically drawn on the map the is passed in to the Async Task.
+     */
     private void drawDrivingDirectionsOnMap()
     {
         if(departureMarker != null && destinationMarker != null)
@@ -510,6 +550,9 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
         stepTwoButton.setEnabled(true);
     }
 
+    /**
+     * Called after driving directions have been successfully drawn on the map.
+     */
     @Override
     public void onDrivingDirectionsRetrieved() {
         progressBar.setVisibility(View.GONE);

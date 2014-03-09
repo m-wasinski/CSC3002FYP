@@ -3,7 +3,6 @@ package com.example.myapplication.activities.activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -23,17 +22,18 @@ import com.example.myapplication.constants.WcfConstants;
 import com.example.myapplication.domain_objects.Notification;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.dtos.LoadRangeDTO;
+import com.example.myapplication.factories.DialogFactory;
 import com.example.myapplication.interfaces.NotificationTargetRetrieved;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.notification_management.NotificationProcessor;
-import com.example.myapplication.factories.DialogFactory;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 
 /**
- * Created by Michal on 06/01/14.
+ * This activity displays user notifications. Activities which have an action associated with display an arrow to the right of the message body.
+ * Clicking on a notification automatically marks it as read or delivered, which have the same meaning.
  */
 public class MyNotificationsActivity extends BaseActivity implements WCFServiceCallback<ArrayList<Notification>, Void>,
         AbsListView.OnScrollListener, AdapterView.OnItemClickListener{
@@ -58,6 +58,7 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_notifications);
 
+        // Check if this activity has been started from a notification. If yes, we need to mark it as read.
         Bundle bundle = getIntent().getExtras();
 
         if(bundle != null)
@@ -137,11 +138,12 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
         }
     }
 
-    private void markNotificationRead(NotificationProcessor notificationProcessor, Notification notification, final View view)
+    private void markNotificationRead(NotificationProcessor notificationProcessor, final Notification notification, final View view)
     {
         notificationProcessor.MarkDelivered(this, appManager, notification, new WCFServiceCallback<Boolean, Void>() {
             public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
-                view.findViewById(R.id.NotificationListViewRowParentRelativeLayout).setBackgroundColor(Color.parseColor("#80151515"));
+                notification.setDelivered(true);
+                notificationsAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -166,7 +168,7 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
 
         markNotificationRead(notificationProcessor, notifications.get(i), view);
 
-        if(notifications.get(i).TargetObjectId != -1)
+        if(notifications.get(i).getTargetObjectId() != -1)
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
 

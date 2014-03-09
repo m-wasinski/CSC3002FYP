@@ -35,7 +35,7 @@ public class Utilities {
 
     public static String getJourneyHeader(ArrayList<GeoAddress> addresses)
     {
-        String header = "From: " + addresses.get(0).AddressLine;
+        String header = "From: " + addresses.get(0).getAddressLine();
 
         if(addresses.size() > 2)
         {
@@ -43,7 +43,7 @@ public class Utilities {
 
             for(int i = 1; i < addresses.size()-1; i++)
             {
-                header = header + addresses.get(i).AddressLine;
+                header = header + addresses.get(i).getAddressLine();
 
                 if(i < addresses.size()-2)
                 {
@@ -52,7 +52,7 @@ public class Utilities {
             }
         }
 
-        header = header + "\nTo: " + addresses.get(addresses.size()-1).AddressLine;
+        header = header + "\nTo: " + addresses.get(addresses.size()-1).getAddressLine();
 
         return header;
     }

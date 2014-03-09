@@ -1,10 +1,10 @@
 package com.example.myapplication.constants;
 
 /**
- * Created by Michal on 16/02/14.
+ * Contains all possible Journey Request Decisions.
  */
 public class JourneyRequestDecisions {
-    public static final int Undecided = 0;
-    public static final int Accepted = 1;
-    public static final int Denied = 2;
+    public static final int UNDECIDED = 0;
+    public static final int ACCEPTED = 1;
+    public static final int DENIED = 2;
 }

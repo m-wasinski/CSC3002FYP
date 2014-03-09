@@ -5,6 +5,7 @@ using System.Web;
 
 namespace FindNDriveServices2.ServiceUtils
 {
+    using System.Data.Entity;
     using System.Security.Cryptography.X509Certificates;
 
     using DomainObjects.Constants;
@@ -22,6 +23,11 @@ namespace FindNDriveServices2.ServiceUtils
             {
                 var matchDeparture = -1;
                 var matchDestination = -1;
+
+                if (x.AvailableSeats <= 0)
+                {
+                    return false;
+                }
 
                 if (x.JourneyStatus == JourneyStatus.Expired || x.DateAndTimeOfDeparture < DateTime.Now || x.JourneyStatus != JourneyStatus.OK)
                 {
@@ -66,9 +72,7 @@ namespace FindNDriveServices2.ServiceUtils
                 }
 
                 var driver =
-                    findNDriveUnitOfWork.UserRepository.AsQueryable()
-                        .IncludeAll()
-                        .FirstOrDefault(_ => _.UserId == x.Driver.UserId);
+                    findNDriveUnitOfWork.UserRepository.AsQueryable().Include(_ => _.Friends).FirstOrDefault(_ => _.UserId == x.Driver.UserId);
 
                 if (driver != null && (x.Private && !driver.Friends.Select(_ => _.UserId).Contains(requestingUser.UserId)))
                 {
@@ -99,7 +103,7 @@ namespace FindNDriveServices2.ServiceUtils
                 return matchDeparture < matchDestination && matchDeparture != -1 && matchDestination != -1;
             };
 
-            return findNDriveUnitOfWork.JourneyRepository.AsQueryable().IncludeSearch().Where(filter).ToList();
+            return findNDriveUnitOfWork.JourneyRepository.AsQueryable().Include(_ => _.Driver).Include(_ => _.GeoAddresses).Where(filter).ToList();
         }
 
         public static List<JourneyTemplate> SearchForTemplates(Journey journey, FindNDriveUnitOfWork findNDriveUnitOfWork)

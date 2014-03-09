@@ -1,7 +1,7 @@
 package com.example.myapplication.constants;
 
 /**
- * Created by Michal on 14/02/14.
+ * Contains the possible GCM Notification Types.
  */
 public class GcmNotificationTypes
 {

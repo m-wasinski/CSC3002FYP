@@ -28,7 +28,8 @@ import com.example.myapplication.notification_management.NotificationProcessor;
 import com.google.gson.reflect.TypeToken;
 
 /**
- * Created by Michal on 10/02/14.
+ * Displays friends request that has been received from another user.
+ * Provides all the necessary functionality to accept or deny the request as well as vies the other user's profile.
  */
 public class ReceivedFriendRequestActivity extends BaseActivity implements View.OnClickListener,
         WCFServiceCallback<Boolean, Void>, WCFImageRetrieved{
@@ -51,6 +52,7 @@ public class ReceivedFriendRequestActivity extends BaseActivity implements View.
         // Initialise local variables.
         Bundle bundle = getIntent().getExtras();
 
+        // Check if this activity has been started from a notification, if yes, mark it as read.
         Notification notification = gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),
                 new TypeToken<Notification>() {}.getType());
 
@@ -96,6 +98,10 @@ public class ReceivedFriendRequestActivity extends BaseActivity implements View.
         getWindow().setAttributes(layout);
     }
 
+    /**
+     * Calls the web service with the user's decision regarding this friend request.
+     * @param decision - decision being submitted by the user.
+     */
     private void submitDecision(int decision)
     {
         progressBar.setVisibility(View.VISIBLE);
@@ -106,6 +112,9 @@ public class ReceivedFriendRequestActivity extends BaseActivity implements View.
                 new TypeToken<ServiceResponse<Boolean>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
     }
 
+    /**
+     * Retrieves profile picture of the user who sent the friend request.
+     */
     private void retrieveProfilePicture()
     {
         new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
@@ -133,6 +142,12 @@ public class ReceivedFriendRequestActivity extends BaseActivity implements View.
         }
     }
 
+    /**
+     * Called after the friend request decision has been processed by the web service.
+     *
+     * @param serviceResponse
+     * @param parameter
+     */
     @Override
     public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter)
     {
@@ -143,7 +158,10 @@ public class ReceivedFriendRequestActivity extends BaseActivity implements View.
         }
     }
 
-
+    /**
+     * Called after the profile picture of the user who sent the friend request has been retrieved.
+     * @param bitmap
+     */
     @Override
     public void onImageRetrieved(Bitmap bitmap) {
         if(bitmap != null)

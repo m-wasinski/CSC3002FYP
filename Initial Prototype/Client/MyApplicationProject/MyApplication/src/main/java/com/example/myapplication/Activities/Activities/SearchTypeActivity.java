@@ -9,7 +9,8 @@ import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.constants.IntentConstants;
 
 /**
- * Created by Michal on 05/03/14.
+ * Asks the user to determine whether they wish to start a new search or use one of
+ * their existing templates to perform a search.
  */
 public class SearchTypeActivity extends BaseActivity implements View.OnClickListener {
 

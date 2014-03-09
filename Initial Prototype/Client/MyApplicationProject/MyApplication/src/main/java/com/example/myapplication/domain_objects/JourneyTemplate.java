@@ -39,7 +39,6 @@ public class JourneyTemplate {
 
     private String DateAndTimeOfDeparture;
     private double DepartureRadius;
-    private String DepartureTime;
     private String CreationDate;
     private int JourneyTemplateId;
 
@@ -59,27 +58,7 @@ public class JourneyTemplate {
         return Alias;
     }
 
-    private String DepartureDate;
     private String Alias;
-
-
-
-    public void setDepartureTime(String departureTime) {
-        DepartureTime = departureTime;
-    }
-
-    public void setDepartureDate(String departureDate) {
-        DepartureDate = departureDate;
-    }
-
-    public String getDepartureTime() {
-
-        return DepartureTime;
-    }
-
-    public String getDepartureDate() {
-        return DepartureDate;
-    }
 
     public void setDepartureRadius(double departureRadius) {
         DepartureRadius = departureRadius;

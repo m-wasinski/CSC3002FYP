@@ -1,7 +1,7 @@
 package com.example.myapplication.constants;
 
 /**
- * Created by Michal on 06/01/14.
+ * Contains possible variations of the Journey Status.
  */
 public class JourneyStatus
 {

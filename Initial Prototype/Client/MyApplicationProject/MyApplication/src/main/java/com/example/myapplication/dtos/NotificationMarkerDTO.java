@@ -1,7 +1,7 @@
 package com.example.myapplication.dtos;
 
 /**
- * Created by Michal on 15/02/14.
+ * DTO object used to mark a notification as delivered.
  */
 public class NotificationMarkerDTO {
     private int NotificationId;

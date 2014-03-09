@@ -1,9 +1,7 @@
 package com.example.myapplication.activities.activities;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,13 +9,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.myapplication.R;
@@ -28,12 +24,13 @@ import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.domain_objects.Journey;
 import com.example.myapplication.domain_objects.JourneyTemplate;
 import com.example.myapplication.domain_objects.ServiceResponse;
+import com.example.myapplication.factories.DialogFactory;
 import com.example.myapplication.factories.ServiceTaskFactory;
 import com.example.myapplication.interfaces.Interfaces;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
+import com.example.myapplication.utilities.CustomDateTimePicker;
 import com.example.myapplication.utilities.DateTimeHelper;
-import com.example.myapplication.factories.DialogFactory;
 import com.example.myapplication.utilities.Utilities;
 import com.google.gson.reflect.TypeToken;
 
@@ -45,16 +42,16 @@ import java.util.Calendar;
 import java.util.Locale;
 
 /**
- * Created by Michal on 26/02/14.
+ * Allows the user to specify the more advanced criteria, it is be used for the following purposes:
+ * - Performing a new journey search.
+ * - Editing existing template.
+ * - Creating a new template.
  */
 public class SearchEditorStepTwoActivity extends BaseActivity implements View.OnClickListener,
         WCFServiceCallback<ArrayList<Journey>, Void>, Interfaces.TemplateNameListener, Interfaces.YesNoDialogPositiveButtonListener {
 
     private JourneyTemplate journeyTemplate;
     private String[] vehicleOptions;
-
-    private boolean setDate;
-    private boolean setTime;
 
     private TableRow flexibleDateTableRow;
     private TableRow flexibleTimeTableRow;
@@ -73,6 +70,7 @@ public class SearchEditorStepTwoActivity extends BaseActivity implements View.On
     private Button subtractFlexibleTimeButton;
 
     private Button searchButton;
+
     private Button saveTemplateButton;
     private Button updateTemplateButton;
 
@@ -87,14 +85,19 @@ public class SearchEditorStepTwoActivity extends BaseActivity implements View.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_dialog_search_more_options);
+        setContentView(R.layout.activity_search_editor_step_two);
 
         Bundle bundle = getIntent().getExtras();
 
-        calendar = Calendar.getInstance();
+        calendar = DateTimeHelper.getCalendar();
 
         mode = bundle.getInt(IntentConstants.SEARCH_MODE);
-        journeyTemplate = gson.fromJson(bundle.getString(IntentConstants.JOURNEY_SEARCH_DTO), new TypeToken<JourneyTemplate>(){}.getType());
+        journeyTemplate = gson.fromJson(bundle.getString(IntentConstants.JOURNEY_TEMPLATE), new TypeToken<JourneyTemplate>(){}.getType());
+
+        if((mode == IntentConstants.EDITING_TEMPLATE || mode == IntentConstants.SEARCH_MODE_FROM_TEMPLATE) && journeyTemplate.getDateAndTimeOfDeparture() != null)
+        {
+            calendar.setTime(DateTimeHelper.parseWCFDate(journeyTemplate.getDateAndTimeOfDeparture()));
+        }
 
         TextView fromToTextView = (TextView) findViewById(R.id.SearchStepTwoActivityFromToTextView);
         fromToTextView.setText(Utilities.getJourneyHeader(journeyTemplate.getGeoAddresses()));
@@ -192,6 +195,15 @@ public class SearchEditorStepTwoActivity extends BaseActivity implements View.On
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if(searchServiceTask != null)
+        {
+            searchServiceTask.cancel(true);
+        }
+    }
+
+    @Override
     public void onClick(View view) {
 
         switch (view.getId())
@@ -282,7 +294,7 @@ public class SearchEditorStepTwoActivity extends BaseActivity implements View.On
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {
                     startActivity(new Intent(getApplicationContext(), HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-                    Toast.makeText(getApplicationContext(), "Template was updated successfully.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SearchEditorStepTwoActivity.this, "Template was updated successfully.", Toast.LENGTH_LONG).show();
                 }
                 else
                 {
@@ -300,130 +312,51 @@ public class SearchEditorStepTwoActivity extends BaseActivity implements View.On
 
     private void getDate(final TextView textView)
     {
-        final DatePickerDialog dateDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener(){
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-
-                if(setDate)
-                {
-                    calendar.set(Calendar.YEAR, year);
-                    calendar.set(Calendar.MONTH, monthOfYear);
-                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        new CustomDateTimePicker().showDatePickerDialog(this, calendar, new Interfaces.DateSelectedListener() {
+            @Override
+            public void dateSelected(Calendar c) {
+                if (c != null) {
+                    calendar.set(Calendar.YEAR, c.get(Calendar.YEAR));
+                    calendar.set(Calendar.MONTH, c.get(Calendar.MONTH));
+                    calendar.set(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH));
 
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMMM-yyyy", Locale.UK);
 
                     textView.setText(simpleDateFormat.format(calendar.getTime()));
                     journeyTemplate.setDateAndTimeOfDeparture(DateTimeHelper.convertToWCFDate(calendar.getTime()));
-                    journeyTemplate.setDepartureDate(DateTimeHelper.convertToWCFDate(calendar.getTime()));
                     journeyTemplate.setSearchByDate(true);
                     flexibleDateTableRow.setVisibility(View.VISIBLE);
+                } else {
+                    textView.setText("I don't mind");
+                    flexibleDateTableRow.setVisibility(View.GONE);
+                    journeyTemplate.setSearchByTime(false);
+                    journeyTemplate.setDateAllowance(0);
                 }
-
             }
-        } ,calendar
-                .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH));
-
-        dateDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialogInterface) {
-                setDate = false;
-                dateDialog.dismiss();
-            }
-        });
-
-        dateDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                setDate = false;
-                dateDialog.dismiss();
-            }
-        });
-
-        dateDialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Done", new DatePickerDialog.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // user set new date
-                setDate = true;
-            }
-        });
-
-        dateDialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "I don't mind", new DatePickerDialog.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                setDate = false;
-                textView.setText("I don't mind");
-                journeyTemplate.setDepartureDate(null);
-                flexibleDateTableRow.setVisibility(View.GONE);
-                journeyTemplate.setSearchByTime(false);
-                journeyTemplate.setDateAllowance(0);
-            }
-        });
-
-        dateDialog.show();
+        }, true, true);
     }
 
     private void getTime(final TextView textView)
     {
-        final TimePickerDialog timeDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+        new CustomDateTimePicker().showTimePickerDialog(this, calendar, new Interfaces.TimeSelectedListener() {
             @Override
-            public void onTimeSet(TimePicker timePicker, int i, int i2) {
-
-                if(setTime)
-                {
-                    calendar.set(Calendar.HOUR_OF_DAY, timePicker.getCurrentHour());
-                    calendar.set(Calendar.MINUTE, timePicker.getCurrentMinute());
+            public void timeSelected(Calendar c) {
+                if (c != null) {
+                    calendar.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY));
+                    calendar.set(Calendar.MINUTE, c.get(Calendar.MINUTE));
                     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.UK);
                     textView.setText(sdf.format(calendar.getTime()));
                     journeyTemplate.setDateAndTimeOfDeparture(DateTimeHelper.convertToWCFDate(calendar.getTime()));
-                    journeyTemplate.setDepartureTime(DateTimeHelper.convertToWCFDate(calendar.getTime()));
                     journeyTemplate.setSearchByTime(true);
                     flexibleTimeTableRow.setVisibility(View.VISIBLE);
+                } else {
+                    textView.setText("I don't mind");
+                    journeyTemplate.setSearchByTime(false);
+                    journeyTemplate.setTimeAllowance(0);
+                    flexibleTimeTableRow.setVisibility(View.GONE);
                 }
-
             }
-        }, Calendar.HOUR_OF_DAY, Calendar.MINUTE, true);
-
-        timeDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialogInterface) {
-                setDate = false;
-                timeDialog.dismiss();
-            }
-        });
-
-        timeDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                setTime = false;
-                timeDialog.dismiss();
-            }
-        });
-
-        timeDialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Done", new DatePickerDialog.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // user set new date
-                setTime = true;
-            }
-        });
-
-        timeDialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "I don't mind", new DatePickerDialog.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                setTime = false;
-                textView.setText("I don't mind");
-                journeyTemplate.setDepartureTime(null);
-                journeyTemplate.setSearchByTime(false);
-                journeyTemplate.setTimeAllowance(0);
-                flexibleTimeTableRow.setVisibility(View.GONE);
-            }
-        });
-
-        timeDialog.show();
+        }, true);
     }
 
     private void showFeeSpecifyDialog(final OnFeeSelected onFeeSelected)
@@ -491,6 +424,9 @@ public class SearchEditorStepTwoActivity extends BaseActivity implements View.On
         createNewTemplate();
     }
 
+    /**
+     * Called after user confirms that they wish to create a new template.
+     **/
     @Override
     public void positiveButtonClicked() {
         getTemplateName();
@@ -506,6 +442,14 @@ public class SearchEditorStepTwoActivity extends BaseActivity implements View.On
         void feeSelected(double fee);
     }
 
+    /**
+     * Concatenates two arrays, used for joining the 'I don't mind' option with array of vehicles stored in resources.
+     *
+     * @param A
+     * @param B
+     * @param <T>
+     * @return
+     */
     private <T> T[] concatenate (T[] A, T[] B) {
         int aLen = A.length;
         int bLen = B.length;
@@ -518,6 +462,10 @@ public class SearchEditorStepTwoActivity extends BaseActivity implements View.On
         return C;
     }
 
+    /**
+     * Calls the web service to perform the search for journeys.
+     * Search criteria on which the search is performed is specified in the journeyTemplate object.
+     */
     private void searchForJourneys()
     {
         progressBar.setVisibility(View.VISIBLE);
@@ -528,6 +476,12 @@ public class SearchEditorStepTwoActivity extends BaseActivity implements View.On
         searchServiceTask.execute();
     }
 
+    /**
+     * Callback from the service task called once search results are retrieved from the web service.
+     *
+     * @param serviceResponse - contains arraylist of journeys in the Result property.
+     * @param parameter
+     */
     @Override
     public void onServiceCallCompleted(ServiceResponse<ArrayList<Journey>> serviceResponse, Void parameter) {
         progressBar.setVisibility(View.GONE);
@@ -548,7 +502,7 @@ public class SearchEditorStepTwoActivity extends BaseActivity implements View.On
                 }
                 else
                 {
-                    Toast.makeText(getApplicationContext(), "No journeys were found.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SearchEditorStepTwoActivity.this, "No journeys were found.", Toast.LENGTH_LONG).show();
                 }
             }
         }
@@ -587,6 +541,10 @@ public class SearchEditorStepTwoActivity extends BaseActivity implements View.On
         startActivity(new Intent(this, SearchResultDetailsActivity.class).putExtras(bundle));
     }
 
+    /**
+     *  Call the web service to create a new template from the current journey template object.
+     *  Template is saved database and then used by the web service to suggest journeys to the user.
+     **/
     private void createNewTemplate()
     {
         saveTemplateButton.setEnabled(false);
@@ -599,7 +557,7 @@ public class SearchEditorStepTwoActivity extends BaseActivity implements View.On
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {
                     startActivity(new Intent(getApplicationContext(), HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-                    Toast.makeText(getApplicationContext(), "New template was created successfully.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SearchEditorStepTwoActivity.this, "New template was created successfully.", Toast.LENGTH_LONG).show();
                 }
                 else
                 {

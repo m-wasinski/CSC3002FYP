@@ -3,7 +3,7 @@ package com.example.myapplication.dtos;
 import com.example.myapplication.domain_objects.User;
 
 /**
- * Created by Michal on 05/11/13.
+ * DTO object used to create a new account within the system.
  */
 public class RegisterDTO {
     private User User;

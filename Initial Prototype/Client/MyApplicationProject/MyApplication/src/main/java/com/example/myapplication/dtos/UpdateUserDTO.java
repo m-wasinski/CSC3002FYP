@@ -1,7 +1,7 @@
 package com.example.myapplication.dtos;
 
 /**
- * Created by Michal on 19/02/14.
+ * DTO object used to update personal user information.
  */
 public class UpdateUserDTO {
 

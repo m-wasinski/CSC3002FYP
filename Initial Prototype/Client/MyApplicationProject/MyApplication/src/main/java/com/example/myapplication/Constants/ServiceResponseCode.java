@@ -1,7 +1,7 @@
 package com.example.myapplication.constants;
 
 /**
- * Created by Michal on 05/01/14.
+ * Constants which represent different service response codes which are part of the service response object retrieved from the WCF web service.
  */
 public class ServiceResponseCode {
     public final static int SUCCESS = 0;

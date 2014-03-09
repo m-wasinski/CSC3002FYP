@@ -1,7 +1,7 @@
 package com.example.myapplication.dtos;
 
 /**
- * Created by Michal on 16/02/14.
+ * DTO object used when a user withdraws from a journey or by the driver when they decide to cancel one of their journeys.
  */
 public class JourneyUserDTO {
     private int JourneyId;

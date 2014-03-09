@@ -26,12 +26,13 @@ import com.google.gson.reflect.TypeToken;
 
 import static java.util.Arrays.asList;
 
+/**
+ * Provides users with the ability to log into the application using their username and password.
+ **/
 public class LoginActivity extends BaseActivity implements WCFServiceCallback<User,String>, View.OnClickListener {
 
     private ProgressBar progressBar;
-    private LinearLayout keepMeLoggedInLinearLayout;
     private Button loginButton;
-    private Button registerButton;
     private CheckBox rememberMeCheckbox;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -42,18 +43,21 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
         // Initialise UI elements and setup event handlers.
         progressBar = (ProgressBar) findViewById(R.id.LoginActivityProgressBar);
 
-        keepMeLoggedInLinearLayout = (LinearLayout) findViewById(R.id.LoginActivityKeepMeLoggedInLinearLayout);
+        LinearLayout keepMeLoggedInLinearLayout = (LinearLayout) findViewById(R.id.LoginActivityKeepMeLoggedInLinearLayout);
         keepMeLoggedInLinearLayout.setOnClickListener(this);
 
         loginButton = (Button) findViewById(R.id.LoginUserButton);
         loginButton.setOnClickListener(this);
 
-        registerButton = (Button) findViewById(R.id.LoginActivityRegisterButton);
+        Button registerButton = (Button) findViewById(R.id.LoginActivityRegisterButton);
         registerButton.setOnClickListener(this);
 
         rememberMeCheckbox = (CheckBox) findViewById(R.id.RememberMeCheckBox);
     }
 
+    /**
+     * Validates the username and password fields and triggers call to the web service to perform user log in.
+     */
     private void attemptLogin()
     {
         EditText userName = (EditText) findViewById(R.id.UserLoginUserNameEditText);
@@ -102,6 +106,12 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Called after user login has been processed by the web service.
+     *
+     * @param serviceResponse
+     * @param session
+     */
     @Override
     public void onServiceCallCompleted(ServiceResponse<User> serviceResponse, String session) {
         progressBar.setVisibility(View.GONE);

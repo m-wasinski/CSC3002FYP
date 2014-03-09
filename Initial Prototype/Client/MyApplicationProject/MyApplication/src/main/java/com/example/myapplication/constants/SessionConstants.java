@@ -1,7 +1,7 @@
 package com.example.myapplication.constants;
 
 /**
- * Created by Michal on 13/01/14.
+ * Constants used for session management between the app and the WCF web service.
  */
 public class SessionConstants {
     public static final String SESSION_ID = "SESSION_ID";

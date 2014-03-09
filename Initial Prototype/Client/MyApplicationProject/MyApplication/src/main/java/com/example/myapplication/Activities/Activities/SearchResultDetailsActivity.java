@@ -39,7 +39,7 @@ import com.google.gson.reflect.TypeToken;
 import java.text.DecimalFormat;
 
 /**
- * Created by Michal on 04/02/14.
+ * Displays details of a journey and provides user with the ability to send a request to its driver.
  */
 public class SearchResultDetailsActivity extends BaseMapActivity implements WCFServiceCallback<JourneyRequest, Void>,
         OnDrivingDirectionsRetrrievedListener, GoogleMap.OnMapLoadedCallback, WCFImageRetrieved, View.OnClickListener{
@@ -67,12 +67,14 @@ public class SearchResultDetailsActivity extends BaseMapActivity implements WCFS
 
     private ProgressBar progressBar;
 
+    private final String TAG = "Search Result Details Activity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_result_journey_details);
 
-        // Initialise variables.
+        // Check if this activity has been started from a notification, if so, mark is as read.
         Bundle extras = getIntent().getExtras();
         Notification notification = gson.fromJson(extras.getString(IntentConstants.NOTIFICATION), new TypeToken<Notification>() {}.getType());
 
@@ -81,11 +83,12 @@ public class SearchResultDetailsActivity extends BaseMapActivity implements WCFS
             new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
-                    Log.i(getClass().getSimpleName(), "Notification successfully marked as delivered");
+                    Log.i(TAG, "Notification successfully marked as delivered");
                 }
             });
         }
 
+        // Initialise UI elements, local variables and setup event handlers
         journey = gson.fromJson(extras.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
 
         DisplayMetrics metrics = new DisplayMetrics();
@@ -99,7 +102,6 @@ public class SearchResultDetailsActivity extends BaseMapActivity implements WCFS
             mapFragment.getView().setLayoutParams(layoutParams);
         }
 
-        // Initialise UI elements and setup their event handlers..
         journeyIdTextView = (TextView) findViewById(R.id.JourneyDetailsActivityJourneyIdTextView);
         journeyDriverTextView = (TextView) findViewById(R.id.JourneyDetailsActivityJourneyDriverTextView);
         journeyDateTextView = (TextView) findViewById(R.id.JourneyDetailsActivityJourneyDateTextView);
@@ -117,7 +119,7 @@ public class SearchResultDetailsActivity extends BaseMapActivity implements WCFS
         journeyMessageToDriverEditText = (EditText) findViewById(R.id.JourneyDetailsActivityMessageToDriverEditText);
         driverImageView = (ImageView) findViewById(R.id.JourneySearchResultsActivityDriverImageView);
 
-        retrieveDriverImage();
+        retrieveDriverProfilePicture();
 
         // Fill journey information
         fillJourneyInformation();
@@ -132,6 +134,9 @@ public class SearchResultDetailsActivity extends BaseMapActivity implements WCFS
         googleMap.setOnMapLoadedCallback(this);
     }
 
+    /**
+     * Display the information about this journey in the UI elements.
+     */
     private void fillJourneyInformation()
     {
         String[] vehicleTypes = getResources().getStringArray(R.array.vehicle_types);
@@ -148,25 +153,32 @@ public class SearchResultDetailsActivity extends BaseMapActivity implements WCFS
         journeyFeeTextView.setText(("£"+new DecimalFormat("0.00").format(journey.getFee())) + (journey.getPreferredPaymentMethod() == null ? "" : ", " +journey.getPreferredPaymentMethod()));
     }
 
+    /**
+     * Initialises the Google Map present in this activity.
+     */
     private void initialiseMap() {
 
         if (googleMap == null && mapFragment != null) {
             googleMap = mapFragment.getMap();
 
             if (googleMap == null) {
-                Toast.makeText(this,
-                        "Unable to initialise Google Maps, please check your network connection.", Toast.LENGTH_SHORT)
-                        .show();
+                Toast.makeText(this,"Check if Google Play services are installed.", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    private void retrieveDriverImage()
+    /**
+     * Retrieves profile picture of the driver.
+     */
+    private void retrieveDriverProfilePicture()
     {
         new WcfPictureServiceTask(appManager.getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
                 journey.getDriver().getUserId(), appManager.getAuthorisationHeaders(), this).execute();
     }
 
+    /**
+     * Builds and sends a new journey request from the current user to the driver of the current journey.
+     */
     private void sendRequest()
     {
         sendRequestButton.setEnabled(false);
@@ -180,6 +192,12 @@ public class SearchResultDetailsActivity extends BaseMapActivity implements WCFS
                 journeyRequest, new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
     }
 
+    /**
+     * Callback method called upon completion of the Service Task whose responsibility was to send the journey request.
+     *
+     * @param serviceResponse
+     * @param parameter
+     */
     @Override
     public void onServiceCallCompleted(ServiceResponse<JourneyRequest> serviceResponse, Void parameter) {
         progressBar.setVisibility(View.GONE);
@@ -201,6 +219,11 @@ public class SearchResultDetailsActivity extends BaseMapActivity implements WCFS
         drawDrivingDirectionsOnMap(googleMap, journey.getGeoAddresses(), this);
     }
 
+    /**
+     * Called upon successful picture retrieval from the web service.
+     *
+     * @param bitmap - bitmap containing the image.
+     */
     @Override
     public void onImageRetrieved(Bitmap bitmap) {
         if(bitmap != null)

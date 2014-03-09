@@ -1,7 +1,7 @@
 package com.example.myapplication.dtos;
 
 /**
- * Created by Michal on 12/02/14.
+ * DTO object used to retrieve a journey chat conversation history for a specific journey.
  */
 public class JourneyMessageRetrieverDTO {
     public int JourneyId;

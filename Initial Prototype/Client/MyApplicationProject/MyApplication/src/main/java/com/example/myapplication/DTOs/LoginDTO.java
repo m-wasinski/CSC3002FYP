@@ -1,7 +1,7 @@
 package com.example.myapplication.dtos;
 
 /**
- * Created by Michal on 11/11/13.
+ * DTO object used to log a user in.
  */
 public class LoginDTO {
     private String UserName;

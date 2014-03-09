@@ -12,7 +12,9 @@ namespace FindNDriveServices2.Services
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Data.Entity;
     using System.Linq;
+    using System.Net.Sockets;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
 
@@ -25,6 +27,8 @@ namespace FindNDriveServices2.Services
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
     using FindNDriveServices2.ServiceUtils;
+
+    using Microsoft.Practices.ObjectBuilder2;
 
     /// <summary>
     /// The rating service.
@@ -94,9 +98,7 @@ namespace FindNDriveServices2.Services
             }
 
             var driver =
-                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                    .IncludeAll()
-                    .FirstOrDefault(_ => _.UserId == ratingDTO.UserId);
+                this.findNDriveUnitOfWork.UserRepository.AsQueryable().Include(_ => _.Rating).FirstOrDefault(_ => _.UserId == ratingDTO.UserId);
 
             if (driver == null)
             {
@@ -181,7 +183,28 @@ namespace FindNDriveServices2.Services
             }
 
             var ratings =
-                this.findNDriveUnitOfWork.RatingsRepository.AsQueryable().IncludeAll().Where(_ => _.UserId == id).ToList();
+                (from rating in
+                     this.findNDriveUnitOfWork.RatingsRepository.AsQueryable()
+                     .Include(_ => _.FromUser)
+                     .Where(_ => _.UserId == id)
+                     .ToList()
+                 select
+                     new Rating
+                         {
+                             UserId = rating.UserId,
+                             Feedback = rating.Feedback,
+                             FromUser =
+                                 new User
+                                     {
+                                         UserId = rating.FromUser.UserId,
+                                         FirstName = rating.FromUser.FirstName,
+                                         LastName = rating.FromUser.LastName,
+                                         UserName = rating.FromUser.UserName
+                                     },
+                             LeftOnDate = rating.LeftOnDate,
+                             Score = rating.Score,
+                             RatingId = rating.RatingId
+                         }).ToList();
 
             return ServiceResponseBuilder.Success(ratings);
         }
@@ -203,7 +226,6 @@ namespace FindNDriveServices2.Services
             }
 
             var users = (from user in this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                                           .IncludeAll()
                                            .OrderByDescending(_ => _.AverageRating)
                                            .Skip(loadRangeDTO.Skip)
                                            .Take(loadRangeDTO.Take).ToList()

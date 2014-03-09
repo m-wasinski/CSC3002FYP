@@ -12,6 +12,7 @@ namespace FindNDriveServices2.Services
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Data.Entity;
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
@@ -103,7 +104,7 @@ namespace FindNDriveServices2.Services
 
             var journeys =
                 this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
-                    .IncludeAll()
+                    .Include(_ => _.Driver).Include(_ => _.GeoAddresses)
                     .Where(_ => _.Driver.UserId == loadRangeDTO.Id || _.Participants.Any(x => x.UserId == loadRangeDTO.Id))
                     .OrderByDescending(x => x.CreationDate)
                     .Skip(loadRangeDTO.Skip)
@@ -150,9 +151,7 @@ namespace FindNDriveServices2.Services
             }
 
             var user =
-                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                    .IncludeAll()
-                    .FirstOrDefault(_ => _.UserId == journeyDTO.Driver.UserId);
+                this.findNDriveUnitOfWork.UserRepository.AsQueryable().Include(_ => _.Friends).FirstOrDefault(_ => _.UserId == journeyDTO.Driver.UserId);
 
             if (user == null)
             {
@@ -237,10 +236,17 @@ namespace FindNDriveServices2.Services
 
             var journey =
                 this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
-                    .IncludeAll()
+                    .Include(_ => _.Driver).Include(_ => _.GeoAddresses)
                     .FirstOrDefault(_ => _.JourneyId == id);
 
-            return journey != null ? ServiceResponseBuilder.Success(journey) : ServiceResponseBuilder.Failure<Journey>("Journey with this id does not exist.");
+            if (journey == null)
+            {
+                return ServiceResponseBuilder.Failure<Journey>("Invalid journey id");
+            }
+
+            journey.Driver = new User { UserId = journey.Driver.UserId, FirstName = journey.Driver.FirstName, LastName = journey.Driver.LastName};
+
+            return ServiceResponseBuilder.Success(journey);
         }
 
         /// <summary>
@@ -285,7 +291,7 @@ namespace FindNDriveServices2.Services
 
             var journey =
                 this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
-                    .IncludeAll()
+                    .Include(_ => _.GeoAddresses).Include(_ => _.Participants)
                     .FirstOrDefault(_ => _.JourneyId == journeyDTO.JourneyId);
 
             if (journey == null)
@@ -435,7 +441,7 @@ namespace FindNDriveServices2.Services
 
             var journey =
                 this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
-                    .IncludeAll()
+                    .Include(_ => _.Participants).Include(_ => _.Driver).Include(_ => _.GeoAddresses)
                     .FirstOrDefault(_ => _.JourneyId == journeyUserDTO.JourneyId);
 
             if (journey == null)
@@ -514,7 +520,7 @@ namespace FindNDriveServices2.Services
 
             var journey =
                 this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
-                    .IncludeAll()
+                    .Include(_ => _.Participants)
                     .FirstOrDefault(_ => _.JourneyId == journeyId);
 
             if (journey == null)

@@ -41,6 +41,8 @@ public class JourneySummaryActivity extends BaseActivity implements WCFImageRetr
 
     private ImageView driverIconImageView;
 
+    private String TAG = "Journey Summary Activity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);

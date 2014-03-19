@@ -244,7 +244,7 @@ namespace FindNDriveServices2.Services
                 return ServiceResponseBuilder.Failure<Journey>("Invalid journey id");
             }
 
-            journey.Driver = new User { UserId = journey.Driver.UserId, FirstName = journey.Driver.FirstName, LastName = journey.Driver.LastName};
+            journey.Driver = new User { UserId = journey.Driver.UserId, FirstName = journey.Driver.FirstName, LastName = journey.Driver.LastName, UserName =  journey.Driver.UserName};
 
             return ServiceResponseBuilder.Success(journey);
         }

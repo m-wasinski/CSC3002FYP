@@ -67,9 +67,9 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
 
             if(notification != null)
             {
-                new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Boolean, Void>() {
+                new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Void, Void>() {
                     @Override
-                    public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+                    public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                         Log.i(TAG, "Notification successfully marked as delivered");
                     }
                 });
@@ -138,10 +138,10 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
         }
     }
 
-    private void markNotificationRead(NotificationProcessor notificationProcessor, final Notification notification, final View view)
+    private void markNotificationDelivered(NotificationProcessor notificationProcessor, final Notification notification, final View view)
     {
-        notificationProcessor.MarkDelivered(this, appManager, notification, new WCFServiceCallback<Boolean, Void>() {
-            public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+        notificationProcessor.MarkDelivered(this, appManager, notification, new WCFServiceCallback<Void, Void>() {
+            public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                 notification.setDelivered(true);
                 notificationsAdapter.notifyDataSetChanged();
             }
@@ -166,7 +166,7 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
     public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
         final NotificationProcessor notificationProcessor = new NotificationProcessor();
 
-        markNotificationRead(notificationProcessor, notifications.get(i), view);
+        markNotificationDelivered(notificationProcessor, notifications.get(i), view);
 
         if(notifications.get(i).getTargetObjectId() != -1)
         {

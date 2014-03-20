@@ -78,10 +78,10 @@ public class PictureUploadActivity extends BaseActivity implements View.OnClickL
         //Just before sending the bitmap, convert it to byte64 string to allow it to be transferred inside JSON object.
         new WcfPostServiceTask<ProfilePictureUpdaterDTO>(this, getResources().getString(R.string.UpdateProfilePictureURL),
                 new ProfilePictureUpdaterDTO(this.appManager.getUser().getUserId(), Base64.encodeToString(byteArray, Base64.DEFAULT)),
-                new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback() {
+                new TypeToken<ServiceResponse<Void>>() {}.getType(),
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
             @Override
-            public void onServiceCallCompleted(ServiceResponse serviceResponse, Object parameter) {
+            public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {
                     pictureUploadedSuccessfully(bitmap);

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="SendRequestURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyRequestService.svc/send</string>
-    <string name="ProcessRequestDecisionURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyRequestService.svc/processdecision</string>
-    <string name="GetRequestsForJourneyURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyRequestService.svc/getforjourney</string>
-    <string name="GetRequestsForUserURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyRequestService.svc/getforuser</string>
+    <string name="ProcessRequestDecisionURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyRequestService.svc/process</string>
+    <string name="GetRequestsForJourneyURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyRequestService.svc/journey</string>
+    <string name="GetRequestsForUserURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyRequestService.svc/user</string>
     <string name="GetJourneyRequestURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyRequestService.svc/get</string>
-    <string name="MarkRequestAsReadURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyRequestService.svc/markasread</string>
 </resources>

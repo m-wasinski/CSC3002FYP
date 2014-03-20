@@ -38,7 +38,7 @@ namespace DomainObjects.Domains
         /// <summary>
         /// Gets or sets the user name.
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "Username is required")]
         [DataMember]
         public string UserName { get; set; }
 
@@ -46,7 +46,7 @@ namespace DomainObjects.Domains
         /// Gets or sets the email address.
         /// </summary>
         [EmailAddress]
-        [Required(ErrorMessage = "You must provide valid email address.")]
+        [Required(ErrorMessage = "Valid email address is required")]
         [DataMember]
         public string EmailAddress { get; set; }
 

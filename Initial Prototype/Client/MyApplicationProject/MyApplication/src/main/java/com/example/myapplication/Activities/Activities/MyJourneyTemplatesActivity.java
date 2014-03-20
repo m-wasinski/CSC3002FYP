@@ -178,9 +178,9 @@ public class MyJourneyTemplatesActivity extends BaseActivity implements WCFServi
         progressBar.setVisibility(View.VISIBLE);
         new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.DeleteJourneyTemplateURL),
                 journeyTemplates.get(index).getJourneyTemplateId(),
-                new TypeToken<ServiceResponse<Boolean>>() {}.getType(), appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+                new TypeToken<ServiceResponse<Void>>() {}.getType(), appManager.getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
             @Override
-            public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+            public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                 progressBar.setVisibility(View.GONE);
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {

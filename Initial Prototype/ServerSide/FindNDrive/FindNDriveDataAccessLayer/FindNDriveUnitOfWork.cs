@@ -24,11 +24,7 @@ namespace FindNDriveDataAccessLayer
         /// <summary>
         /// The _db context.
         /// </summary>
-        private readonly DbContext _dbContext;
-
-        /**
-        * Each IRepository<T> repesents a repository available in the database. 
-        **/
+        private readonly DbContext dbContext;
 
         /// <summary>
         /// Gets or sets the user repository.
@@ -138,7 +134,7 @@ namespace FindNDriveDataAccessLayer
             IRepository<ProfilePicture> profilePicturesRepository,
             IRepository<JourneyTemplate> journeyTemplateRepository)
         {
-            this._dbContext = dbContext;
+            this.dbContext = dbContext;
             this.UserRepository = userRepository;
             this.JourneyRepository = journeyRepository;
             this.SessionRepository = sessionRepository;
@@ -155,13 +151,33 @@ namespace FindNDriveDataAccessLayer
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="FindNDriveUnitOfWork"/> class.
+        /// </summary>
+        public FindNDriveUnitOfWork()
+        {
+            this.dbContext = new ApplicationContext();
+            this.UserRepository = new EntityFrameworkRepository<User>(this.dbContext);
+            this.JourneyRepository = new EntityFrameworkRepository<Journey>(this.dbContext);
+            this.SessionRepository = new EntityFrameworkRepository<Session>(this.dbContext);
+            this.JourneyRequestRepository = new EntityFrameworkRepository<JourneyRequest>(this.dbContext);
+            this.ChatMessageRepository = new EntityFrameworkRepository<ChatMessage>(this.dbContext);
+            this.NotificationRepository = new EntityFrameworkRepository<Notification>(this.dbContext);
+            this.FriendRequestsRepository = new EntityFrameworkRepository<FriendRequest>(this.dbContext);
+            this.JourneyMessageRepository = new EntityFrameworkRepository<JourneyMessage>(this.dbContext);
+            this.GeoAddressRepository = new EntityFrameworkRepository<GeoAddress>(this.dbContext);
+            this.RatingsRepository = new EntityFrameworkRepository<Rating>(this.dbContext);
+            this.ProfilePicturesRepository = new EntityFrameworkRepository<ProfilePicture>(this.dbContext);
+            this.JourneyTemplateRepository = new EntityFrameworkRepository<JourneyTemplate>(this.dbContext);
+        }
+
+        /// <summary>
         /// The commit.
         /// </summary>
         public void Commit()
         {
             try
             {
-                this._dbContext.SaveChanges();
+                this.dbContext.SaveChanges();
             }
             catch (Exception e)
             {
@@ -177,7 +193,7 @@ namespace FindNDriveDataAccessLayer
         /// </summary>
         public void Dispose()
         {
-            this._dbContext.Dispose();
+            this.dbContext.Dispose();
         }
     }
 }

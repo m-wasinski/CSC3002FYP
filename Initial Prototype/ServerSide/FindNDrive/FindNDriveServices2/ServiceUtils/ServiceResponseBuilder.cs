@@ -10,7 +10,6 @@
 namespace FindNDriveServices2.ServiceUtils
 {
     using System.Collections.Generic;
-
     using FindNDriveServices2.ServiceResponses;
 
     public class ServiceResponseBuilder
@@ -71,14 +70,17 @@ namespace FindNDriveServices2.ServiceUtils
             };
         }
 
-        public static ServiceResponse<T> Unauthorised<T>(T result)
-        {
-            return new ServiceResponse<T> { ServiceResponseCode = ServiceResponseCode.Unauthorized };
-        }
-
         public static ServiceResponse<T> Unauthorised<T>()
         {
             return new ServiceResponse<T>
+            {
+                ServiceResponseCode = ServiceResponseCode.Unauthorized
+            };
+        }
+
+        public static ServiceResponse Unauthorised()
+        {
+            return new ServiceResponse
             {
                 ServiceResponseCode = ServiceResponseCode.Unauthorized
             };

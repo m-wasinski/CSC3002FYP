@@ -16,13 +16,9 @@ namespace FindNDriveServices2.Services
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
-
     using DomainObjects.Constants;
     using DomainObjects.Domains;
     using FindNDriveDataAccessLayer;
-
-    using FindNDriveInfrastructureCore;
-
     using FindNDriveServices2.Contracts;
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
@@ -31,7 +27,7 @@ namespace FindNDriveServices2.Services
     using Microsoft.Practices.ObjectBuilder2;
 
     /// <summary>
-    /// The car share service.
+    /// The journey service.
     /// </summary>
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple)]
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
@@ -55,18 +51,19 @@ namespace FindNDriveServices2.Services
         /// <summary>
         /// The random.
         /// </summary>
-        private Random random;
+        private readonly Random random;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="JourneyService"/> class. 
+        /// Initializes a new instance of the <see cref="JourneyService"/> class.
         /// </summary>
         /// <param name="findNDriveUnitOfWork">
-        /// The find N Drive Unit Of Work.
+        /// The find n drive unit of work.
         /// </param>
         /// <param name="sessionManager">
-        /// The session Manager.
+        /// The session manager.
         /// </param>
         /// <param name="notificationManager">
+        /// The notification manager.
         /// </param>
         public JourneyService(
             FindNDriveUnitOfWork findNDriveUnitOfWork,
@@ -80,7 +77,7 @@ namespace FindNDriveServices2.Services
         }
 
         /// <summary>
-        /// The get all journeys for user.
+        /// Retrieves a list of all journeys for a given user both as a driver and a passenger.
         /// </summary>
         /// <param name="loadRangeDTO">
         /// The load range dto.
@@ -90,11 +87,6 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<List<Journey>> GetAllJourneysForUser(LoadRangeDTO loadRangeDTO)
         {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised(new List<Journey>());
-            }
-
             var user = this.findNDriveUnitOfWork.UserRepository.Find(loadRangeDTO.Id);
 
             if (user == null)
@@ -135,7 +127,7 @@ namespace FindNDriveServices2.Services
         }
 
         /// <summary>
-        /// The create new journey.
+        /// Creates a new journey.
         /// </summary>
         /// <param name="journeyDTO">
         /// The journey dto.
@@ -143,11 +135,11 @@ namespace FindNDriveServices2.Services
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<bool> CreateNewJourney(JourneyDTO journeyDTO)
+        public ServiceResponse<Journey> CreateNewJourney(JourneyDTO journeyDTO)
         {
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised<bool>();
+                return ServiceResponseBuilder.Unauthorised<Journey>();
             }
 
             var user =
@@ -155,12 +147,12 @@ namespace FindNDriveServices2.Services
 
             if (user == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid user id.");
+                return ServiceResponseBuilder.Failure<Journey>("Invalid user id.");
             }
 
             if (journeyDTO.DateAndTimeOfDeparture < DateTime.Now)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid date or time!");
+                return ServiceResponseBuilder.Failure<Journey>("Invalid date or time!");
             }
 
             var newJourney = new Journey
@@ -215,11 +207,11 @@ namespace FindNDriveServices2.Services
             this.notificationManager.SendGcmTickle(
                interestedUsers);
 
-            return ServiceResponseBuilder.Success(true);
+            return ServiceResponseBuilder.Success(newJourney);
         }
 
         /// <summary>
-        /// The get car share by id.
+        /// Retrieves a specific journey by its id.
         /// </summary>
         /// <param name="id">
         /// The id.
@@ -229,11 +221,6 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<Journey> GetJourneyById(int id)
         {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised(new Journey());
-            }
-
             var journey =
                 this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
                     .Include(_ => _.Driver).Include(_ => _.GeoAddresses)
@@ -250,31 +237,7 @@ namespace FindNDriveServices2.Services
         }
 
         /// <summary>
-        /// The get multiple journeys by id.
-        /// </summary>
-        /// <param name="ids">
-        /// The ids.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        public ServiceResponse<List<Journey>> GetMultipleJourneysById(Collection<int> ids)
-        {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised(new List<Journey>());
-            }
-
-            var journeys =
-                this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
-                    .IncludeAll()
-                    .Where(_ => ids.Contains(_.JourneyId))
-                    .ToList();
-            return ServiceResponseBuilder.Success(journeys);
-        }
-
-        /// <summary>
-        /// The modify journey.
+        /// Modifies a specific journey with new information provided by the user.
         /// </summary>
         /// <param name="journeyDTO">
         /// The journey dto.
@@ -282,11 +245,11 @@ namespace FindNDriveServices2.Services
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<bool> ModifyJourney(JourneyDTO journeyDTO)
+        public ServiceResponse<Journey> ModifyJourney(JourneyDTO journeyDTO)
         {
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised<bool>();
+                return ServiceResponseBuilder.Unauthorised<Journey>();
             }
 
             var journey =
@@ -296,12 +259,12 @@ namespace FindNDriveServices2.Services
 
             if (journey == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid journey id");
+                return ServiceResponseBuilder.Failure<Journey>("Invalid journey id");
             }
 
             if (journey.JourneyStatus != JourneyStatus.OK)
             {
-                return ServiceResponseBuilder.Failure<bool>(string.Format("This journey is {0}, you cannot make a change to it.", journey.JourneyStatus == JourneyStatus.Cancelled ? "cancelled" : "expired"));
+                return ServiceResponseBuilder.Failure<Journey>(string.Format("This journey is {0}, you cannot make a change to it.", journey.JourneyStatus == JourneyStatus.Cancelled ? "cancelled" : "expired"));
             }
 
             this.findNDriveUnitOfWork.GeoAddressRepository.RemoveRange(journey.GeoAddresses);
@@ -342,11 +305,11 @@ namespace FindNDriveServices2.Services
             this.notificationManager.SendGcmTickle(
                 journey.Participants);
 
-            return ServiceResponseBuilder.Success(true);
+            return ServiceResponseBuilder.Success(journey);
         }
 
         /// <summary>
-        /// The cancel journey.
+        /// Cancels a specific journey.
         /// </summary>
         /// <param name="journeyUserDTO">
         /// The journey user dto.
@@ -432,11 +395,20 @@ namespace FindNDriveServices2.Services
             return ServiceResponseBuilder.Success(journey);
         }
 
-        public ServiceResponse<bool> WithdrawFromJourney(JourneyUserDTO journeyUserDTO)
+        /// <summary>
+        /// Withdraws a specific passenger from a journey.
+        /// </summary>
+        /// <param name="journeyUserDTO">
+        /// The journey user dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse WithdrawFromJourney(JourneyUserDTO journeyUserDTO)
         {
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(false);
+                return ServiceResponseBuilder.Unauthorised();
             }
 
             var journey =
@@ -446,24 +418,24 @@ namespace FindNDriveServices2.Services
 
             if (journey == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid journey id");
+                return ServiceResponseBuilder.Failure("Invalid journey id");
             }
 
             if (journey.JourneyStatus != JourneyStatus.OK)
             {
-                return ServiceResponseBuilder.Failure<bool>(string.Format("This journey is {0}, there is no need to withdraw.", journey.JourneyStatus == JourneyStatus.Cancelled ? "cancelled" : "expired"));
+                return ServiceResponseBuilder.Failure(string.Format("This journey is {0}, there is no need to withdraw.", journey.JourneyStatus == JourneyStatus.Cancelled ? "cancelled" : "expired"));
             }
 
             var passenger = this.findNDriveUnitOfWork.UserRepository.Find(journeyUserDTO.UserId);
 
             if (passenger == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid passenger id");
+                return ServiceResponseBuilder.Failure("Invalid passenger id");
             }
 
             if (passenger.UserId == journey.Driver.UserId)
             {
-                return ServiceResponseBuilder.Failure<bool>("As driver, you cannot withdraw from this journey.");
+                return ServiceResponseBuilder.Failure("As driver, you cannot withdraw from this journey.");
             }
             
             journey.Participants.Remove(passenger);
@@ -507,17 +479,20 @@ namespace FindNDriveServices2.Services
             this.notificationManager.SendGcmTickle(
                 new List<User> { journey.Driver });
 
-            return ServiceResponseBuilder.Success(true);
+            return ServiceResponseBuilder.Success();
         }
 
-
+        /// <summary>
+        /// Retrieves the list of all passengers for a specific journey.
+        /// </summary>
+        /// <param name="journeyId">
+        /// The journey id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         public ServiceResponse<List<User>> GetPassengers(int journeyId)
         {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised<List<User>>();
-            }
-
             var journey =
                 this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
                     .Include(_ => _.Participants)

@@ -74,7 +74,9 @@ namespace FindNDriveServices2.Services
         }
 
         /// <summary>
-        /// The send message.
+        /// Adds a new message to the conversation history of two users.
+        /// Depending on the current online status of the receiving user, the message will either
+        /// be sent immediately or saved in the repository for later retrieval.
         /// </summary>
         /// <param name="chatMessageDTO">
         /// The chat message dto.
@@ -82,11 +84,11 @@ namespace FindNDriveServices2.Services
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<bool> SendMessage(ChatMessageDTO chatMessageDTO)
+        public ServiceResponse SendMessage(ChatMessageDTO chatMessageDTO)
         {
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(false);
+                return ServiceResponseBuilder.Unauthorised();
             }
 
             var targetUser = this.findNDriveUnitOfWork.UserRepository.Find(chatMessageDTO.RecipientId);
@@ -94,7 +96,7 @@ namespace FindNDriveServices2.Services
 
             if (targetUser == null || sendingUser == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid sender or recipient id");
+                return ServiceResponseBuilder.Failure("Invalid sender or recipient id");
             }
 
             var newMessage = new ChatMessage
@@ -119,11 +121,11 @@ namespace FindNDriveServices2.Services
                 newMessage,
                 newMessage.ChatMessageId);
 
-            return ServiceResponseBuilder.Success(true);
+            return ServiceResponseBuilder.Success();
         }
 
         /// <summary>
-        /// The retrieve messages.
+        /// Retrieves all messages for a given conversation between two users.
         /// </summary>
         /// <param name="chatMessageRetrieverDTO">
         /// The chat message retriever dto.
@@ -133,11 +135,6 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<List<ChatMessage>> RetrieveMessages(ChatMessageRetrieverDTO chatMessageRetrieverDTO)
         {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised(new List<ChatMessage>());
-            }
-
             var messages =
                 this.findNDriveUnitOfWork.ChatMessageRepository.AsQueryable()
                     .Where(
@@ -161,7 +158,7 @@ namespace FindNDriveServices2.Services
         }
 
         /// <summary>
-        /// The get unread messages.
+        /// Retrieves any new (unread) messages for a given conversation between two users.
         /// </summary>
         /// <param name="chatMessageRetrieverDTO">
         /// The chat message retriever dto.
@@ -171,11 +168,6 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<List<ChatMessage>> GetUnreadMessages(ChatMessageRetrieverDTO chatMessageRetrieverDTO)
         {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised(new List<ChatMessage>());
-            }
-
             var messages =
                 this.findNDriveUnitOfWork.ChatMessageRepository.AsQueryable()
                     .Where(
@@ -196,7 +188,7 @@ namespace FindNDriveServices2.Services
         }
 
         /// <summary>
-        /// The get unread messages count.
+        /// Retrieves the total number of all new (unread) messages for all friends.
         /// </summary>
         /// <param name="userId">
         /// The user id.
@@ -206,11 +198,6 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<int> GetUnreadMessagesCount(int userId)
         {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised(0);
-            }
-
             var unreadMessages =
                 this.findNDriveUnitOfWork.ChatMessageRepository.AsQueryable().Count(_ => _.RecipientId == userId && !_.Read);
 
@@ -218,7 +205,7 @@ namespace FindNDriveServices2.Services
         }
 
         /// <summary>
-        /// The get unread messages count for friend.
+        /// Retrieves the total number of new (unread) messages for a specific friend.
         /// </summary>
         /// <param name="chatMessageRetrieverDTO">
         /// The chat message retriever dto.
@@ -228,24 +215,23 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<int> GetUnreadMessagesCountForFriend(ChatMessageRetrieverDTO chatMessageRetrieverDTO)
         {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised(0);
-            }
-
             var unreadMessages =
                 this.findNDriveUnitOfWork.ChatMessageRepository.AsQueryable().Count(_ => _.RecipientId == chatMessageRetrieverDTO.RecipientId && _.SenderId == chatMessageRetrieverDTO.SenderId && !_.Read);
 
             return ServiceResponseBuilder.Success(unreadMessages);
         }
 
+        /// <summary>
+        /// Retrieves a specific message by its id.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         public ServiceResponse<ChatMessage> GetMessageById(int id)
         {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised(new ChatMessage());
-            }
-
             var message =
                 this.findNDriveUnitOfWork.ChatMessageRepository.Find(id);
 
@@ -255,18 +241,27 @@ namespace FindNDriveServices2.Services
                        : ServiceResponseBuilder.Failure<ChatMessage>("Invalid message id");
         }
 
-        public ServiceResponse<bool> MarkAsRead(int id)
+        /// <summary>
+        /// Marks a specific message as read.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse MarkAsRead(int id)
         {
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(false);
+                return ServiceResponseBuilder.Unauthorised();
             }
 
             var unreadMessage = this.findNDriveUnitOfWork.ChatMessageRepository.Find(id);
 
             if (unreadMessage == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid message id");
+                return ServiceResponseBuilder.Failure("Invalid message id");
             }
 
             if (!unreadMessage.Read)
@@ -275,7 +270,7 @@ namespace FindNDriveServices2.Services
                 this.findNDriveUnitOfWork.Commit();
             }
 
-            return ServiceResponseBuilder.Success(true);
+            return ServiceResponseBuilder.Success();
         }
     }
 }

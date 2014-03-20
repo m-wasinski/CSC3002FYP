@@ -73,9 +73,9 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
 
             if(notification != null)
             {
-                new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Boolean, Void>() {
+                new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Void, Void>() {
                     @Override
-                    public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+                    public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                         Log.i(TAG, "Notification successfully marked as delivered");
                     }
                 });
@@ -222,7 +222,7 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
                             public void positiveButtonClicked() {
                                 progressBar.setVisibility(View.VISIBLE);
                                 new WcfPostServiceTask<FriendDeletionDTO>(FriendsListActivity.this, getResources().getString(R.string.DeleteFriendURL),
-                                        new FriendDeletionDTO(appManager.getUser().getUserId(), friends.get(i).getUserId()), new TypeToken<ServiceResponse<Boolean>>(){}.getType(), appManager.getAuthorisationHeaders(), new WCFServiceCallback() {
+                                        new FriendDeletionDTO(appManager.getUser().getUserId(), friends.get(i).getUserId()), new TypeToken<ServiceResponse<Void>>(){}.getType(), appManager.getAuthorisationHeaders(), new WCFServiceCallback() {
                                     @Override
                                     public void onServiceCallCompleted(ServiceResponse serviceResponse, Object parameter) {
                                         progressBar.setVisibility(View.GONE);

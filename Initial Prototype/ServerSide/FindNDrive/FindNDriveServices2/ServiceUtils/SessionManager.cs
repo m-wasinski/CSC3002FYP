@@ -13,10 +13,8 @@ namespace FindNDriveServices2.ServiceUtils
     using System.Security.Cryptography;
     using System.ServiceModel.Web;
     using System.Text;
-
     using DomainObjects.Constants;
     using DomainObjects.Domains;
-
     using FindNDriveDataAccessLayer;
 
     /// <summary>
@@ -63,7 +61,7 @@ namespace FindNDriveServices2.ServiceUtils
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private static string EncryptValue(string value)
+        private string EncryptValue(string value)
         {
             var encoding = new UTF8Encoding();
             var bytes = encoding.GetBytes(value);
@@ -74,7 +72,8 @@ namespace FindNDriveServices2.ServiceUtils
         }
 
         /// <summary>
-        /// The is session valid.
+        /// Checks whether the session arguments supplied inside HTTP headers are valid.
+        /// Any mismatch in the session arguments when compared with the values stored in the database results in automatic user logout from the app.
         /// </summary>
         /// <returns>
         /// The <see cref="bool"/>.
@@ -83,19 +82,23 @@ namespace FindNDriveServices2.ServiceUtils
         {
             if (WebOperationContext.Current != null)
             {
+                // Retrieve session arguments from HTTP headers.
                 var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[SessionConstants.SESSION_ID];
                 var incomingDeviceId = WebOperationContext.Current.IncomingRequest.Headers[SessionConstants.DEVICE_ID];
                 var randomId = WebOperationContext.Current.IncomingRequest.Headers[SessionConstants.UUID];
 
-                var userId = this.GetUserId(incomingSessionId);
+                // Retrieve the user id from the session string.
+                var userId = this.ExtractUserId(incomingSessionId);
 
                 if (userId == -1)
                 {
                     return false;
                 }
 
-                var savedSession = this.findNDriveUnitOfWork.SessionRepository.Find(this.GetUserId(incomingSessionId));
+                // Retrieve the actual session from the database.
+                var savedSession = this.findNDriveUnitOfWork.SessionRepository.Find(userId);
 
+                // Perform all the checks to ensure that the session is valid.
                 if (savedSession != null)
                 {
                     if (savedSession.SessionType == SessionTypes.Temporary)
@@ -118,6 +121,7 @@ namespace FindNDriveServices2.ServiceUtils
                         return false;
                     }
 
+                    // Session has timed out, user must be logged out.
                     var result = DateTime.Compare(DateTime.Now, savedSession.ExpiryDate);
 
                     if (result > 0)
@@ -126,9 +130,11 @@ namespace FindNDriveServices2.ServiceUtils
                         return false;
                     }
 
+                    // Since we have made it this far, it means that the current session is valid and can be extended by another 30 minutes.
                     if (savedSession.SessionType == SessionTypes.Temporary)
                     {
-                        this.RefreshSession(savedSession);
+                        savedSession.ExpiryDate = DateTime.Now.AddMinutes(30);
+                        this.findNDriveUnitOfWork.Commit();
                     }
                 }
                 else
@@ -145,7 +151,9 @@ namespace FindNDriveServices2.ServiceUtils
         }
 
         /// <summary>
-        /// The is still logged in.
+        /// Checks if a given user is still logged in.
+        /// This method is used by the notification manager before a notification is sent.
+        /// This helps it decide whether notification should be dispatched to the user immediately or saved in the repository for later retrieval.
         /// </summary>
         /// <param name="user">
         /// The user.
@@ -169,15 +177,13 @@ namespace FindNDriveServices2.ServiceUtils
                 return true;
             }
 
-            user.Status = Status.Offline;
-            user.GCMRegistrationID = null;
-            savedSession.ExpiryDate = DateTime.Now.AddDays(-1);
-            this.findNDriveUnitOfWork.Commit();
+            this.InvalidateSession(true, user.UserId);
+
             return false;
         }
 
         /// <summary>
-        /// The get user id.
+        /// Used by the auto-login feature, extracts user id from the session string.
         /// </summary>
         /// <returns>
         /// The <see cref="int"/>.
@@ -190,7 +196,7 @@ namespace FindNDriveServices2.ServiceUtils
 
                 if (incomingSessionId != null)
                 {
-                    return this.GetUserId(incomingSessionId);
+                    return this.ExtractUserId(incomingSessionId);
                 }
             }
 
@@ -198,7 +204,7 @@ namespace FindNDriveServices2.ServiceUtils
         }
 
         /// <summary>
-        /// The get user id.
+        /// Extracts user id from the session string.
         /// </summary>
         /// <param name="session">
         /// The session.
@@ -206,7 +212,7 @@ namespace FindNDriveServices2.ServiceUtils
         /// <returns>
         /// The <see cref="int"/>.
         /// </returns>
-        public int GetUserId(string session)
+        private int ExtractUserId(string session)
         {
             string stringId;
 
@@ -244,19 +250,8 @@ namespace FindNDriveServices2.ServiceUtils
         }
 
         /// <summary>
-        /// The refresh session.
-        /// </summary>
-        /// <param name="session">
-        /// The session.
-        /// </param>
-        public void RefreshSession(Session session)
-        {
-            session.ExpiryDate = DateTime.Now.AddMinutes(30);
-            this.findNDriveUnitOfWork.Commit();
-        }
-
-        /// <summary>
-        /// The generate new session.
+        /// Generates a new session.
+        /// Used when a new user registers with the system and when a current user logs in.
         /// </summary>
         /// <param name="userId">
         /// The user id.
@@ -270,6 +265,7 @@ namespace FindNDriveServices2.ServiceUtils
                 return;
             }
 
+            // Retrieve session arguments from the HTTP headers.
             var rememberUser = WebOperationContext.Current.IncomingRequest.Headers[SessionConstants.REMEMBER_ME];
             var incomingDeviceId = WebOperationContext.Current.IncomingRequest.Headers[SessionConstants.DEVICE_ID];
             var randomId = WebOperationContext.Current.IncomingRequest.Headers[SessionConstants.UUID];
@@ -279,6 +275,7 @@ namespace FindNDriveServices2.ServiceUtils
             var sessionId = GenerateNewSessionId(userId);
             var hashedDeviceId = EncryptValue(incomingDeviceId);
                 
+            // Check if user has ticked the remember me checkbox.
             if (rememberUser != null)
             {
                 var savedSession = this.findNDriveUnitOfWork.SessionRepository.Find(userId);
@@ -301,6 +298,7 @@ namespace FindNDriveServices2.ServiceUtils
 
                 if (savedSession != null)
                 {
+                    // Update existing session.
                     savedSession.SessionId = sessionId;
                     savedSession.DeviceId = hashedDeviceId;
                     savedSession.ExpiryDate = validUntil;
@@ -308,6 +306,7 @@ namespace FindNDriveServices2.ServiceUtils
                 }
                 else
                 {
+                    // Create the new session.
                     var newSession = new Session
                                          {
                                              Uuid = randomId,
@@ -323,45 +322,48 @@ namespace FindNDriveServices2.ServiceUtils
                         
                 this.findNDriveUnitOfWork.Commit();
 
+                // Attach the newly generated session id to the outgoing HTTP response as a header.
                 WebOperationContext.Current.OutgoingResponse.Headers.Add(SessionConstants.SESSION_ID, sessionId);
             }
         }
 
         /// <summary>
-        /// The invalidate session.
+        /// Invalidates session for a given user and logs them out of the app.
         /// </summary>
         /// <param name="forceInvalidate">
         /// The force invalidate.
         /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        public bool InvalidateSession(bool forceInvalidate)
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        public void InvalidateSession(bool forceInvalidate, int id = -1)
         {
-            if (WebOperationContext.Current == null)
+            var userId = 0;
+
+            if (id != -1)
             {
-                return false;
+                userId = id;
             }
-
-            var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[SessionConstants.SESSION_ID];
-
-            var userId = this.GetUserId(incomingSessionId);
-
-            if (userId == -1)
+            else
             {
-                return false;
+                if (WebOperationContext.Current != null)
+                {
+                    var incomingSessionId = WebOperationContext.Current.IncomingRequest.Headers[SessionConstants.SESSION_ID];
+
+                    userId = this.ExtractUserId(incomingSessionId);
+                }
             }
 
             var savedSession = this.findNDriveUnitOfWork.SessionRepository.Find(userId);
 
             if (userId == -1 || savedSession == null)
             {
-                return false;
+                return;
             }
 
             if (!forceInvalidate && savedSession.SessionType != SessionTypes.Temporary)
             {
-                return false;
+                return;
             }
 
             var user = this.findNDriveUnitOfWork.UserRepository.Find(userId);
@@ -369,8 +371,6 @@ namespace FindNDriveServices2.ServiceUtils
             user.GCMRegistrationID = null;
             savedSession.ExpiryDate = DateTime.Now.AddDays(-1);
             this.findNDriveUnitOfWork.Commit();
-
-            return true;
         }
     }
 }

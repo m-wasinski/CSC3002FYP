@@ -6,15 +6,12 @@
 //   Defines the FriendsService type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace FindNDriveServices2.Contracts
 {
     using System.Collections.Generic;
     using System.ServiceModel;
     using System.ServiceModel.Web;
-
     using DomainObjects.Domains;
-
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
 
@@ -25,7 +22,7 @@ namespace FindNDriveServices2.Contracts
     public interface IFriendsService
     {
         /// <summary>
-        /// The add travel buddy.
+        /// Processes the decision submitted by the user for given friend request.
         /// </summary>
         /// <param name="friendRequestDTO">
         /// The friend Request DTO.
@@ -37,11 +34,11 @@ namespace FindNDriveServices2.Contracts
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/processdecision")]
-        ServiceResponse<bool> ProcessDecision(FriendRequestDTO friendRequestDTO);
+            UriTemplate = "/process")]
+        ServiceResponse ProcessDecision(FriendRequestDTO friendRequestDTO);
 
         /// <summary>
-        /// The send request.
+        /// Sends a new friend request to a given user.
         /// </summary>
         /// <param name="friendRequestDTO">
         /// The friend request dto.
@@ -50,12 +47,14 @@ namespace FindNDriveServices2.Contracts
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare,
+        [WebInvoke(Method = "POST", 
+            ResponseFormat = WebMessageFormat.Json, 
+            BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/sendrequest")]
-        ServiceResponse<bool> SendRequest(FriendRequestDTO friendRequestDTO);
+        ServiceResponse SendRequest(FriendRequestDTO friendRequestDTO);
 
         /// <summary>
-        /// The get travel buddies.
+        /// Retrieves list of user's friends.
         /// </summary>
         /// <param name="userId">
         /// The user id.
@@ -71,7 +70,7 @@ namespace FindNDriveServices2.Contracts
         ServiceResponse<List<User>> GetFriends(int userId);
 
         /// <summary>
-        /// The get friend request.
+        /// Retrieves a list of friend requests for a given user.
         /// </summary>
         /// <param name="id">
         /// The id.
@@ -88,7 +87,7 @@ namespace FindNDriveServices2.Contracts
         ServiceResponse<FriendRequest> GetFriendRequest(int id);
 
         /// <summary>
-        /// The delete friend.
+        /// Deletes a friend from a given user's friend list.
         /// </summary>
         /// <param name="friendDeletionDTO">
         /// The friend deletion dto.
@@ -102,6 +101,6 @@ namespace FindNDriveServices2.Contracts
             UriTemplate = "/delete",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare)]
-        ServiceResponse<bool> DeleteFriend(FriendDeletionDTO friendDeletionDTO);
+        ServiceResponse DeleteFriend(FriendDeletionDTO friendDeletionDTO);
     }
 }

@@ -11,7 +11,6 @@ namespace FindNDriveServices2.Services
 {
     using System;
     using System.Data.Entity;
-    using System.Drawing;
     using System.IO;
     using System.Linq;
     using System.ServiceModel;
@@ -29,8 +28,6 @@ namespace FindNDriveServices2.Services
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
     using FindNDriveServices2.ServiceUtils;
-
-    using Newtonsoft.Json;
 
     using WebMatrix.WebData;
 
@@ -80,10 +77,14 @@ namespace FindNDriveServices2.Services
         }
 
         /// <summary>
-        /// Logs a user in.
+        /// Performs a standard user login using credentials provided by the user in the logindto object.
         /// </summary>
-        /// <param name="login"></param>
-        /// <returns></returns>
+        /// <param name="login">
+        /// The login.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         public ServiceResponse<User> ManualUserLogin(LoginDTO login)
         {
             var validatedUser = ValidationHelper.Validate(login);
@@ -171,6 +172,13 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<User> RegisterUser(RegisterDTO register)
         {
+            var validatedObject = ValidationHelper.Validate(register);
+
+            if (!validatedObject.IsValid)
+            {
+                return ServiceResponseBuilder.Failure<User>(validatedObject.ErrorMessages);
+            }
+
             // Check if an account with the same username already exists.
             if (WebSecurity.UserExists(register.User.UserName))
             {
@@ -200,6 +208,7 @@ namespace FindNDriveServices2.Services
                 WebSecurity.CreateUserAndAccount(register.User.UserName, register.Password);
                 register.User.UserId = WebSecurity.GetUserId(register.User.UserName);
 
+                // Create the new user.
                 var newUser = new User
                 {
                     EmailAddress = register.User.EmailAddress,
@@ -267,7 +276,7 @@ namespace FindNDriveServices2.Services
         }
 
         /// <summary>
-        /// The logout user.
+        /// Logs the current user out.
         /// </summary>
         /// <param name="forceInvalidate">
         /// The force invalidate.
@@ -275,45 +284,31 @@ namespace FindNDriveServices2.Services
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<bool> LogoutUser(bool forceInvalidate)
+        public ServiceResponse LogoutUser(bool forceInvalidate)
         {
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(false);
+                return ServiceResponseBuilder.Unauthorised();
             }
 
-            var success = this.sessionManager.InvalidateSession(forceInvalidate);
-            return ServiceResponseBuilder.Success(success);
+            this.sessionManager.InvalidateSession(forceInvalidate);
+            return ServiceResponseBuilder.Success();
         }
 
         /// <summary>
-        /// The refresh user.
+        /// Updates information about the current user.
         /// </summary>
-        /// <param name="userId">
-        /// The user id.
+        /// <param name="userDTO">
+        /// The user dto.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<User> RefreshUser(int userId)
-        {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised(new User());
-            }
-
-            var user = this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                    .IncludeAll()
-                    .FirstOrDefault(_ => _.UserId == userId);
-
-            return user != null ? ServiceResponseBuilder.Success(user) : ServiceResponseBuilder.Unauthorised(new User());
-        }
-
         public ServiceResponse<User> UpdateUser(UserDTO userDTO)
         {
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(new User());
+                return ServiceResponseBuilder.Unauthorised<User>();
             }
 
             var user = this.findNDriveUnitOfWork.UserRepository.AsQueryable().FirstOrDefault(_ => _.UserId == userDTO.UserId);
@@ -398,11 +393,20 @@ namespace FindNDriveServices2.Services
             return new MemoryStream(user.ProfilePictureBytes);
         }
 
-        public ServiceResponse<bool> UpdateProfilePicture(ProfilePictureUpdaterDTO profilePictureUpdaterDTO)
+        /// <summary>
+        /// Updates user's profile picture.
+        /// </summary>
+        /// <param name="profilePictureUpdaterDTO">
+        /// The profile picture updater dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse UpdateProfilePicture(ProfilePictureUpdaterDTO profilePictureUpdaterDTO)
         {
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(false);
+                return ServiceResponseBuilder.Unauthorised();
             }
 
             var user =
@@ -412,7 +416,7 @@ namespace FindNDriveServices2.Services
 
             if (user == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("User with this id does not exist.");
+                return ServiceResponseBuilder.Failure("User with this id does not exist.");
             }
 
             var imageBytes = Convert.FromBase64String(profilePictureUpdaterDTO.Picture);
@@ -423,6 +427,15 @@ namespace FindNDriveServices2.Services
             return ServiceResponseBuilder.Success(true);
         }
 
+        /// <summary>
+        /// Updates user's privacy settings.
+        /// </summary>
+        /// <param name="dto">
+        /// The dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         public ServiceResponse<User> UpdatePrivacySettings(PrivacySettingsUpdaterDTO dto)
         {
             if (!this.sessionManager.IsSessionValid())
@@ -452,13 +465,17 @@ namespace FindNDriveServices2.Services
             return ServiceResponseBuilder.Success(user);
         }
 
+        /// <summary>
+        /// Retrieves user by its id.
+        /// </summary>
+        /// <param name="dto">
+        /// The dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         public ServiceResponse<User> GetUser(UserRetrieverDTO dto)
         {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised<User>();
-            }
-
             var retrievingUser =
                 this.findNDriveUnitOfWork.UserRepository.AsQueryable()
                     .IncludeAll()
@@ -470,7 +487,10 @@ namespace FindNDriveServices2.Services
             }
 
             var targetUser =
-                this.findNDriveUnitOfWork.UserRepository.AsQueryable().Include(_ => _.Friends).Include(_ => _.PrivacySettings).FirstOrDefault(_ => _.UserId == dto.TargetUserId);
+                this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+                    .Include(_ => _.Friends)
+                    .Include(_ => _.PrivacySettings)
+                    .FirstOrDefault(_ => _.UserId == dto.TargetUserId);
 
             if (targetUser == null)
             {
@@ -479,32 +499,57 @@ namespace FindNDriveServices2.Services
 
             var friend = targetUser.Friends.Select(_ => _.UserId).Contains(retrievingUser.UserId);
 
-            return ServiceResponseBuilder.Success(new User()
-                                            {
-                                                UserId = targetUser.UserId,
-                                                UserName = targetUser.UserName,
-                                                FirstName = targetUser.FirstName,
-                                                LastName = targetUser.LastName,
-                                                LastLogon = targetUser.LastLogon,
-                                                MemberSince = targetUser.MemberSince,
-
-                                                AverageRating = targetUser.PrivacySettings.RatingPrivacyLevel == PrivacyLevel.Everyone ? targetUser.AverageRating : 
-                                                targetUser.PrivacySettings.RatingPrivacyLevel == PrivacyLevel.FriendsOnly && friend ? targetUser.AverageRating : -1,
-
-                                                EmailAddress = targetUser.PrivacySettings.EmailPrivacyLevel == PrivacyLevel.Everyone ? targetUser.EmailAddress :
-                                                targetUser.PrivacySettings.RatingPrivacyLevel == PrivacyLevel.FriendsOnly && friend ? targetUser.EmailAddress : null,
-
-                                                Gender = targetUser.PrivacySettings.GenderPrivacyLevel == PrivacyLevel.Everyone ? targetUser.Gender :
-                                                targetUser.PrivacySettings.GenderPrivacyLevel == PrivacyLevel.FriendsOnly && friend ? targetUser.Gender : Gender.NotAvailable,
-
-                                                DateOfBirth = targetUser.PrivacySettings.DateOfBirthPrivacyLevel == PrivacyLevel.Everyone ? targetUser.DateOfBirth :
-                                                targetUser.PrivacySettings.DateOfBirthPrivacyLevel == PrivacyLevel.FriendsOnly && friend ? targetUser.DateOfBirth : null,
-
-                                                PhoneNumber = targetUser.PrivacySettings.PhoneNumberPrivacyLevel == PrivacyLevel.Everyone ? targetUser.PhoneNumber :
-                                                targetUser.PrivacySettings.PhoneNumberPrivacyLevel == PrivacyLevel.FriendsOnly && friend ? targetUser.PhoneNumber : null,
-
-                                                JourneysVisible = targetUser.PrivacySettings.JourneysPrivacyLevel == PrivacyLevel.Everyone || (targetUser.PrivacySettings.JourneysPrivacyLevel == PrivacyLevel.FriendsOnly && friend),
-                                            });
+            // To protect user's data, we must first analyse this user's privacy settings and return the relevant information based on those.
+            return
+                ServiceResponseBuilder.Success(
+                    new User
+                        {
+                            UserId = targetUser.UserId,
+                            UserName = targetUser.UserName,
+                            FirstName = targetUser.FirstName,
+                            LastName = targetUser.LastName,
+                            LastLogon = targetUser.LastLogon,
+                            MemberSince = targetUser.MemberSince,
+                            AverageRating =
+                                targetUser.PrivacySettings.RatingPrivacyLevel == PrivacyLevel.Everyone
+                                    ? targetUser.AverageRating
+                                    : targetUser.PrivacySettings.RatingPrivacyLevel == PrivacyLevel.FriendsOnly
+                                      && friend
+                                          ? targetUser.AverageRating
+                                          : -1,
+                            EmailAddress =
+                                targetUser.PrivacySettings.EmailPrivacyLevel == PrivacyLevel.Everyone
+                                    ? targetUser.EmailAddress
+                                    : targetUser.PrivacySettings.RatingPrivacyLevel == PrivacyLevel.FriendsOnly
+                                      && friend
+                                          ? targetUser.EmailAddress
+                                          : null,
+                            Gender =
+                                targetUser.PrivacySettings.GenderPrivacyLevel == PrivacyLevel.Everyone
+                                    ? targetUser.Gender
+                                    : targetUser.PrivacySettings.GenderPrivacyLevel == PrivacyLevel.FriendsOnly
+                                      && friend
+                                          ? targetUser.Gender
+                                          : Gender.NotAvailable,
+                            DateOfBirth =
+                                targetUser.PrivacySettings.DateOfBirthPrivacyLevel == PrivacyLevel.Everyone
+                                    ? targetUser.DateOfBirth
+                                    : targetUser.PrivacySettings.DateOfBirthPrivacyLevel == PrivacyLevel.FriendsOnly
+                                      && friend
+                                          ? targetUser.DateOfBirth
+                                          : null,
+                            PhoneNumber =
+                                targetUser.PrivacySettings.PhoneNumberPrivacyLevel == PrivacyLevel.Everyone
+                                    ? targetUser.PhoneNumber
+                                    : targetUser.PrivacySettings.PhoneNumberPrivacyLevel == PrivacyLevel.FriendsOnly
+                                      && friend
+                                          ? targetUser.PhoneNumber
+                                          : null,
+                            JourneysVisible =
+                                targetUser.PrivacySettings.JourneysPrivacyLevel == PrivacyLevel.Everyone
+                                || (targetUser.PrivacySettings.JourneysPrivacyLevel == PrivacyLevel.FriendsOnly
+                                    && friend),
+                        });
         }
     }
 }

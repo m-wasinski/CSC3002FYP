@@ -142,7 +142,7 @@ public class NotificationProcessor
      * @param notification
      * @param listener
      */
-    public void MarkDelivered(Context context, AppManager appManager, Notification notification, final WCFServiceCallback<Boolean, Void> listener)
+    public void MarkDelivered(Context context, AppManager appManager, Notification notification, final WCFServiceCallback<Void, Void> listener)
     {
         if(notification.getDelivered())
         {
@@ -152,10 +152,10 @@ public class NotificationProcessor
         // Call the web service.
         new WcfPostServiceTask<NotificationMarkerDTO>(context, context.getResources().getString(R.string.MarkNotificationDeliveredURL),
                 new NotificationMarkerDTO(appManager.getUser().getUserId(), notification.getNotificationId()),
-                new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+                new TypeToken<ServiceResponse<Void>>() {}.getType(),
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
             @Override
-            public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+            public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {
                     // Calls the callback method after the web service marks the notification as read successfully.

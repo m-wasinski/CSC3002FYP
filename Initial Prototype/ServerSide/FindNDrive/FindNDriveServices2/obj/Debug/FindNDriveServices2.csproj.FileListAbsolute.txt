@@ -74,4 +74,3 @@ C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveServices2\bin\En
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveServices2\bin\Resources\default_picture.png
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveServices2\obj\Debug\FindNDriveServices2.Properties.Resources.resources
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveServices2\obj\Debug\FindNDriveServices2.csproj.GenerateResource.Cache
-C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveServices2\bin\FindNDriveServices2.dll.config

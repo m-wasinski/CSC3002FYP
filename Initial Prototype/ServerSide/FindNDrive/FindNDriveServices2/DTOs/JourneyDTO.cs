@@ -111,12 +111,6 @@ namespace FindNDriveServices2.DTOs
         public bool SearchByTime { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether free.
-        /// </summary>
-        [DataMember]
-        public bool Free { get; set; }
-
-        /// <summary>
         /// Gets or sets the unread requests count.
         /// </summary>
         [DataMember]

@@ -9,17 +9,11 @@
 namespace FindNDriveServices2.Contracts
 {
     using System.IO;
-    using System.Security.Permissions;
     using System.ServiceModel;
     using System.ServiceModel.Web;
-    using System.Web.Providers.Entities;
-
     using DomainObjects.Domains;
-
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
-
-    using User = DomainObjects.Domains.User;
 
     /// <summary>
     /// The UserService interface.
@@ -28,7 +22,7 @@ namespace FindNDriveServices2.Contracts
     public interface IUserService
     {
         /// <summary>
-        /// The manual user login.
+        /// Performs manual user login using user's username and password.
         /// </summary>
         /// <param name="login">
         /// The login.
@@ -41,12 +35,11 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/manuallogin")]
-        [PrincipalPermission(SecurityAction.Demand, Authenticated = true)]
+            UriTemplate = "/login")]
         ServiceResponse<User> ManualUserLogin(LoginDTO login);
 
         /// <summary>
-        /// The auto user login.
+        /// Performs automatic user login using the session information contained within HTTP headers.
         /// </summary>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
@@ -56,11 +49,11 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/autologin")]
+            UriTemplate = "/auto")]
         ServiceResponse<User> AutoUserLogin();
 
         /// <summary>
-        /// The register user.
+        /// Registers a new account within the system.
         /// </summary>
         /// <param name="register">
         /// The register.
@@ -77,7 +70,7 @@ namespace FindNDriveServices2.Contracts
         ServiceResponse<User> RegisterUser(RegisterDTO register);
 
         /// <summary>
-        /// The logout user.
+        /// Logs out the user.
         /// </summary>
         /// <param name="forceDelete">
         /// The force delete.
@@ -90,26 +83,10 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/logout")]
-        ServiceResponse<bool> LogoutUser(bool forceDelete);
+        ServiceResponse LogoutUser(bool forceDelete);
 
         /// <summary>
-        /// The refresh user.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        [OperationContract]
-        [WebGet(
-            ResponseFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/refresh/?id={id}")]
-        ServiceResponse<User> RefreshUser(int id);
-
-        /// <summary>
-        /// The update user.
+        /// Updates information about given user.
         /// </summary>
         /// <param name="userDTO">
         /// The user dto.
@@ -125,7 +102,7 @@ namespace FindNDriveServices2.Contracts
         ServiceResponse<User> UpdateUser(UserDTO userDTO);
 
         /// <summary>
-        /// The get user picture by id.
+        /// Retrieves profile picture of a given user.
         /// </summary>
         /// <param name="id">
         /// The id.
@@ -135,13 +112,13 @@ namespace FindNDriveServices2.Contracts
         /// </returns>
         [OperationContract]
         [WebGet(
-            UriTemplate = "/getProfilePicture?id={id}",
+            UriTemplate = "/getpicture?id={id}",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare)]
         Stream GetUserProfilePicture(int id);
 
         /// <summary>
-        /// The update profile picture.
+        /// Updates user's profile picture.
         /// </summary>
         /// <param name="profilePictureUpdaterDTO">
         /// The profile Picture Updater DTO.
@@ -152,13 +129,13 @@ namespace FindNDriveServices2.Contracts
         [OperationContract]
         [WebInvoke(
             Method = "POST",
-            UriTemplate = "/updateProfilePicture",
+            UriTemplate = "/updatepicture",
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare)]
-        ServiceResponse<bool> UpdateProfilePicture(ProfilePictureUpdaterDTO profilePictureUpdaterDTO);
+        ServiceResponse UpdateProfilePicture(ProfilePictureUpdaterDTO profilePictureUpdaterDTO);
 
         /// <summary>
-        /// The update privacy settings.
+        /// Updates user's privacy settings.
         /// </summary>
         /// <param name="dto">
         /// The dto.
@@ -175,7 +152,7 @@ namespace FindNDriveServices2.Contracts
         ServiceResponse<User> UpdatePrivacySettings(PrivacySettingsUpdaterDTO dto);
 
         /// <summary>
-        /// The get user.
+        /// Retrieves the user by its id.
         /// </summary>
         /// <param name="dto">
         /// The dto.

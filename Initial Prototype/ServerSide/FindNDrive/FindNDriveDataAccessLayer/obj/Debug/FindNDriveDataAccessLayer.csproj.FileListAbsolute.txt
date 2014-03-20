@@ -82,4 +82,3 @@ C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveDataAccessLayer\
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveDataAccessLayer\bin\FindNDriveServices2.pdb
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveDataAccessLayer\bin\FindNDriveInfrastructureCore.pdb
 C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveDataAccessLayer\bin\Newtonsoft.Json.xml
-C:\CSC3002FYP\Initial Prototype\ServerSide\FindNDrive\FindNDriveDataAccessLayer\bin\FindNDriveDataAccessLayer.dll.config

@@ -26,7 +26,7 @@ import java.util.ArrayList;
 /**
  * Provides user with the ability to rate the driver.
  */
-public class RateDriverActivity extends BaseActivity implements WCFServiceCallback<Boolean, Void>
+public class RateDriverActivity extends BaseActivity implements WCFServiceCallback<Void, Void>
 {
 
     private Button sendFeedbackButton;
@@ -88,7 +88,7 @@ public class RateDriverActivity extends BaseActivity implements WCFServiceCallba
         sendFeedbackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendFeedback();
+                sendRating();
             }
         });
     }
@@ -106,7 +106,7 @@ public class RateDriverActivity extends BaseActivity implements WCFServiceCallba
     }
 
     @Override
-    public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter)
+    public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter)
     {
         progressBar.setVisibility(View.GONE);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -116,7 +116,7 @@ public class RateDriverActivity extends BaseActivity implements WCFServiceCallba
         }
     }
 
-    private void sendFeedback()
+    private void sendRating()
     {
         String message = feedbackEditText.getText().toString();
 
@@ -133,7 +133,7 @@ public class RateDriverActivity extends BaseActivity implements WCFServiceCallba
         new WcfPostServiceTask<RatingDTO>(this, getResources().getString(R.string.RateDriverURL),
                 new RatingDTO(journey.getDriver().getUserId(), rating,
                         appManager.getUser().getUserId(), message),
-                new TypeToken<ServiceResponse<Boolean>>(){}.getType(), appManager.getAuthorisationHeaders(), this).execute();
+                new TypeToken<ServiceResponse<Void>>(){}.getType(), appManager.getAuthorisationHeaders(), this).execute();
     }
 
     private class ButtonHolder

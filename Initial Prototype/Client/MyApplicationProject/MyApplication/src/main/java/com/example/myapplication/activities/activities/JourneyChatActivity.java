@@ -82,10 +82,10 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
         // Check if there is a pending notification that must be marked read.
         if(notification != null)
         {
-            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Boolean, Void>() {
+            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Void, Void>() {
                 @Override
-                public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
-
+                public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
+                    Log.i(TAG, "Notification marked as read successfully.");
                 }
             });
         }
@@ -140,10 +140,10 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
         if(newMessage.getMessageBody().length() > 0 )
         {
             new WcfPostServiceTask<JourneyMessage>(this, getResources().getString(R.string.SendJourneyChatMessageURL), newMessage,
-                    new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
-                    appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+                    new TypeToken<ServiceResponse<Void>>() {}.getType(),
+                    appManager.getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
                 @Override
-                public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+                public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                     progressBar.setVisibility(View.GONE);
                     if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                     {
@@ -206,10 +206,10 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
     {
         new WcfPostServiceTask<JourneyMessageMarkerDTO>(this, getResources().getString(R.string.MarkJourneyMessageAsReadURL),
                 new JourneyMessageMarkerDTO(appManager.getUser().getUserId(), journeyMessage.getJourneyMessageId()),
-                new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+                new TypeToken<ServiceResponse<Void>>() {}.getType(),
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
             @Override
-            public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+            public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {
                     Log.i(TAG, "Message no: " + journeyMessage.getJourneyMessageId() + " successfully marked as read.");

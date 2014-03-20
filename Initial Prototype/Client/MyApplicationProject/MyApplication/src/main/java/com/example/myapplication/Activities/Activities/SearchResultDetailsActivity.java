@@ -80,9 +80,9 @@ public class SearchResultDetailsActivity extends BaseMapActivity implements WCFS
 
         if(notification != null)
         {
-            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Boolean, Void>() {
+            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Void, Void>() {
                 @Override
-                public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+                public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                     Log.i(TAG, "Notification successfully marked as delivered");
                 }
             });
@@ -189,7 +189,7 @@ public class SearchResultDetailsActivity extends BaseMapActivity implements WCFS
         journeyRequest.setMessage(journeyMessageToDriverEditText.getText().toString());
 
         new WcfPostServiceTask<JourneyRequest>(this, getResources().getString(R.string.SendRequestURL),
-                journeyRequest, new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
+                journeyRequest, new TypeToken<ServiceResponse<Void>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
     }
 
     /**

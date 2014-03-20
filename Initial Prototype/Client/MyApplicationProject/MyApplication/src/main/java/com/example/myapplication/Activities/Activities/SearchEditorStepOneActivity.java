@@ -374,9 +374,9 @@ public class SearchEditorStepOneActivity extends BaseMapActivity implements WCFS
     {
         progressBar.setVisibility(View.VISIBLE);
         new WcfPostServiceTask<JourneyTemplate>(this, getResources().getString(R.string.CreateNewJourneyTemplateURL),
-                journeyTemplate, new TypeToken<ServiceResponse<Boolean>>() {}.getType(), appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+                journeyTemplate, new TypeToken<ServiceResponse<Void>>() {}.getType(), appManager.getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
             @Override
-            public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+            public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                 progressBar.setVisibility(View.GONE);
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {

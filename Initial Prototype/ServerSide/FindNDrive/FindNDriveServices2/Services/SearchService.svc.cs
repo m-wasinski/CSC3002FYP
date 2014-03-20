@@ -79,11 +79,6 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<List<Journey>> SearchForJourneys(JourneyTemplateDTO journeyTemplateDTO)
         {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised<List<Journey>>();
-            }
-
             var requestingUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.UserId == journeyTemplateDTO.UserId);
 
             if (requestingUser == null)

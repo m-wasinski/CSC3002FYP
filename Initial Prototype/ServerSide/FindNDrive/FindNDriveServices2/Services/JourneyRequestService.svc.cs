@@ -85,11 +85,11 @@ namespace FindNDriveServices2.Services
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<JourneyRequest> SendRequest(JourneyRequestDTO journeyRequestDTO)
+        public ServiceResponse SendRequest(JourneyRequestDTO journeyRequestDTO)
         {
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(new JourneyRequest());
+                return ServiceResponseBuilder.Unauthorised();
             }
 
             // Retrieve the journey to which this particular request relates.
@@ -98,12 +98,12 @@ namespace FindNDriveServices2.Services
             // Invalid journey Id, return failure immediately.
             if (journey == null)
             {
-                return ServiceResponseBuilder.Failure<JourneyRequest>("Invalid journey Id");
+                return ServiceResponseBuilder.Failure("Invalid journey Id");
             }
 
             if (journey.JourneyStatus != JourneyStatus.OK)
             {
-                return ServiceResponseBuilder.Failure<JourneyRequest>(string.Format("This journey is {0}, you request could not be sent.", journey.JourneyStatus == JourneyStatus.Cancelled ? "cancelled" : "expired"));
+                return ServiceResponseBuilder.Failure(string.Format("This journey is {0}, you request could not be sent.", journey.JourneyStatus == JourneyStatus.Cancelled ? "cancelled" : "expired"));
             }
 
             // Check if this user is already participating in this journey. If yes, return a failure with appropriate error message.
@@ -112,7 +112,7 @@ namespace FindNDriveServices2.Services
 
             if (alreadyInJourney != null)
             {
-                return ServiceResponseBuilder.Failure<JourneyRequest>("You are already one of the passengers in this journey.");
+                return ServiceResponseBuilder.Failure("You are already one of the passengers in this journey.");
             }
 
             // Check if this user already has a pending request for this journey. This is to avoid user spamming the driver with another when no decision is made.
@@ -123,13 +123,13 @@ namespace FindNDriveServices2.Services
 
             if (hasPendingRequest != null)
             {
-                return ServiceResponseBuilder.Failure<JourneyRequest>("You already have a pending request for this journey.");
+                return ServiceResponseBuilder.Failure("You already have a pending request for this journey.");
             }
 
             // Also check if the user is not trying to join journey in which they are the driver.
             if (journey.Driver.UserId == journeyRequestDTO.FromUser.UserId)
             {
-                return ServiceResponseBuilder.Failure<JourneyRequest>("You are the driver in this journey.");
+                return ServiceResponseBuilder.Failure("You are the driver in this journey.");
             }
 
             journey.UnreadRequestsCount += 1;
@@ -142,7 +142,7 @@ namespace FindNDriveServices2.Services
 
             if (targetUser == null || requestingUser == null)
             {
-                return ServiceResponseBuilder.Failure<JourneyRequest>("Invalid user id.");
+                return ServiceResponseBuilder.Failure("Invalid user id.");
             }
 
             var request = new JourneyRequest 
@@ -180,7 +180,7 @@ namespace FindNDriveServices2.Services
 
             this.notificationManager.SendGcmTickle(new List<User> { targetUser });
 
-            return ServiceResponseBuilder.Success(request);
+            return ServiceResponseBuilder.Success();
         }
 
         /// <summary>
@@ -192,30 +192,30 @@ namespace FindNDriveServices2.Services
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<JourneyRequest> ProcessDecision(JourneyRequestDTO journeyRequestDTO)
+        public ServiceResponse ProcessDecision(JourneyRequestDTO journeyRequestDTO)
         {
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(new JourneyRequest());
+                return ServiceResponseBuilder.Unauthorised();
             }
 
             var newPassenger = this.findNDriveUnitOfWork.UserRepository.Find(journeyRequestDTO.FromUser.UserId);
 
             if (newPassenger == null)
             {
-                return ServiceResponseBuilder.Failure<JourneyRequest>("User with this id does not exist.");
+                return ServiceResponseBuilder.Failure("User with this id does not exist.");
             }
 
             var journey = this.findNDriveUnitOfWork.JourneyRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.JourneyId == journeyRequestDTO.JourneyId);
 
             if (journey == null)
             {
-                return ServiceResponseBuilder.Failure<JourneyRequest>("Invalid journey id.");
+                return ServiceResponseBuilder.Failure("Invalid journey id.");
             }
 
             if (journey.JourneyStatus != JourneyStatus.OK)
             {
-                return ServiceResponseBuilder.Failure<JourneyRequest>(string.Format("This journey is {0}, No more requests can be accepted or denied.", journey.JourneyStatus == JourneyStatus.Cancelled ? "cancelled" : "expired"));
+                return ServiceResponseBuilder.Failure(string.Format("This journey is {0}, No more requests can be accepted or denied.", journey.JourneyStatus == JourneyStatus.Cancelled ? "cancelled" : "expired"));
             }
 
             var request = this.findNDriveUnitOfWork.JourneyRequestRepository.Find(
@@ -223,12 +223,12 @@ namespace FindNDriveServices2.Services
 
             if (request == null)
             {
-                return ServiceResponseBuilder.Failure<JourneyRequest>("Invalid request id");
+                return ServiceResponseBuilder.Failure("Invalid request id");
             }
 
             if (request.Decision != JourneyRequestDecision.Undecided)
             {
-                return ServiceResponseBuilder.Failure<JourneyRequest>(string.Format("This request has already been {0}", request.Decision == JourneyRequestDecision.Accepted ? "accepted" : "denied"));
+                return ServiceResponseBuilder.Failure(string.Format("This request has already been {0}", request.Decision == JourneyRequestDecision.Accepted ? "accepted" : "denied"));
             }
 
             if (journeyRequestDTO.Decision == JourneyRequestDecision.Accepted)
@@ -306,7 +306,7 @@ namespace FindNDriveServices2.Services
             // Send a tickle to ensure their devices are in sync with the server.
             this.notificationManager.SendGcmTickle(new List<User> { newPassenger });
 
-            return ServiceResponseBuilder.Success(request);
+            return ServiceResponseBuilder.Success();
         }
 
         /// <summary>
@@ -320,15 +320,28 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<List<JourneyRequest>> GetAllRequestsForJourney(int id)
         {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised(new List<JourneyRequest>());
-            }
-
             var requests =
-                this.findNDriveUnitOfWork.JourneyRequestRepository.AsQueryable()
-                    .IncludeAll()
-                    .Where(_ => _.JourneyId == id).ToList();
+               (from journeyRequest in this.findNDriveUnitOfWork.JourneyRequestRepository.AsQueryable()
+                   .IncludeAll()
+                   .Where(_ => _.JourneyId == id).ToList()
+                select new JourneyRequest
+                {
+                    JourneyRequestId = journeyRequest.JourneyRequestId,
+                    DecidedOnDate = journeyRequest.DecidedOnDate,
+                    Decision = journeyRequest.Decision,
+                    FromUser = new User
+                    {
+                        UserId = journeyRequest.FromUser.UserId,
+                        FirstName = journeyRequest.FromUser.FirstName,
+                        LastName = journeyRequest.FromUser.LastName,
+                        UserName = journeyRequest.FromUser.UserName
+                    },
+                    Journey = journeyRequest.Journey,
+                    JourneyId = journeyRequest.JourneyId,
+                    Message = journeyRequest.Message,
+                    Read = journeyRequest.Read,
+                    SentOnDate = journeyRequest.SentOnDate
+                }).ToList();
 
             return ServiceResponseBuilder.Success(requests);
         }
@@ -344,21 +357,34 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<List<JourneyRequest>> GetAllRequestsForUser(int id)
         {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised(new List<JourneyRequest>());
-            }
-
             var requests =
-               this.findNDriveUnitOfWork.JourneyRequestRepository.AsQueryable()
+               (from journeyRequest in this.findNDriveUnitOfWork.JourneyRequestRepository.AsQueryable()
                    .IncludeAll()
-                   .Where(_ => _.FromUser.UserId == id).ToList();
+                   .Where(_ => _.FromUser.UserId == id).ToList()
+                select new JourneyRequest
+                           {
+                               JourneyRequestId = journeyRequest.JourneyRequestId,
+                               DecidedOnDate = journeyRequest.DecidedOnDate,
+                               Decision = journeyRequest.Decision,
+                               FromUser = new User
+                                              {
+                                                  UserId = journeyRequest.FromUser.UserId,
+                                                  FirstName = journeyRequest.FromUser.FirstName,
+                                                  LastName = journeyRequest.FromUser.LastName,
+                                                  UserName = journeyRequest.FromUser.UserName
+                                              },
+                                              Journey = journeyRequest.Journey,
+                                              JourneyId = journeyRequest.JourneyId,
+                                              Message = journeyRequest.Message,
+                                              Read = journeyRequest.Read,
+                                              SentOnDate = journeyRequest.SentOnDate
+                           }).ToList(); 
 
             return ServiceResponseBuilder.Success(requests);
         }
 
         /// <summary>
-        /// The get journey request.
+        /// Retrieves specific journey request by its id.
         /// </summary>
         /// <param name="id">
         /// The id.
@@ -368,25 +394,26 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<JourneyRequest> GetJourneyRequest(int id)
         {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised(new JourneyRequest());
-            }
-
             var request =
                this.findNDriveUnitOfWork.JourneyRequestRepository.AsQueryable()
                    .IncludeAll()
                    .FirstOrDefault(_ => _.JourneyRequestId == id);
 
-            request.FromUser = new User
-                                   {
-                                       UserId = request.FromUser.UserId,
-                                       UserName = request.FromUser.UserName,
-                                       FirstName = request.FromUser.FirstName,
-                                       LastName = request.FromUser.LastName
-                                   };
+            if (request == null)
+            {
+                return ServiceResponseBuilder.Failure<JourneyRequest>("Request with this id does not exist.");
+            }
 
-            return request == null ? ServiceResponseBuilder.Failure<JourneyRequest>("Request with this id does not exist.") : ServiceResponseBuilder.Success(request);
+            // For security purposes, we only retrieve the basic information about the user.
+            request.FromUser = new User
+                                       {
+                                           UserId = request.FromUser.UserId,
+                                           UserName = request.FromUser.UserName,
+                                           FirstName = request.FromUser.FirstName,
+                                           LastName = request.FromUser.LastName
+                                       };
+
+            return ServiceResponseBuilder.Success(request);
         }
     }
 }

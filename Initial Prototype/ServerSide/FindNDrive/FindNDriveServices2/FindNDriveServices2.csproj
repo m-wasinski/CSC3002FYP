@@ -203,10 +203,9 @@
       <DependentUpon>JourneyTemplateService.svc</DependentUpon>
     </Compile>
     <Compile Include="ServiceUtils\EmailUtils.cs" />
-    <Compile Include="ServiceUtils\Haversine.cs" />
+    <Compile Include="ServiceUtils\HaversineCalculator.cs" />
     <Compile Include="ServiceHostUtils\MyServiceHost.cs" />
     <Compile Include="ServiceHostUtils\MyServiceHostFactory.cs" />
-    <Compile Include="ServiceUtils\PrivacyHelper.cs" />
     <Compile Include="ServiceUtils\SearchUtils.cs" />
     <Compile Include="ServiceUtils\NotificationManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

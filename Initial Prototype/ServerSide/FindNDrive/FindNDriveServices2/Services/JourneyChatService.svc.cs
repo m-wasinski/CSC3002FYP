@@ -1,18 +1,22 @@
-﻿namespace FindNDriveServices2.Services
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="JourneyChatService.svc.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The journey chat service.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace FindNDriveServices2.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
-    using System.Web.UI.WebControls.WebParts;
-
     using DomainObjects.Constants;
     using DomainObjects.Domains;
-
     using FindNDriveDataAccessLayer;
-
     using FindNDriveServices2.Contracts;
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
@@ -63,11 +67,21 @@
             this.notificationManager = notificationManager;
         }
 
-        public ServiceResponse<bool> SendMessage(JourneyMessageDTO journeyMessageDTO)
+        /// <summary>
+        /// Allows users to send a new message in the journey chat room.
+        /// </summary>
+        /// <param name="journeyMessageDTO">
+        /// The journey message dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse SendMessage(JourneyMessageDTO journeyMessageDTO)
         {   
+            // Check if current session is still valid, otherwise log the user out.
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(false);
+                return ServiceResponseBuilder.Unauthorised();
             }
 
             var journey =
@@ -77,14 +91,14 @@
 
             if (journey == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid journey id.");
+                return ServiceResponseBuilder.Failure("Invalid journey id.");
             }
 
             var sender = this.findNDriveUnitOfWork.UserRepository.Find(journeyMessageDTO.SenderId);
 
             if (sender == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid sender id.");
+                return ServiceResponseBuilder.Failure("Invalid sender id.");
             }
 
             var journeyMessage = new JourneyMessage
@@ -116,14 +130,24 @@
                 journeyMessage,
                 journeyMessage.JourneyMessageId);
 
-            return ServiceResponseBuilder.Success(true);
+            return ServiceResponseBuilder.Success();
         }
 
+        /// <summary>
+        /// Retrieves conversation history for a given journey chat room.
+        /// </summary>
+        /// <param name="journeyMessageRetrieverDTO">
+        /// The journey message retriever dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         public ServiceResponse<List<JourneyMessage>> RetrieveMessages(JourneyMessageRetrieverDTO journeyMessageRetrieverDTO)
-        {   
+        {
+            // Check if current session is still valid, otherwise log the user out.
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(new List<JourneyMessage>());
+                return ServiceResponseBuilder.Unauthorised<List<JourneyMessage>>();
             }
 
             var user = this.findNDriveUnitOfWork.UserRepository.Find(journeyMessageRetrieverDTO.UserId);
@@ -154,11 +178,21 @@
             return ServiceResponseBuilder.Success(messages.ToList());
         }
 
+        /// <summary>
+        /// Retrieves all unread messages for a given journey.
+        /// </summary>
+        /// <param name="journeyMessageRetrieverDTO">
+        /// The journey message retriever dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         public ServiceResponse<List<JourneyMessage>> RetrieveUnreadMessages(JourneyMessageRetrieverDTO journeyMessageRetrieverDTO)
         {
+            // Check if current session is still valid, otherwise log the user out.
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(new List<JourneyMessage>());
+                return ServiceResponseBuilder.Unauthorised<List<JourneyMessage>>();
             }
 
             var user = this.findNDriveUnitOfWork.UserRepository.Find(journeyMessageRetrieverDTO.UserId);
@@ -179,18 +213,28 @@
             return ServiceResponseBuilder.Success(messages);
         }
 
-        public ServiceResponse<bool> MarkAsRead(JourneyMessageMarkerDTO journeyMessageMarkerDTO)
+        /// <summary>
+        /// Marks a given journey chat message as read.
+        /// </summary>
+        /// <param name="journeyMessageMarkerDTO">
+        /// The journey message marker dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse MarkAsRead(JourneyMessageMarkerDTO journeyMessageMarkerDTO)
         {
+            // Check if current session is still valid, otherwise log the user out.
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(false);
+                return ServiceResponseBuilder.Unauthorised();
             }
 
             var user = this.findNDriveUnitOfWork.UserRepository.Find(journeyMessageMarkerDTO.UserId);
 
             if (user == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid user id");
+                return ServiceResponseBuilder.Failure("Invalid user id");
             }
 
             var message =
@@ -200,7 +244,7 @@
 
             if (message == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid message id");
+                return ServiceResponseBuilder.Failure("Invalid message id");
             }
 
             message.SeenBy.Add(user);
@@ -209,13 +253,17 @@
             return ServiceResponseBuilder.Success(true);
         }
 
+        /// <summary>
+        /// Retrieves a specific journey chat message by its id.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         public ServiceResponse<JourneyMessage> GetJourneyMessageById(int id)
         {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised(new JourneyMessage());
-            }
-
             var journeyMessage =
                 this.findNDriveUnitOfWork.JourneyMessageRepository.AsQueryable()
                     .IncludeAll()
@@ -226,13 +274,17 @@
                        : ServiceResponseBuilder.Success(journeyMessage);
         }
 
+        /// <summary>
+        /// Retrieves the number of unread messages for a given journey.
+        /// </summary>
+        /// <param name="journeyMessageRetrieverDTO">
+        /// The journey message retriever dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         public ServiceResponse<int> GetUnreadMessagesCount(JourneyMessageRetrieverDTO journeyMessageRetrieverDTO)
         {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised(0);
-            }
-
             var user = this.findNDriveUnitOfWork.UserRepository.Find(journeyMessageRetrieverDTO.UserId);
 
             if (user == null)

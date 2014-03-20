@@ -34,7 +34,7 @@ namespace FindNDriveServices2.DTOs
         /// Gets or sets the password.
         /// </summary>
         [DataMember]
-        [Required]
+        [Required(ErrorMessage = "Password cannot be empty")]
         [Compare("ConfirmedPassword", ErrorMessage = "The password and confirmation password do not match.")]
         public string Password { get; set; }
 
@@ -42,7 +42,7 @@ namespace FindNDriveServices2.DTOs
         /// Gets or sets the confirmed password.
         /// </summary>
         [DataMember]
-        [Required]
+        [Required(ErrorMessage = "Password cannot be empty")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmedPassword { get; set; }
     }

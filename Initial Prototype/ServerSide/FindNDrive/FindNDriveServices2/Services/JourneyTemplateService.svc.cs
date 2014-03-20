@@ -62,23 +62,36 @@
             this.random = new Random(Guid.NewGuid().GetHashCode());
         }
 
+        /// <summary>
+        /// Retrieves all journey templates for a given user.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         public ServiceResponse<List<JourneyTemplate>> GetTemplates(int userId)
         {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised<List<JourneyTemplate>>();
-            }
-
             var templates = this.findNDriveUnitOfWork.JourneyTemplateRepository.AsQueryable().IncludeAll().Where(_ => _.UserId == userId).ToList();
 
             return ServiceResponseBuilder.Success(templates);
         }
 
-        public ServiceResponse<bool> CreateNewTemplate(JourneyTemplateDTO journeyTemplateDTO)
+        /// <summary>
+        /// Creates a new journey template.
+        /// </summary>
+        /// <param name="journeyTemplateDTO">
+        /// The journey template dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse CreateNewTemplate(JourneyTemplateDTO journeyTemplateDTO)
         {
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised<bool>();
+                return ServiceResponseBuilder.Unauthorised();
             }
 
             var user =
@@ -88,7 +101,7 @@
 
             if (user == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid user id.");
+                return ServiceResponseBuilder.Failure("Invalid user id.");
             }
 
             var templateExists =
@@ -97,7 +110,7 @@
 
             if (templateExists)
             {
-                return ServiceResponseBuilder.Failure<bool>("Template with this name alrady exists!");
+                return ServiceResponseBuilder.Failure("Template with this name alrady exists!");
             }
 
             var newTemplate = new JourneyTemplate
@@ -123,41 +136,59 @@
 
             this.findNDriveUnitOfWork.Commit();
 
-            return ServiceResponseBuilder.Success(true);
+            return ServiceResponseBuilder.Success();
         }
 
-        public ServiceResponse<bool> DeleteTemplate(int id)
+        /// <summary>
+        /// Deletes a given journey template.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse DeleteTemplate(int id)
         {
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised<bool>();
+                return ServiceResponseBuilder.Unauthorised();
             }
 
             var template = this.findNDriveUnitOfWork.JourneyTemplateRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.JourneyTemplateId == id);
 
             if (template == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid journey template id");
+                return ServiceResponseBuilder.Failure("Invalid journey template id");
             }
 
             this.findNDriveUnitOfWork.JourneyTemplateRepository.Remove(template);
             this.findNDriveUnitOfWork.Commit();
 
-            return ServiceResponseBuilder.Success(true);
+            return ServiceResponseBuilder.Success();
         }
 
-        public ServiceResponse<bool> UpdateTemplate(JourneyTemplateDTO journeyTemplateDTO)
+        /// <summary>
+        /// Updates a given journey template with new information provided by the user.
+        /// </summary>
+        /// <param name="journeyTemplateDTO">
+        /// The journey template dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse UpdateTemplate(JourneyTemplateDTO journeyTemplateDTO)
         {
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised<bool>();
+                return ServiceResponseBuilder.Unauthorised();
             }
 
             var template = this.findNDriveUnitOfWork.JourneyTemplateRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.JourneyTemplateId == journeyTemplateDTO.JourneyTemplateId);
 
             if (template == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid journey template id");
+                return ServiceResponseBuilder.Failure("Invalid journey template id");
             }
 
             this.findNDriveUnitOfWork.GeoAddressRepository.RemoveRange(template.GeoAddresses);
@@ -177,7 +208,7 @@
 
             this.findNDriveUnitOfWork.Commit();
 
-            return ServiceResponseBuilder.Success(true);
+            return ServiceResponseBuilder.Success();
         }
     }
 }

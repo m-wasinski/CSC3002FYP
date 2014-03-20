@@ -27,7 +27,7 @@ import com.google.gson.reflect.TypeToken;
 /**
  * Provides user with all necessary functionality to send a new friend request to another user of the system.
  */
-public class SendFriendRequestActivity extends BaseActivity implements WCFServiceCallback<Boolean, Void>, View.OnClickListener {
+public class SendFriendRequestActivity extends BaseActivity implements WCFServiceCallback<Void, Void>, View.OnClickListener {
 
     private EditText messageEditText;
 
@@ -75,7 +75,7 @@ public class SendFriendRequestActivity extends BaseActivity implements WCFServic
 
         new WcfPostServiceTask<FriendRequest>(this,
                 getResources().getString(R.string.SendFriendRequestURL), friendRequest,
-                new TypeToken<ServiceResponse<Boolean>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
+                new TypeToken<ServiceResponse<Void>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
     }
 
     /**
@@ -85,7 +85,7 @@ public class SendFriendRequestActivity extends BaseActivity implements WCFServic
      * @param parameter
      */
     @Override
-    public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter)     {
+    public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter)     {
         progressBar.setVisibility(View.GONE);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {

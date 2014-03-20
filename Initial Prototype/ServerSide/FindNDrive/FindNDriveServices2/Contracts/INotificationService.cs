@@ -10,12 +10,9 @@
 namespace FindNDriveServices2.Contracts
 {
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.ServiceModel;
     using System.ServiceModel.Web;
-
     using DomainObjects.Domains;
-
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
 
@@ -26,7 +23,7 @@ namespace FindNDriveServices2.Contracts
     public interface INotificationService
     {
         /// <summary>
-        /// The get in app notifications.
+        /// Retrieves all in-app notifications for a given user.
         /// </summary>
         /// <param name="loadRangeDTO">
         /// The load range dto.
@@ -39,11 +36,11 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/getappnotifications")]
+            UriTemplate = "/app")]
         ServiceResponse<List<Notification>> GetAppNotifications(LoadRangeDTO loadRangeDTO);
 
         /// <summary>
-        /// The get device notifications.
+        /// Retrieves all device-notifications for a given user.
         /// </summary>
         /// <param name="userId">
         /// The user id.
@@ -56,11 +53,11 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/getdevicenotifications")]
+            UriTemplate = "/device")]
         ServiceResponse<List<Notification>> GetDeviceNotifications(int userId);
 
         /// <summary>
-        /// The get unread in app notifications count.
+        /// Retrieves the count of all unread in-app notifications.
         /// </summary>
         /// <param name="userId">
         /// The user id.
@@ -73,11 +70,11 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/getcount")]
+            UriTemplate = "/count")]
         ServiceResponse<int> GetUnreadAppNotificationsCount(int userId);
 
         /// <summary>
-        /// The mark as delivered.
+        /// Marks a given notification as delivered.
         /// </summary>
         /// <param name="notificationMarkerDTO">
         /// </param>
@@ -89,7 +86,7 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/markdelivered")]
-        ServiceResponse<bool> MarkAsDelivered(NotificationMarkerDTO notificationMarkerDTO);
+            UriTemplate = "/delivered")]
+        ServiceResponse MarkAsDelivered(NotificationMarkerDTO notificationMarkerDTO);
     }
 }

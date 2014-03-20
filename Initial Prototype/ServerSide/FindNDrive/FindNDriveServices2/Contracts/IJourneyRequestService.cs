@@ -1,20 +1,18 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IRequestService.cs" company="">
+// <copyright file="IJourneyRequestService.cs" company="">
 //   
 // </copyright>
 // <summary>
-//   Defines the IRequestService type.
+//   The RequestService interface.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace FindNDriveServices2.Contracts
 {
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.ServiceModel;
     using System.ServiceModel.Web;
     using DomainObjects.Domains;
-
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
 
@@ -25,10 +23,10 @@ namespace FindNDriveServices2.Contracts
     public interface IJourneyRequestService
     {
         /// <summary>
-        /// The send request.
+        /// Send a new request for a given journey.
         /// </summary>
         /// <param name="journeyRequestDTO">
-        /// The car share request dto.
+        /// The journey request dto.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
@@ -39,13 +37,13 @@ namespace FindNDriveServices2.Contracts
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/send")]
-        ServiceResponse<JourneyRequest> SendRequest(JourneyRequestDTO journeyRequestDTO);
+        ServiceResponse SendRequest(JourneyRequestDTO journeyRequestDTO);
 
         /// <summary>
-        /// The make decision.
+        /// Processes decision submitted by the user for a given journey request.
         /// </summary>
         /// <param name="journeyRequestDTO">
-        /// The car share request dto.
+        /// The journey request dto.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
@@ -55,11 +53,11 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/processdecision")]
-        ServiceResponse<JourneyRequest> ProcessDecision(JourneyRequestDTO journeyRequestDTO);
+            UriTemplate = "/process")]
+        ServiceResponse ProcessDecision(JourneyRequestDTO journeyRequestDTO);
 
         /// <summary>
-        /// The get all requests for journey.
+        /// Retrieves all requests for a given journey.
         /// </summary>
         /// <param name="id">
         /// The id.
@@ -72,11 +70,11 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/getforjourney")]
+            UriTemplate = "/journey")]
         ServiceResponse<List<JourneyRequest>> GetAllRequestsForJourney(int id);
 
         /// <summary>
-        /// The get all requests for user.
+        /// Retrieves all journey requests for a given user.
         /// </summary>
         /// <param name="id">
         /// The id.
@@ -89,11 +87,11 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/getforuser")]
+            UriTemplate = "/user")]
         ServiceResponse<List<JourneyRequest>> GetAllRequestsForUser(int id);
 
         /// <summary>
-        /// The get journey request.
+        /// Retrieves a journey request by its id.
         /// </summary>
         /// <param name="id">
         /// The id.

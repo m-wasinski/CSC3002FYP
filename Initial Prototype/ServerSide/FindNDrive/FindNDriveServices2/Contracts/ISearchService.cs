@@ -23,7 +23,7 @@ namespace FindNDriveServices2.Contracts
     public interface ISearchService
     {
         /// <summary>
-        /// The search for journeys.
+        /// Performs a search for journeys.
         /// </summary>
         /// <param name="journeyTemplateDTO">
         /// The journey Search DTO.

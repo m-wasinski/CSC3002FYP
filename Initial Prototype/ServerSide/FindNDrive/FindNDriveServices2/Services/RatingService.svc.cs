@@ -56,11 +56,6 @@ namespace FindNDriveServices2.Services
         private readonly NotificationManager notificationManager;
 
         /// <summary>
-        /// The invalid gcm registration id.
-        /// </summary>
-        private const string InvalidGCMRegistrationId = "0";
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="RatingService"/> class. 
         /// </summary>
         /// <param name="findNDriveUnitOfWork">
@@ -90,11 +85,11 @@ namespace FindNDriveServices2.Services
         /// </returns>
         /// <exception cref="NotImplementedException">
         /// </exception>
-        public ServiceResponse<bool> RateDriver(RatingDTO ratingDTO)
+        public ServiceResponse RateDriver(RatingDTO ratingDTO)
         {
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(false);
+                return ServiceResponseBuilder.Unauthorised();
             }
 
             var driver =
@@ -102,14 +97,14 @@ namespace FindNDriveServices2.Services
 
             if (driver == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid driver id.");
+                return ServiceResponseBuilder.Failure("Invalid driver id.");
             }
 
             var leavingUser = this.findNDriveUnitOfWork.UserRepository.Find(ratingDTO.FromUserId);
 
             if (leavingUser == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid user id.");
+                return ServiceResponseBuilder.Failure("Invalid user id.");
             }
 
             var rating =
@@ -119,7 +114,7 @@ namespace FindNDriveServices2.Services
 
             if (rating != null)
             {
-                return ServiceResponseBuilder.Failure<bool>("You have already rated this driver.");
+                return ServiceResponseBuilder.Failure("You have already rated this driver.");
             }
 
             var ratings =
@@ -172,16 +167,11 @@ namespace FindNDriveServices2.Services
 
             this.notificationManager.SendGcmTickle(new Collection<User> { driver });
 
-            return ServiceResponseBuilder.Success(true);
+            return ServiceResponseBuilder.Success();
         }
 
         public ServiceResponse<List<Rating>> GetUserRatings(int id)
         {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised(new List<Rating>());
-            }
-
             var ratings =
                 (from rating in
                      this.findNDriveUnitOfWork.RatingsRepository.AsQueryable()
@@ -220,11 +210,6 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<List<User>> GetLeaderboard(LoadRangeDTO loadRangeDTO)
         {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised(new List<User>());
-            }
-
             var users = (from user in this.findNDriveUnitOfWork.UserRepository.AsQueryable()
                                            .OrderByDescending(_ => _.AverageRating)
                                            .Skip(loadRangeDTO.Skip)

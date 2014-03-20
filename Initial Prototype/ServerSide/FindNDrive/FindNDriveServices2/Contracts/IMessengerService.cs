@@ -12,9 +12,7 @@ namespace FindNDriveServices2.Contracts
     using System.Collections.Generic;
     using System.ServiceModel;
     using System.ServiceModel.Web;
-
     using DomainObjects.Domains;
-
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
 
@@ -25,10 +23,10 @@ namespace FindNDriveServices2.Contracts
     public interface IMessengerService
     {
         /// <summary>
-        /// The send new message.
+        /// Sends a new chat message from one user to another.
         /// </summary>
-        /// <param name="carShareMessageDTO">
-        /// The car share message dto.
+        /// <param name="chatMessageDTO">
+        /// The chat message dto.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
@@ -39,44 +37,10 @@ namespace FindNDriveServices2.Contracts
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/send")]
-        ServiceResponse<bool> SendMessage(ChatMessageDTO chatMessageDTO);
+        ServiceResponse SendMessage(ChatMessageDTO chatMessageDTO);
 
         /// <summary>
-        /// The retrieve messages.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        [OperationContract]
-        [WebInvoke(Method = "POST",
-            ResponseFormat = WebMessageFormat.Json,
-            RequestFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/getall")]
-        ServiceResponse<List<ChatMessage>> RetrieveMessages(ChatMessageRetrieverDTO chatMessageRetrieverDTO);
-
-        /// <summary>
-        /// The get unread messages count.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        [OperationContract]
-        [WebInvoke(Method = "POST",
-            ResponseFormat = WebMessageFormat.Json,
-            RequestFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/getunreadcount")]
-        ServiceResponse<int> GetUnreadMessagesCount(int userId);
-
-        /// <summary>
-        /// The get unread messages for friend.
+        /// Retrieves a conversation history between two users.
         /// </summary>
         /// <param name="chatMessageRetrieverDTO">
         /// The chat message retriever dto.
@@ -89,25 +53,62 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/getunreadcountforfriend")]
-        ServiceResponse<int> GetUnreadMessagesCountForFriend(ChatMessageRetrieverDTO chatMessageRetrieverDTO);
+            UriTemplate = "/all")]
+        ServiceResponse<List<ChatMessage>> RetrieveMessages(ChatMessageRetrieverDTO chatMessageRetrieverDTO);
 
         /// <summary>
-        /// The mark messages as read for friend.
+        /// Retrieves the count of all unread messages for a given user.
         /// </summary>
-        /// <param name="chatMessageRetrieverDTO">
-        /// The chat Message Retriever DTO.
+        /// <param name="userId">
+        /// The user id.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/getunread")]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/unreadcount")]
+        ServiceResponse<int> GetUnreadMessagesCount(int userId);
+
+        /// <summary>
+        /// Retrieves the number of unread messages for a specific friend.
+        /// </summary>
+        /// <param name="chatMessageRetrieverDTO">
+        /// The chat message retriever dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/unreadcountfriend")]
+        ServiceResponse<int> GetUnreadMessagesCountForFriend(ChatMessageRetrieverDTO chatMessageRetrieverDTO);
+
+        /// <summary>
+        /// Retrieves only unread messages for a given conversation history.
+        /// </summary>
+        /// <param name="chatMessageRetrieverDTO">
+        /// The chat message retriever dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        [WebInvoke(Method = "POST", 
+            ResponseFormat = WebMessageFormat.Json, 
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/unread")]
         ServiceResponse<List<ChatMessage>> GetUnreadMessages(ChatMessageRetrieverDTO chatMessageRetrieverDTO);
 
         /// <summary>
-        /// The mark as read.
+        /// Marks a given message as read.
         /// </summary>
         /// <param name="id">
         /// The id.
@@ -116,9 +117,12 @@ namespace FindNDriveServices2.Contracts
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/markread")]
-        ServiceResponse<bool> MarkAsRead(int id);
+        [WebInvoke(Method = "POST", 
+            ResponseFormat = WebMessageFormat.Json, 
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare, 
+            UriTemplate = "/read")]
+        ServiceResponse MarkAsRead(int id);
 
         /// <summary>
         /// The get message by id.
@@ -130,8 +134,11 @@ namespace FindNDriveServices2.Contracts
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/get")]
+        [WebInvoke(Method = "POST", 
+            ResponseFormat = WebMessageFormat.Json, 
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare, 
+            UriTemplate = "/get")]
         ServiceResponse<ChatMessage> GetMessageById(int id);
     }
 }

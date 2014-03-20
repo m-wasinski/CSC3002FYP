@@ -76,9 +76,9 @@ public class JourneyManagementActivity extends BaseMapActivity implements View.O
         // If there is, go ahead and mark it as delivered.
         if(notification != null)
         {
-            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Boolean, Void>() {
+            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Void, Void>() {
                 @Override
-                public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+                public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                     Log.i(TAG, "Notification successfully marked as delivered");
                 }
             });
@@ -375,10 +375,10 @@ public class JourneyManagementActivity extends BaseMapActivity implements View.O
         progressBar.setVisibility(View.VISIBLE);
         new WcfPostServiceTask<JourneyUserDTO>(this, getResources().getString(R.string.WithdrawFromJourneyURL),
                 new JourneyUserDTO(journey.getJourneyId(), appManager.getUser().getUserId()),
-                new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+                new TypeToken<ServiceResponse<Void>>() {}.getType(),
+                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
             @Override
-            public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+            public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                 progressBar.setVisibility(View.GONE);
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                 {

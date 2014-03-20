@@ -481,33 +481,21 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
                     IntentConstants.JOURNEY_CREATOR_MODE_CREATING ?
                     R.string.CreateNewJourneyURL : R.string.EditJourneyURL),
                     journey,
-                    new TypeToken<ServiceResponse<Boolean>>() {}.getType(),
-                    appManager.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+                    new TypeToken<ServiceResponse<Journey>>() {}.getType(),
+                    appManager.getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
                 @Override
-                public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+                public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                     progressBar.setVisibility(View.GONE);
 
                     if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
                     {
-                        operationCompletedSuccessfully();
-                    }
-                    else
-                    {
-                        createButton.setEnabled(true);
+                        startActivity(new Intent(OfferJourneyStepTwoActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                        Toast.makeText(OfferJourneyStepTwoActivity.this, mode == IntentConstants.JOURNEY_CREATOR_MODE_CREATING ?
+                                "Your journey was created successfully." : "Changes to your journey were saved successfully.", Toast.LENGTH_LONG).show();
                     }
                 }
             }).execute();
 
         }
-    }
-
-    /**
-     * Called after web service operation is completed.
-     */
-    private void operationCompletedSuccessfully()
-    {
-        startActivity(new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-        Toast.makeText(this, mode == IntentConstants.JOURNEY_CREATOR_MODE_CREATING ?
-                "Your journey was created successfully." : "Changes to your journey were saved successfully.", Toast.LENGTH_LONG).show();
     }
 }

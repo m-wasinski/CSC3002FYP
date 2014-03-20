@@ -32,7 +32,7 @@ import com.google.gson.reflect.TypeToken;
  * Provides all the necessary functionality to accept or deny the request as well as vies the other user's profile.
  */
 public class ReceivedFriendRequestActivity extends BaseActivity implements View.OnClickListener,
-        WCFServiceCallback<Boolean, Void>, WCFImageRetrieved{
+        WCFServiceCallback<Void, Void>, WCFImageRetrieved{
 
     private FriendRequest friendRequest;
 
@@ -60,9 +60,9 @@ public class ReceivedFriendRequestActivity extends BaseActivity implements View.
 
         if(notification != null)
         {
-            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Boolean, Void>() {
+            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Void, Void>() {
                 @Override
-                public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
+                public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                     Log.i(getClass().getSimpleName(), "Notification successfully marked as delivered");
                 }
             });
@@ -109,7 +109,7 @@ public class ReceivedFriendRequestActivity extends BaseActivity implements View.
 
         new WcfPostServiceTask<FriendRequest>(this,
                 getResources().getString(R.string.ProcessFriendRequestDecisionURL), friendRequest,
-                new TypeToken<ServiceResponse<Boolean>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
+                new TypeToken<ServiceResponse<Void>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
     }
 
     /**
@@ -149,7 +149,7 @@ public class ReceivedFriendRequestActivity extends BaseActivity implements View.
      * @param parameter
      */
     @Override
-    public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter)
+    public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter)
     {
         progressBar.setVisibility(View.GONE);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)

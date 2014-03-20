@@ -1,16 +1,15 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IGroupChat.cs" company="">
+// <copyright file="IJourneyChatService.cs" company="">
 //   
 // </copyright>
 // <summary>
-//   Defines the IGroupChat type.
+//   The JourneyChatService interface.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace FindNDriveServices2.Contracts
 {
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.ServiceModel;
     using System.ServiceModel.Web;
     using DomainObjects.Domains;
@@ -18,16 +17,16 @@ namespace FindNDriveServices2.Contracts
     using FindNDriveServices2.ServiceResponses;
 
     /// <summary>
-    /// The group chat.
+    /// The JourneyChatService interface.
     /// </summary>
     [ServiceContract]
     public interface IJourneyChatService
     {
         /// <summary>
-        /// The send new message.
+        /// Sends new message in a given journey chat room.
         /// </summary>
         /// <param name="journeyMessageDTO">
-        /// The car share message dto.
+        /// The journey message dto.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
@@ -38,13 +37,13 @@ namespace FindNDriveServices2.Contracts
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/send")]
-        ServiceResponse<bool> SendMessage(JourneyMessageDTO journeyMessageDTO);
+        ServiceResponse SendMessage(JourneyMessageDTO journeyMessageDTO);
 
         /// <summary>
-        /// The send new message.
+        /// The retrieve messages.
         /// </summary>
-        /// <param name="journeyId">
-        /// The car Share Id.
+        /// <param name="journeyMessageRetrieverDTO">
+        /// The journey message retriever dto.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
@@ -58,7 +57,7 @@ namespace FindNDriveServices2.Contracts
         ServiceResponse<List<JourneyMessage>> RetrieveMessages(JourneyMessageRetrieverDTO journeyMessageRetrieverDTO);
 
         /// <summary>
-        /// The get unread messages count.
+        /// Retrieves a count of unread messages for a given journey.
         /// </summary>
         /// <param name="journeyMessageRetrieverDTO">
         /// The journey message retriever dto.
@@ -75,7 +74,7 @@ namespace FindNDriveServices2.Contracts
         ServiceResponse<int> GetUnreadMessagesCount(JourneyMessageRetrieverDTO journeyMessageRetrieverDTO);
 
         /// <summary>
-        /// The retrieve unread messages.
+        /// Retrieves all unread messages for a given journey.
         /// </summary>
         /// <param name="journeyMessageRetrieverDTO">
         /// The journey message retriever dto.
@@ -92,7 +91,7 @@ namespace FindNDriveServices2.Contracts
         ServiceResponse<List<JourneyMessage>> RetrieveUnreadMessages(JourneyMessageRetrieverDTO journeyMessageRetrieverDTO);
 
         /// <summary>
-        /// The mark as read.
+        /// Marks a given message as read.
         /// </summary>
         /// <param name="journeyMessageMarkerDTO">
         /// The journey Message Marker DTO.
@@ -101,9 +100,12 @@ namespace FindNDriveServices2.Contracts
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/markread")]
-        ServiceResponse<bool> MarkAsRead(JourneyMessageMarkerDTO journeyMessageMarkerDTO);
+        [WebInvoke(Method = "POST", 
+            ResponseFormat = WebMessageFormat.Json, 
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare, 
+            UriTemplate = "/markread")]
+        ServiceResponse MarkAsRead(JourneyMessageMarkerDTO journeyMessageMarkerDTO);
 
         /// <summary>
         /// The get journey message by id.
@@ -115,8 +117,11 @@ namespace FindNDriveServices2.Contracts
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/get")]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json, 
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare, 
+            UriTemplate = "/get")]
         ServiceResponse<JourneyMessage> GetJourneyMessageById(int id);
     }
 }

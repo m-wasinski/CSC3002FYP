@@ -24,7 +24,7 @@ namespace FindNDriveServices2.Contracts
     public interface IJourneyService
     {
         /// <summary>
-        /// The get all journeys for user.
+        /// Retrieves list of journeys for the current user, both as driver and as passenger.
         /// </summary>
         /// <param name="loadRangeDTO">
         /// The load range dto.
@@ -37,11 +37,11 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/getall")]
+            UriTemplate = "/user")]
         ServiceResponse<List<Journey>> GetAllJourneysForUser(LoadRangeDTO loadRangeDTO);
 
         /// <summary>
-        /// The create new car share listing.
+        /// Creates a new journey.
         /// </summary>
         /// <param name="journeyDTO">
         /// The car share dto.
@@ -55,10 +55,10 @@ namespace FindNDriveServices2.Contracts
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/create")]
-        ServiceResponse<bool> CreateNewJourney(JourneyDTO journeyDTO);
+        ServiceResponse<Journey> CreateNewJourney(JourneyDTO journeyDTO);
 
         /// <summary>
-        /// The get car share by id.
+        /// Retrieves journey by id.
         /// </summary>
         /// <param name="id">
         /// The id.
@@ -71,28 +71,11 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/getsingle")]
+            UriTemplate = "/get")]
         ServiceResponse<Journey> GetJourneyById(int id);
 
         /// <summary>
-        /// The get car shares by id.
-        /// </summary>
-        /// <param name="ids">
-        /// The ids.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        [OperationContract]
-        [WebInvoke(Method = "POST",
-            ResponseFormat = WebMessageFormat.Json,
-            RequestFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/getmany")]
-        ServiceResponse<List<Journey>> GetMultipleJourneysById(Collection<int> ids);
-
-        /// <summary>
-        /// The modify car share.
+        /// Provides the ability for the user to make changes to the journey.
         /// </summary>
         /// <param name="journeyDTO">
         /// The car share dto.
@@ -106,10 +89,10 @@ namespace FindNDriveServices2.Contracts
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/edit")]
-        ServiceResponse<bool> ModifyJourney(JourneyDTO journeyDTO);
+        ServiceResponse<Journey> ModifyJourney(JourneyDTO journeyDTO);
 
         /// <summary>
-        /// The withdraw from journey.
+        /// Withdraws a passenger from journey.
         /// </summary>
         /// <param name="journeyUserDTO">
         /// The journey passenger withdraw dto.
@@ -123,10 +106,10 @@ namespace FindNDriveServices2.Contracts
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/withdraw")]
-        ServiceResponse<bool> WithdrawFromJourney(JourneyUserDTO journeyUserDTO);
+        ServiceResponse WithdrawFromJourney(JourneyUserDTO journeyUserDTO);
 
         /// <summary>
-        /// The cancel journey.
+        /// Cancels a given journey.
         /// </summary>
         /// <param name="journeyUserDTO">
         /// The journey user dto.
@@ -142,12 +125,21 @@ namespace FindNDriveServices2.Contracts
             UriTemplate = "/cancel")]
         ServiceResponse<Journey> CancelJourney(JourneyUserDTO journeyUserDTO);
 
+        /// <summary>
+        /// Returns list of passengers for a given journey.
+        /// </summary>
+        /// <param name="journeyId">
+        /// The journey id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         [OperationContract]
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/getpassengers")]
+            UriTemplate = "/passengers")]
         ServiceResponse<List<User>> GetPassengers(int journeyId);
     }
 }

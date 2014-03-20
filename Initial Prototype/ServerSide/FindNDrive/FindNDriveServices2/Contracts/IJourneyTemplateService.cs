@@ -7,15 +7,12 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Collections.Generic;
-
 namespace FindNDriveServices2.Contracts
 {
+    using System.Collections.Generic;
     using System.ServiceModel;
     using System.ServiceModel.Web;
-
     using DomainObjects.Domains;
-
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
 
@@ -26,7 +23,7 @@ namespace FindNDriveServices2.Contracts
     public interface IJourneyTemplateService
     {
         /// <summary>
-        /// The get templates.
+        /// Retrieves a list of journey templates for a given user.
         /// </summary>
         /// <param name="userId">
         /// The user id.
@@ -42,7 +39,7 @@ namespace FindNDriveServices2.Contracts
         ServiceResponse<List<JourneyTemplate>> GetTemplates(int userId);
 
         /// <summary>
-        /// The create new template.
+        /// Creates a new journey template.
         /// </summary>
         /// <param name="journeyTemplateDTO">
         /// The journey search dto.
@@ -55,10 +52,10 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/create")]
-        ServiceResponse<bool> CreateNewTemplate(JourneyTemplateDTO journeyTemplateDTO);
+        ServiceResponse CreateNewTemplate(JourneyTemplateDTO journeyTemplateDTO);
 
         /// <summary>
-        /// The delete template.
+        /// Deletes a journey template.
         /// </summary>
         /// <param name="id">
         /// The id.
@@ -71,10 +68,10 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/delete")]
-        ServiceResponse<bool> DeleteTemplate(int id);
+        ServiceResponse DeleteTemplate(int id);
 
         /// <summary>
-        /// The update template.
+        /// Updates a given journey template.
         /// </summary>
         /// <param name="journeyTemplateDTO">
         /// The journey template dto.
@@ -87,6 +84,6 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/update")]
-        ServiceResponse<bool> UpdateTemplate(JourneyTemplateDTO journeyTemplateDTO);
+        ServiceResponse UpdateTemplate(JourneyTemplateDTO journeyTemplateDTO);
     }
 }

@@ -30,7 +30,7 @@ namespace FindNDriveServices2.ServiceUtils
         private const int PortNumber = 587;
 
         /// <summary>
-        /// The send email.
+        /// Used to send emails.
         /// </summary>
         /// <param name="emailToAddress">
         /// The email to address.

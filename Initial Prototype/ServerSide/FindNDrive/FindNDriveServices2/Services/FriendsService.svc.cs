@@ -16,12 +16,9 @@ namespace FindNDriveServices2.Services
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
-
     using DomainObjects.Constants;
     using DomainObjects.Domains;
-
     using FindNDriveDataAccessLayer;
-
     using FindNDriveServices2.Contracts;
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
@@ -65,8 +62,8 @@ namespace FindNDriveServices2.Services
         /// <param name="sessionManager">
         /// The session manager.
         /// </param>
-        /// <param name="gcmManager">
-        /// The gcm manager.
+        /// <param name="notificationManager">
+        /// The notification Manager.
         /// </param>
         public FriendsService(FindNDriveUnitOfWork findNDriveUnitOfWork, SessionManager sessionManager, NotificationManager notificationManager)
         {
@@ -77,7 +74,7 @@ namespace FindNDriveServices2.Services
         }
 
         /// <summary>
-        /// The process decision.
+        /// Processes decision submitted by the user for a given friend request.
         /// </summary>
         /// <param name="friendRequestDTO">
         /// The friend request dto.
@@ -85,13 +82,15 @@ namespace FindNDriveServices2.Services
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<bool> ProcessDecision(FriendRequestDTO friendRequestDTO)
+        public ServiceResponse ProcessDecision(FriendRequestDTO friendRequestDTO)
         {
+            // Check if session is still valid, if not send unauthorised response to log the user out.
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(false);
+                return ServiceResponseBuilder.Unauthorised();
             }
 
+            // Retrieve both users from the database to that entity framework can track the entities.
             var toUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable()
                 .Include(_ => _.Friends).FirstOrDefault(_ => _.UserId == friendRequestDTO.ToUser.UserId);
 
@@ -100,21 +99,23 @@ namespace FindNDriveServices2.Services
 
             if (toUser == null || fromUser == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid user id.");
+                return ServiceResponseBuilder.Failure("Invalid user id.");
             }
 
             var targetRequest = this.findNDriveUnitOfWork.FriendRequestsRepository.Find(
                 friendRequestDTO.FriendRequestId);
 
+            // Check if the request has already been replied to.
             if (targetRequest.FriendRequestDecision != FriendRequestDecision.Undecided)
             {
-                return ServiceResponseBuilder.Failure<bool>(string.Format("You have already {0} this request ", targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted ? "accepted": "denied"));
+                return ServiceResponseBuilder.Failure(string.Format("You have already {0} this request ", targetRequest.FriendRequestDecision == FriendRequestDecision.Accepted ? "accepted": "denied"));
             }
 
             targetRequest.DecidedOnDate = DateTime.Now;
             targetRequest.Read = true;
             targetRequest.FriendRequestDecision = friendRequestDTO.FriendRequestDecision;
 
+            // Request has been accepted by the user.
             if (friendRequestDTO.FriendRequestDecision == FriendRequestDecision.Accepted)
             {
                 var match = toUser.Friends.FirstOrDefault(_ => _.UserId == fromUser.UserId);
@@ -124,8 +125,9 @@ namespace FindNDriveServices2.Services
                     toUser.Friends.Add(fromUser);
                     fromUser.Friends.Add(toUser);
                 }
-                else
+                else 
                 {
+                    // This user is already in the other user's friends list.
                     return ServiceResponseBuilder.Failure<bool>("This user is already in your list of friends.");
                 }
             }
@@ -173,11 +175,11 @@ namespace FindNDriveServices2.Services
 
             this.notificationManager.SendGcmTickle(new Collection<User>{toUser});
 
-            return ServiceResponseBuilder.Success(true);
+            return ServiceResponseBuilder.Success();
         }
 
         /// <summary>
-        /// The send request.
+        /// Sends a new friend request.
         /// </summary>
         /// <param name="friendRequestDTO">
         /// The friend request dto.
@@ -185,13 +187,15 @@ namespace FindNDriveServices2.Services
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<bool> SendRequest(FriendRequestDTO friendRequestDTO)
+        public ServiceResponse SendRequest(FriendRequestDTO friendRequestDTO)
         {
+            // Check if session is still valid, if not send unauthorised response to log the user out.
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised(false);
+                return ServiceResponseBuilder.Unauthorised();
             }
 
+            // Retrieve both users to allow entity framework tracking.
             var toUser =
                 this.findNDriveUnitOfWork.UserRepository.AsQueryable()
                     .Include(_ => _.Friends).FirstOrDefault(_ => _.UserId == friendRequestDTO.ToUser.UserId);
@@ -208,29 +212,33 @@ namespace FindNDriveServices2.Services
                         _.FromUser.UserId == fromUser.UserId && _.ToUser.UserId == toUser.UserId
                         && _.FriendRequestDecision == FriendRequestDecision.Undecided);
 
+            // Check if there is a pending request from this user. This is to prevent one user spamming another one with requests.
             if (pendingFriendRequest != null)
             {
-                return ServiceResponseBuilder.Failure<bool>(
+                return ServiceResponseBuilder.Failure(
                     "You already have a pending friend request for this person.");
             }
 
             if (toUser == null || fromUser == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid user id.");
+                return ServiceResponseBuilder.Failure("Invalid user id.");
             }
 
             var match = fromUser.Friends.FirstOrDefault(_ => _.UserId == toUser.UserId);
 
+            // Alrady in friends list.
             if (match != null)
             {
-                return ServiceResponseBuilder.Failure<bool>("This user is already in your list of friends.");
+                return ServiceResponseBuilder.Failure("This user is already in your list of friends.");
             }
 
+            // User tried to add themselves to the list of friends. App doesn't allow that so this is purely a security measure.
             if (friendRequestDTO.FromUser.UserId == friendRequestDTO.ToUser.UserId)
             {
-                return ServiceResponseBuilder.Failure<bool>("You cannot send a friend request to yourself.");
+                return ServiceResponseBuilder.Failure("You cannot send a friend request to yourself.");
             }
 
+            // Create an new FriendRequest object and add it to the database.
             var friendRequest = new FriendRequest
                                     {
                                         FriendRequestDecision = FriendRequestDecision.Undecided,
@@ -247,6 +255,7 @@ namespace FindNDriveServices2.Services
             const string ReceiverMessage = "You received a friend request from user: {0} {1} ({2})";
             const string SenderMessage = "You sent a friend request to user: {0} {1} ({2})";
 
+            // Send appropriate notifications to both users.
             this.notificationManager.SendAppNotification(
                 new List<User> { toUser },
                 "New friend request received.",
@@ -277,11 +286,11 @@ namespace FindNDriveServices2.Services
 
             this.notificationManager.SendGcmTickle(new List<User> { toUser });
             
-            return ServiceResponseBuilder.Success(true);
+            return ServiceResponseBuilder.Success();
         }
 
         /// <summary>
-        /// The get friends.
+        /// Retrievers a given user's list of friends.
         /// </summary>
         /// <param name="userId">
         /// The user id.
@@ -291,11 +300,6 @@ namespace FindNDriveServices2.Services
         /// </returns>
         public ServiceResponse<List<User>> GetFriends(int userId)
         {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised(new List<User>());
-            }
-
             var currentUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable()
                 .IncludeFriends()
                 .FirstOrDefault(_ => _.UserId == userId);
@@ -305,6 +309,7 @@ namespace FindNDriveServices2.Services
                 return ServiceResponseBuilder.Failure<List<User>>("Invalid user id");
             }
 
+            // For security purposes, we only return part of the information about the user.
             var friends = (from user in currentUser.Friends.ToList()
                             select
                              new User
@@ -317,6 +322,7 @@ namespace FindNDriveServices2.Services
                                  UnreadMessagesCount = 0
                              }).ToList();
 
+            // Let's calculate the number of unread messages for each friend.
             friends.ForEach(
                 delegate(User u)
                     {
@@ -326,37 +332,72 @@ namespace FindNDriveServices2.Services
             return ServiceResponseBuilder.Success(friends);
         }
 
+        /// <summary>
+        /// Retrieves a specific friend request by its id.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         public ServiceResponse<FriendRequest> GetFriendRequest(int id)
         {
-            if (!this.sessionManager.IsSessionValid())
-            {
-                return ServiceResponseBuilder.Unauthorised(new FriendRequest());
-            }
+            // Retrieve the target FriendRequest from database.
+            var friendRequest =
+                this.findNDriveUnitOfWork.FriendRequestsRepository.AsQueryable()
+                    .IncludeAll()
+                    .Where(_ => _.FriendRequestId == id)
+                    .Select(
+                        u =>
+                        new FriendRequest
+                            {
+                                FriendRequestId = u.FriendRequestId,
+                                DecidedOnDate = u.DecidedOnDate,
+                                FriendRequestDecision = u.FriendRequestDecision,
+                                FromUser =
+                                    new User
+                                        {
+                                            UserId = u.FromUser.UserId,
+                                            UserName = u.FromUser.UserName,
+                                            FirstName = u.FromUser.FirstName,
+                                            LastName = u.FromUser.LastName
+                                        },
+                                Message = u.Message,
+                                Read = u.Read,
+                                SentOnDate = u.SentOnDate,
+                                ToUser =
+                                    new User
+                                        {
+                                            UserId = u.ToUser.UserId,
+                                            UserName = u.ToUser.UserName,
+                                            FirstName = u.ToUser.FirstName,
+                                            LastName = u.ToUser.LastName
+                                        }
+                            })
+                    .Single();
 
-            var friendRequest = this.findNDriveUnitOfWork.FriendRequestsRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.FriendRequestId == id);
-            
-            if (friendRequest == null)
-            {
-                return ServiceResponseBuilder.Failure<FriendRequest>("Invalid friend request id");
-            }
-
-            friendRequest.FromUser = new User
-                                         {
-                                             UserId = friendRequest.FromUser.UserId,
-                                             UserName = friendRequest.FromUser.UserName,
-                                             FirstName = friendRequest.FromUser.FirstName,
-                                             LastName = friendRequest.FromUser.LastName
-                                         };
-            return ServiceResponseBuilder.Success(friendRequest);
+            return friendRequest == null ? ServiceResponseBuilder.Failure<FriendRequest>("Invalid friend request id") : ServiceResponseBuilder.Success(friendRequest);
         }
 
-        public ServiceResponse<bool> DeleteFriend(FriendDeletionDTO friendDeletionDTO)
+        /// <summary>
+        /// Deletes a friend from a given user's friends list.
+        /// </summary>
+        /// <param name="friendDeletionDTO">
+        /// The friend deletion dto.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse DeleteFriend(FriendDeletionDTO friendDeletionDTO)
         {
+            // Check if session is still valid, if not send unauthorised response to log the user out.
             if (!this.sessionManager.IsSessionValid())
             {
-                return ServiceResponseBuilder.Unauthorised<bool>();
+                return ServiceResponseBuilder.Unauthorised();
             }
 
+            // Retrieve both users to enable Entity Framework tracking.
             var firstUser =
                 this.findNDriveUnitOfWork.UserRepository.AsQueryable()
                     .Include(_ => _.Friends).FirstOrDefault(_ => _.UserId == friendDeletionDTO.UserId);
@@ -367,21 +408,22 @@ namespace FindNDriveServices2.Services
 
             if (firstUser == null || secondUser == null)
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid user id");
+                return ServiceResponseBuilder.Failure("Invalid user id");
             }
 
             if (!firstUser.Friends.Select(_ => _.UserId).Contains(secondUser.UserId) ||
                 !secondUser.Friends.Select(_ => _.UserId).Contains(firstUser.UserId))
             {
-                return ServiceResponseBuilder.Failure<bool>("Invalid friend id");
+                return ServiceResponseBuilder.Failure("Invalid friend id");
             }
 
+            // Friends list have to be updated for both users.
             firstUser.Friends.Remove(secondUser);
             secondUser.Friends.Remove(firstUser);
 
             this.findNDriveUnitOfWork.Commit();
 
-            return ServiceResponseBuilder.Success(true);
+            return ServiceResponseBuilder.Success();
         }
     }
 }

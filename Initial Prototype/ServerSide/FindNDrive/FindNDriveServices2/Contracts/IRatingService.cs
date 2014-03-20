@@ -12,9 +12,7 @@ namespace FindNDriveServices2.Contracts
     using System.Collections.Generic;
     using System.ServiceModel;
     using System.ServiceModel.Web;
-
     using DomainObjects.Domains;
-
     using FindNDriveServices2.DTOs;
     using FindNDriveServices2.ServiceResponses;
 
@@ -25,7 +23,7 @@ namespace FindNDriveServices2.Contracts
     public interface IRatingService
     {
         /// <summary>
-        /// The rate driver.
+        /// Provides user with the ability to rate driver of a journey they participated in.
         /// </summary>
         /// <param name="ratingDTO">
         /// The rating dto.
@@ -39,10 +37,10 @@ namespace FindNDriveServices2.Contracts
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/rate")]
-        ServiceResponse<bool> RateDriver(RatingDTO ratingDTO);
+        ServiceResponse RateDriver(RatingDTO ratingDTO);
 
         /// <summary>
-        /// The get ratings.
+        /// Retrieves all ratings for a given user.
         /// </summary>
         /// <param name="id">
         /// The id.
@@ -55,12 +53,15 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/getuserratings")]
+            UriTemplate = "/user")]
         ServiceResponse<List<Rating>> GetUserRatings(int id);
 
         /// <summary>
-        /// The get leaderboard.
+        /// Retrievers the system-wide leaderboard.
         /// </summary>
+        /// <param name="loadRangeDTO">
+        /// The load Range DTO.
+        /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
@@ -69,7 +70,7 @@ namespace FindNDriveServices2.Contracts
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/getleaderboard")]
+            UriTemplate = "/leaderboard")]
         ServiceResponse<List<User>> GetLeaderboard(LoadRangeDTO loadRangeDTO);
     }
 }

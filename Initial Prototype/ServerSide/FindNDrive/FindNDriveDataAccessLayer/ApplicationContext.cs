@@ -128,16 +128,6 @@ namespace FindNDriveDataAccessLayer
                     map.ToTable("Journey_User");
                 });
 
-            /*modelBuilder.Entity<Journey>()
-                .HasMany(_ => _.Requests)
-                .WithMany()
-                .Map(map =>
-                {
-                    map.MapLeftKey("JourneyId");
-                    map.MapRightKey("JourneyRequestId");
-                    map.ToTable("Journey_Request");
-                });*/
-
             modelBuilder.Entity<User>()
                .HasMany(_ => _.Friends).WithMany().Map(map =>
                 {

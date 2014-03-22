@@ -6,8 +6,6 @@ namespace FindNDriveServices2.ServiceResponses
     /// <summary>
     /// Represents a service response which will be returned from all service operations.
     /// This is used a mechanism for handling error scenarios in a consistent manner.
-    /// For instance if there is a validation error, this will be determinable by the ServiceResponseCode,
-    /// rather than a SoapFault/Exception.
     /// </summary>
     [DataContract]
     [KnownType(typeof(ServiceResponse<object>))]

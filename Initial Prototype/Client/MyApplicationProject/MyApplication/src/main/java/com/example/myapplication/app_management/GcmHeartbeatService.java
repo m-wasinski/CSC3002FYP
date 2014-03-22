@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.util.Log;
 
 /**
- * Created by Michal on 11/02/14.
+ * An intent service whose responsibility is to send a broadcast to the below addresses.
+ * This is to keep the connection between the device and the GCM
+ * servers open or to restore it when the connection is broken.
  */
 public class GcmHeartbeatService extends IntentService {
 

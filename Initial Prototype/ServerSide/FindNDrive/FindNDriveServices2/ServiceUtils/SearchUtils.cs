@@ -119,7 +119,7 @@ namespace FindNDriveServices2.ServiceUtils
                 foreach (var geoAddress in x.GeoAddresses)
                 {
                     if (journeyTemplateDTO.DepartureRadius
-                        >= HaversineCalculator.Distance(
+                        >= HaversineCalculator.CalculateDistance(
                             geoAddress,
                             journeyTemplateDTO.GeoAddresses.First(),
                             DistanceType.Miles) && matchDeparture == -1 && matchDestination != geoAddress.Order)
@@ -128,7 +128,7 @@ namespace FindNDriveServices2.ServiceUtils
                     }
 
                     if (journeyTemplateDTO.DestinationRadius
-                        >= HaversineCalculator.Distance(
+                        >= HaversineCalculator.CalculateDistance(
                             geoAddress,
                             journeyTemplateDTO.GeoAddresses.Last(),
                             DistanceType.Miles) && matchDestination == -1 && matchDeparture != geoAddress.Order)
@@ -204,7 +204,7 @@ namespace FindNDriveServices2.ServiceUtils
                 foreach (var geoAddress in x.GeoAddresses)
                 {
                     if (x.DepartureRadius
-                        >= HaversineCalculator.Distance(
+                        >= HaversineCalculator.CalculateDistance(
                             geoAddress,
                             journey.GeoAddresses.First(),
                             DistanceType.Miles) && matchDeparture == -1 && matchDestination != geoAddress.Order)
@@ -213,7 +213,7 @@ namespace FindNDriveServices2.ServiceUtils
                     }
 
                     if (x.DestinationRadius
-                        >= HaversineCalculator.Distance(
+                        >= HaversineCalculator.CalculateDistance(
                             geoAddress,
                             journey.GeoAddresses.Last(),
                             DistanceType.Miles) && matchDestination == -1 && matchDeparture != geoAddress.Order)

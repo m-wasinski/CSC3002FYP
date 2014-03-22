@@ -146,5 +146,26 @@ namespace FindNDriveServices2.DTOs
         /// Gets or sets the load range.
         /// </summary>
         public int LoadRange { get; set; }
+
+        public static explicit operator Journey(JourneyDTO c)
+        {
+            var journey = new Journey
+                              {
+                                  Driver = c.Driver,
+                                  Fee = c.Fee,
+                                  Pets = c.Pets,
+                                  Smokers = c.Smokers,
+                                  Description = c.Description,
+                                  AvailableSeats = c.AvailableSeats,
+                                  CreationDate = c.CreationDate,
+                                  DateAndTimeOfDeparture = c.DateAndTimeOfDeparture,
+                                  GeoAddresses = c.GeoAddresses,
+                                  Private = c.Private,
+                                  PreferredPaymentMethod = c.PreferredPaymentMethod,
+                                  VehicleType = c.VehicleType
+                              };
+
+            return journey;
+        }
     }
 }

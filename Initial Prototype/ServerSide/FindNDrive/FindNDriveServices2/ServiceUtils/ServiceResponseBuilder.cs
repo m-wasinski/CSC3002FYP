@@ -6,12 +6,13 @@
 //   Defines the ServiceResponseBuilder type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace FindNDriveServices2.ServiceUtils
 {
     using System.Collections.Generic;
     using FindNDriveServices2.ServiceResponses;
-
+    /// <summary>
+    /// Provides a set of extension methods to speed up the creation of a ServiceResponse object.
+    /// </summary>
     public class ServiceResponseBuilder
     {
         public static ServiceResponse Failure()

@@ -24,28 +24,30 @@ namespace FindNDriveServices2.ServiceUtils
     using Newtonsoft.Json;
 
     /// <summary>
-    /// The notification manager.
+    /// Responsible for managament of device and in-app notifications.
+    /// Device notification - notification which appears in the top left corner of user's Android device.
+    /// In-App notification - notification which is accessed through the notifications menu option in the Android app.
     /// </summary>
     public class NotificationManager
     {
 
         /// <summary>
-        /// The ap i_ key.
+        /// API key provided by Google GCM, required by the service.
         /// </summary>
         private const string ApiKey = "AIzaSyAo1y7Zzp4GAskemJMlWwtYkdmY-_A2zm8";
 
         /// <summary>
-        /// The sende r_ id.
+        /// GFM Project Id.
         /// </summary>
         private const string SenderID = "505647745249";
 
         /// <summary>
-        /// The gcm post data.
+        /// Prepared Json data for GCM notification with content.
         /// </summary>
         private const string GCMInstantMessage = "{{ \"registration_ids\": {0} , \"data\": {{\"tickerText\":\"{1}\", \"contentTitle\":\"{2}\", \"notificationType\": {3}, \"collapsibleKey\": {4}, \"payload\": {5}, \"pictureId\": {6} }}}}";
 
         /// <summary>
-        /// The gcm tickle.
+        /// Prepared Json data for GCM notification only containing a tickle.
         /// </summary>
         private const string GCMTickle = "{{ \"registration_ids\": {0} , \"data\": {{\"tickerText\":\"{1}\", \"contentTitle\":\"{2}\", \"notificationType\": {3} }}}}";
 
@@ -90,7 +92,9 @@ namespace FindNDriveServices2.ServiceUtils
         }
 
         /// <summary>
-        /// The send gcm tickle.
+        /// Sends a GCM notification containing a tickle.
+        /// Tickle tells the Android app that there is a new data waiting
+        /// on the server and the app should call it to re-sync its state.
         /// </summary>
         /// <param name="users">
         /// The users.
@@ -105,6 +109,7 @@ namespace FindNDriveServices2.ServiceUtils
                 return;
             }
 
+            // Send the tickle to all the users who are currently online.
             var gcmPostData = string.Format(
                 GCMTickle,
                 JsonConvert.SerializeObject(onlineUsers.Select(_ => _.GCMRegistrationID).ToList()),
@@ -116,7 +121,7 @@ namespace FindNDriveServices2.ServiceUtils
         }
 
         /// <summary>
-        /// The send instant message.
+        /// Used by the in-app instant messenger and multi-user journey chat rooms to forward a message to another user(s).
         /// </summary>
         /// <param name="users">
         /// The users.
@@ -153,6 +158,7 @@ namespace FindNDriveServices2.ServiceUtils
                     Formatting.None,
                     new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.MicrosoftDateFormat });
 
+                // For those users who are online, send the message immediately.
                 var gcmPostData = string.Format(
                     GCMInstantMessage,
                     JsonConvert.SerializeObject(onlineUsers.Select(_ => _.GCMRegistrationID).ToList()),
@@ -171,6 +177,8 @@ namespace FindNDriveServices2.ServiceUtils
                 return;
             }
 
+            // Offline users will have the messages saved in the Notification respository for later retrieval.
+            // They will be informed of the new message as soon as they log on.
             foreach (var offlineUser in offlineUsers)
             {
                 this.findNDriveUnitOfWork.NotificationRepository.Add(new Notification
@@ -193,7 +201,7 @@ namespace FindNDriveServices2.ServiceUtils
         }
 
         /// <summary>
-        /// The send app notification.
+        /// Sends an in-app notification.
         /// </summary>
         /// <param name="users">
         /// The users.
@@ -243,7 +251,7 @@ namespace FindNDriveServices2.ServiceUtils
         }
 
         /// <summary>
-        /// The send notification.
+        /// Forwards the prepared notification onto GCM servers.
         /// </summary>
         /// <param name="gcmPostData">
         /// The gcm post data.

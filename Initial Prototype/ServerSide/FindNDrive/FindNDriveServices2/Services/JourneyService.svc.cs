@@ -254,7 +254,7 @@ namespace FindNDriveServices2.Services
 
             var journey =
                 this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
-                    .Include(_ => _.GeoAddresses).Include(_ => _.Participants)
+                    .Include(_ => _.GeoAddresses).Include(_ => _.Participants).Include(_ => _.Driver)
                     .FirstOrDefault(_ => _.JourneyId == journeyDTO.JourneyId);
 
             if (journey == null)
@@ -278,7 +278,6 @@ namespace FindNDriveServices2.Services
             journey.Smokers = journeyDTO.Smokers;
             journey.VehicleType = journeyDTO.VehicleType;
             journey.Pets = journeyDTO.Pets;
-            journey.JourneyStatus = journeyDTO.JourneyStatus;
             journey.PreferredPaymentMethod = journeyDTO.PreferredPaymentMethod;
 
             this.findNDriveUnitOfWork.Commit();

@@ -25,7 +25,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindNDriveAdminPanel2", "Fi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "_ExternalComponents", "_ExternalComponents\_ExternalComponents.csproj", "{4D041CB4-E345-4739-A1A3-E55CD4104C13}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindNDriveIntegrationTests", "FindNDriveIntegrationTests\FindNDriveIntegrationTests.csproj", "{8F1ED93E-EAD1-4E42-9074-AEEA45CEA5B5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindNDriveTests", "FindNDriveTests\FindNDriveTests.csproj", "{8F1ED93E-EAD1-4E42-9074-AEEA45CEA5B5}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution

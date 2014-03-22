@@ -13,7 +13,7 @@ namespace FindNDriveServices2.ServiceUtils
     using DomainObjects.Domains;
 
     /// <summary>
-    /// Distance between two GeoAddresses will be returned in either Miles or Kilometers.
+    /// Uses the haversine formula to work out distance between two GeoAddresses, either in kilometers or miles.
     /// </summary>
     public enum DistanceType
     {
@@ -48,9 +48,9 @@ namespace FindNDriveServices2.ServiceUtils
         /// <returns>
         /// The <see cref="double"/>.
         /// </returns>
-        public static double Distance(GeoAddress geoAddress1, GeoAddress geoAddress2, DistanceType type)
+        public static double CalculateDistance(GeoAddress geoAddress1, GeoAddress geoAddress2, DistanceType type)
         {
-            var r = (type == DistanceType.Miles) ? 3960 : 6371;
+             var radius = (type == DistanceType.Miles) ? 3960 : 6371;
 
              var distancelatitude = ConvertToRadian(geoAddress2.Latitude - geoAddress1.Latitude);
 
@@ -62,7 +62,7 @@ namespace FindNDriveServices2.ServiceUtils
                 Math.Sin(distancelongitude / 2) * Math.Sin(distancelongitude / 2);
 
             var c = 2 * Math.Asin(Math.Min(1, Math.Sqrt(a)));
-            var distance = r * c;
+            var distance = radius * c;
 
             return distance;
         }

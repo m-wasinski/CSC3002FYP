@@ -118,7 +118,8 @@ namespace FindNDriveDataAccessLayer.Migrations
                 UserId = administrator.UserId,
                 SessionType = SessionTypes.Permanent,
                 SessionId = SessionManager.GenerateNewSessionId(administrator.UserId),
-                DeviceId = "Test",
+                DeviceId = SessionManager.EncryptValue("admin"),
+                Uuid = "admin",
                 ExpiryDate = DateTime.Now.AddDays(999),
             };
 

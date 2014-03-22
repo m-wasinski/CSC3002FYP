@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace FindNDriveServices2.ServiceResponses
 {
     /// <summary>
-    /// The service response code value returned in ServiceResponse.
+    /// The service response code returned in the service response.
     /// </summary>
     [DataContract]
     [Serializable]

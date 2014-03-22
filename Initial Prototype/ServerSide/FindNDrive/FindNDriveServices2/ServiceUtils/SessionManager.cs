@@ -61,7 +61,7 @@ namespace FindNDriveServices2.ServiceUtils
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private string EncryptValue(string value)
+        public static string EncryptValue(string value)
         {
             var encoding = new UTF8Encoding();
             var bytes = encoding.GetBytes(value);

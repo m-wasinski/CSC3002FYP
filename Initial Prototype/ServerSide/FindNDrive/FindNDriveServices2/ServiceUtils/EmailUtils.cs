@@ -61,13 +61,13 @@ namespace FindNDriveServices2.ServiceUtils
                                      UseDefaultCredentials = false,
                                      Credentials =
                                          new NetworkCredential(
-                                         "wasinskimichal@gmail.com",
-                                         "Kochamzoncie1990")
+                                         "noreply.findndrive@gmail.com",
+                                         "findndrivepassword")
                                  };
 
             using (var mailMessage = new MailMessage())
             {
-                mailMessage.From = new MailAddress("wasinskimichal@gmail.com");
+                mailMessage.From = new MailAddress("noreply.findndrive@gmail.com");
                 mailMessage.Subject = subject ?? string.Empty;
                 mailMessage.Body = body ?? string.Empty;
                 mailMessage.IsBodyHtml = isBodyHtml;
@@ -79,13 +79,7 @@ namespace FindNDriveServices2.ServiceUtils
                     ccemailTo.ForEach(mailMessage.CC.Add);
                 }
 
-                try
-                {
-                    smtpClient.Send(mailMessage);
-                }
-                catch (SmtpException e)
-                {
-                }
+                smtpClient.Send(mailMessage);
             }
         }
     }

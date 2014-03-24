@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="SendJourneyChatMessageURL">https://54.72.27.104/Services_deploy/Services/JourneyChatService.svc/send</string>
+    <string name="RetrieveJourneyChatMessagesURL">https://54.72.27.104/Services_deploy/Services/JourneyChatService.svc/getall</string>
+    <string name="RetrieveUnreadJourneyMessagesCountURL">https://54.72.27.104/Services_deploy/Services/JourneyChatService.svc/getunreadcount</string>
+    <string name="RetrieveUnreadJourneyMessagesURL">https://54.72.27.104/Services_deploy/Services/JourneyChatService.svc/getunread</string>
+    <string name="MarkJourneyMessageAsReadURL">https://54.72.27.104/Services_deploy/Services/JourneyChatService.svc/markread</string>
+    <string name="GetJourneyMessageURL">https://54.72.27.104/Services_deploy/Services/JourneyChatService.svc/get</string>
+</resources>

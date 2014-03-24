@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="RateDriverURL">https://54.72.27.104/Services_deploy/Services/RatingService.svc/rate</string>
+    <string name="GetUserRatingsURL">https://54.72.27.104/Services_deploy/Services/RatingService.svc/user</string>
+    <string name="GetLeaderboardURL">https://54.72.27.104/Services_deploy/Services/RatingService.svc/leaderboard</string>
+</resources>

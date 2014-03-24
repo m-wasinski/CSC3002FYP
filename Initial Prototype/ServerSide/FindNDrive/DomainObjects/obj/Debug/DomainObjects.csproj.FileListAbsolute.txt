@@ -1,4 +1,0 @@
-C:\CSC3002FYP\FindNDrive\DomainObjects\bin\Debug\DomainObjects.dll
-C:\CSC3002FYP\FindNDrive\DomainObjects\bin\Debug\DomainObjects.pdb
-C:\CSC3002FYP\FindNDrive\DomainObjects\obj\Debug\DomainObjects.dll
-C:\CSC3002FYP\FindNDrive\DomainObjects\obj\Debug\DomainObjects.pdb

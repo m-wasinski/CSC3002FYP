@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="CreateNewJourneyTemplateURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyTemplateService.svc/create</string>
-    <string name="DeleteJourneyTemplateURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyTemplateService.svc/delete</string>
-    <string name="GetJourneyTemplatesURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyTemplateService.svc/get</string>
-    <string name="UpdateJourneyTemplateURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/JourneyTemplateService.svc/update</string>
-</resources>

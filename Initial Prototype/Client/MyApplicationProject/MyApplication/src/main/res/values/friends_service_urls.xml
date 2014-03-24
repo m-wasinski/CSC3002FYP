@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="GetFriendsURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/FriendsService.svc/getfriends</string>
-    <string name="SendFriendRequestURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/FriendsService.svc/sendrequest</string>
-    <string name="ProcessFriendRequestDecisionURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/FriendsService.svc/process</string>
-    <string name="GetFriendRequestURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/FriendsService.svc/getrequest</string>
-    <string name="DeleteFriendURL">https://54.72.27.104/FindNDriveServices2_deploy/Services/FriendsService.svc/delete</string>
-</resources>

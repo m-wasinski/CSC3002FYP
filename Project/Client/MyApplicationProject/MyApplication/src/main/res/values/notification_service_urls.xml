@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="GetDeviceNotificationsURL">https://54.72.27.104/Services_deploy/Services/NotificationService.svc/device</string>
+    <string name="GetAppNotificationsURL">https://54.72.27.104/Services_deploy/Services/NotificationService.svc/app</string>
+    <string name="GetUnreadAppNotificationsCountURL">https://54.72.27.104/Services_deploy/Services/NotificationService.svc/count</string>
+    <string name="MarkNotificationDeliveredURL">https://54.72.27.104/Services_deploy/Services/NotificationService.svc/delivered</string>
+</resources>

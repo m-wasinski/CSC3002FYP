@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<parameters>
-  <parameter name="FindNDriveConnectionString-Web.config Connection String" description="FindNDriveConnectionString Connection String used in web.config by the application to access the database." defaultValue="Data Source=findndrivedb.c4itfsjh5fjn.eu-west-1.rds.amazonaws.com,1433;Initial Catalog=findndrivedb; User Id=Administrator; password=Kochamzoncie1992;" tags="SqlConnectionString">
-    <parameterEntry kind="XmlFile" scope="C:\\CSC3002FYP\\Initial\ Prototype\\ServerSide\\FindNDrive\\FindNDriveServices2\\obj\\Debug\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='FindNDriveConnectionString']/@connectionString" />
-  </parameter>
-</parameters>

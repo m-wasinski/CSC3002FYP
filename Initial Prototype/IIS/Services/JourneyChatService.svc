@@ -1,1 +1,0 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="FindNDriveServices2.Services.JourneyChatService" CodeBehind="JourneyChatService.svc.cs" Factory="FindNDriveServices2.ServiceHostUtils.MyServiceHostFactory" %>

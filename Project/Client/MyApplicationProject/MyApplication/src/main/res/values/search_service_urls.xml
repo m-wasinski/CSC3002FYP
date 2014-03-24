@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="SearchForJourneysURL">https://54.72.27.104/Services_deploy/Services/SearchService.svc/searchforjourney</string>
+</resources>

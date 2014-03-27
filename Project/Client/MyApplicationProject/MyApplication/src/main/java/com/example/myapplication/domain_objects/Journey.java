@@ -84,8 +84,8 @@ public class Journey {
         return Private;
     }
 
-    public int getUnreadRequestsCount() {
-        return UnreadRequestsCount;
+    public int getDecidedRequestsCount() {
+        return UndecidedRequestsCount;
     }
 
     public int getVehicleType() {
@@ -130,7 +130,7 @@ public class Journey {
     private boolean Pets;
     private int VehicleType;
     private boolean Private;
-    private int UnreadRequestsCount;
+    private int UndecidedRequestsCount;
     private int JourneyStatus;
     private String CreationDate;
     private String PreferredPaymentMethod;

@@ -59,8 +59,8 @@
 
         public void LoadData(int id)
         {
-            this.user = this.findNDriveUnitOfWork.UserRepository.AsQueryable().IncludeAll().First(_ => _.UserId == id);
-            var journeys = this.findNDriveUnitOfWork.JourneyRepository.AsQueryable().IncludeAll().ToList();
+            this.user = this.findNDriveUnitOfWork.UserRepository.AsQueryable().IncludeChildren().First(_ => _.UserId == id);
+            var journeys = this.findNDriveUnitOfWork.JourneyRepository.AsQueryable().IncludeChildren().ToList();
             var messages = this.findNDriveUnitOfWork.JourneyMessageRepository.AsQueryable().ToList();
             var journeyMessages = this.findNDriveUnitOfWork.ChatMessageRepository.AsQueryable().ToList();
             var requests = this.findNDriveUnitOfWork.JourneyRequestRepository.AsQueryable().ToList();

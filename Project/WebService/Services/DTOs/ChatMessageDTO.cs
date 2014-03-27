@@ -53,12 +53,6 @@ namespace Services.DTOs
         public DateTime SentOnDate { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether read.
-        /// </summary>
-        [DataMember]
-        public bool Read { get; set; }
-
-        /// <summary>
         /// Gets or sets the recipient user name.
         /// </summary>
         [DataMember]

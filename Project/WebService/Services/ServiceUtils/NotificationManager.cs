@@ -143,7 +143,7 @@ namespace Services.ServiceUtils
         /// </param>
         /// <typeparam name="T">
         /// </typeparam>
-        public void SendInstantMessage<T>(ICollection<User> users, GcmNotificationType gcmNotificationType, int pictureId, int collapsibleKey, T message, int targetObjectId)
+        public void SendMessage<T>(ICollection<User> users, GcmNotificationType gcmNotificationType, int pictureId, int collapsibleKey, T message, int targetObjectId)
         {
             // Determine which users are online.
             var onlineUsers = users.Where(_ => this.sessionManager.IsStillLoggedIn(_)).ToList();
@@ -227,7 +227,7 @@ namespace Services.ServiceUtils
         /// <param name="collapsibleKey">
         /// The collapsible key.
         /// </param>
-        public void SendAppNotification(ICollection<User> users, string notificationTitle, string notificationMessage, int profilePicture, int targetObjectId, NotificationType notificationType, NotificationContentType notificationContentType, int collapsibleKey)
+        public void CreateAppNotification(ICollection<User> users, string notificationTitle, string notificationMessage, int profilePicture, int targetObjectId, NotificationType notificationType, NotificationContentType notificationContentType, int collapsibleKey)
         {
             foreach (var user in users)
             {

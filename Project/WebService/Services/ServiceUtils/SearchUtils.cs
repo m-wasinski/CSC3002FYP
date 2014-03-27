@@ -228,7 +228,7 @@ namespace Services.ServiceUtils
                 return matchDeparture < matchDestination && matchDeparture != -1 && matchDestination != -1;
             };
 
-            return findNDriveUnitOfWork.JourneyTemplateRepository.AsQueryable().IncludeAll().Where(filter).ToList();
+            return findNDriveUnitOfWork.JourneyTemplateRepository.AsQueryable().IncludeChildren().Where(filter).ToList();
         }
     }
 }

@@ -28,13 +28,14 @@ namespace DataAccessLayer
         /// <returns>
         /// The <see cref="IQueryable"/>.
         /// </returns>
-        public static IQueryable<Journey> IncludeAll(this IQueryable<Journey> queryable)
+        public static IQueryable<Journey> IncludeChildren(this IQueryable<Journey> queryable)
         {
             return
-                queryable.Include("Driver")
-                    .Include("Passengers")
-                    .Include("Requests")
-                    .Include("GeoAddresses");
+                queryable
+                .Include(_ => _.Driver)
+                    .Include(_ => _.Passengers)
+                    .Include(_ => _.Requests)
+                    .Include(_ => _.GeoAddresses);
         }
 
         /// <summary>
@@ -46,41 +47,14 @@ namespace DataAccessLayer
         /// <returns>
         /// The <see cref="IQueryable"/>.
         /// </returns>
-        public static IQueryable<Journey> IncludeSearch(this IQueryable<Journey> queryable)
+        public static IQueryable<User> IncludeChildren(this IQueryable<User> queryable)
         {
-            return
-                queryable.Include("Driver")
-                    .Include("Passengers")
-                    .Include("GeoAddresses");
-        }
-
-
-        /// <summary>
-        /// The include all.
-        /// </summary>
-        /// <param name="queryable">
-        /// The queryable.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IQueryable"/>.
-        /// </returns>
-        public static IQueryable<User> IncludeAll(this IQueryable<User> queryable)
-        {
-            return queryable.Include("Friends").Include("Rating").Include("ProfilePicture").Include("JourneyTemplates").Include("PrivacySettings");
-        }
-
-        /// <summary>
-        /// The include friends.
-        /// </summary>
-        /// <param name="queryable">
-        /// The queryable.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IQueryable"/>.
-        /// </returns>
-        public static IQueryable<User> IncludeFriends(this IQueryable<User> queryable)
-        {
-            return queryable.Include("Friends");
+            return queryable
+                .Include(_ => _.Friends)
+                .Include(_ => _.Ratings)
+                .Include(_ => _.ProfilePicture)
+                .Include(_ => _.JourneyTemplates)
+                .Include(_ => _.PrivacySettings);
         }
 
         /// <summary>
@@ -92,9 +66,11 @@ namespace DataAccessLayer
         /// <returns>
         /// The <see cref="IQueryable"/>.
         /// </returns>
-        public static IQueryable<JourneyRequest> IncludeAll(this IQueryable<JourneyRequest> queryable)
+        public static IQueryable<JourneyRequest> IncludeChildren(this IQueryable<JourneyRequest> queryable)
         {
-            return queryable.Include("FromUser").Include("Journey");
+            return queryable
+                .Include(_ => _.FromUser)
+                .Include(_ => _.Journey);
         }
 
         /// <summary>
@@ -106,9 +82,10 @@ namespace DataAccessLayer
         /// <returns>
         /// The <see cref="IQueryable"/>.
         /// </returns>
-        public static IQueryable<JourneyMessage> IncludeAll(this IQueryable<JourneyMessage> queryable)
+        public static IQueryable<JourneyMessage> IncludeChildren(this IQueryable<JourneyMessage> queryable)
         {
-            return queryable.Include("SeenBy");
+            return queryable
+                .Include(_ => _.SeenBy);
         }
 
         /// <summary>
@@ -120,24 +97,24 @@ namespace DataAccessLayer
         /// <returns>
         /// The <see cref="IQueryable"/>.
         /// </returns>
-        public static IQueryable<Rating> IncludeAll(this IQueryable<Rating> queryable)
+        public static IQueryable<Rating> IncludeChildren(this IQueryable<Rating> queryable)
         {
-            return queryable.Include("FromUser");
+            return queryable
+                .Include(_ => _.FromUser);
         }
 
-        public static IQueryable<Notification> IncludeAll(this IQueryable<Notification> queryable)
+        public static IQueryable<FriendRequest> IncludeChildren(this IQueryable<FriendRequest> queryable)
         {
-            return queryable.Include("ProfilePicture");
+            return queryable
+                .Include(_ => _.FromUser)
+                .Include(_ => _.ToUser);
         }
 
-        public static IQueryable<FriendRequest> IncludeAll(this IQueryable<FriendRequest> queryable)
+        public static IQueryable<JourneyTemplate> IncludeChildren(this IQueryable<JourneyTemplate> queryable)
         {
-            return queryable.Include("FromUser").Include("ToUser");
-        }
-
-        public static IQueryable<JourneyTemplate> IncludeAll(this IQueryable<JourneyTemplate> queryable)
-        {
-            return queryable.Include("User").Include("GeoAddresses");
+            return queryable
+                .Include(_ => _.User)
+                .Include(_ => _.GeoAddresses);
         }
     }
 }

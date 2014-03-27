@@ -81,7 +81,7 @@ namespace Services.Services
         /// </returns>
         public ServiceResponse<List<Journey>> SearchForJourneys(JourneyTemplateDTO journeyTemplateDTO)
         {
-            var requestingUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.UserId == journeyTemplateDTO.UserId);
+            var requestingUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable().IncludeChildren().FirstOrDefault(_ => _.UserId == journeyTemplateDTO.UserId);
 
             if (requestingUser == null)
             {

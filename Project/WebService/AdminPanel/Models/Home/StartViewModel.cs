@@ -54,7 +54,7 @@ namespace AdminPanel.Models.Home
 
             // TODO: The following list of actions is used to populate the application's main navigation area (such as a menu or a home screen)
 
-            this.Actions.Add(new ViewAction("Users", execute: (a, o) => Controller.Action("Users", "Search", new {users = this.findNDriveUnitOfWork.UserRepository.AsQueryable().IncludeAll().ToList(), windowTitle = "Users" })) { Significance = ViewActionSignificance.AboveNormal });
+            this.Actions.Add(new ViewAction("Users", execute: (a, o) => Controller.Action("Users", "Search", new {users = this.findNDriveUnitOfWork.UserRepository.AsQueryable().IncludeChildren().ToList(), windowTitle = "Users" })) { Significance = ViewActionSignificance.AboveNormal });
 
             this.Actions.Add(new ViewAction("Journeys", execute: (a, o) => Controller.Message("Menu Item #3 clicked!")) { Significance = ViewActionSignificance.AboveNormal });
 

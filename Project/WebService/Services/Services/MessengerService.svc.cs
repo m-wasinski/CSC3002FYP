@@ -115,7 +115,7 @@ namespace Services.Services
             this.findNDriveUnitOfWork.ChatMessageRepository.Add(newMessage);
             this.findNDriveUnitOfWork.Commit();
 
-            this.notificationManager.SendInstantMessage(
+            this.notificationManager.SendMessage(
                 new Collection<User> { targetUser },
                 GcmNotificationType.ChatMessage,
                 sendingUser.UserId,

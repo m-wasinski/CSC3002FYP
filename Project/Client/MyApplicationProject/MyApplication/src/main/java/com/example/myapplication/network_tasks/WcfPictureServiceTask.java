@@ -67,7 +67,7 @@ public class WcfPictureServiceTask extends AsyncTask<Void, Void, Void> {
 
             if(WcfConstants.DEV_MODE)
             {
-                url = url.replace("https://54.72.27.104/FindNDriveServices2_deploy", "https://findndrive.no-ip.co.uk");
+                url = url.replace("https://54.72.27.104/Services_deploy", "https://findndrive.no-ip.co.uk");
             }
 
             Log.i(TAG, "Dev mode enabled: " + WcfConstants.DEV_MODE);

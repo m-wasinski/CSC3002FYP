@@ -98,8 +98,8 @@ public class JourneyAdapter extends ArrayAdapter<Journey> {
         holder.statusTextView.setText(statusText);
         holder.creationDateTextView.setText(DateTimeHelper.getSimpleDate(journey.getCreationDate()));
         holder.modeTextView.setText(journey.getDriver().getUserId() == user.getUserId() ? "Driver" : "Passenger");
-        holder.newRequestIcon.setImageResource(journey.getUnreadRequestsCount() > 0 ? R.drawable.new_notification_myjourney : R.drawable.notification_myjourney);
-        holder.unreadRequests.setText(""+journey.getUnreadRequestsCount());
+        holder.newRequestIcon.setImageResource(journey.getDecidedRequestsCount() > 0 ? R.drawable.new_notification_myjourney : R.drawable.notification_myjourney);
+        holder.unreadRequests.setText(""+journey.getDecidedRequestsCount());
         holder.unreadMessages.setText(String.valueOf(journey.getUnreadMessagesCount()));
         holder.newMessagesIconView.setImageResource(journey.getUnreadMessagesCount() > 0 ? R.drawable.new_journey_message : R.drawable.envelope_blue);
 

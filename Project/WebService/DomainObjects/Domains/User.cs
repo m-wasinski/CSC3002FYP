@@ -96,7 +96,7 @@ namespace DomainObjects.Domains
         /// <summary>
         /// Gets or sets the rating.
         /// </summary>
-        public virtual ICollection<Rating> Rating { get; set; }
+        public virtual ICollection<Rating> Ratings { get; set; }
 
         /// <summary>
         /// Gets or sets the last logon.
@@ -153,12 +153,14 @@ namespace DomainObjects.Domains
         /// Gets or sets a value indicating whether journeys visible.
         /// </summary>
         [DataMember]
+        [NotMapped]
         public bool JourneysVisible { get; set; }
 
         /// <summary>
         /// Gets or sets the votes count.
         /// </summary>
         [DataMember]
+        [NotMapped]
         public int VotesCount { get; set; }
     }
 }

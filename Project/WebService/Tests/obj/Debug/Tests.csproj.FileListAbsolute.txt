@@ -58,7 +58,6 @@ C:\CSC3002FYP\Project\WebService\Tests\bin\Debug\Tests.pdb
 C:\CSC3002FYP\Project\WebService\Tests\bin\Debug\DataAccessLayer.dll
 C:\CSC3002FYP\Project\WebService\Tests\bin\Debug\DomainObjects.dll
 C:\CSC3002FYP\Project\WebService\Tests\bin\Debug\EntityFramework.dll
-C:\CSC3002FYP\Project\WebService\Tests\bin\Debug\KellermanSoftware.Compare-NET-Objects.dll
 C:\CSC3002FYP\Project\WebService\Tests\bin\Debug\Microsoft.Practices.Unity.dll
 C:\CSC3002FYP\Project\WebService\Tests\bin\Debug\Newtonsoft.Json.dll
 C:\CSC3002FYP\Project\WebService\Tests\bin\Debug\Services.dll

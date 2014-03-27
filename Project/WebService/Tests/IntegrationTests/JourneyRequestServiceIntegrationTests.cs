@@ -99,7 +99,6 @@
                 GeoAddresses = new List<GeoAddress> { geoAddress1, geoAddress2, geoAddress3 },
                 Description = "Free ride to Dublin!",
                 JourneyStatus = JourneyStatus.OK,
-                CreationDate = DateTime.Now,
                 Fee = 0.00,
                 Smokers = true,
                 Pets = true,

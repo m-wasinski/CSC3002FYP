@@ -114,7 +114,7 @@ namespace Services.Services
                             journey.JourneyStatus = JourneyStatus.Expired;
                         }
 
-                        var messages = this.findNDriveUnitOfWork.JourneyMessageRepository.AsQueryable().IncludeAll().Where(_ => _.JourneyId == journey.JourneyId).ToList();
+                        var messages = this.findNDriveUnitOfWork.JourneyMessageRepository.AsQueryable().IncludeChildren().Where(_ => _.JourneyId == journey.JourneyId).ToList();
 
                         journey.UnreadMessagesCount = messages.Count(
                             delegate(JourneyMessage journeyMessage)
@@ -179,7 +179,7 @@ namespace Services.Services
 
             this.findNDriveUnitOfWork.Commit();
 
-            this.notificationManager.SendAppNotification(
+            this.notificationManager.CreateAppNotification(
                 new Collection<User> {user}, 
                 "You offered new journey",
                 string.Format("You have offerred new journey from {0} to {1} and its number is: {2}, ", newJourney.GeoAddresses.First().AddressLine, newJourney.GeoAddresses.Last().AddressLine, newJourney.JourneyId),
@@ -187,7 +187,7 @@ namespace Services.Services
                 NotificationType.App,
                 NotificationContentType.JourneyModified, this.random.Next());
 
-            this.notificationManager.SendAppNotification(
+            this.notificationManager.CreateAppNotification(
                 user.Friends,
                 string.Format("{0} {1} ({2}) offered new journey.", user.FirstName, user.LastName, user.UserName),
                 "Click this notification to see it.",
@@ -201,7 +201,7 @@ namespace Services.Services
             var interestedUsers =
                SearchUtils.SearchForTemplates(newJourney, this.findNDriveUnitOfWork).Select(_ => _.User).ToList();
 
-            this.notificationManager.SendAppNotification(
+            this.notificationManager.CreateAppNotification(
                interestedUsers,
                string.Format("New journey found!."),"Journey matching your criteria has just been offered.", newJourney.Driver.UserId, newJourney.JourneyId,
                NotificationType.Both,
@@ -289,7 +289,7 @@ namespace Services.Services
             this.findNDriveUnitOfWork.Commit();
 
             // Inform all the passengers that a change to one of the journeys they participate in has been made.
-            this.notificationManager.SendAppNotification(
+            this.notificationManager.CreateAppNotification(
                 journey.Passengers,
                 "Journey changed.",
                 string.Format(
@@ -334,7 +334,7 @@ namespace Services.Services
 
             var journey =
                 this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
-                    .IncludeAll()
+                    .IncludeChildren()
                     .FirstOrDefault(_ => _.JourneyId == journeyUserDTO.JourneyId);
 
             if (journey == null)
@@ -364,7 +364,7 @@ namespace Services.Services
             this.findNDriveUnitOfWork.Commit();
 
             // We must inform all the passengers of this journey of the cancellation.
-            this.notificationManager.SendAppNotification(
+            this.notificationManager.CreateAppNotification(
                 journey.Passengers,
                 "Journey has been cancelled.",
                 string.Format(
@@ -382,7 +382,7 @@ namespace Services.Services
                 this.random.Next());
 
             // Send an in-app notification to the driver to confirm that the journey has been succesfully cancelled.
-            this.notificationManager.SendAppNotification(
+            this.notificationManager.CreateAppNotification(
                new List<User> { journey.Driver },
                 "You have cancelled your journey.",
                 string.Format(
@@ -453,7 +453,7 @@ namespace Services.Services
             journey.AvailableSeats += 1;
             this.findNDriveUnitOfWork.Commit();
 
-            this.notificationManager.SendAppNotification(
+            this.notificationManager.CreateAppNotification(
                 new List<User> { journey.Driver },
                 string.Format(
                     "{0} {1} ({2}) has left your journey.",
@@ -472,7 +472,7 @@ namespace Services.Services
                 NotificationType.Both,
                 NotificationContentType.PassengerLeftJourney, this.random.Next());
 
-            this.notificationManager.SendAppNotification(
+            this.notificationManager.CreateAppNotification(
                 new List<User> { passenger },
                 "You have left a journey.",
                 string.Format(

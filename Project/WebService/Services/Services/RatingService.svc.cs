@@ -91,7 +91,7 @@ namespace Services.Services
             }
 
             var driver =
-                this.findNDriveUnitOfWork.UserRepository.AsQueryable().Include(_ => _.Rating).FirstOrDefault(_ => _.UserId == ratingDTO.TargetUserId);
+                this.findNDriveUnitOfWork.UserRepository.AsQueryable().Include(_ => _.Ratings).FirstOrDefault(_ => _.UserId == ratingDTO.TargetUserId);
 
             if (driver == null)
             {
@@ -107,7 +107,7 @@ namespace Services.Services
 
             var rating =
                 this.findNDriveUnitOfWork.RatingsRepository.AsQueryable()
-                    .IncludeAll()
+                    .IncludeChildren()
                     .FirstOrDefault(_ => _.FromUser.UserId == ratingDTO.FromUserId && _.UserId == ratingDTO.TargetUserId);
 
             if (rating != null)
@@ -120,7 +120,6 @@ namespace Services.Services
 
             ratings.Add(ratingDTO.Score);
             driver.AverageRating = ratings.Average();
-            driver.VotesCount += 1;
 
             var newRating = new Rating
                                 {
@@ -131,11 +130,11 @@ namespace Services.Services
                                     LeftOnDate = DateTime.Now
                                 };
 
-            driver.Rating.Add(newRating);
+            driver.Ratings.Add(newRating);
 
             this.findNDriveUnitOfWork.Commit();
 
-            this.notificationManager.SendAppNotification(
+            this.notificationManager.CreateAppNotification(
                 new Collection<User> { driver },
                 "New rating received",
                 string.Format(
@@ -149,7 +148,7 @@ namespace Services.Services
                 NotificationContentType.RatingReceived,
                 newRating.RatingId);
 
-            this.notificationManager.SendAppNotification(
+            this.notificationManager.CreateAppNotification(
                 new Collection<User> { driver },
                 "Rating left.",
                 string.Format(
@@ -217,7 +216,7 @@ namespace Services.Services
         /// </returns>
         public ServiceResponse<List<User>> GetLeaderboard(LoadRangeDTO loadRangeDTO)
         {
-            var users = (from user in this.findNDriveUnitOfWork.UserRepository.AsQueryable()
+            var users = (from user in this.findNDriveUnitOfWork.UserRepository.AsQueryable().Include(_ => _.Ratings)
                                            .OrderByDescending(_ => _.AverageRating)
                                            .Skip(loadRangeDTO.Skip)
                                            .Take(loadRangeDTO.Take).ToList()
@@ -229,7 +228,7 @@ namespace Services.Services
                                      LastName = user.LastName,
                                      UserName = user.UserName,
                                      AverageRating = user.AverageRating,
-                                     VotesCount = user.VotesCount
+                                     VotesCount = user.Ratings.Count
                                  }).ToList();
 
             return ServiceResponseBuilder.Success(users);

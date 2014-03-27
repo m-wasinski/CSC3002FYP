@@ -100,7 +100,7 @@ namespace DomainObjects.Domains
         /// Gets or sets the unread requests count.
         /// </summary>
         [DataMember]
-        public int UnreadRequestsCount { get; set; }
+        public int UndecidedRequestsCount { get; set; }
 
         /// <summary>
         /// Gets or sets the car share status.

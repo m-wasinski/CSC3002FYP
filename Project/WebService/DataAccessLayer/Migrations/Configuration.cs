@@ -46,7 +46,7 @@ namespace DataAccessLayer.Migrations
         {
             
             // Prepare the default profile picture.
-            var img = Image.FromFile(@"C:\\CSC3002FYP\\Initial Prototype\\Resources\\default_picture.png");
+            var img = Image.FromFile(@"C:\\CSC3002FYP\\Project\\Resources\\default_picture.png");
             byte[] arr;
 
             using (var ms = new MemoryStream())

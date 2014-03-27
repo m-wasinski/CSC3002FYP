@@ -145,7 +145,7 @@ namespace Services.Services
                                         : "Friend request denied";
 
             // This notification is sent to the user who replied to the friend request.
-            this.notificationManager.SendAppNotification(
+            this.notificationManager.CreateAppNotification(
                 new List<User> { toUser },
                 notificationTitle,
                 string.Format(
@@ -161,7 +161,7 @@ namespace Services.Services
                 this.random.Next());
 
             // This notification is sent to the user who sent the friend request in the first place.
-            this.notificationManager.SendAppNotification(
+            this.notificationManager.CreateAppNotification(
                 new List<User> { fromUser },
                 notificationTitle,
                 string.Format(
@@ -209,7 +209,7 @@ namespace Services.Services
 
             var pendingFriendRequest =
                 this.findNDriveUnitOfWork.FriendRequestsRepository.AsQueryable()
-                    .IncludeAll()
+                    .IncludeChildren()
                     .FirstOrDefault(
                         _ =>
                         _.FromUser.UserId == fromUser.UserId && _.ToUser.UserId == toUser.UserId
@@ -259,7 +259,7 @@ namespace Services.Services
             const string SenderMessage = "You sent a friend request to user: {0} {1} ({2})";
 
             // Send appropriate notifications to both users.
-            this.notificationManager.SendAppNotification(
+            this.notificationManager.CreateAppNotification(
                 new List<User> { toUser },
                 "New friend request received.",
                 string.Format(
@@ -273,7 +273,7 @@ namespace Services.Services
                 NotificationContentType.FriendRequestReceived,
                 this.random.Next());
 
-            this.notificationManager.SendAppNotification(
+            this.notificationManager.CreateAppNotification(
                 new List<User> { fromUser },
                 "Friend request sent.",
                 string.Format(
@@ -304,7 +304,7 @@ namespace Services.Services
         public ServiceResponse<List<User>> GetFriends(int userId)
         {
             var currentUser = this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                .IncludeFriends()
+                .Include(_ => _.Friends)
                 .FirstOrDefault(_ => _.UserId == userId);
 
             if (currentUser == null)
@@ -349,7 +349,7 @@ namespace Services.Services
             // Retrieve the target FriendRequest from database.
             var friendRequest =
                 this.findNDriveUnitOfWork.FriendRequestsRepository.AsQueryable()
-                    .IncludeAll().FirstOrDefault(_ => _.FriendRequestId == id);
+                    .IncludeChildren().FirstOrDefault(_ => _.FriendRequestId == id);
 
             if (friendRequest == null)
             {

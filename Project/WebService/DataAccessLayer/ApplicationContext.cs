@@ -171,6 +171,8 @@ namespace DataAccessLayer
 
             modelBuilder.Entity<User>().Ignore(t => t.JourneysVisible);
 
+            modelBuilder.Entity<User>().Ignore(t => t.VotesCount);
+
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();   
         }
     }

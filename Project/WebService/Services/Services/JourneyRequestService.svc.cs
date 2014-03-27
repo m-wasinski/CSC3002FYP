@@ -91,7 +91,7 @@ namespace Services.Services
             }
 
             // Retrieve the journey to which this particular request relates.
-            var journey = this.findNDriveUnitOfWork.JourneyRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.JourneyId == journeyRequestDTO.JourneyId);
+            var journey = this.findNDriveUnitOfWork.JourneyRepository.AsQueryable().IncludeChildren().FirstOrDefault(_ => _.JourneyId == journeyRequestDTO.JourneyId);
 
             // Invalid journey Id, return failure immediately.
             if (journey == null)
@@ -115,7 +115,7 @@ namespace Services.Services
 
             // Check if this user already has a pending request for this journey. This is to avoid user spamming the driver with another when no decision is made.
             var hasPendingRequest = this.findNDriveUnitOfWork.JourneyRequestRepository.AsQueryable()
-                    .IncludeAll()
+                    .IncludeChildren()
                     .FirstOrDefault(_ => _.JourneyId == journeyRequestDTO.JourneyId && _.FromUser.UserId == journeyRequestDTO.FromUser.UserId
                         && _.Decision == Decision.Undecided);
 
@@ -130,7 +130,7 @@ namespace Services.Services
                 return ServiceResponseBuilder.Failure("You are the driver in this journey.");
             }
 
-            journey.UnreadRequestsCount += 1;
+            journey.UndecidedRequestsCount += 1;
 
             var targetUser =
                 this.findNDriveUnitOfWork.UserRepository.Find(journey.Driver.UserId);
@@ -172,9 +172,9 @@ namespace Services.Services
                 journey.GeoAddresses.First().AddressLine, 
                 journey.GeoAddresses.Last().AddressLine);
 
-            this.notificationManager.SendAppNotification(new List<User> { targetUser }, "You have received a new journey request.", receiverMessage, requestingUser.UserId, request.JourneyRequestId, NotificationType.Both, NotificationContentType.JourneyRequestReceived, this.random.Next());
+            this.notificationManager.CreateAppNotification(new List<User> { targetUser }, "You have received a new journey request.", receiverMessage, requestingUser.UserId, request.JourneyRequestId, NotificationType.Both, NotificationContentType.JourneyRequestReceived, this.random.Next());
 
-            this.notificationManager.SendAppNotification(new List<User> { requestingUser }, "You have sent a new journey request.", senderMessage, targetUser.UserId, -1, NotificationType.App, NotificationContentType.JourneyRequestSent, this.random.Next());
+            this.notificationManager.CreateAppNotification(new List<User> { requestingUser }, "You have sent a new journey request.", senderMessage, targetUser.UserId, -1, NotificationType.App, NotificationContentType.JourneyRequestSent, this.random.Next());
 
             this.notificationManager.SendGcmTickle(new List<User> { targetUser });
 
@@ -205,7 +205,7 @@ namespace Services.Services
                 return ServiceResponseBuilder.Failure("User with this id does not exist.");
             }
 
-            var journey = this.findNDriveUnitOfWork.JourneyRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.JourneyId == journeyRequestDTO.JourneyId);
+            var journey = this.findNDriveUnitOfWork.JourneyRepository.AsQueryable().IncludeChildren().FirstOrDefault(_ => _.JourneyId == journeyRequestDTO.JourneyId);
 
             if (journey == null)
             {
@@ -262,15 +262,15 @@ namespace Services.Services
             request.DecidedOnDate = DateTime.Now;
             request.Read = true;
 
-            if (journey.UnreadRequestsCount > 0)
+            if (journey.UndecidedRequestsCount > 0)
             {
-                journey.UnreadRequestsCount -= 1;
+                journey.UndecidedRequestsCount -= 1;
             }
 
             this.findNDriveUnitOfWork.Commit();
 
             // Send a message to the requesting user informing them of the driver's decision.
-            this.notificationManager.SendAppNotification(
+            this.notificationManager.CreateAppNotification(
                 new List<User> { newPassenger },
                 journeyRequestDTO.Decision == Decision.Accepted ? "Journey request accepted" : "Journey request denied",
                 message,
@@ -291,7 +291,7 @@ namespace Services.Services
                     journey.GeoAddresses.Last().AddressLine);
 
             // Send a reminder to the driver informing them of their decision regarding this request.
-            this.notificationManager.SendAppNotification(
+            this.notificationManager.CreateAppNotification(
                 new List<User> { journey.Driver },
                 string.Format("You have {0} a journey request.", journeyRequestDTO.Decision == Decision.Accepted ? "accepted" : "denied"),
                 driversMessage,
@@ -321,7 +321,7 @@ namespace Services.Services
         {
             var requests =
                (from journeyRequest in this.findNDriveUnitOfWork.JourneyRequestRepository.AsQueryable()
-                   .IncludeAll()
+                   .IncludeChildren()
                    .Where(_ => _.JourneyId == id).ToList()
                 select new JourneyRequest
                 {
@@ -358,7 +358,7 @@ namespace Services.Services
         {
             var request =
                this.findNDriveUnitOfWork.JourneyRequestRepository.AsQueryable()
-                   .IncludeAll()
+                   .IncludeChildren()
                    .FirstOrDefault(_ => _.JourneyRequestId == id);
 
             if (request == null)

@@ -99,24 +99,6 @@ namespace Services.DTOs
         public VehicleTypes VehicleType { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether search by date.
-        /// </summary>
-        [DataMember]
-        public bool SearchByDate { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether search by time.
-        /// </summary>
-        [DataMember]
-        public bool SearchByTime { get; set; }
-
-        /// <summary>
-        /// Gets or sets the unread requests count.
-        /// </summary>
-        [DataMember]
-        public int UnreadRequestsCount { get; set; }
-
-        /// <summary>
         /// Gets or sets the car share status.
         /// </summary>
         [DataMember]
@@ -129,43 +111,9 @@ namespace Services.DTOs
         public ICollection<JourneyRequest> Requests { get; set; }
 
         /// <summary>
-        /// Gets or sets the creation date.
-        /// </summary>
-        [DataMember]
-        [DataType(DataType.Date)]
-        [Column(TypeName = "DateTime2")]
-        public DateTime CreationDate { get; set; }
-
-        /// <summary>
         /// Gets or sets the preferred payment method.
         /// </summary>
         [DataMember]
         public string PreferredPaymentMethod { get; set; }
-
-        /// <summary>
-        /// Gets or sets the load range.
-        /// </summary>
-        public int LoadRange { get; set; }
-
-        public static explicit operator Journey(JourneyDTO c)
-        {
-            var journey = new Journey
-                              {
-                                  Driver = c.Driver,
-                                  Fee = c.Fee,
-                                  Pets = c.Pets,
-                                  Smokers = c.Smokers,
-                                  Description = c.Description,
-                                  AvailableSeats = c.AvailableSeats,
-                                  CreationDate = c.CreationDate,
-                                  DateAndTimeOfDeparture = c.DateAndTimeOfDeparture,
-                                  GeoAddresses = c.GeoAddresses,
-                                  Private = c.Private,
-                                  PreferredPaymentMethod = c.PreferredPaymentMethod,
-                                  VehicleType = c.VehicleType
-                              };
-
-            return journey;
-        }
     }
 }

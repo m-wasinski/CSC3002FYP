@@ -73,7 +73,7 @@
         /// </returns>
         public ServiceResponse<List<JourneyTemplate>> GetTemplates(int userId)
         {
-            var templates = this.findNDriveUnitOfWork.JourneyTemplateRepository.AsQueryable().IncludeAll().Where(_ => _.UserId == userId).ToList();
+            var templates = this.findNDriveUnitOfWork.JourneyTemplateRepository.AsQueryable().IncludeChildren().Where(_ => _.UserId == userId).ToList();
 
             return ServiceResponseBuilder.Success(templates);
         }
@@ -97,7 +97,7 @@
 
             var user =
                 this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                    .IncludeAll()
+                    .IncludeChildren()
                     .FirstOrDefault(_ => _.UserId == journeyTemplateDTO.UserId);
 
             if (user == null)
@@ -157,7 +157,7 @@
                 return ServiceResponseBuilder.Unauthorised();
             }
 
-            var template = this.findNDriveUnitOfWork.JourneyTemplateRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.JourneyTemplateId == id);
+            var template = this.findNDriveUnitOfWork.JourneyTemplateRepository.AsQueryable().IncludeChildren().FirstOrDefault(_ => _.JourneyTemplateId == id);
 
             if (template == null)
             {
@@ -188,7 +188,7 @@
             }
 
             // Find the relevant journey template object in the database.
-            var template = this.findNDriveUnitOfWork.JourneyTemplateRepository.AsQueryable().IncludeAll().FirstOrDefault(_ => _.JourneyTemplateId == journeyTemplateDTO.JourneyTemplateId);
+            var template = this.findNDriveUnitOfWork.JourneyTemplateRepository.AsQueryable().IncludeChildren().FirstOrDefault(_ => _.JourneyTemplateId == journeyTemplateDTO.JourneyTemplateId);
 
             if (template == null)
             {

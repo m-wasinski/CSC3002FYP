@@ -419,7 +419,7 @@ namespace Services.Services
 
             var user =
                 this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                    .IncludeAll()
+                    .IncludeChildren()
                     .FirstOrDefault(_ => _.UserId == profilePictureUpdaterDTO.UserId);
 
             if (user == null)
@@ -487,7 +487,7 @@ namespace Services.Services
         {
             var retrievingUser =
                 this.findNDriveUnitOfWork.UserRepository.AsQueryable()
-                    .IncludeAll()
+                    .IncludeChildren()
                     .FirstOrDefault(_ => _.UserId == dto.RetrievingUserId);
 
             if (retrievingUser == null)

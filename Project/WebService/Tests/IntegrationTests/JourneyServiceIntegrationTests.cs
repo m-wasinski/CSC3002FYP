@@ -85,7 +85,6 @@ namespace Tests.IntegrationTests
                 GeoAddresses = new List<GeoAddress> { geoAddress1, geoAddress2, geoAddress3 },
                 Description = "Free ride to Dublin!",
                 JourneyStatus = JourneyStatus.OK,
-                CreationDate = DateTime.Now,
                 Fee = 0.00,
                 Smokers = true,
                 Pets = true,
@@ -150,7 +149,7 @@ namespace Tests.IntegrationTests
         {
             var savedJourney =
                     this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
-                        .IncludeAll()
+                        .IncludeChildren()
                         .FirstOrDefault(_ => _.JourneyId == this.journey.JourneyId);
 
             Assert.AreEqual(this.journey.JourneyId, savedJourney.JourneyId, "Journeys should have the same id.");
@@ -263,7 +262,7 @@ namespace Tests.IntegrationTests
 
                 var savedJourney =
                     this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
-                        .IncludeAll()
+                        .IncludeChildren()
                         .FirstOrDefault(_ => _.JourneyId == serviceResponseObject.Result.JourneyId);
 
                 Assert.AreEqual(savedJourney.JourneyId, this.journey.JourneyId, "Journeys should have the same id.");

@@ -49,7 +49,7 @@ public class User {
         return VotesCount;
     }
 
-    private ArrayList<Rating> Rating;
+    private ArrayList<Rating> Ratings;
 
     private int UnreadMessagesCount;
 
@@ -59,8 +59,8 @@ public class User {
         return JourneysVisible;
     }
 
-    public ArrayList<Rating> getRating() {
-        return Rating;
+    public ArrayList<Rating> getRatings() {
+        return Ratings;
     }
 
     public String getLastLogon() {

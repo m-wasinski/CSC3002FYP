@@ -94,7 +94,7 @@ namespace Services.DTOs
         /// Gets or sets the rating.
         /// </summary>
         [DataMember]
-        public virtual List<Rating> Rating { get; set; }
+        public virtual List<Rating> Ratings { get; set; }
 
         /// <summary>
         /// Gets or sets the last logon.

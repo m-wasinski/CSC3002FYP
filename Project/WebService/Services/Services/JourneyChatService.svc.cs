@@ -89,7 +89,7 @@ namespace Services.Services
 
             var journey =
                 this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
-                    .IncludeAll()
+                    .IncludeChildren()
                     .FirstOrDefault(_ => _.JourneyId == journeyMessageDTO.JourneyId);
 
             if (journey == null)
@@ -125,7 +125,7 @@ namespace Services.Services
                 participants.Add(journey.Driver);
             }
 
-            this.notificationManager.SendInstantMessage(
+            this.notificationManager.SendMessage(
                 participants,
                 GcmNotificationType.JourneyChatMessage,
                 -1,
@@ -162,7 +162,7 @@ namespace Services.Services
             }
 
             var messages =
-                this.findNDriveUnitOfWork.JourneyMessageRepository.AsQueryable().IncludeAll()
+                this.findNDriveUnitOfWork.JourneyMessageRepository.AsQueryable().IncludeChildren()
                     .Where(_ => _.JourneyId == journeyMessageRetrieverDTO.JourneyId).OrderByDescending(x => x.SentOnDate)
                     .Skip(journeyMessageRetrieverDTO.LoadRangeDTO.Skip).Take(journeyMessageRetrieverDTO.LoadRangeDTO.Take);
 
@@ -209,7 +209,7 @@ namespace Services.Services
             }
 
             var messages =
-                this.findNDriveUnitOfWork.JourneyMessageRepository.AsQueryable().IncludeAll()
+                this.findNDriveUnitOfWork.JourneyMessageRepository.AsQueryable().IncludeChildren()
                     .Where(_ => _.JourneyId == journeyMessageRetrieverDTO.JourneyId && !_.SeenBy.Select(x => x.UserId).ToList().Contains(user.UserId)).OrderBy(x => x.SentOnDate).ToList();
 
             messages.ForEach(journeyMessage => journeyMessage.SeenBy.Add(user));
@@ -246,7 +246,7 @@ namespace Services.Services
 
             var message =
                 this.findNDriveUnitOfWork.JourneyMessageRepository.AsQueryable()
-                    .IncludeAll()
+                    .IncludeChildren()
                     .FirstOrDefault(_ => _.JourneyMessageId == journeyMessageMarkerDTO.JourneyMessageId);
 
             if (message == null)
@@ -273,7 +273,7 @@ namespace Services.Services
         {
             var journeyMessage =
                 this.findNDriveUnitOfWork.JourneyMessageRepository.AsQueryable()
-                    .IncludeAll()
+                    .IncludeChildren()
                     .FirstOrDefault(_ => _.JourneyMessageId == id);
 
             return journeyMessage == null
@@ -301,7 +301,7 @@ namespace Services.Services
             }
 
             var messages =
-                this.findNDriveUnitOfWork.JourneyMessageRepository.AsQueryable().IncludeAll()
+                this.findNDriveUnitOfWork.JourneyMessageRepository.AsQueryable().IncludeChildren()
                     .Where(_ => _.JourneyId == journeyMessageRetrieverDTO.JourneyId).ToList();
 
             var count = messages.Count(

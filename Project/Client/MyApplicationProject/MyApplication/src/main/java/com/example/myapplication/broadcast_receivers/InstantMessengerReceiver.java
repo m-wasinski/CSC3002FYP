@@ -23,19 +23,28 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 /**
- * Created by Michal on 28/01/14.
+ * Receiver triggered upon the arrival of a new chat message.
+ * This is the default receiver for the app's built in instant messenger. Receiving a broadcast here means
+ * that the relevant chat activity is not currently open as it would have cancelled the broadcast which as a result would not reach this receiver.
+ * Here, we display the notification to alert the user of a new message.
  */
 public class InstantMessengerReceiver extends BroadcastReceiver {
 
     public final String TAG = "Instant Messenger Receiver";
 
+    /**
+     * Called when a new broadcast is received.
+     * @param context - Context passed in from GcmIntentService.
+     * @param intent - Intent containing the message.
+     */
     public void onReceive(final Context context, Intent intent) {
-
 
         final AppManager appManager = ((AppManager)context.getApplicationContext());
         final Bundle bundle = intent.getExtras();
         int pictureId = Integer.parseInt(bundle.getString("pictureId"));
         Log.i(TAG, String.valueOf(pictureId));
+
+        //Retrieve the picture of the user who sent this message.
         if(pictureId != -1)
         {
             new WcfPictureServiceTask(appManager.getBitmapLruCache(), context.getResources().getString(R.string.GetProfilePictureURL),
@@ -53,6 +62,14 @@ public class InstantMessengerReceiver extends BroadcastReceiver {
 
     }
 
+    /***
+     * Displays the notification in the top left corner of the device using Android's
+     * native NotificationManager.
+     * @param context - Context passed in from GcmIntentService.
+     * @param bundle - Bundle containing the message.
+     * @param appManager - Globally available appManager object.
+     * @param bitmap - picture of the user who sent the message.
+     */
     private void showNotification(Context context,Bundle bundle, AppManager appManager, Bitmap bitmap)
     {
         NotificationManager mNotificationManager = (NotificationManager)

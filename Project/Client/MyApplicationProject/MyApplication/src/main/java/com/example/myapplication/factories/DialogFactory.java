@@ -23,10 +23,16 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 
 /**
- * Created by Michal on 19/02/14.
+ * Set of static methods to create and display alert dialogs.
  */
 public class DialogFactory {
 
+    /**
+     * Displays the current activities' help dialog.
+     * @param context - Context of the currently visible activity.
+     * @param title - Title to be displayed on top of the alert dialog.
+     * @param message - Message containing the help content.
+     */
     public static void getHelpDialog(final Context context, String title, String message)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -43,6 +49,11 @@ public class DialogFactory {
         alert.show();
     }
 
+    /**
+     * Asks the user to input a new name for their journey template.
+     * @param context - Context of the currently visible activity.
+     * @param templateNameListener - Callback method to be invoked after the name has been entered.
+     */
     public static void getJourneyTemplateNameDialog(final Context context, final Interfaces.TemplateNameListener templateNameListener)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -86,6 +97,13 @@ public class DialogFactory {
         });
     }
 
+    /**
+     * Displays a simple yes/no dialog.
+     * @param context - Context of the currently visible activity.
+     * @param title - Title to be displayed on top of the alert dialog.
+     * @param message  - Message containing the help content.
+     * @param listener - Callback method to be invoked after the positive (yes) button has been clicked.
+     */
     public static void getYesNoDialog(Context context, String title, String message, final Interfaces.YesNoDialogPositiveButtonListener listener)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -106,6 +124,11 @@ public class DialogFactory {
         alert.show();
     }
 
+    /**
+     * Displays a pre-configured dialog containing search results retrieved from the web service.
+     * @param context - Context of the currently visible activity.
+     * @param searchResults - ArrayList of Journey objects containing the search results received from the server.
+     */
     public static void getJourneySearchResultsDialog(final Context context, final ArrayList<Journey> searchResults)
     {
         Dialog searchResultsDialog = new Dialog(context, R.style.Theme_CustomDialog);
@@ -127,6 +150,10 @@ public class DialogFactory {
         searchResultsDialog.show();
     }
 
+    /**
+     * Displays the terms and conditions dialog at the time of registration.
+     * @param context - Context of the currently visible activity.
+     */
     public static void getTermsAndConditionsDialog(final Context context)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -143,12 +170,5 @@ public class DialogFactory {
 
         AlertDialog alert = builder.create();
         alert.show();
-    }
-
-    public static void getDateDialog(final Context context, String date, Interfaces.DateSelectedListener listener)
-    {
-        boolean setDate;
-
-
     }
 }

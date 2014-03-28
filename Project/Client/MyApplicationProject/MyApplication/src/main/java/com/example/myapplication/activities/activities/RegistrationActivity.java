@@ -97,7 +97,7 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
         if (serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             appManager.setSessionId(session);
-            appManager.login(serviceResponse.Result);
+            appManager.setUser(serviceResponse.Result);
             Toast.makeText(this, "Registered successfully!", Toast.LENGTH_LONG).show();
             startActivity(new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
             finish();

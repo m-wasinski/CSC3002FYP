@@ -125,7 +125,7 @@ public class Journey {
     }
 
     private int AvailableSeats;
-    private ArrayList<User> Participants;
+    private ArrayList<User> Passengers;
     private boolean Smokers;
     private boolean Pets;
     private int VehicleType;

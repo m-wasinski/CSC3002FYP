@@ -22,11 +22,11 @@ public class CustomDateTimePicker {
 
     /**
      * Shows the date picker dialog.
-     * @param context
-     * @param calendar
-     * @param listener
-     * @param resettable
-     * @param setMinDate
+     * @param context - Context from currently visible activity.
+     * @param calendar - Calendar object passed from the activity.
+     * @param listener - Callback to be invoked after date is selected.
+     * @param resettable - Indicates whether date can be set back to null.
+     * @param setMinDate - Indicates whether a smallest minimum date of today must be applied.
      */
     public void showDatePickerDialog(Context context, final Calendar calendar, final Interfaces.DateSelectedListener listener, boolean resettable, boolean setMinDate)
     {
@@ -94,10 +94,10 @@ public class CustomDateTimePicker {
 
     /**
      * Shows the time picker dialog.
-     * @param context
-     * @param calendar
-     * @param listener
-     * @param resettable
+     * @param context - Context from currently visible activity.
+     * @param calendar - Calendar object passed from the activity.
+     * @param listener - Callback to be invoked after time is selected.
+     * @param resettable - Indicates whether time can be set back to null.
      */
     public void showTimePickerDialog(Context context, final Calendar calendar, final Interfaces.TimeSelectedListener listener, boolean resettable)
     {

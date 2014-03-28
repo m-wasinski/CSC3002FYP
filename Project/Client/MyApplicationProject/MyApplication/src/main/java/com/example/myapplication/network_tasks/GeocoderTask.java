@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Async Task which uses Geocoder behind the scenes to translate addresses into latitude and longitude values and vice-versa.
+ * Async Task which uses Geocoder behind the scenes to
+ * translate addresses into latitude and longitude values and vice-versa.
  */
 public class GeocoderTask extends AsyncTask<GeocoderParams, Void, MarkerOptions> {
 
@@ -36,6 +37,13 @@ public class GeocoderTask extends AsyncTask<GeocoderParams, Void, MarkerOptions>
     private MarkerType markerType;
     private double perimeter;
 
+    /***
+     * Initialises a new instance of GeocoderTask.
+     * @param context - Context from currently visible activity.
+     * @param geoCoderFinishedCallBack - Callback method to be invoked once the address translation process is completed.
+     * @param markerType - Identifies the marker type for the address that is being retrieved. Departure/Destination/Waypoint.
+     * @param perimeter - The perimeter in miles within which all search results should be considered.
+     */
     public GeocoderTask(Context context, GeoCoderFinishedCallBack geoCoderFinishedCallBack, MarkerType markerType, double perimeter)
     {
         super();

@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.util.Log;
 import android.util.LruCache;
@@ -32,120 +31,119 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 /**
- * Created by Michal on 01/01/14.
+ * Globally available object providing access to various components required by other classes throughout the program.
+ * This object resembles a singleton behaviour meaning that it is only instantiated once and each new reference
+ * points to exactly the same object in memory.
  */
 public class AppManager extends Application {
 
-
+    // Represents currently logged in user.
     private User user;
+
+    // Represents the newly generated identifier for this session.
     private String uuid;
+
+    // Represents current session id.
     private String sessionId;
+
+    // Represents current GCM registration id.
     private String registrationId;
+
+    // Represents the id number of this device.
     private String uniqueDeviceId;
+
+    // SharedPreferences used to persist data.
     private SharedPreferences sharedPreferences;
-    private WifiManager wifiManager;
-    private WifiManager.WifiLock wifiLock;
+
     private ArrayList<Integer> notificationIds;
     private LruCache<String, Bitmap> bitmapLruCache;
 
     public void addNotificationId(Integer id)
     {
-        if(this.notificationIds == null)
+        if(notificationIds == null)
         {
-            this.notificationIds = new ArrayList<Integer>();
+            notificationIds = new ArrayList<Integer>();
         }
 
-        this.notificationIds.add(id);
+        notificationIds.add(id);
     }
 
     public Boolean hasAppBeenKilled()
     {
-        return this.user == null && this.getSessionId().endsWith("0");
+        return user == null && getSessionId().endsWith("0");
     }
 
     public void setSessionId(String sessionId)
     {
         this.sessionId = sessionId;
 
-        if(this.sharedPreferences == null)
+        if(sharedPreferences == null)
         {
-            this.sharedPreferences = this.retrieveSharedPreferences();
+            sharedPreferences = retrieveSharedPreferences();
         }
 
-        SharedPreferences.Editor editor = this.sharedPreferences.edit();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(SharedPreferencesConstants.PROPERTY_SESSION_ID, sessionId);
         editor.commit();
     }
 
-    public void login(User u)
-    {
-        if(this.wifiLock == null)
-        {
-            this.retrieveWifiLock();
-        }
-
-        this.wifiLock.acquire();
-
-        this.setUser(u);
-    }
-
     public void setUser(User u)
     {
-        this.user = u;
+        user = u;
 
-        if(this.sharedPreferences == null)
+        if(sharedPreferences == null)
         {
-            this.sharedPreferences = this.retrieveSharedPreferences();
+            sharedPreferences = retrieveSharedPreferences();
         }
 
-        SharedPreferences.Editor editor = this.sharedPreferences.edit();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(SharedPreferencesConstants.PROPERTY_USER, u == null ? "" : new Gson().toJson(user));
         editor.commit();
     }
 
     public LruCache<String, Bitmap> getBitmapLruCache()
     {
-        if(this.bitmapLruCache == null)
+        if(bitmapLruCache == null)
         {
-            this.bitmapLruCache = this.createBitmapLruCache();
+            bitmapLruCache = createBitmapLruCache();
         }
 
-        return this.bitmapLruCache;
+        return bitmapLruCache;
     }
 
     public User getUser()
     {
-        if(this.user == null)
+        if(user == null)
         {
-            if(this.sharedPreferences == null)
+            if(sharedPreferences == null)
             {
-                this.sharedPreferences = this.retrieveSharedPreferences();
+                sharedPreferences = retrieveSharedPreferences();
             }
 
-            this.user = new Gson().fromJson(sharedPreferences.getString(SharedPreferencesConstants.PROPERTY_USER, ""), new TypeToken<User>() {}.getType());
+            user = new Gson().fromJson(sharedPreferences.getString(SharedPreferencesConstants.PROPERTY_USER, ""), new TypeToken<User>() {}.getType());
         }
 
-        return this.user;
+        return user;
     }
 
     public void setUUID(String u)
     {
-        this.uuid = u;
+        uuid = u;
     }
 
     public String getUUID()
     {
-        return this.uuid;
+        return uuid;
     }
 
     public String getSessionId()
     {
-        if(this.sessionId == null)
+        if(sessionId == null)
         {
-            this.sessionId = this.retrieveSessionId();
+            sessionId = retrieveSessionId();
         }
 
-        return this.sessionId;
+        return sessionId;
     }
 
     /**
@@ -158,42 +156,45 @@ public class AppManager extends Application {
      */
     public String getRegistrationId()
     {
-        if(this.registrationId == null)
+        if(registrationId == null)
         {
-            this.registrationId = this.retrieveRegistrationId();
+            registrationId = retrieveRegistrationId();
         }
 
-        return this.registrationId;
+        return registrationId;
     }
 
     public void setRegistrationId(String registrationId)
     {
         this.registrationId = registrationId;
 
-        if(this.sharedPreferences == null)
+        if(sharedPreferences == null)
         {
-            this.sharedPreferences = this.retrieveSharedPreferences();
+            sharedPreferences = retrieveSharedPreferences();
         }
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(SharedPreferencesConstants.PROPERTY_REG_ID, registrationId);
-        editor.putInt(SharedPreferencesConstants.PROPERTY_APP_VERSION, this.getAppVersion());
+        editor.putInt(SharedPreferencesConstants.PROPERTY_APP_VERSION, getAppVersion());
         editor.commit();
     }
     /**
      * @return Application's version code from the {@code PackageManager}.
      */
     public int getAppVersion() {
-        try {
-            PackageInfo packageInfo = this.getPackageManager()
-                    .getPackageInfo(this.getPackageName(), 0);
+        try
+        {
+            PackageInfo packageInfo = getPackageManager()
+                    .getPackageInfo(getPackageName(), 0);
 
             return packageInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            // should never happen
+        }
+        catch (PackageManager.NameNotFoundException e)
+        {
             e.printStackTrace();
             throw new RuntimeException("Could not get package name: " + e);
-        }catch (NullPointerException e)
+        }
+        catch (NullPointerException e)
         {
             e.printStackTrace();
             throw new RuntimeException("Could not get package name: " + e);
@@ -202,28 +203,38 @@ public class AppManager extends Application {
 
     public String getUniqueDeviceId()
     {
-        if(this.uniqueDeviceId == null)
+        if(uniqueDeviceId == null)
         {
-            this.uniqueDeviceId = this.retrieveUniqueDeviceId();
+            uniqueDeviceId = retrieveUniqueDeviceId();
         }
 
-        return this.uniqueDeviceId;
+        return uniqueDeviceId;
     }
 
     public List<Pair> getAuthorisationHeaders()
     {
-        return asList(new Pair(SessionConstants.DEVICE_ID, this.getUniqueDeviceId()),
-                new Pair(SessionConstants.SESSION_ID, this.getSessionId()),
-                new Pair(SessionConstants.UUID, this.getUUID()));
+        return asList(new Pair(SessionConstants.DEVICE_ID, getUniqueDeviceId()),
+                new Pair(SessionConstants.SESSION_ID, getSessionId()),
+                new Pair(SessionConstants.UUID, getUUID()));
     }
 
+    /**
+     * Responsible for logging the current user out.
+     * @param force - Determines whether current session between the app and the web service
+     *              should be invalidated and the user should be permanently logged out. This means that even though
+     *              the user has had a permanent session established through auto-login, they will be asked to log-in again
+     *              if the force boolean is set to true.
+     * @param setOfflineOnServer - Determines whether user's status should be changed to
+     *                           offline and their GCM registration id should be set to null.
+     *
+     */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void logout(final boolean force, boolean setOfflineOnServer)
     {
         if(setOfflineOnServer)
         {
             new WcfPostServiceTask<Boolean>(this, getResources().getString(R.string.UserLogoutURL),
-                    force, new TypeToken<ServiceResponse<Boolean>>(){}.getType(), this.getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
+                    force, new TypeToken<ServiceResponse<Boolean>>(){}.getType(), getAuthorisationHeaders(), new WCFServiceCallback<Boolean, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Boolean> serviceResponse, Void parameter) {
                 }
@@ -239,52 +250,45 @@ public class AppManager extends Application {
 
         if(force)
         {
-
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-
-            if(this.wifiLock== null)
-            {
-                this.retrieveWifiLock();
-            }
-
-            if(this.wifiLock.isHeld())
-            {
-                this.wifiLock.release();
-            }
-
         }
     }
 
+    /**
+     * When the user logs out, we must remember to clear
+     * all notifications that have not been opened yet.
+     */
     private void clearNotifications()
     {
         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(getApplicationContext().NOTIFICATION_SERVICE);
 
-
-        if(this.notificationIds != null)
+        if(notificationIds != null)
         {
-            for(Integer id : this.notificationIds)
+            for(Integer id : notificationIds)
             {
-                Log.i(this.getClass().getSimpleName(), "Notification: " + id + " is being cleared");
+                Log.i(getClass().getSimpleName(), "Notification: " + id + " is being cleared");
                 notificationManager.cancel(id);
             }
         }
     }
 
+    /**
+     * Since the AppManager extends Application, its creation happens along with the
+     * initialisation of the entire app.
+     */
     @Override
     public void onCreate() {
         super.onCreate();
-        this.sharedPreferences = this.retrieveSharedPreferences();
-        this.registrationId = this.retrieveRegistrationId();
-        this.sessionId = this.retrieveSessionId();
-        this.uniqueDeviceId = this.retrieveUniqueDeviceId();
-        this.wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        this.wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "LockTag");
-        this.notificationIds = new ArrayList<Integer>();
-        this.bitmapLruCache = this.createBitmapLruCache();
+        sharedPreferences = retrieveSharedPreferences();
+        registrationId = retrieveRegistrationId();
+        sessionId = retrieveSessionId();
+        uniqueDeviceId = retrieveUniqueDeviceId();
+        notificationIds = new ArrayList<Integer>();
+        bitmapLruCache = createBitmapLruCache();
     }
 
     private String retrieveUniqueDeviceId()
@@ -300,41 +304,35 @@ public class AppManager extends Application {
 
     private String retrieveSessionId()
     {
-        if(this.sharedPreferences == null)
+        if(sharedPreferences == null)
         {
-            this.sharedPreferences = this.retrieveSharedPreferences();
+            sharedPreferences = retrieveSharedPreferences();
         }
 
         String session = sharedPreferences.getString(SessionConstants.SESSION_ID, "");
 
-        this.sessionId = session == null ? "" : session;
+        sessionId = session == null ? "" : session;
 
-        return this.sessionId;
+        return sessionId;
     }
 
     private String retrieveRegistrationId()
     {
-        if(this.sharedPreferences == null)
+        if(sharedPreferences == null)
         {
-            this.sharedPreferences = this.retrieveSharedPreferences();
+            sharedPreferences = retrieveSharedPreferences();
         }
 
         String registrationId = sharedPreferences.getString(SharedPreferencesConstants.PROPERTY_REG_ID, "");
 
-        this.registrationId = registrationId == null ? "0" : registrationId;
+        registrationId = registrationId == null ? "0" : registrationId;
 
-        return this.registrationId;
+        return registrationId;
     }
 
     private SharedPreferences retrieveSharedPreferences()
     {
         return getSharedPreferences(SharedPreferencesConstants.GLOBAL_APP_DATA, Context.MODE_PRIVATE);
-    }
-
-    private void retrieveWifiLock()
-    {
-        this.wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        this.wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "LockTag");
     }
 
     private LruCache<String, Bitmap> createBitmapLruCache()

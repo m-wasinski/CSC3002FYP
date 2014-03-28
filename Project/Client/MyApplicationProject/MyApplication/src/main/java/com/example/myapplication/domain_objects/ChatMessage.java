@@ -49,12 +49,12 @@ public class ChatMessage {
 
     public ChatMessage(int senderId, int recipientId, String messageBody, String sentOnDate, Boolean read, String recipientUserName, String senderUserName)
     {
-        this.SenderId = senderId;
-        this.RecipientId = recipientId;
-        this.MessageBody = messageBody;
-        this.SentOnDate = sentOnDate;
-        this.Read = read;
-        this.RecipientUserName = recipientUserName;
-        this.SenderUserName = senderUserName;
+        SenderId = senderId;
+        RecipientId = recipientId;
+        MessageBody = messageBody;
+        SentOnDate = sentOnDate;
+        Read = read;
+        RecipientUserName = recipientUserName;
+        SenderUserName = senderUserName;
     }
 }

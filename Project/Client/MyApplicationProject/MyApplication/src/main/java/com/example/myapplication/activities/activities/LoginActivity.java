@@ -119,7 +119,7 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
         if (serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             appManager.setSessionId(session);
-            appManager.login(serviceResponse.Result);
+            appManager.setUser(serviceResponse.Result);
             startActivity(new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
             finish();
         }

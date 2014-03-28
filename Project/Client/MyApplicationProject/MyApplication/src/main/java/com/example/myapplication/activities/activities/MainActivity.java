@@ -99,7 +99,7 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
     @Override
     public void onServiceCallCompleted(ServiceResponse<User> serviceResponse, Void v)
     {
-        appManager.login(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS ? serviceResponse.Result : null);
+        appManager.setUser(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS ? serviceResponse.Result : null);
 
         startActivity(new Intent(this, serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS ? HomeActivity.class : LoginActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));

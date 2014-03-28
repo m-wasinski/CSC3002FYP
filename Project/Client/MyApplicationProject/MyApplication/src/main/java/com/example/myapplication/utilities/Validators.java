@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * A set of static method to validate email format, passwords etc...
+ * A set of static method to validate user's input.
  */
 public class Validators {
 

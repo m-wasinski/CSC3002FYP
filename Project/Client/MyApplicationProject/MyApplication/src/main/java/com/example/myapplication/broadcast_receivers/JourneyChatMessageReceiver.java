@@ -12,14 +12,22 @@ import android.support.v4.app.NotificationCompat;
 import com.example.myapplication.R;
 import com.example.myapplication.activities.activities.JourneyChatActivity;
 import com.example.myapplication.app_management.AppManager;
-
 /**
- * Created by Michal on 12/02/14.
+ * Receiver triggered upon the arrival of a new message in one of the journey chat roons.
+ * This is the default receiver for the app's built in chat room functionality.
+ * Receiving a broadcast here means that the relevant chat activity is not
+ * currently open as it would have cancelled the broadcast which as a result would not reach this receiver.
+ * Here, we display the notification to alert the user of a new message.
  */
 public class JourneyChatMessageReceiver extends BroadcastReceiver {
 
     public final String TAG = this.getClass().getSimpleName();
 
+    /**
+     * Called when a new broadcast is received.
+     * @param context - Context passed in from GcmIntentService.
+     * @param intent - Intent containing the message.
+     */
     public void onReceive(Context context, Intent intent) {
 
         AppManager appManager = ((AppManager)context.getApplicationContext());

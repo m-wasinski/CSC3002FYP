@@ -27,7 +27,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 
 /**
- * Service called by the GcmBroadcastReceiver, responsible for processing GCM notifications.
+ * Service triggered by GcmBroadcastReceiver upon arrival of a new GCM notification.
  */
 public class GcmIntentService extends IntentService {
 
@@ -37,6 +37,10 @@ public class GcmIntentService extends IntentService {
         super("GcmIntentService");
     }
 
+    /**
+     * Here's we analyse the incoming the incoming GCM notification and determine its contents.
+     * @param intent - Intent passed from the GcmBroadcastReceiver.
+     */
     @Override
     protected void onHandleIntent(Intent intent) {
 
@@ -64,6 +68,7 @@ public class GcmIntentService extends IntentService {
                     return;
                 }
 
+                // Determine the type of notification that has been received.
                 switch (requestType)
                 {
                     case GcmNotificationTypes.NOTIFICATION_TICKLE:

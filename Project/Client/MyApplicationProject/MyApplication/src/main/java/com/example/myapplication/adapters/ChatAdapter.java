@@ -16,7 +16,7 @@ import com.example.myapplication.utilities.DateTimeHelper;
 
 import java.util.ArrayList;
 /**
- * Created by Michal on 18/01/14.
+ *
  */
 public class ChatAdapter extends BaseAdapter {
 

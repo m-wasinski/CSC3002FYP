@@ -1,7 +1,7 @@
 package com.example.myapplication.enums;
 
 /**
- * Created by Michal on 05/02/14.
+ * Identifies the different marker types used when showing journey locations on map.
  */
 public enum MarkerType {
     Departure,

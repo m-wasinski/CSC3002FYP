@@ -137,10 +137,10 @@ public class NotificationProcessor
 
     /**
      * Calls the web service to mark the notification which is passed in as one of the arguments as delivered.
-     * @param context
-     * @param appManager
-     * @param notification
-     * @param listener
+     * @param context - Context passed in from currently visible activity.
+     * @param appManager - The globally available app manager object.
+     * @param notification - The notification to be marked as delivered.
+     * @param listener - Callback method to be invoked after response from web service has been retrieved.
      */
     public void MarkDelivered(Context context, AppManager appManager, Notification notification, final WCFServiceCallback<Void, Void> listener)
     {
@@ -216,12 +216,12 @@ public class NotificationProcessor
 
         /**
          * Shows the given notification by using Android's NotificationManager.
-         * @param appManager
-         * @param context
-         * @param notification
-         * @param object
-         * @param c
-         * @param intentConstant
+         * @param appManager  - The globally available app manager object.
+         * @param context - Context passed in from currently visible activity.
+         * @param notification - Notification to be displayed.
+         * @param object - Object to be passed to pending intent which is fired once user clicks on the notification.
+         * @param c - The class file identifying the class to be invoked once user clicks on the notification.
+         * @param intentConstant - Used to indicate the type of object being passed in the intent to the pending intent activity.
          */
         public void showNotification(AppManager appManager, Context context, Notification notification, T object, Class c, String intentConstant)
         {

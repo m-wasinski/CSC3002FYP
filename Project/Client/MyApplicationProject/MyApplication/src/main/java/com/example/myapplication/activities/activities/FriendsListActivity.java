@@ -135,9 +135,11 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
         ServiceTaskFactory.getFriendsList(this, appManager.getAuthorisationHeaders(), appManager.getUser().getUserId(), this).execute();
     }
 
-    /**
+    /***
      * Called when friends list have been retrieved from the server.
-     **/
+     * @param serviceResponse - Service response from the web service containing list of friends in the Result field.
+     * @param v - empty parameter.
+     */
     @Override
     public void onServiceCallCompleted(final ServiceResponse<ArrayList<User>> serviceResponse, Void v) {
         progressBar.setVisibility(View.GONE);
@@ -152,9 +154,10 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
         }
     }
 
-    /**
+    /***
      * Displays chat activity after clicking on one of the contacts.
-     **/
+     * @param friend - represents the user that has been clicked on.
+     */
     private void showInstantMessengerActivity(User friend)
     {
         Bundle extras = new Bundle();
@@ -195,6 +198,14 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
         showInstantMessengerActivity(friends.get(i));
     }
 
+    /***
+     * Detects when a user has performed a long click on one of their friends from the list.
+     * @param adapterView
+     * @param view
+     * @param i
+     * @param l
+     * @return
+     */
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
         final String items[] = {"Show profile", "Start chat", "Delete from friends list"};

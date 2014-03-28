@@ -9,7 +9,7 @@ import com.example.myapplication.domain_objects.GeoAddress;
 import java.util.ArrayList;
 
 /**
- * Created by Michal on 01/12/13.
+ * Contains a set of helper methods used at various places in the program.
  */
 public class Utilities {
 
@@ -33,6 +33,11 @@ public class Utilities {
         return "Private";
     }
 
+    /**
+     * Retrieves a formatted journey header for all journey locations.
+     * @param addresses - list of all addresses in a journey.
+     * @return
+     */
     public static String getJourneyHeader(ArrayList<GeoAddress> addresses)
     {
         String header = "From: " + addresses.get(0).getAddressLine();
@@ -57,6 +62,13 @@ public class Utilities {
         return header;
     }
 
+    /**
+     * Checks whether network connection is currently available.
+     * Network tasks use call this in their pre-execute method to determine
+     * if network connection is available prior to making a web call.
+     * @param context - Context from currently active activity.
+     * @return
+     */
     public static Boolean isNetworkAvailable(Context context)  {
 
         try{

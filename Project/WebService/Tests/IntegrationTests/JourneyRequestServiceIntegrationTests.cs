@@ -277,7 +277,66 @@
         [TestMethod]
         public void TestDenyRequest()
         {
-            
+            Assert.IsNotNull(this.journeyRequest);
+            Assert.IsNotNull(this.journeyRequestDTO);
+
+            // Accept any SSL certificates.
+            ServicePointManager.ServerCertificateValidationCallback = (obj, certificate, chain, errors) => true;
+
+            this.journeyRequestDTO.Decision = Decision.Denied;
+            this.journeyRequestDTO.JourneyRequestId = this.journeyRequest.JourneyRequestId;
+
+            //serialise the registerDTO object into a json string.
+            var serialisedRegisterDTO = JsonConvert.SerializeObject(
+                this.journeyRequestDTO,
+                typeof(JourneyRequestDTO),
+                Formatting.Indented,
+                new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.MicrosoftDateFormat });
+
+            var webRequest = WebRequest.Create("https://findndrive.no-ip.co.uk/Services/JourneyRequestService.svc/process") as HttpWebRequest;
+            Assert.IsNotNull(webRequest);
+
+            webRequest.Method = "POST";
+
+            // Add the necessary HTTP headers.
+            webRequest.ContentType = "application/json";
+            webRequest.Headers.Add(SessionConstants.SESSION_ID, this.driverSession.SessionId);
+            webRequest.Headers.Add(SessionConstants.UUID, this.driverSession.Uuid);
+            webRequest.Headers.Add(SessionConstants.DEVICE_ID, "test");
+
+
+            var bytes = Encoding.UTF8.GetBytes(serialisedRegisterDTO);
+            webRequest.ContentLength = bytes.Length;
+            var outputStream = webRequest.GetRequestStream();
+            outputStream.Write(bytes, 0, bytes.Length);
+            outputStream.Close();
+
+            // Make call to the service and retrieve response.
+            var webResponse = (HttpWebResponse)webRequest.GetResponse();
+
+            // Deserialise and analyse the response returned from the server.
+            using (var sr = new StreamReader(webResponse.GetResponseStream()))
+            {
+                var serviceResponseString = sr.ReadToEnd();
+
+                Assert.IsNotNull(serviceResponseString);
+                Assert.AreNotEqual(string.Empty, serviceResponseString);
+
+                var serviceResponseObject =
+                    JsonConvert.DeserializeObject<ServiceResponse>(serviceResponseString);
+
+                Assert.AreEqual(
+                    ServiceResponseCode.Success,
+                    serviceResponseObject.ServiceResponseCode,
+                    "Service respponse code must be equal to success.");
+
+                this.journey =
+                    this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
+                        .Include(_ => _.Passengers)
+                        .FirstOrDefault(_ => _.JourneyId == this.journey.JourneyId);
+
+                Assert.AreEqual(0, this.journey.Passengers.Count);
+            }
         }
     }
 }

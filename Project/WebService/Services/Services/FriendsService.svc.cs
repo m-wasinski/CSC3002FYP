@@ -108,6 +108,11 @@ namespace Services.Services
             var targetRequest = this.findNDriveUnitOfWork.FriendRequestsRepository.Find(
                 friendRequestDTO.FriendRequestId);
 
+            if (targetRequest == null)
+            {
+                return ServiceResponseBuilder.Failure("Invalid friend request id.");
+            }
+
             // Check if the request has already been replied to.
             if (targetRequest.Decision != Decision.Undecided)
             {

@@ -105,14 +105,6 @@
                 return ServiceResponseBuilder.Failure("Invalid user id.");
             }
 
-            var templateExists =
-                this.findNDriveUnitOfWork.JourneyTemplateRepository.AsQueryable()
-                    .Any(_ => _.Alias.Equals(journeyTemplateDTO.Alias));
-
-            if (templateExists)
-            {
-                return ServiceResponseBuilder.Failure("Template with this name alrady exists!");
-            }
 
             // Create new journey template object.
             var newTemplate = new JourneyTemplate

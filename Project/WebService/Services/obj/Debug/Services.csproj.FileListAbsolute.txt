@@ -145,3 +145,4 @@ C:\CSC3002FYP\Project\WebService\Services\bin\WebMatrix.Data.xml
 C:\CSC3002FYP\Project\WebService\Services\bin\WebMatrix.WebData.xml
 C:\CSC3002FYP\Project\WebService\Services\obj\Debug\Services.dll
 C:\CSC3002FYP\Project\WebService\Services\obj\Debug\Services.pdb
+C:\CSC3002FYP\Project\WebService\Services\bin\Services.dll.config

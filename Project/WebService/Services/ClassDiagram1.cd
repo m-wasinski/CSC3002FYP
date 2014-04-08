@@ -1,0 +1,457 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Services.DTOs.ChatMessageDTO">
+    <Position X="3" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EIAAAAAQgAAAAAAAAAAAAAAAAAABAAAAAAABAAACAAA=</HashCode>
+      <FileName>DTOs\ChatMessageDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.ChatMessageRetrieverDTO">
+    <Position X="4.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAAAAAAAAAAAAAAAABAAAAAAAAAAQAAAA=</HashCode>
+      <FileName>DTOs\ChatMessageRetrieverDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.FriendDeletionDTO">
+    <Position X="11.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DTOs\FriendDeletionDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.FriendDTO">
+    <Position X="13.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>DTOs\FriendDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.FriendRequestDTO">
+    <Position X="3" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAgAAAAAAAAAAAAAAAAAAAAAQAAAAAAICAAAAA=</HashCode>
+      <FileName>DTOs\FriendRequestDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.JourneyDTO">
+    <Position X="10" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAQgAAAkIgAAAAAAEAAggAJAAAQAABACAAA=</HashCode>
+      <FileName>DTOs\JourneyDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.JourneyMessageDTO">
+    <Position X="11.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAAAAIAIAAAAAAgABAAAAAAAAQAACAAA=</HashCode>
+      <FileName>DTOs\JourneyMessageDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.JourneyMessageMarkerDTO">
+    <Position X="13.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAgAAgAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DTOs\JourneyMessageMarkerDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.JourneyMessageRetrieverDTO">
+    <Position X="3" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAgAAAAAAAAAAAAAAAQAAAA=</HashCode>
+      <FileName>DTOs\JourneyMessageRetrieverDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.JourneyRequestDTO">
+    <Position X="4.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAIAAAAAAAAAEAAQAAAAAAICAAAAA=</HashCode>
+      <FileName>DTOs\JourneyRequestDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.JourneyTemplateDTO">
+    <Position X="10" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAIAQEAAAIAAAIkAAAEAAwAACAAAAJAAAQAAAACAAA=</HashCode>
+      <FileName>DTOs\JourneyTemplateDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.JourneyUserDTO">
+    <Position X="13.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DTOs\JourneyUserDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.LoadRangeDTO">
+    <Position X="3" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAEAA=</HashCode>
+      <FileName>DTOs\LoadRangeDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.LoginDTO">
+    <Position X="4.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAAAAAACAQAAAAAgAAA=</HashCode>
+      <FileName>DTOs\LoginDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.NotificationDTO">
+    <Position X="13.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAgAAAAAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>DTOs\NotificationDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.NotificationMarkerDTO">
+    <Position X="4.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAgAAAAAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>DTOs\NotificationMarkerDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.PrivacySettingsUpdaterDTO">
+    <Position X="10" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAIABAAAAAAAAAgAAAAAAAAABAAAAAAIIAA=</HashCode>
+      <FileName>DTOs\PrivacySettingsUpdaterDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.ProfilePictureUpdaterDTO">
+    <Position X="11.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DTOs\ProfilePictureUpdaterDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.RatingDTO">
+    <Position X="13.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAgAAAAAAIAAgAAAACAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DTOs\RatingDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.RegisterDTO">
+    <Position X="4.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAAAAAACAQAAAAAAAAA=</HashCode>
+      <FileName>DTOs\RegisterDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.UserDTO">
+    <Position X="3" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAEBAAAAAiAAgAAQAhAAAAQAAAAASAAAggAAAg=</HashCode>
+      <FileName>DTOs\UserDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.DTOs.UserRetrieverDTO">
+    <Position X="4.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DTOs\UserRetrieverDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.Properties.Resources">
+    <Position X="6.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABEAAAAQAAAAAAAAAAAAAAAoA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.ServiceHostUtils.CustomEndpointBehaviour" BaseTypeListCollapsed="true">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAQAACAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ServiceHostUtils\CustomEndpointBehaviour.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Services.ServiceHostUtils.CustomMessageInspector" BaseTypeListCollapsed="true">
+    <Position X="8.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAAAAAAAIAAAAAAIAAAAEAAAAAAA=</HashCode>
+      <FileName>ServiceHostUtils\CustomMessageInspector.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Services.ServiceHostUtils.MyServiceHost">
+    <Position X="10" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ServiceHostUtils\MyServiceHost.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.ServiceHostUtils.MyServiceHostFactory">
+    <Position X="11.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ServiceHostUtils\MyServiceHostFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.ServiceHostUtils.MyInstanceProvider" BaseTypeListCollapsed="true">
+    <Position X="8.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACCAQAACAAAgAAAAAAAAABAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>ServiceHostUtils\MyServiceHostFactory.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Services.ServiceResponses.ServiceResponse">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>ServiceResponses\ServiceResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.ServiceResponses.ServiceResponse&lt;T&gt;">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ServiceResponses\ServiceResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.Services.FriendsService" BaseTypeListCollapsed="true">
+    <Position X="4.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAABAAiBAAACAAAAAAAAAAAQAAAAAAEA=</HashCode>
+      <FileName>Services\FriendsService.svc.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Services.Services.JourneyChatService" BaseTypeListCollapsed="true">
+    <Position X="8.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAgAgAAAAACBgABAACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\JourneyChatService.svc.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Services.Services.JourneyRequestService" BaseTypeListCollapsed="true">
+    <Position X="6.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAiBAAACAAAAAAAAIAAQAAACAAAA=</HashCode>
+      <FileName>Services\JourneyRequestService.svc.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Services.Services.JourneyService" BaseTypeListCollapsed="true">
+    <Position X="8.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAgACAAACBAAAAAAAAAAAgAAgwAIBAAAAA=</HashCode>
+      <FileName>Services\JourneyService.svc.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Services.Services.JourneyTemplateService" BaseTypeListCollapsed="true">
+    <Position X="11.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAEAgAAAAACBAAAAAAAAACAAAAEQAAAAAAAA=</HashCode>
+      <FileName>Services\JourneyTemplateService.svc.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Services.Services.MessengerService" BaseTypeListCollapsed="true">
+    <Position X="6.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIgAAAAAQgAAAAACBgABAAAAAAAAAAAAQAAAAIAAA=</HashCode>
+      <FileName>Services\MessengerService.svc.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Services.Services.NotificationService" BaseTypeListCollapsed="true">
+    <Position X="6.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIEAAAAAAAIACBAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\NotificationService.svc.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Services.Services.RatingService" BaseTypeListCollapsed="true">
+    <Position X="3" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAgAgAAAAACBAAAAAAAAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>Services\RatingService.svc.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Services.Services.SearchService" BaseTypeListCollapsed="true">
+    <Position X="8.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAACBAAAAAAAAAAAAAAAAAAgAAAAA=</HashCode>
+      <FileName>Services\SearchService.svc.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Services.Services.UserService" BaseTypeListCollapsed="true">
+    <Position X="10.25" Y="12.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAABgAAAAACBEAAAAAQAAAAIQEgAAAAAAACA=</HashCode>
+      <FileName>Services\UserService.svc.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.997" Collapsed="true" />
+  </Class>
+  <Class Name="Services.ServiceUtils.EmailUtils">
+    <Position X="10" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAIAAAgAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>ServiceUtils\EmailUtils.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.ServiceUtils.HaversineCalculator">
+    <Position X="6.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ServiceUtils\HaversineCalculator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.ServiceUtils.NotificationManager">
+    <Position X="3" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAggAAAACAggAAAAAAAABAAAwAQAIAAAAA=</HashCode>
+      <FileName>ServiceUtils\NotificationManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.ServiceUtils.SearchUtils">
+    <Position X="10" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgBAAAA=</HashCode>
+      <FileName>ServiceUtils\SearchUtils.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.ServiceUtils.ServiceResponseBuilder">
+    <Position X="11.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAAAAAAAAAgAAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>ServiceUtils\ServiceResponseBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.ServiceUtils.SessionManager">
+    <Position X="13.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAABAAAAgAQAAAAQAAAAAAASCAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>ServiceUtils\SessionManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.ServiceUtils.ValidatedObject">
+    <Position X="8.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ServiceUtils\ValidationHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.ServiceUtils.ValidationHelper">
+    <Position X="11.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAACAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>ServiceUtils\ValidationHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.ServiceUtils.ObjectExtensions">
+    <Position X="8.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ServiceUtils\ValidationHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Services.ServiceUtils.ValidateObjectAttribute">
+    <Position X="10" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BQAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ServiceUtils\ValidationHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Services.Contracts.IFriendsService">
+    <Position X="3" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAgAAAACAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Contracts\IFriendsService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Services.Contracts.IJourneyChatService">
+    <Position X="4.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAgAAAAAAACAgABAACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\IJourneyChatService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Services.Contracts.IJourneyRequestService">
+    <Position X="6.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAgAAAACAAAAAAAAIAAAAAACAAAA=</HashCode>
+      <FileName>Contracts\IJourneyRequestService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Services.Contracts.IJourneyService">
+    <Position X="8.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAACAAAAAAAAAAAAAAAAgAAggAIBAAAAA=</HashCode>
+      <FileName>Contracts\IJourneyService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Services.Contracts.IJourneyTemplateService">
+    <Position X="10" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAEAAAAAAAAAAAAAAAAAACAAAAEAAAAAAAAA=</HashCode>
+      <FileName>Contracts\IJourneyTemplateService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Services.Contracts.IMessengerService">
+    <Position X="11.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIgAAAAAQAAAAAACAgABAAAAAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Contracts\IMessengerService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Services.Contracts.INotificationService">
+    <Position X="13.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAIAABAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\INotificationService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Services.Contracts.IRatingService">
+    <Position X="3" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAgAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\IRatingService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Services.Contracts.ISearchService">
+    <Position X="4.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAA=</HashCode>
+      <FileName>Contracts\ISearchService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Services.Contracts.IUserService">
+    <Position X="6.75" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAABAAAAAAAAEAAAAAQAAAAIQEgAAAAAAACA=</HashCode>
+      <FileName>Contracts\IUserService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="Services.DTOs.MultiChoice">
+    <Position X="4.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DTOs\MultiChoice.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Services.ServiceResponses.ServiceResponseCode">
+    <Position X="6.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAEAAAAAAgAAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>ServiceResponses\ServiceResponseCode.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Services.ServiceUtils.DistanceType">
+    <Position X="3" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAABAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ServiceUtils\HaversineCalculator.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

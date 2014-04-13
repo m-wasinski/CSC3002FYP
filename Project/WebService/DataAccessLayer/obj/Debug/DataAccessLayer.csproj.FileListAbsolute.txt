@@ -51,7 +51,6 @@ C:\CSC3002FYP\Project\ServerSide\FindNDrive\DataAccessLayer\obj\Debug\DataAccess
 C:\CSC3002FYP\Project\ServerSide\FindNDrive\DataAccessLayer\obj\Debug\FindNDriveDataAccessLayer.dll
 C:\CSC3002FYP\Project\ServerSide\FindNDrive\DataAccessLayer\obj\Debug\FindNDriveDataAccessLayer.pdb
 C:\CSC3002FYP\Project\WebService\DataAccessLayer\obj\Debug\DataAccessLayer.csprojResolveAssemblyReference.cache
-C:\CSC3002FYP\Project\WebService\DataAccessLayer\bin\DataAccessLayer.dll.config
 C:\CSC3002FYP\Project\WebService\DataAccessLayer\bin\DataAccessLayer.dll
 C:\CSC3002FYP\Project\WebService\DataAccessLayer\bin\DataAccessLayer.pdb
 C:\CSC3002FYP\Project\WebService\DataAccessLayer\bin\DomainObjects.dll

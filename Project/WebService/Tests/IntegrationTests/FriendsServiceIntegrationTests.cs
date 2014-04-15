@@ -81,8 +81,9 @@
             {
                 user1.Friends.Remove(user2);
                 user2.Friends.Remove(user1);
-                this.findNDriveUnitOfWork.Commit();
             }
+
+            this.findNDriveUnitOfWork.Commit();
 
             this.friendRequestDTO = new FriendRequestDTO
                                         {

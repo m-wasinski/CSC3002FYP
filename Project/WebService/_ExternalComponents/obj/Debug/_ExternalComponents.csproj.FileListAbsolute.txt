@@ -6,3 +6,4 @@ C:\CSC3002FYP\Project\WebService\_ExternalComponents\bin\Debug\_ExternalComponen
 C:\CSC3002FYP\Project\WebService\_ExternalComponents\bin\Debug\_ExternalComponents.pdb
 C:\CSC3002FYP\Project\WebService\_ExternalComponents\obj\Debug\_ExternalComponents.dll
 C:\CSC3002FYP\Project\WebService\_ExternalComponents\obj\Debug\_ExternalComponents.pdb
+C:\CSC3002FYP\Project\WebService\_ExternalComponents\obj\Debug\_ExternalComponents.csprojResolveAssemblyReference.cache

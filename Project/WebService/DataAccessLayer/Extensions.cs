@@ -100,7 +100,7 @@ namespace DataAccessLayer
         public static IQueryable<Rating> IncludeChildren(this IQueryable<Rating> queryable)
         {
             return queryable
-                .Include(_ => _.FromUser);
+                .Include(_ => _.FromUser).Include(_ => _.TargetUser);
         }
 
         public static IQueryable<FriendRequest> IncludeChildren(this IQueryable<FriendRequest> queryable)

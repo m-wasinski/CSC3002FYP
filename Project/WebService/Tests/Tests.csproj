@@ -67,6 +67,7 @@
     <Compile Include="IntegrationTests\FriendsServiceIntegrationTests.cs" />
     <Compile Include="IntegrationTests\JourneyRequestServiceIntegrationTests.cs" />
     <Compile Include="IntegrationTests\JourneyTemplateServiceIntegrationTests.cs" />
+    <Compile Include="IntegrationTests\RatingServiceIntegrationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IntegrationTests\JourneyServiceIntegrationTests.cs" />
     <Compile Include="IntegrationTests\UserServiceIntegrationTests.cs" />

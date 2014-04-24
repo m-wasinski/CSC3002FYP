@@ -63,11 +63,11 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
 
         if(bundle != null)
         {
-            Notification notification =  gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),  new TypeToken<Notification>() {}.getType());
+            Notification notification =  getGson().fromJson(bundle.getString(IntentConstants.NOTIFICATION),  new TypeToken<Notification>() {}.getType());
 
             if(notification != null)
             {
-                new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Void, Void>() {
+                new NotificationProcessor().MarkDelivered(this, getAppManager(), notification, new WCFServiceCallback<Void, Void>() {
                     @Override
                     public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                         Log.i(TAG, "Notification successfully marked as delivered");
@@ -81,7 +81,7 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
         noNotificationsTestView = (TextView) findViewById(R.id.MyNotificationsActivityNoNotificationsTextView);
         notificationsListView = (ListView) findViewById(R.id.MyNotificationsActivityMainListView);
         notifications = new ArrayList<Notification>();
-        notificationsAdapter = new NotificationsAdapter(appManager, this, R.layout.listview_row_notification, notifications);
+        notificationsAdapter = new NotificationsAdapter(getAppManager(), this, R.layout.listview_row_notification, notifications);
         notificationsListView.setAdapter(notificationsAdapter);
         notificationsListView.setOnScrollListener(this);
 
@@ -100,10 +100,10 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
         progressBar.setVisibility(View.VISIBLE);
 
         new WcfPostServiceTask<LoadRangeDTO>(this, getResources().getString(R.string.GetAppNotificationsURL),
-                new LoadRangeDTO(appManager.getUser().getUserId(),
+                new LoadRangeDTO(getAppManager().getUser().getUserId(),
                         requestMoreData ? notificationsListView.getCount() : 0, requestMoreData ? WcfConstants.NotificationsPerCall : notificationsListView.getCount()),
                 new TypeToken<ServiceResponse<ArrayList<Notification>>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), this).execute();
+                getAppManager().getAuthorisationHeaders(), this).execute();
     }
     @Override
     public void onServiceCallCompleted(final ServiceResponse<ArrayList<Notification>> serviceResponse, Void parameter)
@@ -140,7 +140,7 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
 
     private void markNotificationDelivered(NotificationProcessor notificationProcessor, final Notification notification, final View view)
     {
-        notificationProcessor.MarkDelivered(this, appManager, notification, new WCFServiceCallback<Void, Void>() {
+        notificationProcessor.MarkDelivered(this, getAppManager(), notification, new WCFServiceCallback<Void, Void>() {
             public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                 notification.setDelivered(true);
                 notificationsAdapter.notifyDataSetChanged();
@@ -150,7 +150,7 @@ public class MyNotificationsActivity extends BaseActivity implements WCFServiceC
 
     private void launchNotificationProcessor(NotificationProcessor notificationProcessor, Notification notification)
     {
-        notificationProcessor.process(this, appManager, notification, new NotificationTargetRetrieved() {
+        notificationProcessor.process(this, getAppManager(), notification, new NotificationTargetRetrieved() {
 
             @Override
             public void onNotificationTargetRetrieved(Intent intent) {

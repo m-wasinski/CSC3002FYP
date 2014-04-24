@@ -9,13 +9,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
 import com.example.myapplication.R;
 import com.example.myapplication.activities.base.BaseActivity;
 import com.example.myapplication.constants.ServiceResponseCode;
 import com.example.myapplication.constants.SessionConstants;
-import com.example.myapplication.dtos.RegisterDTO;
 import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.domain_objects.User;
+import com.example.myapplication.dtos.RegisterDTO;
 import com.example.myapplication.factories.DialogFactory;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
@@ -66,7 +67,7 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
      * Validate the information provided by the user and if successful,
      * call the web service to register a new account.
      **/
-    public void AttemptToRegister() {
+    public void Register() {
 
         //Perform validation before calling the web service.
         if(Validators.validatePasswords(passwordEditText, confirmedPasswordEditText) &&
@@ -77,11 +78,11 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
             registerButton.setEnabled(false);
             new WcfPostServiceTask<RegisterDTO>(this, getResources().getString(R.string.UserRegisterURL),
                     new RegisterDTO(passwordEditText.getText().toString(), confirmedPasswordEditText.getText().toString(),
-                            new User(userNameEditText.getText().toString(),emailAddressEditText.getText().toString(), appManager.getRegistrationId())),
+                            new User(userNameEditText.getText().toString(),emailAddressEditText.getText().toString(), getAppManager().getRegistrationId())),
                     new TypeToken<ServiceResponse<User>>() {}.getType(),
                     asList(new Pair(SessionConstants.REMEMBER_ME, ""+false),
-                           new Pair(SessionConstants.DEVICE_ID, appManager.getUniqueDeviceId()),
-                           new Pair(SessionConstants.UUID, appManager.getUUID())), this).execute();
+                           new Pair(SessionConstants.DEVICE_ID, getAppManager().getUniqueDeviceId()),
+                           new Pair(SessionConstants.UUID, getAppManager().getUUID())), this).execute();
 
         }
     }
@@ -96,8 +97,8 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
 
         if (serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
-            appManager.setSessionId(session);
-            appManager.setUser(serviceResponse.Result);
+            getAppManager().setSessionId(session);
+            getAppManager().setUser(serviceResponse.Result);
             Toast.makeText(this, "Registered successfully!", Toast.LENGTH_LONG).show();
             startActivity(new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
             finish();
@@ -135,7 +136,7 @@ public class RegistrationActivity extends BaseActivity implements WCFServiceCall
         switch(view.getId())
         {
             case R.id.RegisterNewUserButton:
-                AttemptToRegister();
+                Register();
                 break;
             case R.id.RegistrationActivityTermsTextView:
                 DialogFactory.getTermsAndConditionsDialog(this);

@@ -88,8 +88,8 @@ public class MyJourneyTemplatesActivity extends BaseActivity implements WCFServi
     {
         progressBar.setVisibility(View.VISIBLE);
         new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetJourneyTemplatesURL),
-                appManager.getUser().getUserId(), new TypeToken<ServiceResponse<ArrayList<JourneyTemplate>>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), this).execute();
+                getAppManager().getUser().getUserId(), new TypeToken<ServiceResponse<ArrayList<JourneyTemplate>>>() {}.getType(),
+                getAppManager().getAuthorisationHeaders(), this).execute();
     }
 
     /**
@@ -116,7 +116,7 @@ public class MyJourneyTemplatesActivity extends BaseActivity implements WCFServi
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Bundle bundle = new Bundle();
         bundle.putInt(IntentConstants.SEARCH_MODE, mode);
-        bundle.putString(IntentConstants.JOURNEY_TEMPLATE, gson.toJson(journeyTemplates.get(i)));
+        bundle.putString(IntentConstants.JOURNEY_TEMPLATE, getGson().toJson(journeyTemplates.get(i)));
         startActivity(new Intent(this, SearchEditorStepOneActivity.class).putExtras(bundle));
     }
 
@@ -168,7 +168,7 @@ public class MyJourneyTemplatesActivity extends BaseActivity implements WCFServi
 
         Bundle bundle = new Bundle();
         bundle.putInt(IntentConstants.SEARCH_MODE, IntentConstants.CREATING_NEW_TEMPLATE);
-        bundle.putString(IntentConstants.JOURNEY_TEMPLATE, gson.toJson(journeyTemplate));
+        bundle.putString(IntentConstants.JOURNEY_TEMPLATE, getGson().toJson(journeyTemplate));
 
         startActivity(new Intent(this, SearchEditorStepOneActivity.class).putExtras(bundle));
     }
@@ -178,7 +178,7 @@ public class MyJourneyTemplatesActivity extends BaseActivity implements WCFServi
         progressBar.setVisibility(View.VISIBLE);
         new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.DeleteJourneyTemplateURL),
                 journeyTemplates.get(index).getJourneyTemplateId(),
-                new TypeToken<ServiceResponse<Void>>() {}.getType(), appManager.getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
+                new TypeToken<ServiceResponse<Void>>() {}.getType(), getAppManager().getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                 progressBar.setVisibility(View.GONE);
@@ -194,7 +194,7 @@ public class MyJourneyTemplatesActivity extends BaseActivity implements WCFServi
     private void searchForJourneys(int i)
     {
         progressBar.setVisibility(View.VISIBLE);
-        searchServiceTask = ServiceTaskFactory.getJourneySearch(this, appManager.getAuthorisationHeaders(), journeyTemplates.get(i), new WCFServiceCallback<ArrayList<Journey>, Void>() {
+        searchServiceTask = ServiceTaskFactory.getJourneySearch(this, getAppManager().getAuthorisationHeaders(), journeyTemplates.get(i), new WCFServiceCallback<ArrayList<Journey>, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<ArrayList<Journey>> serviceResponse, Void parameter) {
                 progressBar.setVisibility(View.GONE);

@@ -52,22 +52,95 @@ import java.util.ArrayList;
 public class BaseMapActivity extends FragmentActivity implements GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener, GeoCoderFinishedCallBack
 {
-    protected GoogleMap googleMap;
-    protected Geocoder geocoder;
-    protected LocationListener locationListener;
-    protected Marker departureMarker;
-    protected Marker destinationMarker;
-    protected GMapV2Direction gMapV2Direction;
-    protected Location myLocation;
-    protected LocationManager  locationManager;
-    protected Circle departureRadius;
-    protected Circle destinationRadius;
-    protected AppManager appManager;
-    protected Gson gson;
-    protected ActionBar actionBar;
-    protected InputMethodManager inputMethodManager;
-    protected ArrayList<WaypointHolder> wayPoints;
-    protected LocationClient locationClient;
+    private GoogleMap googleMap;
+    private Geocoder geocoder;
+    private LocationListener locationListener;
+    private Marker departureMarker;
+    private Marker destinationMarker;
+    private GMapV2Direction gMapV2Direction;
+    private Location myLocation;
+    private LocationManager  locationManager;
+    private Circle departureRadius;
+    private Circle destinationRadius;
+    private AppManager appManager;
+    private Gson gson;
+    private ActionBar actionBar;
+    private InputMethodManager inputMethodManager;
+    private ArrayList<WaypointHolder> wayPoints;
+    private LocationClient locationClient;
+
+    public void setWayPoints(ArrayList<WaypointHolder> wayPoints) {
+        this.wayPoints = wayPoints;
+    }
+
+    public LocationClient getLocationClient() {
+        return locationClient;
+    }
+
+    public ArrayList<WaypointHolder> getWayPoints() {
+        return wayPoints;
+    }
+
+    public InputMethodManager getInputMethodManager() {
+        return inputMethodManager;
+    }
+
+    public ActionBar getActionBar() {
+        return actionBar;
+    }
+
+    public Gson getGson() {
+        return gson;
+    }
+
+    public AppManager getAppManager() {
+        return appManager;
+    }
+
+    public Circle getDestinationRadius() {
+        return destinationRadius;
+    }
+
+    public Circle getDepartureRadius() {
+        return departureRadius;
+    }
+
+    public LocationManager getLocationManager() {
+        return locationManager;
+    }
+
+    public Location getMyLocation() {
+        return myLocation;
+    }
+
+    public GMapV2Direction getgMapV2Direction() {
+        return gMapV2Direction;
+    }
+
+    public Marker getDestinationMarker() {
+        return destinationMarker;
+    }
+
+    public Marker getDepartureMarker() {
+        return departureMarker;
+    }
+
+    public Geocoder getGeocoder() {
+        return geocoder;
+    }
+
+    public GoogleMap getGoogleMap() {
+        return googleMap;
+    }
+
+    public void setGoogleMap(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+    }
+
+    public LocationListener getLocationListener() {
+        return locationListener;
+    }
+
     private Polyline polyline;
 
     @Override

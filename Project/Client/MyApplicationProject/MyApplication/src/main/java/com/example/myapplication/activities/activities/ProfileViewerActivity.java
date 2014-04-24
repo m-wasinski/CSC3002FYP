@@ -78,7 +78,7 @@ public class ProfileViewerActivity extends BaseActivity implements WCFImageRetri
 
     private void getPersonalDetails()
     {
-        detailsRetriever = ServiceTaskFactory.getPersonDetails(this, appManager.getAuthorisationHeaders(), new UserRetrieverDTO(appManager.getUser().getUserId(), userId), this);
+        detailsRetriever = ServiceTaskFactory.getPersonDetails(this, getAppManager().getAuthorisationHeaders(), new UserRetrieverDTO(getAppManager().getUser().getUserId(), userId), this);
         detailsRetriever.execute();
     }
 
@@ -153,7 +153,7 @@ public class ProfileViewerActivity extends BaseActivity implements WCFImageRetri
                 @Override
                 public void onClick(View view) {
                     Bundle bundle = new Bundle();
-                    bundle.putString(IntentConstants.USER, gson.toJson(user));
+                    bundle.putString(IntentConstants.USER, getGson().toJson(user));
                     startActivity(new Intent(ProfileViewerActivity.this, RatingsActivity.class).putExtras(bundle));
                 }
             });
@@ -165,14 +165,14 @@ public class ProfileViewerActivity extends BaseActivity implements WCFImageRetri
             findViewById(R.id.ProfileViewerActivityJourneysTableRow).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    startActivity(new Intent(ProfileViewerActivity.this, MyJourneysActivity.class).putExtra(IntentConstants.USER, gson.toJson(user)));
+                    startActivity(new Intent(ProfileViewerActivity.this, MyJourneysActivity.class).putExtra(IntentConstants.USER, getGson().toJson(user)));
                 }
             });
         }
 
         Button sendFriendRequestButton = (Button) findViewById(R.id.ProfileViewerActivitySendFriendRequestButton);
-        sendFriendRequestButton.setEnabled(appManager.getUser().getUserId() != userId);
-        sendFriendRequestButton.setVisibility(appManager.getUser().getUserId() == userId ? View.GONE : View.VISIBLE);
+        sendFriendRequestButton.setEnabled(getAppManager().getUser().getUserId() != userId);
+        sendFriendRequestButton.setVisibility(getAppManager().getUser().getUserId() == userId ? View.GONE : View.VISIBLE);
         sendFriendRequestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -186,8 +186,8 @@ public class ProfileViewerActivity extends BaseActivity implements WCFImageRetri
      */
     private void getProfilePicture()
     {
-        new WcfPictureServiceTask(appManager.getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
-                userId, appManager.getAuthorisationHeaders(), this).execute();
+        new WcfPictureServiceTask(getAppManager().getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
+                userId, getAppManager().getAuthorisationHeaders(), this).execute();
     }
 
     /**
@@ -204,7 +204,12 @@ public class ProfileViewerActivity extends BaseActivity implements WCFImageRetri
         if(bitmap != null)
         {
             BitmapDrawable icon = new BitmapDrawable(getResources() ,bitmap);
-            actionBar.setIcon(icon);
+
+            if(getActionBar() != null)
+            {
+                getActionBar().setIcon(icon);
+            }
+
             profileImageView.setImageBitmap(bitmap);
         }
     }

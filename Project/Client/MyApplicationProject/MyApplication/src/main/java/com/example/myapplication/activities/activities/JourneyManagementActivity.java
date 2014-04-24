@@ -38,6 +38,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 
+
 /**
  * This activity is used to display the details of the journey being passed in.
  * It also contains a control panel for the user to perform various operations on the journey such as cancelling, making changes, viewing passengers etc.
@@ -71,12 +72,12 @@ public class JourneyManagementActivity extends BaseMapActivity implements View.O
         Bundle extras = getIntent().getExtras();
 
         // Check to see if there is a pending notification to be marked as delivered inside the bundle.
-        Notification notification = gson.fromJson(extras.getString(IntentConstants.NOTIFICATION), new TypeToken<Notification>() {}.getType());
+        Notification notification = getGson().fromJson(extras.getString(IntentConstants.NOTIFICATION), new TypeToken<Notification>() {}.getType());
 
         // If there is, go ahead and mark it as delivered.
         if(notification != null)
         {
-            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Void, Void>() {
+            new NotificationProcessor().MarkDelivered(this, getAppManager(), notification, new WCFServiceCallback<Void, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                     Log.i(TAG, "Notification successfully marked as delivered");
@@ -84,7 +85,7 @@ public class JourneyManagementActivity extends BaseMapActivity implements View.O
             });
         }
 
-        journey = gson.fromJson(extras.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
+        journey = getGson().fromJson(extras.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
 
         newMessagesCount = extras.getInt(IntentConstants.NEW_JOURNEY_MESSAGES);
         newRequestsCount = extras.getInt(IntentConstants.NEW_JOURNEY_REQUESTS);
@@ -93,9 +94,9 @@ public class JourneyManagementActivity extends BaseMapActivity implements View.O
 
         // The journey requests button.
         showRequestsButton = (Button) findViewById(R.id.MyJourneyDetailsActivityShowRequestsButton);
-        showRequestsButton.setEnabled(journey.getDriver().getUserId() == appManager.getUser().getUserId());
+        showRequestsButton.setEnabled(journey.getDriver().getUserId() == getAppManager().getUser().getUserId());
         showRequestsButton.setOnClickListener(this);
-        showRequestsButton.setVisibility(journey.getDriver().getUserId() == appManager.getUser().getUserId() ? View.VISIBLE : View.GONE);
+        showRequestsButton.setVisibility(journey.getDriver().getUserId() == getAppManager().getUser().getUserId() ? View.VISIBLE : View.GONE);
 
         // The journey passengers button.
         Button showPassengersButton = (Button) findViewById(R.id.MyJourneyDetailsActivityShowPassengersButton);
@@ -107,26 +108,26 @@ public class JourneyManagementActivity extends BaseMapActivity implements View.O
 
         // The make change to a journey button.
         makeChangeButton = (Button) findViewById(R.id.MyJourneyDetailsActivityMakeChangeButton);
-        makeChangeButton.setEnabled(journey.getDriver().getUserId() == appManager.getUser().getUserId() && journey.getJourneyStatus() == JourneyStatus.OK);
-        makeChangeButton.setVisibility(journey.getDriver().getUserId() == appManager.getUser().getUserId() ? View.VISIBLE : View.GONE);
+        makeChangeButton.setEnabled(journey.getDriver().getUserId() == getAppManager().getUser().getUserId() && journey.getJourneyStatus() == JourneyStatus.OK);
+        makeChangeButton.setVisibility(journey.getDriver().getUserId() == getAppManager().getUser().getUserId() ? View.VISIBLE : View.GONE);
         makeChangeButton.setOnClickListener(this);
 
         // The cancel journey button.
         cancelJourneyButton = (Button) findViewById(R.id.MyJourneyDetailsActivityCancelJourneyButton);
-        cancelJourneyButton.setEnabled(journey.getDriver().getUserId() == appManager.getUser().getUserId() && journey.getJourneyStatus() == JourneyStatus.OK);
-        cancelJourneyButton.setVisibility(journey.getDriver().getUserId() == appManager.getUser().getUserId() ? View.VISIBLE : View.GONE);
+        cancelJourneyButton.setEnabled(journey.getDriver().getUserId() == getAppManager().getUser().getUserId() && journey.getJourneyStatus() == JourneyStatus.OK);
+        cancelJourneyButton.setVisibility(journey.getDriver().getUserId() == getAppManager().getUser().getUserId() ? View.VISIBLE : View.GONE);
         cancelJourneyButton.setOnClickListener(this);
 
         // The withdraw from journey button.
         Button withdrawFromJourneyButton = (Button) findViewById(R.id.MyJourneyDetailsActivityWithdrawFromJourneyButton);
-        withdrawFromJourneyButton.setEnabled(journey.getDriver().getUserId() != appManager.getUser().getUserId() && journey.getJourneyStatus() == JourneyStatus.OK);
-        withdrawFromJourneyButton.setVisibility(journey.getDriver().getUserId() != appManager.getUser().getUserId() ? View.VISIBLE : View.GONE);
+        withdrawFromJourneyButton.setEnabled(journey.getDriver().getUserId() != getAppManager().getUser().getUserId() && journey.getJourneyStatus() == JourneyStatus.OK);
+        withdrawFromJourneyButton.setVisibility(journey.getDriver().getUserId() != getAppManager().getUser().getUserId() ? View.VISIBLE : View.GONE);
         withdrawFromJourneyButton.setOnClickListener(this);
 
         // The rate driver button.
         Button rateDriverButton = (Button) findViewById(R.id.MyJourneyDetailsActivityRateDriverButton);
-        rateDriverButton.setEnabled(!(journey.getDriver().getUserId() == appManager.getUser().getUserId()));
-        rateDriverButton.setVisibility(!(journey.getDriver().getUserId() == appManager.getUser().getUserId()) ? View.VISIBLE : View.GONE);
+        rateDriverButton.setEnabled(!(journey.getDriver().getUserId() == getAppManager().getUser().getUserId()));
+        rateDriverButton.setVisibility(!(journey.getDriver().getUserId() == getAppManager().getUser().getUserId()) ? View.VISIBLE : View.GONE);
         rateDriverButton.setOnClickListener(this);
 
         // The journey summary button.
@@ -199,7 +200,7 @@ public class JourneyManagementActivity extends BaseMapActivity implements View.O
     {
         new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetSingleJourneyURL), journey.getJourneyId(),
                 new TypeToken<ServiceResponse<Journey>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Journey, Void>() {
+                getAppManager().getAuthorisationHeaders(), new WCFServiceCallback<Journey, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Journey> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -218,7 +219,7 @@ public class JourneyManagementActivity extends BaseMapActivity implements View.O
     private void journeyRetrieved(Journey journey)
     {
         this.journey = journey;
-        super.drawDrivingDirectionsOnMap(googleMap, journey.getGeoAddresses(), this);
+        super.drawDrivingDirectionsOnMap(getGoogleMap(), journey.getGeoAddresses(), this);
     }
 
     /**
@@ -226,10 +227,9 @@ public class JourneyManagementActivity extends BaseMapActivity implements View.O
      */
     private void initialiseMap() {
 
-        if (googleMap == null) {
-            googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.FragmentJourneyDetailsMap)).getMap();
-
-            if (googleMap == null) {
+        if (getGoogleMap() == null) {
+            setGoogleMap(((MapFragment) getFragmentManager().findFragmentById(R.id.FragmentJourneyDetailsMap)).getMap());
+            if (getGoogleMap() == null) {
                 Toast.makeText(this,
                         "Unable to initialise Google Maps, please check your network connection.", Toast.LENGTH_SHORT)
                         .show();
@@ -284,7 +284,7 @@ public class JourneyManagementActivity extends BaseMapActivity implements View.O
         new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetRequestsForJourneyURL),
                 journey.getJourneyId(),
                 new TypeToken<ServiceResponse<ArrayList<JourneyRequest>>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyRequest>, Void>() {
+                getAppManager().getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyRequest>, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<ArrayList<JourneyRequest>> serviceResponse, Void parameter) {
                 progressBar.setVisibility(View.GONE);
@@ -314,7 +314,7 @@ public class JourneyManagementActivity extends BaseMapActivity implements View.O
 
         if(requests.size() > 0)
         {
-            JourneyRequestAdapter adapter = new JourneyRequestAdapter(appManager, this, R.layout.listview_row_journey_request, requests);
+            JourneyRequestAdapter adapter = new JourneyRequestAdapter(getAppManager(), this, R.layout.listview_row_journey_request, requests);
             requestsListView.setAdapter(adapter);
             requestsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -322,7 +322,7 @@ public class JourneyManagementActivity extends BaseMapActivity implements View.O
                     newRequestsCount = 0;
                     requestsDialog.dismiss();
                     Bundle bundle = new Bundle();
-                    bundle.putString(IntentConstants.JOURNEY_REQUEST, gson.toJson(requests.get(i)));
+                    bundle.putString(IntentConstants.JOURNEY_REQUEST, getGson().toJson(requests.get(i)));
                     startActivity(new Intent(JourneyManagementActivity.this, JourneyRequestDialogActivity.class).putExtras(bundle));
                 }
             });
@@ -349,7 +349,7 @@ public class JourneyManagementActivity extends BaseMapActivity implements View.O
 
         if(passengers.size() > 0)
         {
-            PassengersAdapter adapter = new PassengersAdapter(appManager, this, R.layout.listview_row_journey_passengers, passengers);
+            PassengersAdapter adapter = new PassengersAdapter(getAppManager(), this, R.layout.listview_row_journey_passengers, passengers);
             passengersListView.setAdapter(adapter);
             passengersListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
             {
@@ -374,9 +374,9 @@ public class JourneyManagementActivity extends BaseMapActivity implements View.O
     {
         progressBar.setVisibility(View.VISIBLE);
         new WcfPostServiceTask<JourneyUserDTO>(this, getResources().getString(R.string.WithdrawFromJourneyURL),
-                new JourneyUserDTO(journey.getJourneyId(), appManager.getUser().getUserId()),
+                new JourneyUserDTO(journey.getJourneyId(), getAppManager().getUser().getUserId()),
                 new TypeToken<ServiceResponse<Void>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
+                getAppManager().getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                 progressBar.setVisibility(View.GONE);
@@ -396,9 +396,9 @@ public class JourneyManagementActivity extends BaseMapActivity implements View.O
     {
         progressBar.setVisibility(View.VISIBLE);
         new WcfPostServiceTask<JourneyUserDTO>(this, getResources().getString(R.string.CancelJourneyURL),
-                new JourneyUserDTO(journey.getJourneyId(), appManager.getUser().getUserId()),
+                new JourneyUserDTO(journey.getJourneyId(), getAppManager().getUser().getUserId()),
                 new TypeToken<ServiceResponse<Journey>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Journey, Void>() {
+                getAppManager().getAuthorisationHeaders(), new WCFServiceCallback<Journey, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Journey> serviceResponse, Void parameter) {
                 progressBar.setVisibility(View.GONE);
@@ -432,7 +432,7 @@ public class JourneyManagementActivity extends BaseMapActivity implements View.O
         new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetPassengersURL),
                 journey.getJourneyId(),
                 new TypeToken<ServiceResponse<ArrayList<User>>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<User>, Void>() {
+                getAppManager().getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<User>, Void>() {
             @Override
             public void onServiceCallCompleted(final ServiceResponse<ArrayList<User>> serviceResponse, Void parameter) {
                 progressBar.setVisibility(View.GONE);
@@ -467,10 +467,10 @@ public class JourneyManagementActivity extends BaseMapActivity implements View.O
                 showCancelJourneyDialog();
                 break;
             case R.id.MyJourneyDetailsActivityRateDriverButton:
-                startActivity(new Intent(this, RateDriverActivity.class).putExtra(IntentConstants.JOURNEY, gson.toJson(journey)));
+                startActivity(new Intent(this, RateDriverActivity.class).putExtra(IntentConstants.JOURNEY, getGson().toJson(journey)));
                 break;
             case R.id.MyJourneyDetailsActivityShowSummaryButton:
-                startActivity(new Intent(this, JourneySummaryActivity.class).putExtra(IntentConstants.JOURNEY, gson.toJson(journey)));
+                startActivity(new Intent(this, JourneySummaryActivity.class).putExtra(IntentConstants.JOURNEY, getGson().toJson(journey)));
                 break;
         }
     }
@@ -482,7 +482,7 @@ public class JourneyManagementActivity extends BaseMapActivity implements View.O
     {
         Bundle bundle = new Bundle();
         bundle.putInt(IntentConstants.JOURNEY_CREATOR_MODE, IntentConstants.JOURNEY_CREATOR_MODE_EDITING);
-        bundle.putString(IntentConstants.JOURNEY ,gson.toJson(journey));
+        bundle.putString(IntentConstants.JOURNEY ,getGson().toJson(journey));
         startActivity(new Intent(this, OfferJourneyStepOneActivity.class).putExtras(bundle));
     }
 

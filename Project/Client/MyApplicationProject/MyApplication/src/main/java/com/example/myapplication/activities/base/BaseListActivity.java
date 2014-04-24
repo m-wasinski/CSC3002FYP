@@ -19,9 +19,21 @@ import com.google.gson.Gson;
  **/
 public class BaseListActivity extends ListActivity
 {
-    protected AppManager appManager;
-    protected Gson gson;
-    protected ActionBar actionBar;
+    private AppManager appManager;
+    private Gson gson;
+    private ActionBar actionBar;
+
+    public AppManager getAppManager() {
+        return appManager;
+    }
+
+    public Gson getGson() {
+        return gson;
+    }
+
+    public ActionBar getActionBar() {
+        return actionBar;
+    }
 
     @Override
     public void onBackPressed()

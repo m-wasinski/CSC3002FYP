@@ -53,14 +53,14 @@ public class ReceivedFriendRequestActivity extends BaseActivity implements View.
         Bundle bundle = getIntent().getExtras();
 
         // Check if this activity has been started from a notification, if yes, mark it as read.
-        Notification notification = gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),
+        Notification notification = getGson().fromJson(bundle.getString(IntentConstants.NOTIFICATION),
                 new TypeToken<Notification>() {}.getType());
 
-        friendRequest =  gson.fromJson(bundle.getString(IntentConstants.FRIEND_REQUEST), new TypeToken<FriendRequest>() {}.getType());
+        friendRequest =  getGson().fromJson(bundle.getString(IntentConstants.FRIEND_REQUEST), new TypeToken<FriendRequest>() {}.getType());
 
         if(notification != null)
         {
-            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Void, Void>() {
+            new NotificationProcessor().MarkDelivered(this, getAppManager(), notification, new WCFServiceCallback<Void, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                     Log.i(getClass().getSimpleName(), "Notification successfully marked as delivered");
@@ -109,7 +109,7 @@ public class ReceivedFriendRequestActivity extends BaseActivity implements View.
 
         new WcfPostServiceTask<FriendRequest>(this,
                 getResources().getString(R.string.ProcessFriendRequestDecisionURL), friendRequest,
-                new TypeToken<ServiceResponse<Void>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
+                new TypeToken<ServiceResponse<Void>>() {}.getType(), getAppManager().getAuthorisationHeaders(), this).execute();
     }
 
     /**
@@ -117,8 +117,8 @@ public class ReceivedFriendRequestActivity extends BaseActivity implements View.
      */
     private void retrieveProfilePicture()
     {
-        new WcfPictureServiceTask(this.appManager.getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
-                friendRequest.getFromUser().getUserId(), this.appManager.getAuthorisationHeaders(), this).execute();
+        new WcfPictureServiceTask(this.getAppManager().getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
+                friendRequest.getFromUser().getUserId(), this.getAppManager().getAuthorisationHeaders(), this).execute();
     }
 
     @Override

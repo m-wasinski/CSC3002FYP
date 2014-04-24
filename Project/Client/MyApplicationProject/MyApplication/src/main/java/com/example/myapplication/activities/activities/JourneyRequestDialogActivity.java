@@ -47,14 +47,14 @@ public class JourneyRequestDialogActivity extends BaseActivity implements View.O
         // Initialise local variables.
         Bundle bundle = getIntent().getExtras();
 
-        Notification notification = gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION), new TypeToken<Notification>() {}.getType());
+        Notification notification = getGson().fromJson(bundle.getString(IntentConstants.NOTIFICATION), new TypeToken<Notification>() {}.getType());
 
-        journeyRequest = gson.fromJson(bundle.getString(IntentConstants.JOURNEY_REQUEST),  new TypeToken<JourneyRequest>() {}.getType());
+        journeyRequest = getGson().fromJson(bundle.getString(IntentConstants.JOURNEY_REQUEST),  new TypeToken<JourneyRequest>() {}.getType());
 
         // Check if this activity was started from a notification. If so, mark it as read.
         if(notification != null)
         {
-            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Void, Void>() {
+            new NotificationProcessor().MarkDelivered(this, getAppManager(), notification, new WCFServiceCallback<Void, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                     Log.i(getClass().getSimpleName(), "Notification successfully marked as delivered");
@@ -113,7 +113,7 @@ public class JourneyRequestDialogActivity extends BaseActivity implements View.O
         // Call the web service to process it.
         new WcfPostServiceTask<JourneyRequest>(this, getResources().getString(R.string.ProcessRequestDecisionURL),
                 journeyRequest,  new TypeToken<ServiceResponse<JourneyRequest>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), this).execute();
+                getAppManager().getAuthorisationHeaders(), this).execute();
     }
 
     @Override
@@ -135,7 +135,7 @@ public class JourneyRequestDialogActivity extends BaseActivity implements View.O
                 startActivity(new Intent(this, ProfileViewerActivity.class).putExtras(bundle));
                 break;
             case R.id.JourneyRequestDialogActivitySendFriendRequestButton:
-                startActivity(new Intent(this, SendFriendRequestActivity.class).putExtra(IntentConstants.USER, gson.toJson(journeyRequest.getFromUser())));
+                startActivity(new Intent(this, SendFriendRequestActivity.class).putExtra(IntentConstants.USER, getGson().toJson(journeyRequest.getFromUser())));
                 break;
         }
     }

@@ -33,8 +33,13 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        actionBar.setHomeButtonEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(false);
+
+        if(getActionBar() != null)
+        {
+            getActionBar().setHomeButtonEnabled(false);
+            getActionBar().setDisplayHomeAsUpEnabled(false);
+        }
+
         WcfConstants.DEV_MODE =true;
         // Check device for Play Services APK.
         if (!checkPlayServices()) {
@@ -46,7 +51,7 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
                     .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.dismiss();
-                            appManager.setRegistrationId(null);
+                            getAppManager().setRegistrationId(null);
                             performAutoLogin();
                         }
                     });
@@ -56,14 +61,14 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
         }
         else //Google Play services available.
         {
-            if(appManager.getRegistrationId() == null)
+            if(getAppManager().getRegistrationId() == null)
             {
                 Log.i(TAG, "GCM Registration Id is empty, attempting to register device.");
                 new GCMRegistrationTask(this, this).execute();
             }
             else
             {
-                Log.i(TAG, "Current GCM registration id: "+ appManager.getRegistrationId());
+                Log.i(TAG, "Current GCM registration id: "+ getAppManager().getRegistrationId());
                 performAutoLogin();
             }
         }
@@ -82,11 +87,11 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
     private void performAutoLogin()
     {
         // Generate new random UUID for the duration of this session.
-        appManager.setUUID(UUID.randomUUID().toString());
-        Log.i(TAG, "New UUID generated, " + appManager.getUUID());
+        getAppManager().setUUID(UUID.randomUUID().toString());
+        Log.i(TAG, "New UUID generated, " + getAppManager().getUUID());
 
         new WcfPostServiceTask<Void>(this, getResources().getString(R.string.UserAutoLoginURL), null, new TypeToken<ServiceResponse<User>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), this).execute();
+                getAppManager().getAuthorisationHeaders(), this).execute();
     }
 
     /***
@@ -99,7 +104,7 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
     @Override
     public void onServiceCallCompleted(ServiceResponse<User> serviceResponse, Void v)
     {
-        appManager.setUser(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS ? serviceResponse.Result : null);
+        getAppManager().setUser(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS ? serviceResponse.Result : null);
 
         startActivity(new Intent(this, serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS ? HomeActivity.class : LoginActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
@@ -121,7 +126,7 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode))
             {
                 GooglePlayServicesUtil.getErrorDialog(resultCode, this,
-                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+                        getPLAY_SERVICES_RESOLUTION_REQUEST()).show();
             }
             return false;
         }
@@ -135,7 +140,7 @@ public class MainActivity extends BaseActivity implements WCFServiceCallback<Use
     @Override
     public void onGCMRegistrationCompleted(String registrationId)
     {
-        appManager.setRegistrationId(registrationId);
+        getAppManager().setRegistrationId(registrationId);
         if(registrationId == null)
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(this)

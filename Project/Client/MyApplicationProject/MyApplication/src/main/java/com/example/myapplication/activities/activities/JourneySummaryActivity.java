@@ -50,7 +50,7 @@ public class JourneySummaryActivity extends BaseActivity implements WCFImageRetr
         setContentView(R.layout.activity_journey_summary);
 
         // Initialise local variables.
-        journey = gson .fromJson(getIntent().getStringExtra(IntentConstants.JOURNEY), new TypeToken<Journey>(){}.getType());
+        journey = getGson().fromJson(getIntent().getStringExtra(IntentConstants.JOURNEY), new TypeToken<Journey>(){}.getType());
 
         // Initialise UI elements and setup event handlers.
         journeyIdTextView = (TextView) findViewById(R.id.JourneySummaryJourneyIdTextView);
@@ -101,8 +101,8 @@ public class JourneySummaryActivity extends BaseActivity implements WCFImageRetr
      */
     private void getDriverPicture()
     {
-        new WcfPictureServiceTask(appManager.getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
-                journey.getDriver().getUserId(), appManager.getAuthorisationHeaders(), this).execute();
+        new WcfPictureServiceTask(getAppManager().getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
+                journey.getDriver().getUserId(), getAppManager().getAuthorisationHeaders(), this).execute();
     }
 
     /**

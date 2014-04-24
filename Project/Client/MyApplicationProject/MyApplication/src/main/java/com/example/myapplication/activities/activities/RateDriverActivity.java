@@ -52,7 +52,7 @@ public class RateDriverActivity extends BaseActivity implements WCFServiceCallba
         setContentView(R.layout.activity_rate_driver);
 
         // Initialise local variables.
-        journey = gson.fromJson(getIntent().getStringExtra(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
+        journey = getGson().fromJson(getIntent().getStringExtra(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
 
         // Initialise UI elements.
         sendFeedbackButton = (Button) findViewById(R.id.RateDriverActivityRateButton);
@@ -132,8 +132,8 @@ public class RateDriverActivity extends BaseActivity implements WCFServiceCallba
         sendFeedbackButton.setEnabled(false);
         new WcfPostServiceTask<RatingDTO>(this, getResources().getString(R.string.RateDriverURL),
                 new RatingDTO(journey.getDriver().getUserId(), rating,
-                        appManager.getUser().getUserId(), message),
-                new TypeToken<ServiceResponse<Void>>(){}.getType(), appManager.getAuthorisationHeaders(), this).execute();
+                        getAppManager().getUser().getUserId(), message),
+                new TypeToken<ServiceResponse<Void>>(){}.getType(), getAppManager().getAuthorisationHeaders(), this).execute();
     }
 
     private class ButtonHolder

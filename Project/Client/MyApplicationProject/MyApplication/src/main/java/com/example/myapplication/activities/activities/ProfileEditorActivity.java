@@ -78,7 +78,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        userId = appManager.getUser().getUserId();
+        userId = getAppManager().getUser().getUserId();
         //Initialise UI elements.
         emailAddressTableRow = (TableRow) findViewById(R.id.ProfileViewerActivityEmailAddressTableRow);
         genderTableRow = (TableRow) findViewById(R.id.ProfileViewerActivityGenderTableRow);
@@ -174,7 +174,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
                 startActivity(new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
                 break;
             case R.id.logout_menu_option:
-                appManager.logout(true, true);
+                getAppManager().logout(true, true);
                 break;
             case android.R.id.home:
                 finish();
@@ -215,17 +215,17 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
         nameDialog.setTitle("Enter new name.");
 
         final EditText firstNameEditText = (EditText) nameDialog.findViewById(R.id.NameChangerDialogFirstNameEditText);
-        firstNameEditText.setText(appManager.getUser().getFirstName());
+        firstNameEditText.setText(getAppManager().getUser().getFirstName());
 
         final EditText lastNameEditText = (EditText) nameDialog.findViewById(R.id.NameChangerDialogLastNameEditText);
-        lastNameEditText.setText(appManager.getUser().getLastName());
+        lastNameEditText.setText(getAppManager().getUser().getLastName());
 
         Button okButton = (Button) nameDialog.findViewById(R.id.NameChangerDialogOkButton);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 progressBar.setVisibility(View.VISIBLE);
-                saveChanges(new UpdateUserDTO(appManager.getUser().getUserId(), firstNameEditText.getText().toString(), lastNameEditText.getText().toString(),
+                saveChanges(new UpdateUserDTO(getAppManager().getUser().getUserId(), firstNameEditText.getText().toString(), lastNameEditText.getText().toString(),
                         null, -1, null, null));
                 nameDialog.dismiss();
             }
@@ -247,7 +247,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
                 {
                     progressBar.setVisibility(View.VISIBLE);
                     memberGenderTextView.setText(Utilities.translateGender(choice+1));
-                    saveChanges(new UpdateUserDTO(appManager.getUser().getUserId(), null, null, null, choice+1, null, null));
+                    saveChanges(new UpdateUserDTO(getAppManager().getUser().getUserId(), null, null, null, choice+1, null, null));
                 }
             }
         });
@@ -264,7 +264,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
 
         final EditText emailEditText = (EditText) emailDialog.findViewById(R.id.ProfileEditorDialogEditText);
         emailEditText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        emailEditText.setText(appManager.getUser().getEmailAddress());
+        emailEditText.setText(getAppManager().getUser().getEmailAddress());
 
         Button okButton = (Button) emailDialog.findViewById(R.id.ProfileEditorDialogOkButton);
 
@@ -320,7 +320,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
     {
         progressBar.setVisibility(View.VISIBLE);
         memberEmailAddressTextView.setText(email);
-        saveChanges(new UpdateUserDTO(appManager.getUser().getUserId(), null, null, email, -1, null, null));
+        saveChanges(new UpdateUserDTO(getAppManager().getUser().getUserId(), null, null, email, -1, null, null));
     }
 
     @Override
@@ -339,7 +339,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
 
         final EditText phoneEditText = (EditText) phoneNumberDialog.findViewById(R.id.ProfileEditorDialogEditText);
         phoneEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
-        phoneEditText.setText(appManager.getUser().getPhoneNumber());
+        phoneEditText.setText(getAppManager().getUser().getPhoneNumber());
 
         Button okButton = (Button) phoneNumberDialog.findViewById(R.id.ProfileEditorDialogOkButton);
 
@@ -381,16 +381,16 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
     {
         progressBar.setVisibility(View.VISIBLE);
         phoneNumberTextView.setText(phoneNumber);
-        saveChanges(new UpdateUserDTO(appManager.getUser().getUserId(), null, null, null, -1, null, phoneNumber));
+        saveChanges(new UpdateUserDTO(getAppManager().getUser().getUserId(), null, null, null, -1, null, phoneNumber));
     }
 
     private void getDateOfBirth()
     {
         final Calendar calendar = DateTimeHelper.getCalendar();
 
-        if(appManager.getUser().getDateOfBirth() != null)
+        if(getAppManager().getUser().getDateOfBirth() != null)
         {
-            calendar.setTime(DateTimeHelper.parseWCFDate(appManager.getUser().getDateOfBirth()));
+            calendar.setTime(DateTimeHelper.parseWCFDate(getAppManager().getUser().getDateOfBirth()));
         }
 
         new CustomDateTimePicker().showDatePickerDialog(this, calendar, new Interfaces.DateSelectedListener() {
@@ -405,7 +405,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMMM-yyyy", Locale.UK);
 
                     dateOfBirthTextVIew.setText(simpleDateFormat.format(calendar.getTime()));
-                    saveChanges(new UpdateUserDTO(appManager.getUser().getUserId(), null, null, null, -1, DateTimeHelper.convertToWCFDate(calendar.getTime()), null));
+                    saveChanges(new UpdateUserDTO(getAppManager().getUser().getUserId(), null, null, null, -1, DateTimeHelper.convertToWCFDate(calendar.getTime()), null));
                 }
             }
         }, false, false);
@@ -416,7 +416,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
         new WcfPostServiceTask<UpdateUserDTO>(this, getResources().getString(R.string.UpdateUserURL),
                 updateUserDTO,
                 new TypeToken<ServiceResponse<User>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), this).execute();
+                getAppManager().getAuthorisationHeaders(), this).execute();
     }
 
     @Override
@@ -424,7 +424,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
         progressBar.setVisibility(View.GONE);
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
-            appManager.setUser(serviceResponse.Result);
+            getAppManager().setUser(serviceResponse.Result);
             super.fillPersonDetails(serviceResponse.Result);
             Toast.makeText(this, "Changes to your profile were saved successfully.", Toast.LENGTH_LONG).show();
         }
@@ -433,7 +433,7 @@ public class ProfileEditorActivity extends ProfileViewerActivity implements WCFS
     @Override
     protected void onResume() {
         super.onResume();
-        fillPersonDetails(appManager.getUser());
+        fillPersonDetails(getAppManager().getUser());
     }
 
     @Override

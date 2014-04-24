@@ -92,7 +92,7 @@ public class SearchEditorStepTwoActivity extends BaseActivity implements View.On
         calendar = DateTimeHelper.getCalendar();
 
         mode = bundle.getInt(IntentConstants.SEARCH_MODE);
-        journeyTemplate = gson.fromJson(bundle.getString(IntentConstants.JOURNEY_TEMPLATE), new TypeToken<JourneyTemplate>(){}.getType());
+        journeyTemplate = getGson().fromJson(bundle.getString(IntentConstants.JOURNEY_TEMPLATE), new TypeToken<JourneyTemplate>(){}.getType());
 
         if((mode == IntentConstants.EDITING_TEMPLATE || mode == IntentConstants.SEARCH_MODE_FROM_TEMPLATE) && journeyTemplate.getDateAndTimeOfDeparture() != null)
         {
@@ -287,7 +287,7 @@ public class SearchEditorStepTwoActivity extends BaseActivity implements View.On
         progressBar.setVisibility(View.VISIBLE);
         updateTemplateButton.setEnabled(false);
         new WcfPostServiceTask<JourneyTemplate>(this, getResources().getString(R.string.UpdateJourneyTemplateURL),
-                journeyTemplate, new TypeToken<ServiceResponse<Void>>() {}.getType(), appManager.getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
+                journeyTemplate, new TypeToken<ServiceResponse<Void>>() {}.getType(), getAppManager().getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                 progressBar.setVisibility(View.GONE);
@@ -472,7 +472,7 @@ public class SearchEditorStepTwoActivity extends BaseActivity implements View.On
         searchButton.setEnabled(false);
 
         // All good, call the webservice to begin the search.
-        searchServiceTask = ServiceTaskFactory.getJourneySearch(this, appManager.getAuthorisationHeaders(), journeyTemplate, this);
+        searchServiceTask = ServiceTaskFactory.getJourneySearch(this, getAppManager().getAuthorisationHeaders(), journeyTemplate, this);
         searchServiceTask.execute();
     }
 
@@ -537,7 +537,7 @@ public class SearchEditorStepTwoActivity extends BaseActivity implements View.On
     private void showJourneyDetails(Journey journey)
     {
         Bundle bundle = new Bundle();
-        bundle.putString(IntentConstants.JOURNEY, gson.toJson(journey));
+        bundle.putString(IntentConstants.JOURNEY, getGson().toJson(journey));
         startActivity(new Intent(this, SearchResultDetailsActivity.class).putExtras(bundle));
     }
 
@@ -550,7 +550,7 @@ public class SearchEditorStepTwoActivity extends BaseActivity implements View.On
         saveTemplateButton.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
         new WcfPostServiceTask<JourneyTemplate>(this, getResources().getString(R.string.CreateNewJourneyTemplateURL),
-                journeyTemplate, new TypeToken<ServiceResponse<Void>>() {}.getType(), appManager.getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
+                journeyTemplate, new TypeToken<ServiceResponse<Void>>() {}.getType(), getAppManager().getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                 progressBar.setVisibility(View.GONE);

@@ -77,9 +77,9 @@ public class PictureUploadActivity extends BaseActivity implements View.OnClickL
 
         //Just before sending the bitmap, convert it to byte64 string to allow it to be transferred inside JSON object.
         new WcfPostServiceTask<ProfilePictureUpdaterDTO>(this, getResources().getString(R.string.UpdateProfilePictureURL),
-                new ProfilePictureUpdaterDTO(this.appManager.getUser().getUserId(), Base64.encodeToString(byteArray, Base64.DEFAULT)),
+                new ProfilePictureUpdaterDTO(this.getAppManager().getUser().getUserId(), Base64.encodeToString(byteArray, Base64.DEFAULT)),
                 new TypeToken<ServiceResponse<Void>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
+                getAppManager().getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -96,7 +96,7 @@ public class PictureUploadActivity extends BaseActivity implements View.OnClickL
     private void pictureUploadedSuccessfully(Bitmap bitmap)
     {
         //Add this picture tp the global lru cache.
-        this.appManager.getBitmapLruCache().put(String.valueOf(this.appManager.getUser().getUserId()),bitmap);
+        this.getAppManager().getBitmapLruCache().put(String.valueOf(this.getAppManager().getUser().getUserId()),bitmap);
         this.progressBar.setVisibility(View.GONE);
         this.finish();
     }

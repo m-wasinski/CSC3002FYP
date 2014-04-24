@@ -89,7 +89,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
         //retrieve the journey object from the bundle.
         Bundle bundle = getIntent().getExtras();
 
-        journey = gson.fromJson(bundle.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
+        journey = getGson().fromJson(bundle.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
         mode = bundle.getInt(IntentConstants.JOURNEY_CREATOR_MODE);
 
         if(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING)
@@ -164,7 +164,10 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
 
         progressBar = (ProgressBar) findViewById(R.id.OfferJourneyStepTwoActivityProgressBar);
 
-        actionBar.setTitle(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? "Editing journey, step 2" : "Offering journey, step 2");
+        if(getActionBar() != null)
+        {
+            getActionBar().setTitle(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? "Editing journey, step 2" : "Offering journey, step 2");
+        }
 
         //set the from address next to minimap.
         TextView fromTextView = (TextView) findViewById(R.id.OfferJourneyStepTwoActivityFromTextView);
@@ -482,7 +485,7 @@ public class OfferJourneyStepTwoActivity extends BaseActivity {
                     R.string.CreateNewJourneyURL : R.string.EditJourneyURL),
                     journey,
                     new TypeToken<ServiceResponse<Journey>>() {}.getType(),
-                    appManager.getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
+                    getAppManager().getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                     progressBar.setVisibility(View.GONE);

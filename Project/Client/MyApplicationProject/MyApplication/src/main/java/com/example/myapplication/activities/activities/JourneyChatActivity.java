@@ -25,11 +25,11 @@ import com.example.myapplication.domain_objects.ServiceResponse;
 import com.example.myapplication.dtos.JourneyMessageMarkerDTO;
 import com.example.myapplication.dtos.JourneyMessageRetrieverDTO;
 import com.example.myapplication.dtos.LoadRangeDTO;
-import com.example.myapplication.utilities.DateTimeHelper;
+import com.example.myapplication.factories.DialogFactory;
 import com.example.myapplication.interfaces.WCFServiceCallback;
 import com.example.myapplication.network_tasks.WcfPostServiceTask;
 import com.example.myapplication.notification_management.NotificationProcessor;
-import com.example.myapplication.factories.DialogFactory;
+import com.example.myapplication.utilities.DateTimeHelper;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -76,13 +76,13 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
         // Extract data from the bundle.
         Bundle bundle = getIntent().getExtras();
 
-        com.example.myapplication.domain_objects.Notification notification = gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),
+        com.example.myapplication.domain_objects.Notification notification = getGson().fromJson(bundle.getString(IntentConstants.NOTIFICATION),
                 new TypeToken<com.example.myapplication.domain_objects.Notification>() {}.getType());
 
         // Check if there is a pending notification that must be marked read.
         if(notification != null)
         {
-            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Void, Void>() {
+            new NotificationProcessor().MarkDelivered(this, getAppManager(), notification, new WCFServiceCallback<Void, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                     Log.i(TAG, "Notification marked as read successfully.");
@@ -91,10 +91,10 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
         }
 
         // Retrieve the id for this journey.
-        JourneyMessage journeyMessage = gson.fromJson(bundle.getString(IntentConstants.PAYLOAD), new TypeToken<JourneyMessage>() {}.getType());
+        JourneyMessage journeyMessage = getGson().fromJson(bundle.getString(IntentConstants.PAYLOAD), new TypeToken<JourneyMessage>() {}.getType());
         journeyId =  journeyMessage != null ? journeyMessage.getJourneyId() : bundle.getInt(IntentConstants.JOURNEY);
         journeyMessages = new ArrayList<JourneyMessage>();
-        journeyChatAdapter = new JourneyChatAdapter(this, journeyMessages, appManager.getUser().getUserId());
+        journeyChatAdapter = new JourneyChatAdapter(this, journeyMessages, getAppManager().getUser().getUserId());
         setListAdapter(journeyChatAdapter);
 
         // Initialise UI elements.
@@ -132,8 +132,8 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
 
         final JourneyMessage newMessage = new JourneyMessage(
                 journeyId,
-                appManager.getUser().getUserName(),
-                appManager.getUser().getUserId(),
+                getAppManager().getUser().getUserName(),
+                getAppManager().getUser().getUserId(),
                 messageEditText.getText().toString(),
                 DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime()));
 
@@ -141,7 +141,7 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
         {
             new WcfPostServiceTask<JourneyMessage>(this, getResources().getString(R.string.SendJourneyChatMessageURL), newMessage,
                     new TypeToken<ServiceResponse<Void>>() {}.getType(),
-                    appManager.getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
+                    getAppManager().getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                     progressBar.setVisibility(View.GONE);
@@ -176,7 +176,7 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
 
             Bundle bundle = intent.getExtras();
 
-            JourneyMessage journeyMessage = gson.fromJson(bundle.getString(IntentConstants.PAYLOAD), new TypeToken<JourneyMessage>() {}.getType());
+            JourneyMessage journeyMessage = getGson().fromJson(bundle.getString(IntentConstants.PAYLOAD), new TypeToken<JourneyMessage>() {}.getType());
 
             if(journeyMessage.getJourneyId() == journeyId)
             {
@@ -205,9 +205,9 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
     private void markMessageAsRead(final JourneyMessage journeyMessage)
     {
         new WcfPostServiceTask<JourneyMessageMarkerDTO>(this, getResources().getString(R.string.MarkJourneyMessageAsReadURL),
-                new JourneyMessageMarkerDTO(appManager.getUser().getUserId(), journeyMessage.getJourneyMessageId()),
+                new JourneyMessageMarkerDTO(getAppManager().getUser().getUserId(), journeyMessage.getJourneyMessageId()),
                 new TypeToken<ServiceResponse<Void>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
+                getAppManager().getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -239,10 +239,10 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
     {
         callInProgress = true;
         new WcfPostServiceTask<JourneyMessageRetrieverDTO>(this, getResources().getString(R.string.RetrieveJourneyChatMessagesURL),
-                new JourneyMessageRetrieverDTO(journeyId, appManager.getUser().getUserId(),
-                        new LoadRangeDTO(appManager.getUser().getUserId(), getListView().getCount(),WcfConstants.MessagesPerCall)),
+                new JourneyMessageRetrieverDTO(journeyId, getAppManager().getUser().getUserId(),
+                        new LoadRangeDTO(getAppManager().getUser().getUserId(), getListView().getCount(),WcfConstants.MessagesPerCall)),
                 new TypeToken<ServiceResponse<ArrayList<JourneyMessage>>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyMessage>, Void>() {
+                getAppManager().getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyMessage>, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<ArrayList<JourneyMessage>> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -263,10 +263,10 @@ public class JourneyChatActivity extends BaseListActivity implements AbsListView
     public void getUnreadMessages()
     {
         new WcfPostServiceTask<JourneyMessageRetrieverDTO>(this, getResources().getString(R.string.RetrieveUnreadJourneyMessagesURL),
-                new JourneyMessageRetrieverDTO(journeyId, appManager.getUser().getUserId(),
-                        new LoadRangeDTO(appManager.getUser().getUserId(), 0, 0)),
+                new JourneyMessageRetrieverDTO(journeyId, getAppManager().getUser().getUserId(),
+                        new LoadRangeDTO(getAppManager().getUser().getUserId(), 0, 0)),
                 new TypeToken<ServiceResponse<ArrayList<JourneyMessage>>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyMessage>, Void>() {
+                getAppManager().getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<JourneyMessage>, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<ArrayList<JourneyMessage>> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)

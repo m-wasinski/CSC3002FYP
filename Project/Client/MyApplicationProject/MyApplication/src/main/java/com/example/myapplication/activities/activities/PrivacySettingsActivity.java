@@ -80,18 +80,18 @@ public class PrivacySettingsActivity extends BaseActivity implements View.OnClic
 
     private void loadPrivacySettings()
     {
-        emailTextView.setText(privacyLevels[appManager.getUser().getPrivacySettings().getEmailPrivacyLevel()]);
-        emailPrivacyLevel = appManager.getUser().getPrivacySettings().getEmailPrivacyLevel();
-        genderTextView.setText(privacyLevels[appManager.getUser().getPrivacySettings().getGenderPrivacyLevel()]);
-        genderPrivacyLevel = appManager.getUser().getPrivacySettings().getGenderPrivacyLevel();
-        dateOfBirthTextView.setText(privacyLevels[appManager.getUser().getPrivacySettings().getDateOfBirthPrivacyLevel()]);
-        dateOfBirthPrivacyLevel = appManager.getUser().getPrivacySettings().getDateOfBirthPrivacyLevel();
-        phoneNumberTextVierw.setText(privacyLevels[appManager.getUser().getPrivacySettings().getPhoneNumberPrivacyLevel()]);
-        phoneNumberPrivacyLevel = appManager.getUser().getPrivacySettings().getPhoneNumberPrivacyLevel();
-        ratingTextView.setText(privacyLevels[appManager.getUser().getPrivacySettings().getRatingPrivacyLevel()]);
-        ratingPrivacyLevel = appManager.getUser().getPrivacySettings().getRatingPrivacyLevel();
-        journeysTextView.setText(privacyLevels[appManager.getUser().getPrivacySettings().getJourneysPrivacyLevel()]);
-        journeysPrivacyLevel = appManager.getUser().getPrivacySettings().getJourneysPrivacyLevel();
+        emailTextView.setText(privacyLevels[getAppManager().getUser().getPrivacySettings().getEmailPrivacyLevel()]);
+        emailPrivacyLevel = getAppManager().getUser().getPrivacySettings().getEmailPrivacyLevel();
+        genderTextView.setText(privacyLevels[getAppManager().getUser().getPrivacySettings().getGenderPrivacyLevel()]);
+        genderPrivacyLevel = getAppManager().getUser().getPrivacySettings().getGenderPrivacyLevel();
+        dateOfBirthTextView.setText(privacyLevels[getAppManager().getUser().getPrivacySettings().getDateOfBirthPrivacyLevel()]);
+        dateOfBirthPrivacyLevel = getAppManager().getUser().getPrivacySettings().getDateOfBirthPrivacyLevel();
+        phoneNumberTextVierw.setText(privacyLevels[getAppManager().getUser().getPrivacySettings().getPhoneNumberPrivacyLevel()]);
+        phoneNumberPrivacyLevel = getAppManager().getUser().getPrivacySettings().getPhoneNumberPrivacyLevel();
+        ratingTextView.setText(privacyLevels[getAppManager().getUser().getPrivacySettings().getRatingPrivacyLevel()]);
+        ratingPrivacyLevel = getAppManager().getUser().getPrivacySettings().getRatingPrivacyLevel();
+        journeysTextView.setText(privacyLevels[getAppManager().getUser().getPrivacySettings().getJourneysPrivacyLevel()]);
+        journeysPrivacyLevel = getAppManager().getUser().getPrivacySettings().getJourneysPrivacyLevel();
     }
 
     @Override
@@ -163,8 +163,8 @@ public class PrivacySettingsActivity extends BaseActivity implements View.OnClic
         saveChangesButton.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
 
-        privacySettingsUpdater = ServiceTaskFactory.getPrivacySettingsUpdater(this, appManager.getAuthorisationHeaders(),
-                new PrivacySettingsUpdaterDTO(appManager.getUser().getUserId(), journeysPrivacyLevel, ratingPrivacyLevel, phoneNumberPrivacyLevel, dateOfBirthPrivacyLevel, emailPrivacyLevel, genderPrivacyLevel), this);
+        privacySettingsUpdater = ServiceTaskFactory.getPrivacySettingsUpdater(this, getAppManager().getAuthorisationHeaders(),
+                new PrivacySettingsUpdaterDTO(getAppManager().getUser().getUserId(), journeysPrivacyLevel, ratingPrivacyLevel, phoneNumberPrivacyLevel, dateOfBirthPrivacyLevel, emailPrivacyLevel, genderPrivacyLevel), this);
         privacySettingsUpdater.execute();
     }
 
@@ -189,7 +189,7 @@ public class PrivacySettingsActivity extends BaseActivity implements View.OnClic
         if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
             Toast.makeText(this, "Changes to your privacy settings were saved successfully.", Toast.LENGTH_LONG).show();
-            appManager.setUser(serviceResponse.Result);
+            getAppManager().setUser(serviceResponse.Result);
             loadPrivacySettings();
         }
 

@@ -69,11 +69,11 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
         // Check if a there is a pending notification that needs to be marked as read.
         if(bundle != null)
         {
-             Notification notification =  gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),  new TypeToken<Notification>() {}.getType());
+             Notification notification =  getGson().fromJson(bundle.getString(IntentConstants.NOTIFICATION),  new TypeToken<Notification>() {}.getType());
 
             if(notification != null)
             {
-                new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Void, Void>() {
+                new NotificationProcessor().MarkDelivered(this, getAppManager(), notification, new WCFServiceCallback<Void, Void>() {
                     @Override
                     public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                         Log.i(TAG, "Notification successfully marked as delivered");
@@ -90,7 +90,7 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
 
         // Listview and adapter.
         friends = new ArrayList<User>();
-        friendsAdapter = new FriendsAdapter(this, R.layout.listview_row_friend, appManager, friends);
+        friendsAdapter = new FriendsAdapter(this, R.layout.listview_row_friend, getAppManager(), friends);
 
         ListView friendsListView = (ListView) findViewById(R.id.FriendListActivityFriendsListView);
         friendsListView.setAdapter(friendsAdapter);
@@ -132,7 +132,7 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
 
     private void retrieveFriendsList()
     {
-        ServiceTaskFactory.getFriendsList(this, appManager.getAuthorisationHeaders(), appManager.getUser().getUserId(), this).execute();
+        ServiceTaskFactory.getFriendsList(this, getAppManager().getAuthorisationHeaders(), getAppManager().getUser().getUserId(), this).execute();
     }
 
     /***
@@ -233,7 +233,7 @@ public class FriendsListActivity extends BaseActivity implements WCFServiceCallb
                             public void positiveButtonClicked() {
                                 progressBar.setVisibility(View.VISIBLE);
                                 new WcfPostServiceTask<FriendDeletionDTO>(FriendsListActivity.this, getResources().getString(R.string.DeleteFriendURL),
-                                        new FriendDeletionDTO(appManager.getUser().getUserId(), friends.get(i).getUserId()), new TypeToken<ServiceResponse<Void>>(){}.getType(), appManager.getAuthorisationHeaders(), new WCFServiceCallback() {
+                                        new FriendDeletionDTO(getAppManager().getUser().getUserId(), friends.get(i).getUserId()), new TypeToken<ServiceResponse<Void>>(){}.getType(), getAppManager().getAuthorisationHeaders(), new WCFServiceCallback() {
                                     @Override
                                     public void onServiceCallCompleted(ServiceResponse serviceResponse, Object parameter) {
                                         progressBar.setVisibility(View.GONE);

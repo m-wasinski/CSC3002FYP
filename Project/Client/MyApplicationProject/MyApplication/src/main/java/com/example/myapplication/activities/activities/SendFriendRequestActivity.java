@@ -46,7 +46,7 @@ public class SendFriendRequestActivity extends BaseActivity implements WCFServic
         setContentView(R.layout.activity_send_friend_request);
 
         //Initialise local variables.
-        targetUser = gson.fromJson(getIntent().getExtras().getString(IntentConstants.USER), new TypeToken<User>() {}.getType());
+        targetUser = getGson().fromJson(getIntent().getExtras().getString(IntentConstants.USER), new TypeToken<User>() {}.getType());
 
         //Initialise UI elements.
         messageEditText = (EditText) findViewById(R.id.SendFriendRequestActivityMessageEditText);
@@ -71,11 +71,11 @@ public class SendFriendRequestActivity extends BaseActivity implements WCFServic
         FriendRequest friendRequest = new FriendRequest();
         friendRequest.setMessage(messageEditText.getText().toString());
         friendRequest.setToUser(targetUser);
-        friendRequest.setFromUser(appManager.getUser());
+        friendRequest.setFromUser(getAppManager().getUser());
 
         new WcfPostServiceTask<FriendRequest>(this,
                 getResources().getString(R.string.SendFriendRequestURL), friendRequest,
-                new TypeToken<ServiceResponse<Void>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
+                new TypeToken<ServiceResponse<Void>>() {}.getType(), getAppManager().getAuthorisationHeaders(), this).execute();
     }
 
     /**
@@ -99,8 +99,8 @@ public class SendFriendRequestActivity extends BaseActivity implements WCFServic
      */
     private void retrieveProfilePicture()
     {
-        new WcfPictureServiceTask(appManager.getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
-                targetUser.getUserId(), appManager.getAuthorisationHeaders(), new WCFImageRetrieved() {
+        new WcfPictureServiceTask(getAppManager().getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
+                targetUser.getUserId(), getAppManager().getAuthorisationHeaders(), new WCFImageRetrieved() {
             @Override
             public void onImageRetrieved(Bitmap bitmap) {
                 if(bitmap != null)

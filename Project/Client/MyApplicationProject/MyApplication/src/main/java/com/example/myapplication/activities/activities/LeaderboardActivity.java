@@ -63,7 +63,7 @@ public class LeaderboardActivity extends BaseActivity implements WCFServiceCallb
 
         // Initialise local variables.
         leaderboard = new ArrayList<User>();
-        leaderboardAdapter = new LeaderboardAdapter(appManager, this, R.layout.listview_row_leaderboard, leaderboard);
+        leaderboardAdapter = new LeaderboardAdapter(getAppManager(), this, R.layout.listview_row_leaderboard, leaderboard);
 
         // Initialise UI elements.
         leaderboardListView = (ListView) findViewById(R.id.LeaderboardActivityListView);
@@ -79,9 +79,9 @@ public class LeaderboardActivity extends BaseActivity implements WCFServiceCallb
     {
         progressBar.setVisibility(View.VISIBLE);
         new WcfPostServiceTask<LoadRangeDTO>(this, getResources().getString(R.string.GetLeaderboardURL),
-                new LoadRangeDTO(appManager.getUser().getUserId(), requestMoreData ? leaderboardListView.getCount() : 0,
+                new LoadRangeDTO(getAppManager().getUser().getUserId(), requestMoreData ? leaderboardListView.getCount() : 0,
                         requestMoreData ? WcfConstants.LeaderboardPerCall : leaderboardListView.getCount()),
-                new TypeToken<ServiceResponse<ArrayList<User>>>(){}.getType(),appManager.getAuthorisationHeaders(), this).execute();
+                new TypeToken<ServiceResponse<ArrayList<User>>>(){}.getType(),getAppManager().getAuthorisationHeaders(), this).execute();
     }
 
     /**

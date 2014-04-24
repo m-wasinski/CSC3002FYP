@@ -49,9 +49,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         setContentView(R.layout.activity_home);
 
         //Initialise local variables.
-        actionBar.setTitle(appManager.getUser().getUserName());
-        actionBar.setHomeButtonEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(false);
+        if(getActionBar() != null)
+        {
+            getActionBar().setTitle(getAppManager().getUser().getUserName());
+            getActionBar().setHomeButtonEnabled(false);
+            getActionBar().setDisplayHomeAsUpEnabled(false);
+        }
 
         /*
          * Alarm manager is used to trigger a task every 5 minutes.
@@ -84,7 +87,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        this.appManager.logout(false, true);
+        this.getAppManager().logout(false, true);
     }
 
     @Override
@@ -93,11 +96,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         return true;
     }
 
+    /**
+     *
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout_menu_option:
-                appManager.logout(true, true);
+                getAppManager().logout(true, true);
                 break;
             case R.id.action_refresh:
                 refreshInformation();
@@ -112,12 +120,18 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         return true;
     }
 
+    /**
+     *
+     */
     @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(GCMReceiver);
     }
 
+    /**
+     *
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -136,7 +150,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         progressBar.setVisibility(View.VISIBLE);
         refreshedItems = 0;
 
-        ServiceTaskFactory.getUnreadAppNotificationsCount(this, appManager.getAuthorisationHeaders(), appManager.getUser().getUserId(), new WCFServiceCallback<Integer, Void>() {
+        ServiceTaskFactory.getUnreadAppNotificationsCount(this, getAppManager().getAuthorisationHeaders(), getAppManager().getUser().getUserId(), new WCFServiceCallback<Integer, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {
                 if (serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS) {
@@ -147,7 +161,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
             }
         }).execute();
 
-        ServiceTaskFactory.getUnreadMessagesCount(this, appManager.getAuthorisationHeaders(), appManager.getUser().getUserId(), new WCFServiceCallback<Integer, Void>() {
+        ServiceTaskFactory.getUnreadMessagesCount(this, getAppManager().getAuthorisationHeaders(), getAppManager().getUser().getUserId(), new WCFServiceCallback<Integer, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Integer> serviceResponse, Void parameter) {
                 if (serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS) {
@@ -166,7 +180,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
      **/
     private void retrieveDeviceNotifications()
     {
-        ServiceTaskFactory.getDeviceNotifications(this, appManager.getAuthorisationHeaders(), appManager.getUser().getUserId(), new WCFServiceCallback<ArrayList<Notification>, Void>() {
+        ServiceTaskFactory.getDeviceNotifications(this, getAppManager().getAuthorisationHeaders(), getAppManager().getUser().getUserId(), new WCFServiceCallback<ArrayList<Notification>, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<ArrayList<Notification>> serviceResponse, Void parameter) {
                 if (serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS) {
@@ -196,7 +210,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
 
         for(Notification notification : notifications)
         {
-            notificationProcessor.process(this, appManager, notification, null);
+            notificationProcessor.process(this, getAppManager(), notification, null);
         }
     }
 
@@ -206,7 +220,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         switch(view.getId())
         {
             case R.id.ActivityHomeMyJourneysLayout:
-                startActivity(new Intent(this, MyJourneysActivity.class).putExtra(IntentConstants.USER, gson.toJson(appManager.getUser())));
+                startActivity(new Intent(this, MyJourneysActivity.class).putExtra(IntentConstants.USER, getGson().toJson(getAppManager().getUser())));
                 break;
             case R.id.ActivityHomeSearchLayout:
                 startActivity(new Intent(this, SearchTypeActivity.class));

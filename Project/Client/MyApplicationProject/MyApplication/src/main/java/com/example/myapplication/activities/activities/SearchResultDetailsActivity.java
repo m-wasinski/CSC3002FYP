@@ -76,11 +76,11 @@ public class SearchResultDetailsActivity extends BaseMapActivity implements WCFS
 
         // Check if this activity has been started from a notification, if so, mark is as read.
         Bundle extras = getIntent().getExtras();
-        Notification notification = gson.fromJson(extras.getString(IntentConstants.NOTIFICATION), new TypeToken<Notification>() {}.getType());
+        Notification notification = getGson().fromJson(extras.getString(IntentConstants.NOTIFICATION), new TypeToken<Notification>() {}.getType());
 
         if(notification != null)
         {
-            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Void, Void>() {
+            new NotificationProcessor().MarkDelivered(this, getAppManager(), notification, new WCFServiceCallback<Void, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                     Log.i(TAG, "Notification successfully marked as delivered");
@@ -89,7 +89,7 @@ public class SearchResultDetailsActivity extends BaseMapActivity implements WCFS
         }
 
         // Initialise UI elements, local variables and setup event handlers
-        journey = gson.fromJson(extras.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
+        journey = getGson().fromJson(extras.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType());
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -131,7 +131,7 @@ public class SearchResultDetailsActivity extends BaseMapActivity implements WCFS
             e.printStackTrace();
         }
 
-        googleMap.setOnMapLoadedCallback(this);
+        getGoogleMap().setOnMapLoadedCallback(this);
     }
 
     /**
@@ -158,10 +158,10 @@ public class SearchResultDetailsActivity extends BaseMapActivity implements WCFS
      */
     private void initialiseMap() {
 
-        if (googleMap == null && mapFragment != null) {
-            googleMap = mapFragment.getMap();
+        if (getGoogleMap() == null && mapFragment != null) {
+            setGoogleMap(mapFragment.getMap());
 
-            if (googleMap == null) {
+            if (getGoogleMap() == null) {
                 Toast.makeText(this,"Check if Google Play services are installed.", Toast.LENGTH_SHORT).show();
             }
         }
@@ -172,8 +172,8 @@ public class SearchResultDetailsActivity extends BaseMapActivity implements WCFS
      */
     private void retrieveDriverProfilePicture()
     {
-        new WcfPictureServiceTask(appManager.getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
-                journey.getDriver().getUserId(), appManager.getAuthorisationHeaders(), this).execute();
+        new WcfPictureServiceTask(getAppManager().getBitmapLruCache(), getResources().getString(R.string.GetProfilePictureURL),
+                journey.getDriver().getUserId(), getAppManager().getAuthorisationHeaders(), this).execute();
     }
 
     /**
@@ -184,12 +184,12 @@ public class SearchResultDetailsActivity extends BaseMapActivity implements WCFS
         sendRequestButton.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
         JourneyRequest journeyRequest = new JourneyRequest();
-        journeyRequest.setFromUser(appManager.getUser());
+        journeyRequest.setFromUser(getAppManager().getUser());
         journeyRequest.setJourneyId(journey.getJourneyId());
         journeyRequest.setMessage(journeyMessageToDriverEditText.getText().toString());
 
         new WcfPostServiceTask<JourneyRequest>(this, getResources().getString(R.string.SendRequestURL),
-                journeyRequest, new TypeToken<ServiceResponse<Void>>() {}.getType(), appManager.getAuthorisationHeaders(), this).execute();
+                journeyRequest, new TypeToken<ServiceResponse<Void>>() {}.getType(), getAppManager().getAuthorisationHeaders(), this).execute();
     }
 
     /**
@@ -216,7 +216,7 @@ public class SearchResultDetailsActivity extends BaseMapActivity implements WCFS
 
     @Override
     public void onMapLoaded() {
-        drawDrivingDirectionsOnMap(googleMap, journey.getGeoAddresses(), this);
+        drawDrivingDirectionsOnMap(getGoogleMap(), journey.getGeoAddresses(), this);
     }
 
     /**

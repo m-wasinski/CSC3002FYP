@@ -87,10 +87,10 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
         mode = bundle.getInt(IntentConstants.JOURNEY_CREATOR_MODE);
 
         journey = mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ?
-                (Journey)gson.fromJson(bundle.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType()) : new Journey();
+                (Journey)getGson().fromJson(bundle.getString(IntentConstants.JOURNEY), new TypeToken<Journey>() {}.getType()) : new Journey();
 
         // Initialise variables.
-        wayPoints = new ArrayList<WaypointHolder>();
+        setWayPoints(new ArrayList<WaypointHolder>());
 
         //Initialise UI elements.
         stepTwoButton = (Button) findViewById(R.id.OfferJourneyStepOneActivityStepTwoButton);
@@ -102,7 +102,12 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
         departureTextView = (TextView) findViewById(R.id.OfferJourneyStepOneActivityDepartureTextView);
         destinationTextView = (TextView) findViewById(R.id.OfferJourneyStepOneActivityDestinationTextView);
         viaTextView = (TextView) findViewById(R.id.OfferJourneyStepOneActivityViaTextView);
-        actionBar.setTitle(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? "Editing journey, step 1" : "Offering journey, step 1");
+
+        if(getActionBar() != null)
+        {
+            getActionBar().setTitle(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? "Editing journey, step 1" : "Offering journey, step 1");
+        }
+
         progressBar = (ProgressBar) findViewById(R.id.OfferJourneyStepOneActivityProgressBar);
 
         // Setting up event handlers.
@@ -160,10 +165,10 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
      */
     private void initialiseMap() {
 
-        if (googleMap == null) {
-            googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.OfferJourneyStepOneActivityMap)).getMap();
+        if (getGoogleMap() == null) {
+            setGoogleMap(((MapFragment) getFragmentManager().findFragmentById(R.id.OfferJourneyStepOneActivityMap)).getMap());
 
-            if (googleMap == null) {
+            if (getGoogleMap() == null) {
                 Toast.makeText(this, "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
             }
         }
@@ -179,7 +184,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
     {
         if(markerOptions != null)
         {
-            waypointHolder.googleMapMarker = googleMap.addMarker(new MarkerOptions()
+            waypointHolder.googleMapMarker = getGoogleMap().addMarker(new MarkerOptions()
                     .position(markerOptions.getPosition())
                     .title(markerOptions.getTitle())
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
@@ -206,14 +211,14 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
         departureRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showAddressSelectionDialog(MarkerType.Departure, departureMarker);
+                showAddressSelectionDialog(MarkerType.Departure, getDepartureMarker());
             }
         });
 
         destinationRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showAddressSelectionDialog(MarkerType.Destination, destinationMarker);
+                showAddressSelectionDialog(MarkerType.Destination, getDestinationMarker());
             }
         });
 
@@ -221,7 +226,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
             @Override
             public void onClick(View view) {
                 progressBar.setVisibility(View.VISIBLE);
-                getCurrentAddress(MarkerType.Departure, locationClient.getLastLocation(), 0);
+                getCurrentAddress(MarkerType.Departure, getLocationClient().getLastLocation(), 0);
             }
         });
 
@@ -229,7 +234,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
             @Override
             public void onClick(View view) {
                 progressBar.setVisibility(View.VISIBLE);
-                getCurrentAddress(MarkerType.Destination, locationClient.getLastLocation(), 0);
+                getCurrentAddress(MarkerType.Destination, getLocationClient().getLastLocation(), 0);
             }
         });
 
@@ -258,7 +263,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
         final EditText fifthWayPointEditText  = (EditText) wayPointDialog.findViewById(R.id.AlertDialogWaypointSelectorFifthWaypointEditText);
         final EditText sixthWayPointEditText  = (EditText) wayPointDialog.findViewById(R.id.AlertDialogWaypointSelectorSixthWaypointEditText);
 
-        for(WaypointHolder waypointHolder : wayPoints)
+        for(WaypointHolder waypointHolder : getWayPoints())
         {
             if(waypointHolder.geoAddress.getOrder() == 1 && waypointHolder.googleMapMarker != null)
             {
@@ -297,12 +302,12 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
             @Override
             public void onClick(View view) {
 
-                for(WaypointHolder waypointHolder : wayPoints)
+                for(WaypointHolder waypointHolder : getWayPoints())
                 {
                     waypointHolder.removeMarker();
                 }
 
-                wayPoints.clear();
+                getWayPoints().clear();
                 viaTextView.setText("Add new waypoint (optional)");
                 int wayPointCounter = 1;
                 if(!firstWayPointEditText.getText().toString().isEmpty())
@@ -399,7 +404,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
     private void buildJourney()
     {
         // Check if the required minimum number of points on the map have been specified.
-        if(departureMarker == null || destinationMarker == null)
+        if(getDepartureMarker() == null || getDestinationMarker() == null)
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("You must specify departure and destination points before proceeding.")
@@ -418,10 +423,11 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
 
         // Add all GeoAddresses specified by the user. Start at the departure address.
         journey.setGeoAddresses(new ArrayList<GeoAddress>());
-        journey.getGeoAddresses().add(new GeoAddress(departureMarker.getPosition().latitude, departureMarker.getPosition().longitude, departureMarker.getTitle(), 0));
+        journey.getGeoAddresses().add(new GeoAddress(getDepartureMarker().getPosition().latitude,
+                getDepartureMarker().getPosition().longitude, getDepartureMarker().getTitle(), 0));
 
         // Go through any optional waypoints.
-        for(WaypointHolder waypointHolder : wayPoints)
+        for(WaypointHolder waypointHolder : getWayPoints())
         {
             if(waypointHolder.googleMapMarker != null)
             {
@@ -430,7 +436,8 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
         }
 
         // And finally, add the destination address.
-        journey.getGeoAddresses().add(new GeoAddress(destinationMarker.getPosition().latitude, destinationMarker.getPosition().longitude, destinationMarker.getTitle(), wayPoints.size()+1));
+        journey.getGeoAddresses().add(new GeoAddress(getDestinationMarker().getPosition().latitude,
+                getDestinationMarker().getPosition().longitude, getDestinationMarker().getTitle(), getWayPoints().size()+1));
         Log.i(TAG, "This journey has the following geoaddresses \n");
         for(GeoAddress geoAddress : journey.getGeoAddresses())
         {
@@ -449,10 +456,10 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
         journey.setDescription(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ? journey.getDescription() : null);
         journey.setDateAndTimeOfDeparture(mode == IntentConstants.JOURNEY_CREATOR_MODE_EDITING ?
                 journey.getDateAndTimeOfDeparture() : DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime()));
-        journey.setDriver(appManager.getUser());
+        journey.setDriver(getAppManager().getUser());
 
         // Take a snapshot of the current map view.
-        googleMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
+        getGoogleMap().snapshot(new GoogleMap.SnapshotReadyCallback() {
             @Override
             public void onSnapshotReady(Bitmap bitmap) {
                 int h = OfferJourneyStepOneActivity.this.getResources().getDisplayMetrics().heightPixels / 3;
@@ -462,7 +469,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
                 ByteArrayOutputStream bs = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 50, bs);
                 Bundle bundle = new Bundle();
-                bundle.putString(IntentConstants.JOURNEY, gson.toJson(journey));
+                bundle.putString(IntentConstants.JOURNEY, getGson().toJson(journey));
                 bundle.putInt(IntentConstants.JOURNEY_CREATOR_MODE, mode);
                 Intent intent = new Intent(getApplicationContext(), OfferJourneyStepTwoActivity.class);
                 intent.putExtras(bundle);
@@ -500,13 +507,13 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
             {
                 WaypointHolder waypointHolder = new WaypointHolder();
                 waypointHolder.geoAddress = new GeoAddress(address.getPosition().latitude, address.getPosition().longitude, address.getTitle(), radius.intValue());
-                wayPoints.add(waypointHolder);
+                getWayPoints().add(waypointHolder);
                 showWaypointOnMap(waypointHolder, address);
                 viaTextView.setText(viaTextView.getText().toString() + address.getTitle() + ", ");
             }
 
-            destinationRelativeLayout.setVisibility(departureMarker != null ? View.VISIBLE : View.GONE);
-            stepTwoButton.setVisibility(departureMarker != null && destinationMarker != null ? View.VISIBLE : View.GONE);
+            destinationRelativeLayout.setVisibility(getDepartureMarker() != null ? View.VISIBLE : View.GONE);
+            stepTwoButton.setVisibility(getDepartureMarker() != null && getDepartureMarker() != null ? View.VISIBLE : View.GONE);
 
             drawDrivingDirectionsOnMap();
         }
@@ -532,14 +539,14 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
      */
     private void drawDrivingDirectionsOnMap()
     {
-        if(departureMarker != null && destinationMarker != null)
+        if(getDepartureMarker() != null && getDestinationMarker() != null)
         {
             ArrayList<GeoAddress> geoAddresses = new ArrayList<GeoAddress>();
-            geoAddresses.add(new GeoAddress(departureMarker.getPosition().latitude, departureMarker.getPosition().longitude, departureMarker.getTitle(), 0));
-            geoAddresses.add(new GeoAddress(destinationMarker.getPosition().latitude, destinationMarker.getPosition().longitude, destinationMarker.getTitle(), 1));
-            if(wayPoints.size() > 0)
+            geoAddresses.add(new GeoAddress(getDepartureMarker().getPosition().latitude, getDepartureMarker().getPosition().longitude, getDepartureMarker().getTitle(), 0));
+            geoAddresses.add(new GeoAddress(getDestinationMarker().getPosition().latitude, getDestinationMarker().getPosition().longitude, getDestinationMarker().getTitle(), 1));
+            if(getWayPoints().size() > 0)
             {
-                for(WaypointHolder waypointHolder : wayPoints)
+                for(WaypointHolder waypointHolder : getWayPoints())
                 {
                     if(waypointHolder.geoAddress != null)
                     {
@@ -548,7 +555,7 @@ public class OfferJourneyStepOneActivity extends BaseMapActivity implements OnDr
                 }
             }
             progressBar.setVisibility(View.VISIBLE);
-            drawDrivingDirectionsOnMap(googleMap, geoAddresses, this);
+            drawDrivingDirectionsOnMap(getGoogleMap(), geoAddresses, this);
         }
     }
 

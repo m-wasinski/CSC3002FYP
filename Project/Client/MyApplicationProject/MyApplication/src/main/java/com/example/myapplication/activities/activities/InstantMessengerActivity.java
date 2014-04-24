@@ -97,13 +97,13 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
         Bundle extras = getIntent().getExtras();
 
         // Check if there is a pending notification that must be marked read.
-        com.example.myapplication.domain_objects.Notification notification = gson.fromJson(extras.getString(IntentConstants.NOTIFICATION),
+        com.example.myapplication.domain_objects.Notification notification = getGson().fromJson(extras.getString(IntentConstants.NOTIFICATION),
                 new TypeToken<com.example.myapplication.domain_objects.Notification>() {}.getType());
 
         // Go ahead and mark the notification as read if safe to do so.
         if(notification != null)
         {
-            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Void, Void>() {
+            new NotificationProcessor().MarkDelivered(this, getAppManager(), notification, new WCFServiceCallback<Void, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                     Log.i(TAG, "Notification successfully marked as read.");
@@ -112,19 +112,23 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
         }
 
         // Extract information of the user we are currently chatting with.
-        ChatMessage chatMessage = gson.fromJson(extras.getString(IntentConstants.PAYLOAD) ,new TypeToken<ChatMessage>() {}.getType());
+        ChatMessage chatMessage = getGson().fromJson(extras.getString(IntentConstants.PAYLOAD) ,new TypeToken<ChatMessage>() {}.getType());
 
         recipientId = chatMessage != null ? chatMessage.getSenderId() : extras.getInt(IntentConstants.RECIPIENT_ID);
         recipientUserName = chatMessage != null ? chatMessage.getSenderUserName() : extras.getString(IntentConstants.RECIPIENT_USERNAME);
 
         // Initialise UI elements.
-        actionBar.setTitle("Chat with " + recipientUserName);
+        if(getActionBar() != null)
+        {
+            getActionBar().setTitle("Chat with " + recipientUserName);
+        }
+
         progressBar = (ProgressBar) findViewById(R.id.ActivityInstantMessengerProgressBar);
         sendButton = (Button) findViewById(R.id.InstantMessengerActivityButton);
         messageEditText = (EditText) findViewById(R.id.InstantMessengerActivityMessageEditText);
 
         chatMessages = new ArrayList<ChatMessage>();
-        chatAdapter = new ChatAdapter(this, chatMessages, appManager.getUser().getUserId());
+        chatAdapter = new ChatAdapter(this, chatMessages, getAppManager().getUser().getUserId());
         setListAdapter(chatAdapter);
         getAllMessages();
 
@@ -139,10 +143,10 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
      */
     private void getUnreadMessages() {
         new WcfPostServiceTask<ChatMessageRetrieverDTO>(this, getResources().getString(R.string.GetUnreadMessages),
-                new ChatMessageRetrieverDTO(recipientId, appManager.getUser().getUserId(),
-                        new LoadRangeDTO(appManager.getUser().getUserId(), 0,0)),
+                new ChatMessageRetrieverDTO(recipientId, getAppManager().getUser().getUserId(),
+                        new LoadRangeDTO(getAppManager().getUser().getUserId(), 0,0)),
                 new TypeToken<ServiceResponse<ArrayList<ChatMessage>>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<ChatMessage>, Void>() {
+                getAppManager().getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<ChatMessage>, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<ArrayList<ChatMessage>> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -174,8 +178,8 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
     private void sendMessage()
     {
         // Create a new message.
-        final ChatMessage newMessage = new ChatMessage(appManager.getUser().getUserId(), recipientId, messageEditText.getText().toString(),
-                DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime()), false, recipientUserName, appManager.getUser().getUserName());
+        final ChatMessage newMessage = new ChatMessage(getAppManager().getUser().getUserId(), recipientId, messageEditText.getText().toString(),
+                DateTimeHelper.convertToWCFDate(Calendar.getInstance().getTime()), false, recipientUserName, getAppManager().getUser().getUserName());
 
         // If the message if blank, return.
         if(newMessage.getMessageBody().length() == 0)
@@ -189,7 +193,7 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
 
         new WcfPostServiceTask<ChatMessage>(this, getResources().getString(R.string.SendMessageURL), newMessage,
                 new TypeToken<ServiceResponse<Void>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
+                getAppManager().getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -221,10 +225,10 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
     private void getAllMessages()
     {
         callInProgress = true;
-        new WcfPostServiceTask<ChatMessageRetrieverDTO>(this, getResources().getString(R.string.GetMessagesURL), new ChatMessageRetrieverDTO(appManager.getUser().getUserId(), recipientId,
-                new LoadRangeDTO(appManager.getUser().getUserId(), this.getListView().getCount(),WcfConstants.MessagesPerCall)),
+        new WcfPostServiceTask<ChatMessageRetrieverDTO>(this, getResources().getString(R.string.GetMessagesURL), new ChatMessageRetrieverDTO(getAppManager().getUser().getUserId(), recipientId,
+                new LoadRangeDTO(getAppManager().getUser().getUserId(), this.getListView().getCount(),WcfConstants.MessagesPerCall)),
                 new TypeToken<ServiceResponse<ArrayList<ChatMessage>>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<ChatMessage>, Void>() {
+                getAppManager().getAuthorisationHeaders(), new WCFServiceCallback<ArrayList<ChatMessage>, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<ArrayList<ChatMessage>> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
@@ -304,7 +308,7 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
 
             Bundle bundle = intent.getExtras();
 
-            ChatMessage chatMessage = gson.fromJson(bundle.getString(IntentConstants.PAYLOAD), new TypeToken<ChatMessage>() {}.getType());
+            ChatMessage chatMessage = getGson().fromJson(bundle.getString(IntentConstants.PAYLOAD), new TypeToken<ChatMessage>() {}.getType());
 
             for(ChatMessage message : chatMessages)
             {
@@ -316,7 +320,7 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
 
             // If incoming message happens to be coming from the user we are currently chatting with,
             // we can abort the broadcast and display the message in the listview.
-            if(appManager.getUser().getUserId() == chatMessage.getRecipientId() && chatMessage.getSenderId() == recipientId)
+            if(getAppManager().getUser().getUserId() == chatMessage.getRecipientId() && chatMessage.getSenderId() == recipientId)
             {
                 addNewMessage(chatMessage);
                 markMessageAsRead(chatMessage);
@@ -333,7 +337,7 @@ public class InstantMessengerActivity extends BaseListActivity  implements AbsLi
     {
         new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.MarkMessageAsReadURL),chatMessage.getChatMessageId(),
                 new TypeToken<ServiceResponse<Void>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
+                getAppManager().getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                 if(serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)

@@ -72,7 +72,7 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_journeys);
 
-        user = gson.fromJson(getIntent().getStringExtra(IntentConstants.USER), new TypeToken<User>(){}.getType());
+        user = getGson().fromJson(getIntent().getStringExtra(IntentConstants.USER), new TypeToken<User>(){}.getType());
 
         setTitle(user != null ? user.getUserName()+"'s journeys" : "Error, could not retrieve user.");
 
@@ -173,7 +173,7 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
                 new LoadRangeDTO(user.getUserId(),
                         requestMoreData ? myJourneysListView.getCount() : 0, requestMoreData ? WcfConstants.JourneysPerCall : myJourneysListView.getCount()),
                 new TypeToken<ServiceResponse<ArrayList<Journey>>>() {}.getType(),
-                appManager.getAuthorisationHeaders(), this).execute();
+                getAppManager().getAuthorisationHeaders(), this).execute();
     }
 
     /**
@@ -225,8 +225,8 @@ public class MyJourneysActivity extends BaseActivity implements WCFServiceCallba
         Bundle extras = new Bundle();
         extras.putInt(IntentConstants.NEW_JOURNEY_MESSAGES,Integer.parseInt(((TextView)view.findViewById(R.id.MyCarSharesNumberOfUnreadMessagesTextView)).getText().toString()));
         extras.putInt(IntentConstants.NEW_JOURNEY_REQUESTS,Integer.parseInt(((TextView)view.findViewById(R.id.MyCarSharesNumberOfUnreadRequestsTextView)).getText().toString()));
-        extras.putString(IntentConstants.JOURNEY, gson.toJson(myJourneys.get(i)));
-        startActivity(user.getUserId() == appManager.getUser().getUserId() ? new Intent(this, JourneyManagementActivity.class).putExtras(extras) :
+        extras.putString(IntentConstants.JOURNEY, getGson().toJson(myJourneys.get(i)));
+        startActivity(user.getUserId() == getAppManager().getUser().getUserId() ? new Intent(this, JourneyManagementActivity.class).putExtras(extras) :
                 new Intent(this, SearchResultDetailsActivity.class).putExtras(extras));
     }
 

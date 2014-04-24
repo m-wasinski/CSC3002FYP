@@ -49,13 +49,13 @@ public class RatingsActivity extends BaseActivity implements WCFServiceCallback<
         // Initialise local variables.
         Bundle bundle = getIntent().getExtras();
 
-        user = gson.fromJson(bundle.getString(IntentConstants.USER), new TypeToken<User>(){}.getType());
+        user = getGson().fromJson(bundle.getString(IntentConstants.USER), new TypeToken<User>(){}.getType());
 
-        Notification notification =  gson.fromJson(bundle.getString(IntentConstants.NOTIFICATION),  new TypeToken<Notification>() {}.getType());
+        Notification notification =  getGson().fromJson(bundle.getString(IntentConstants.NOTIFICATION),  new TypeToken<Notification>() {}.getType());
 
         if(notification != null)
         {
-            new NotificationProcessor().MarkDelivered(this, appManager, notification, new WCFServiceCallback<Void, Void>() {
+            new NotificationProcessor().MarkDelivered(this, getAppManager(), notification, new WCFServiceCallback<Void, Void>() {
                 @Override
                 public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                     Log.i(TAG, "Notification successfully marked as delivered");
@@ -65,7 +65,12 @@ public class RatingsActivity extends BaseActivity implements WCFServiceCallback<
         // Initialise UI elements.
         ratingsListView = (ListView) findViewById(R.id.RatingsActivityListView);
         noRatingsTextView = (TextView) findViewById(R.id.RatingsActivityNoRatingsTextView);
-        actionBar.setTitle(user.getUserName() + "'s ratings");
+
+        if(getActionBar() != null)
+        {
+            getActionBar().setTitle(user.getUserName() + "'s ratings");
+        }
+
         progressBar = (ProgressBar) findViewById(R.id.RatingsActivityProgressBar);
     }
 
@@ -79,7 +84,7 @@ public class RatingsActivity extends BaseActivity implements WCFServiceCallback<
     {
         progressBar.setVisibility(View.VISIBLE);
         new WcfPostServiceTask<Integer>(this, getResources().getString(R.string.GetUserRatingsURL), user.getUserId(), new TypeToken<ServiceResponse<ArrayList<Rating>>>(){}.getType(),
-                appManager.getAuthorisationHeaders(), this).execute();
+                getAppManager().getAuthorisationHeaders(), this).execute();
     }
 
     @Override
@@ -92,7 +97,7 @@ public class RatingsActivity extends BaseActivity implements WCFServiceCallback<
 
             noRatingsTextView.setVisibility(serviceResponse.Result.size() == 0 ? View.VISIBLE : View.GONE);
             noRatingsTextView.setText(serviceResponse.Result.size() == 0 ? user.getUserName() + " has no ratings." : "");
-            RatingsAdapter ratingsAdapter = new RatingsAdapter(this, R.layout.listview_row_rating, serviceResponse.Result, appManager);
+            RatingsAdapter ratingsAdapter = new RatingsAdapter(this, R.layout.listview_row_rating, serviceResponse.Result, getAppManager());
             ratingsListView.setAdapter(ratingsAdapter);
 
             ratingsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -71,7 +71,7 @@ public class SearchEditorStepOneActivity extends BaseMapActivity implements WCFS
         mode = bundle.getInt(IntentConstants.SEARCH_MODE);
 
         journeyTemplate = mode == IntentConstants.SEARCH_MODE_NEW ? journeyTemplate = new JourneyTemplate() :
-                (JourneyTemplate) gson.fromJson(bundle.getString(IntentConstants.JOURNEY_TEMPLATE), new TypeToken<JourneyTemplate>(){}.getType());
+                (JourneyTemplate) getGson().fromJson(bundle.getString(IntentConstants.JOURNEY_TEMPLATE), new TypeToken<JourneyTemplate>(){}.getType());
 
         //Initialise UI elements.
         progressBar = (ProgressBar) findViewById(R.id.SearchActivityProgressBar);
@@ -205,11 +205,11 @@ public class SearchEditorStepOneActivity extends BaseMapActivity implements WCFS
      **/
     private void initialiseMap()
     {
-        if (googleMap == null)
+        if (getGoogleMap() == null)
         {
-            googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.FragmentSearchMap)).getMap();
+            setGoogleMap(((MapFragment) getFragmentManager().findFragmentById(R.id.FragmentSearchMap)).getMap());
 
-            if (googleMap == null)
+            if (getGoogleMap() == null)
             {
                 Toast.makeText(this, "Unable to initialise Google Maps, please check your network connection.", Toast.LENGTH_SHORT).show();
             }
@@ -224,7 +224,7 @@ public class SearchEditorStepOneActivity extends BaseMapActivity implements WCFS
 
         // For the search to be performed, we must have both departure and destination points.
         // Search cannot commence if any of them is absent.
-        if(departureMarker == null || destinationMarker == null)
+        if(getDepartureMarker() == null || getDestinationMarker() == null)
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("You must specify departure and destination points to be able to proceed.")
@@ -241,16 +241,16 @@ public class SearchEditorStepOneActivity extends BaseMapActivity implements WCFS
 
         // Build the journeyTemplate object and send it to the web service.
         journeyTemplate.setGeoAddresses(new ArrayList<GeoAddress>(Arrays.asList(
-                new GeoAddress(departureMarker.getPosition().latitude, departureMarker.getPosition().longitude, departureMarker.getTitle(), 0),
-                new GeoAddress(destinationMarker.getPosition().latitude, destinationMarker.getPosition().longitude, destinationMarker.getTitle(), 1))));
+                new GeoAddress(getDepartureMarker().getPosition().latitude, getDepartureMarker().getPosition().longitude, getDepartureMarker().getTitle(), 0),
+                new GeoAddress(getDestinationMarker().getPosition().latitude, getDestinationMarker().getPosition().longitude, getDestinationMarker().getTitle(), 1))));
 
-        journeyTemplate.setDepartureRadius(departureRadius.getRadius() / METERS_IN_MILE);
-        journeyTemplate.setDestinationRadius(destinationRadius.getRadius() / METERS_IN_MILE);
-        journeyTemplate.setUserId(appManager.getUser().getUserId());
+        journeyTemplate.setDepartureRadius(getDepartureRadius().getRadius() / METERS_IN_MILE);
+        journeyTemplate.setDestinationRadius(getDestinationRadius().getRadius() / METERS_IN_MILE);
+        journeyTemplate.setUserId(getAppManager().getUser().getUserId());
 
         Bundle bundle = new Bundle();
         bundle.putInt(IntentConstants.SEARCH_MODE, mode);
-        bundle.putString(IntentConstants.JOURNEY_TEMPLATE, gson.toJson(journeyTemplate));
+        bundle.putString(IntentConstants.JOURNEY_TEMPLATE, getGson().toJson(journeyTemplate));
 
         startActivity(new Intent(this, SearchEditorStepTwoActivity.class).putExtras(bundle));
     }
@@ -321,7 +321,7 @@ public class SearchEditorStepOneActivity extends BaseMapActivity implements WCFS
     private void showJourneyDetails(Journey journey)
     {
         Bundle bundle = new Bundle();
-        bundle.putString(IntentConstants.JOURNEY, gson.toJson(journey));
+        bundle.putString(IntentConstants.JOURNEY, getGson().toJson(journey));
         startActivity(new Intent(this, SearchResultDetailsActivity.class).putExtras(bundle));
     }
 
@@ -374,7 +374,7 @@ public class SearchEditorStepOneActivity extends BaseMapActivity implements WCFS
     {
         progressBar.setVisibility(View.VISIBLE);
         new WcfPostServiceTask<JourneyTemplate>(this, getResources().getString(R.string.CreateNewJourneyTemplateURL),
-                journeyTemplate, new TypeToken<ServiceResponse<Void>>() {}.getType(), appManager.getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
+                journeyTemplate, new TypeToken<ServiceResponse<Void>>() {}.getType(), getAppManager().getAuthorisationHeaders(), new WCFServiceCallback<Void, Void>() {
             @Override
             public void onServiceCallCompleted(ServiceResponse<Void> serviceResponse, Void parameter) {
                 progressBar.setVisibility(View.GONE);
@@ -400,17 +400,17 @@ public class SearchEditorStepOneActivity extends BaseMapActivity implements WCFS
                 break;
             case R.id.SearchActivityDestinationGpsButton:
                 progressBar.setVisibility(View.VISIBLE);
-                getCurrentAddress(MarkerType.Destination, locationClient.getLastLocation(), 2);
+                getCurrentAddress(MarkerType.Destination, getLocationClient().getLastLocation(), 2);
                 break;
             case R.id.SearchActivityDepartureGpsButton:
                 progressBar.setVisibility(View.VISIBLE);
-                getCurrentAddress(MarkerType.Departure, locationClient.getLastLocation(), 2);
+                getCurrentAddress(MarkerType.Departure, getLocationClient().getLastLocation(), 2);
                 break;
             case R.id.SearchActivityDepartureRelativeLayout:
-                showAddressDialog(MarkerType.Departure, departureMarker, departureRadius);
+                showAddressDialog(MarkerType.Departure, getDepartureMarker(), getDepartureRadius());
                 break;
             case R.id.SearchActivityDestinationRelativeLayout:
-                showAddressDialog(MarkerType.Destination, destinationMarker, destinationRadius);
+                showAddressDialog(MarkerType.Destination, getDestinationMarker(), getDestinationRadius());
                 break;
         }
     }

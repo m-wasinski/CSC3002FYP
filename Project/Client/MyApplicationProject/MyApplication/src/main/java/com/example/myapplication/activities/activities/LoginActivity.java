@@ -72,9 +72,9 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
         loginButton.setEnabled(false);
 
         new WcfPostServiceTask<LoginDTO>(this, getResources().getString(R.string.UserManualLoginURL),
-                new LoginDTO(userName.getText().toString(), password.getText().toString(), appManager.getRegistrationId()), new TypeToken<ServiceResponse<User>>() {}.getType(),
-                asList(new Pair(SessionConstants.REMEMBER_ME, ""+rememberMeCheckbox.isChecked()), new Pair(SessionConstants.DEVICE_ID, appManager.getUniqueDeviceId()),
-                        new Pair(SessionConstants.UUID, appManager.getUUID())), this).execute();
+                new LoginDTO(userName.getText().toString(), password.getText().toString(), getAppManager().getRegistrationId()), new TypeToken<ServiceResponse<User>>() {}.getType(),
+                asList(new Pair(SessionConstants.REMEMBER_ME, ""+rememberMeCheckbox.isChecked()), new Pair(SessionConstants.DEVICE_ID, getAppManager().getUniqueDeviceId()),
+                        new Pair(SessionConstants.UUID, getAppManager().getUUID())), this).execute();
     }
 
     private boolean validateFields(EditText editText, String value)
@@ -118,8 +118,8 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
 
         if (serviceResponse.ServiceResponseCode == ServiceResponseCode.SUCCESS)
         {
-            appManager.setSessionId(session);
-            appManager.setUser(serviceResponse.Result);
+            getAppManager().setSessionId(session);
+            getAppManager().setUser(serviceResponse.Result);
             startActivity(new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
             finish();
         }

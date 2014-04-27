@@ -51,9 +51,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         //Initialise local variables.
         if(getActionBar() != null)
         {
-            getActionBar().setTitle(getAppManager().getUser().getUserName());
             getActionBar().setHomeButtonEnabled(false);
             getActionBar().setDisplayHomeAsUpEnabled(false);
+            getActionBar().setTitle("Hi " + getAppManager().getUser().getUserName());
         }
 
         /*

@@ -239,9 +239,12 @@ public class BaseMapActivity extends FragmentActivity implements GooglePlayServi
 
         if(markerOptions != null)
         {
+            // Places the destination marker on the map.
             destinationMarker = googleMap.addMarker(markerOptions);
 
+            // Shows the marker title, which in this case is the address.
             destinationMarker.showInfoWindow();
+
             destinationRadius = googleMap.addCircle(new CircleOptions()
                     .center(markerOptions.getPosition())
                     .radius(perimeter * 1600)

@@ -70,3 +70,7 @@ C:\CSC3002FYP\Project\WebService\Tests\bin\Debug\Microsoft.Practices.Unity.xml
 C:\CSC3002FYP\Project\WebService\Tests\bin\Debug\Newtonsoft.Json.xml
 C:\CSC3002FYP\Project\WebService\Tests\obj\Debug\Tests.dll
 C:\CSC3002FYP\Project\WebService\Tests\obj\Debug\Tests.pdb
+C:\CSC3002FYP\Project\WebService\Tests\bin\Debug\MySql.Web.dll
+C:\CSC3002FYP\Project\WebService\Tests\bin\Debug\MySql.Data.dll
+C:\CSC3002FYP\Project\WebService\Tests\bin\Debug\WebMatrix.WebData.dll
+C:\CSC3002FYP\Project\WebService\Tests\bin\Debug\WebMatrix.WebData.xml

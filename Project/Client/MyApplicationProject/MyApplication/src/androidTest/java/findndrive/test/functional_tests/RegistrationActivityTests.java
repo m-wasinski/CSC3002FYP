@@ -1,15 +1,17 @@
 package findndrive.test.functional_tests;
 
 import android.test.ActivityInstrumentationTestCase2;
+import android.test.UiThreadTest;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.myapplication.R;
+import com.example.myapplication.activities.activities.RegistrationActivity;
 
 
-public class RegistrationActivityTests extends ActivityInstrumentationTestCase2<com.example.myapplication.activities.activities.RegistrationActivity>
+public class RegistrationActivityTests extends ActivityInstrumentationTestCase2<RegistrationActivity>
 {
-    private com.example.myapplication.activities.activities.RegistrationActivity registrationActivity;
+    private RegistrationActivity registrationActivity;
     private EditText userNameEditText;
     private EditText emailAddressEditText;
     private EditText passwordEditText;
@@ -18,7 +20,7 @@ public class RegistrationActivityTests extends ActivityInstrumentationTestCase2<
 
     public RegistrationActivityTests()
     {
-        super(com.example.myapplication.activities.activities.RegistrationActivity.class);
+        super(RegistrationActivity.class);
     }
 
     @Override
@@ -38,6 +40,7 @@ public class RegistrationActivityTests extends ActivityInstrumentationTestCase2<
         assertTrue(registrationActivity != null);
     }
 
+    @UiThreadTest
     public void testRegisterValidUser()
     {
         enterDetails();
@@ -49,7 +52,7 @@ public class RegistrationActivityTests extends ActivityInstrumentationTestCase2<
         assertNull(confirmedPasswordEditText.getError());
     }
 
-
+    @UiThreadTest
     public void testRegisterUserWithDifferentPasswords()
     {
         enterDetails();
@@ -57,7 +60,7 @@ public class RegistrationActivityTests extends ActivityInstrumentationTestCase2<
         confirmedPasswordEditText.setText("password2");
         assertEquals("password2", confirmedPasswordEditText.getText().toString());
 
-        registerButton.performClick();
+        registerButton.callOnClick();
 
         assertNotNull(passwordEditText.getError());
         assertEquals("Both passwords must match.", passwordEditText.getError());
@@ -79,13 +82,6 @@ public class RegistrationActivityTests extends ActivityInstrumentationTestCase2<
             }
         });
 
-        getInstrumentation().waitForIdleSync();
-
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         assertEquals(username, userNameEditText.getText().toString());
         assertEquals(email, emailAddressEditText.getText().toString());
         assertEquals(password, passwordEditText.getText().toString());

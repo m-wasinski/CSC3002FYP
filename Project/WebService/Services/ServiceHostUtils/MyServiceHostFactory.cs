@@ -34,9 +34,17 @@ namespace Services.ServiceHostUtils
         /// </summary>
         public MyServiceHostFactory()
         {
+            var connectionString = "";
+
+            #if DEBUG
+                connectionString = "TestConnectionString";
+            #else
+                connectionString = "ProductionConnectionString";
+            #endif
+
             if (!WebSecurity.Initialized)
             {
-                WebSecurity.InitializeDatabaseConnection("FindNDriveConnectionString", "User", "Id", "UserName", true);
+                WebSecurity.InitializeDatabaseConnection(connectionString, "User", "Id", "UserName", true);
             }
         }
 
@@ -112,7 +120,15 @@ namespace Services.ServiceHostUtils
         /// </returns>
         public object GetInstance(InstanceContext instanceContext)
         {
-            var dbContext = new ApplicationContext();
+            var connectionString = "";
+
+            #if DEBUG
+                connectionString = "TestConnectionString";
+            #else
+                connectionString = "ProductionConnectionString";
+            #endif
+
+            var dbContext = new ApplicationContext(connectionString);
             var userRepository = new EntityFrameworkRepository<User>(dbContext);
             var journeyRepository = new EntityFrameworkRepository<Journey>(dbContext);
             var sessionEntityFrameworkRepository = new EntityFrameworkRepository<Session>(dbContext);

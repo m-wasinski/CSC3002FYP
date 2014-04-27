@@ -41,109 +41,100 @@ namespace Services.ServiceUtils
         /// <returns>
         /// The <see cref="List"/>.
         /// </returns>
-        public static List<Journey> SearchForJourneys(JourneyTemplateDTO journeyTemplateDTO, FindNDriveUnitOfWork findNDriveUnitOfWork, User requestingUser)
+        public static bool JourneyFilter (Journey journey, JourneyTemplateDTO journeyTemplateDTO, User requestingUser)
         {
-            // Performs a verity of checks the journey being passed in to check if it satisfies the user's search criteria.
-            Func<Journey, bool> filter = x =>
+            var matchDeparture = -1;
+            var matchDestination = -1;
+
+            // Journey must have at least one available seat.
+            if (journey.AvailableSeats <= 0)
             {
-                var matchDeparture = -1;
-                var matchDestination = -1;
+                return false;
+            }
 
-                // Journey must have at least one available seat.
-                if (x.AvailableSeats <= 0)
+            // Its status must be OK.
+            if (journey.JourneyStatus == JourneyStatus.Expired || journey.DateAndTimeOfDeparture < DateTime.Now || journey.JourneyStatus != JourneyStatus.OK)
+            {
+                return false;
+            }
+
+            // Check if smokers criteria was set.
+            if (!journeyTemplateDTO.Smokers && journey.Smokers)
+            {
+                return false;
+            }
+
+            // Check if pets criteria was set.
+            if (!journeyTemplateDTO.Pets && journey.Pets)
+            {
+                return false;
+            }
+
+            // Check if the vehicle type criteria was set.
+            if ((int)journeyTemplateDTO.VehicleType != -1 && journey.VehicleType != journeyTemplateDTO.VehicleType)
+            {
+                return false;
+            }
+
+            // Check if user decided to search by date of departure.
+            if (journeyTemplateDTO.SearchByDate)
+            {
+                // If yes, we must include all journeys within the 'flexible days' period.
+                if (Math.Abs(journeyTemplateDTO.DateAndTimeOfDeparture.Date.Subtract(journey.DateAndTimeOfDeparture.Date).TotalDays) > journeyTemplateDTO.DateAllowance)
                 {
                     return false;
                 }
+            }
 
-                // Its status must be OK.
-                if (x.JourneyStatus == JourneyStatus.Expired || x.DateAndTimeOfDeparture < DateTime.Now || x.JourneyStatus != JourneyStatus.OK)
+            // Check if user decided to search by time of departure.
+            if (journeyTemplateDTO.SearchByTime)
+            {
+                // If yes, we must include all journeys within the 'flexible time' period.
+                if (Math.Abs(journeyTemplateDTO.DateAndTimeOfDeparture.TimeOfDay.Subtract(journey.DateAndTimeOfDeparture.TimeOfDay).TotalHours) > journeyTemplateDTO.TimeAllowance)
                 {
                     return false;
                 }
+            }
 
-                // Check if smokers criteria was set.
-                if (!journeyTemplateDTO.Smokers && x.Smokers)
+            // Check the fee.
+            if (journeyTemplateDTO.Fee < journey.Fee)
+            {
+                return false;
+            }
+
+            // If this journey has been marked private, we can only return it if the user who initiated the search is one of the driver's friends.
+            if (journey.Private && !journey.Driver.Friends.Select(_ => _.UserId).Contains(requestingUser.UserId))
+            {
+                return false;
+            }
+
+            /* 
+             * The most important part of the search algorithm checks whether 
+             * the departure and destination points provided by the user are within the
+             * allowed distance of the departure and destination points or infact any of the waypoints of this journey.
+             */
+            foreach (var geoAddress in journey.GeoAddresses)
+            {
+                if (journeyTemplateDTO.DepartureRadius
+                    >= HaversineCalculator.CalculateDistance(
+                        geoAddress,
+                        journeyTemplateDTO.GeoAddresses.First(),
+                        DistanceType.Miles) && matchDeparture == -1 && matchDestination != geoAddress.Order)
                 {
-                    return false;
+                    matchDeparture = geoAddress.Order;
                 }
 
-                // Check if pets criteria was set.
-                if (!journeyTemplateDTO.Pets && x.Pets)
+                if (journeyTemplateDTO.DestinationRadius
+                    >= HaversineCalculator.CalculateDistance(
+                        geoAddress,
+                        journeyTemplateDTO.GeoAddresses.Last(),
+                        DistanceType.Miles) && matchDestination == -1 && matchDeparture != geoAddress.Order)
                 {
-                    return false;
+                    matchDestination = geoAddress.Order;
                 }
+            }
 
-                // Check if the vehicle type criteria was set.
-                if ((int)journeyTemplateDTO.VehicleType != -1 && x.VehicleType != journeyTemplateDTO.VehicleType)
-                {
-                    return false;               
-                }
-
-                // Check if user decided to search by date of departure.
-                if (journeyTemplateDTO.SearchByDate)
-                {
-                    // If yes, we must include all journeys within the 'flexible days' period.
-                    if (Math.Abs(journeyTemplateDTO.DateAndTimeOfDeparture.Date.Subtract(x.DateAndTimeOfDeparture.Date).TotalDays) > journeyTemplateDTO.DateAllowance)
-                    {
-                        return false;
-                    }
-                }
-
-                // Check if user decided to search by time of departure.
-                if (journeyTemplateDTO.SearchByTime)
-                {
-                    // If yes, we must include all journeys within the 'flexible time' period.
-                    if (Math.Abs(journeyTemplateDTO.DateAndTimeOfDeparture.TimeOfDay.Subtract(x.DateAndTimeOfDeparture.TimeOfDay).TotalHours) > journeyTemplateDTO.TimeAllowance)
-                    {
-                        return false;
-                    }
-                }
-
-                // Check the fee.
-                if (journeyTemplateDTO.Fee < x.Fee)
-                {
-                    return false;
-                }
-
-                var driver =
-                    findNDriveUnitOfWork.UserRepository.AsQueryable().Include(_ => _.Friends).FirstOrDefault(_ => _.UserId == x.Driver.UserId);
-
-                // If this journey has been marked private, we can only return it if the user who initiated the search is one of the driver's friends.
-                if (driver != null && (x.Private && !driver.Friends.Select(_ => _.UserId).Contains(requestingUser.UserId)))
-                {
-                    return false;
-                }
-
-                /* 
-                 * The most important part of the search algorithm checks whether 
-                 * the departure and destination points provided by the user are within the
-                 * allowed distance of the departure and destination points or infact any of the waypoints of this journey.
-                 */
-                foreach (var geoAddress in x.GeoAddresses)
-                {
-                    if (journeyTemplateDTO.DepartureRadius
-                        >= HaversineCalculator.CalculateDistance(
-                            geoAddress,
-                            journeyTemplateDTO.GeoAddresses.First(),
-                            DistanceType.Miles) && matchDeparture == -1 && matchDestination != geoAddress.Order)
-                    {
-                        matchDeparture = geoAddress.Order;
-                    }
-
-                    if (journeyTemplateDTO.DestinationRadius
-                        >= HaversineCalculator.CalculateDistance(
-                            geoAddress,
-                            journeyTemplateDTO.GeoAddresses.Last(),
-                            DistanceType.Miles) && matchDestination == -1 && matchDeparture != geoAddress.Order)
-                    {
-                        matchDestination = geoAddress.Order;
-                    }
-                }
-
-                return matchDeparture < matchDestination && matchDeparture != -1 && matchDestination != -1;
-            };
-
-            return findNDriveUnitOfWork.JourneyRepository.AsQueryable().Include(_ => _.Driver).Include(_ => _.GeoAddresses).Where(filter).ToList();
+            return matchDeparture < matchDestination && matchDeparture != -1 && matchDestination != -1;
         }
 
         /// <summary>
@@ -160,53 +151,57 @@ namespace Services.ServiceUtils
         /// <returns>
         /// The <see cref="List"/>.
         /// </returns>
-        public static List<JourneyTemplate> SearchForTemplates(Journey journey, FindNDriveUnitOfWork findNDriveUnitOfWork)
+        public static bool TemplateFilter(Journey journey, JourneyTemplate journeyTemplate)
         {
-            Func<JourneyTemplate, bool> filter = x =>
-            {
                 var matchDeparture = -1;
                 var matchDestination = -1;
 
-                if (journey.Smokers && !x.Smokers)
+                if (journey.Smokers && !journeyTemplate.Smokers)
                 {
                     return false;
                 }
 
-                if (journey.Pets && !x.Pets)
+                if (journey.Pets && !journeyTemplate.Pets)
                 {
                     return false;
                 }
 
-                if ((int)x.VehicleType != -1 && x.VehicleType != journey.VehicleType)
+                if ((int)journeyTemplate.VehicleType != -1 && journeyTemplate.VehicleType != journey.VehicleType)
                 {
                     return false;
                 }
 
 
-                if (x.SearchByDate)
+                if (journeyTemplate.SearchByDate)
                 {
-                    if (Math.Abs(x.DateAndTimeOfDeparture.Date.Subtract(journey.DateAndTimeOfDeparture.Date).TotalDays) > x.DateAllowance)
+                    if (Math.Abs(journeyTemplate.DateAndTimeOfDeparture.Date.Subtract(journey.DateAndTimeOfDeparture.Date).TotalDays) > journeyTemplate.DateAllowance)
                     {
                         return false;
                     }
                 }
 
-                if (x.SearchByTime)
+                if (journeyTemplate.SearchByTime)
                 {
-                    if (Math.Abs(x.DateAndTimeOfDeparture.TimeOfDay.Subtract(journey.DateAndTimeOfDeparture.TimeOfDay).TotalHours) > x.TimeAllowance)
+                    if (Math.Abs(journeyTemplate.DateAndTimeOfDeparture.TimeOfDay.Subtract(journey.DateAndTimeOfDeparture.TimeOfDay).TotalHours) > journeyTemplate.TimeAllowance)
                     {
                         return false;
                     }
                 }
 
-                if (x.Fee < journey.Fee)
+                if (journeyTemplate.Fee < journey.Fee)
                 {
                     return false;
                 }
 
-                foreach (var geoAddress in x.GeoAddresses)
+                // If this journey has been marked private, we can only return it if the user who initiated the search is one of the driver's friends.
+                if (journey.Private && !journey.Driver.Friends.Select(_ => _.UserId).Contains(journeyTemplate.User.UserId))
                 {
-                    if (x.DepartureRadius
+                    return false;
+                }
+
+                foreach (var geoAddress in journeyTemplate.GeoAddresses)
+                {
+                    if (journeyTemplate.DepartureRadius
                         >= HaversineCalculator.CalculateDistance(
                             geoAddress,
                             journey.GeoAddresses.First(),
@@ -215,7 +210,7 @@ namespace Services.ServiceUtils
                         matchDeparture = geoAddress.Order;
                     }
 
-                    if (x.DestinationRadius
+                    if (journeyTemplate.DestinationRadius
                         >= HaversineCalculator.CalculateDistance(
                             geoAddress,
                             journey.GeoAddresses.Last(),
@@ -226,9 +221,6 @@ namespace Services.ServiceUtils
                 }
 
                 return matchDeparture < matchDestination && matchDeparture != -1 && matchDestination != -1;
-            };
-
-            return findNDriveUnitOfWork.JourneyTemplateRepository.AsQueryable().IncludeChildren().Where(filter).ToList();
         }
     }
 }

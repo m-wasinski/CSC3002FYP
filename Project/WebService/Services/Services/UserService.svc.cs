@@ -560,6 +560,24 @@ namespace Services.Services
                                     && friend),
                         });
         }
+
+        public ServiceResponse AdminLogin(LoginDTO loginDTO)
+        {
+            var validatedUser = ValidationHelper.Validate(loginDTO);
+
+            // Verify user's username and password using the WebSecurity module.
+            if (!validatedUser.IsValid || !WebSecurity.Login(loginDTO.UserName, loginDTO.Password))
+            {
+                return ServiceResponseBuilder.Failure("Invalid Username or Password.");
+            }
+
+            if (!System.Web.Security.Roles.GetRolesForUser(loginDTO.UserName).Contains("Administrators"))
+            {
+                return ServiceResponseBuilder.Failure("You are not an administrator.");
+            }
+
+            return ServiceResponseBuilder.Success();
+        }   
     }
 }
 

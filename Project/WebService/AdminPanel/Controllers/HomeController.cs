@@ -8,7 +8,7 @@ namespace FindNDriveAdminPanel2.Controllers
     {
         public ActionResult Start()
         {
-            return Shell(new StartViewModel(), "Business Application");
+            return Shell(new StartViewModel(), "FindNDrive Admin Panel");
         }
     }
 }

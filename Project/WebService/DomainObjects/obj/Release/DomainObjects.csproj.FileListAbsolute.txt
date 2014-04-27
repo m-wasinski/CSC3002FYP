@@ -1,0 +1,7 @@
+C:\CSC3002FYP\Project\WebService\DomainObjects\bin\Release\DomainObjects.dll.config
+C:\CSC3002FYP\Project\WebService\DomainObjects\bin\Release\DomainObjects.dll
+C:\CSC3002FYP\Project\WebService\DomainObjects\bin\Release\DomainObjects.pdb
+C:\CSC3002FYP\Project\WebService\DomainObjects\bin\Release\EntityFramework.dll
+C:\CSC3002FYP\Project\WebService\DomainObjects\bin\Release\EntityFramework.xml
+C:\CSC3002FYP\Project\WebService\DomainObjects\obj\Release\DomainObjects.dll
+C:\CSC3002FYP\Project\WebService\DomainObjects\obj\Release\DomainObjects.pdb

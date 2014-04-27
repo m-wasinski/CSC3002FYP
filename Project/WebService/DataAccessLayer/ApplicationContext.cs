@@ -88,8 +88,7 @@ namespace DataAccessLayer
         /// <summary>
         /// Initializes a new instance of the <see cref="ApplicationContext"/> class.
         /// </summary>
-        public ApplicationContext()
-            : this("FindNDriveConnectionString")
+        public ApplicationContext() : this("ProductionConnectionString")
         {
             this.Configuration.ProxyCreationEnabled = false;
             this.Configuration.LazyLoadingEnabled = false;

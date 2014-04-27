@@ -195,3 +195,10 @@ C:\CSC3002FYP\Project\WebService\AdminPanel\obj\x86\Debug\AdminPanel.Properties.
 C:\CSC3002FYP\Project\WebService\AdminPanel\obj\x86\Debug\AdminPanel.csproj.GenerateResource.Cache
 C:\CSC3002FYP\Project\WebService\AdminPanel\obj\x86\Debug\AdminPanel.exe
 C:\CSC3002FYP\Project\WebService\AdminPanel\obj\x86\Debug\AdminPanel.pdb
+C:\CSC3002FYP\Project\WebService\AdminPanel\bin\Debug\Resources\default_picture.png
+C:\CSC3002FYP\Project\WebService\AdminPanel\bin\Debug\Newtonsoft.Json.dll
+C:\CSC3002FYP\Project\WebService\AdminPanel\bin\Debug\Services.dll
+C:\CSC3002FYP\Project\WebService\AdminPanel\bin\Debug\Microsoft.Practices.Unity.dll
+C:\CSC3002FYP\Project\WebService\AdminPanel\bin\Debug\Services.pdb
+C:\CSC3002FYP\Project\WebService\AdminPanel\bin\Debug\Newtonsoft.Json.xml
+C:\CSC3002FYP\Project\WebService\AdminPanel\bin\Debug\Microsoft.Practices.Unity.xml

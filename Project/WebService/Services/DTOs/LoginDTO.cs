@@ -9,6 +9,7 @@
 
 namespace Services.DTOs
 {
+    using System.ComponentModel.DataAnnotations;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -21,12 +22,14 @@ namespace Services.DTOs
         /// Gets or sets the user name.
         /// </summary>
         [DataMember]
+        [Required]
         public string UserName { get; set; }
 
         /// <summary>
         /// Gets or sets the password.
         /// </summary>
         [DataMember]
+        [Required]
         public string Password { get; set; }
 
         /// <summary>

@@ -10,12 +10,14 @@
 namespace Services.Services
 {
     using System.Collections.Generic;
+    using System.Data.Entity;
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
 
     using DataAccessLayer;
 
+    using DomainObjects.Constants;
     using DomainObjects.Domains;
 
     using global::Services.Contracts;
@@ -88,9 +90,16 @@ namespace Services.Services
                 return ServiceResponseBuilder.Failure<List<Journey>>("Invalid user id.");
             }
 
-            // static method inside the search utils performs the search.
-            var journeys = SearchUtils.SearchForJourneys(journeyTemplateDTO, this.findNDriveUnitOfWork, requestingUser);
-           
+            var journeys =
+                this.findNDriveUnitOfWork.JourneyRepository.AsQueryable()
+                    .Include(_ => _.Driver.Friends)
+                    .Include(_ => _.GeoAddresses)
+                    .Where(
+                        _ =>
+                        _.JourneyStatus == JourneyStatus.OK).ToList();
+
+            journeys = journeys.Where(_ => SearchUtils.JourneyFilter(_, journeyTemplateDTO, requestingUser)).ToList();
+
             return ServiceResponseBuilder.Success(journeys);
         }
     }

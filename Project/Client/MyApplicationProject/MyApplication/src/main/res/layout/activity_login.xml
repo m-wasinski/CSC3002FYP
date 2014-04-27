@@ -37,7 +37,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/UserLoginUserNameEditText"
+            android:id="@+id/LoginActivityUserNameEditText"
             android:hint="@string/UserNameHint"
             android:singleLine="true"
             style="@style/LoginFields"
@@ -46,7 +46,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/UserLoginPasswordTextField"
+            android:id="@+id/LoginActivityPasswordTextField"
             android:hint="@string/PasswordHint"
             android:singleLine="true"
             android:layout_marginTop="15sp"
@@ -57,7 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/LoginLabel"
-            android:id="@+id/LoginUserButton"
+            android:id="@+id/LoginActivityLoginUserButton"
             android:layout_marginTop="15sp"
             android:background="@drawable/button_selector"
             style="@style/UniversalButtonStyle"/>
@@ -75,7 +75,7 @@
             <CheckBox
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/RememberMeCheckBox"
+                android:id="@+id/LoginActivityRememberMeCheckBox"
                 android:button="@drawable/checkbox_selector"
                 android:clickable="false"/>
 

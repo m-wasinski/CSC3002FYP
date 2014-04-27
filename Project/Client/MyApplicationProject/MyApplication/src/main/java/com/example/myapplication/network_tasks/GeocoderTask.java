@@ -86,13 +86,11 @@ public class GeocoderTask extends AsyncTask<GeocoderParams, Void, MarkerOptions>
                     }
                 }
             }
-        } catch (IOException e1) {
-            Log.e("LocationSampleActivity",
-                    "IO Exception in getFromLocation()");
-            e1.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
             return null;
-        } catch (IllegalArgumentException e2) {
-            e2.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
             return null;
         }
 

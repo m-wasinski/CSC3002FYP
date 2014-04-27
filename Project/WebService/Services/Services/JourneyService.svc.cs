@@ -198,8 +198,12 @@ namespace Services.Services
             this.notificationManager.SendGcmTickle(
                 user.Friends);
 
-            var interestedUsers =
-               SearchUtils.SearchForTemplates(newJourney, this.findNDriveUnitOfWork).Select(_ => _.User).ToList();
+            var journeyTemplates =
+                this.findNDriveUnitOfWork.JourneyTemplateRepository.AsQueryable().IncludeChildren().ToList();
+
+            journeyTemplates = journeyTemplates.Where(_ => SearchUtils.TemplateFilter(newJourney, _)).ToList();
+
+            var interestedUsers = journeyTemplates.Select(_ => _.User).ToList();
 
             this.notificationManager.CreateAppNotification(
                interestedUsers,

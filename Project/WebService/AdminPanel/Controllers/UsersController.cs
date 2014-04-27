@@ -12,13 +12,13 @@
     {
         public ActionResult List(List<User> users, string windowTitle)
         {
-            var model = new ListViewModel(users, windowTitle);
+            var model = new UsersListViewModel(users, windowTitle);
             return this.View(model);
         }
 
         public ActionResult Edit(int id)
         {
-            var model = new EditViewModel();
+            var model = new UsersEditViewModel();
             model.LoadData(id);
             return this.View(model);
         }

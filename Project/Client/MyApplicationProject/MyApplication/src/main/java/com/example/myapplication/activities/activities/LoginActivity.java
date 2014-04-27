@@ -46,13 +46,13 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
         LinearLayout keepMeLoggedInLinearLayout = (LinearLayout) findViewById(R.id.LoginActivityKeepMeLoggedInLinearLayout);
         keepMeLoggedInLinearLayout.setOnClickListener(this);
 
-        loginButton = (Button) findViewById(R.id.LoginUserButton);
+        loginButton = (Button) findViewById(R.id.LoginActivityLoginUserButton);
         loginButton.setOnClickListener(this);
 
         Button registerButton = (Button) findViewById(R.id.LoginActivityRegisterButton);
         registerButton.setOnClickListener(this);
 
-        rememberMeCheckbox = (CheckBox) findViewById(R.id.RememberMeCheckBox);
+        rememberMeCheckbox = (CheckBox) findViewById(R.id.LoginActivityRememberMeCheckBox);
     }
 
     /**
@@ -60,8 +60,8 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
      */
     private void attemptLogin()
     {
-        EditText userName = (EditText) findViewById(R.id.UserLoginUserNameEditText);
-        EditText password = (EditText) findViewById(R.id.UserLoginPasswordTextField);
+        EditText userName = (EditText) findViewById(R.id.LoginActivityUserNameEditText);
+        EditText password = (EditText) findViewById(R.id.LoginActivityPasswordTextField);
 
         if(validateFields(userName, "username") || validateFields(password, "password"))
         {
@@ -133,7 +133,7 @@ public class LoginActivity extends BaseActivity implements WCFServiceCallback<Us
     public void onClick(View view) {
         switch(view.getId())
         {
-            case R.id.LoginUserButton:
+            case R.id.LoginActivityLoginUserButton:
                 attemptLogin();
                 break;
             case R.id.LoginActivityRegisterButton:

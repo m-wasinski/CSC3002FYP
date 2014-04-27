@@ -168,5 +168,19 @@ namespace Services.Contracts
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare)]
         ServiceResponse<User> GetUser(UserRetrieverDTO dto);
+
+        /// <summary>
+        /// Login function for the system administrator
+        /// </summary>
+        /// <param name="loginDTO"></param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [WebInvoke(
+            Method = "POST",
+            UriTemplate = "/adminlogin",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        ServiceResponse AdminLogin(LoginDTO loginDTO);
     }
 }

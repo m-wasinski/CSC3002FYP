@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="TestConnectionString-Web.config Connection String" description="TestConnectionString Connection String used in web.config by the application to access the database." defaultValue="Data Source=.\SQLEXPRESS;Initial Catalog=FindNDrive;Integrated Security=SSPI;" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="C:\\CSC3002FYP\\Project\\WebService\\Services\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='TestConnectionString']/@connectionString" />
+  </parameter>
+  <parameter name="ProductionConnectionString-Web.config Connection String" description="ProductionConnectionString Connection String used in web.config by the application to access the database." defaultValue="Data Source=findndrivedb.c4itfsjh5fjn.eu-west-1.rds.amazonaws.com,1433;Initial Catalog=findndrivedb; User Id=Administrator; password=Kochamzoncie1992;" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="C:\\CSC3002FYP\\Project\\WebService\\Services\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='ProductionConnectionString']/@connectionString" />
+  </parameter>
+</parameters>

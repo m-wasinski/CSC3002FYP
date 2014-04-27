@@ -58,7 +58,7 @@ namespace DataAccessLayer.Migrations
             // Initialise the WebSecurity module.
             if (!WebSecurity.Initialized)
             {
-                WebSecurity.InitializeDatabaseConnection("FindNDriveConnectionString", "User", "Id", "UserName", true); 
+                WebSecurity.InitializeDatabaseConnection("ProductionConnectionString", "User", "Id", "UserName", true); 
             }
 
             // Create the administrator role.
@@ -127,7 +127,6 @@ namespace DataAccessLayer.Migrations
             WebSecurity.CreateUserAndAccount("admin", "password");
 
             System.Web.Security.Roles.AddUserToRole("admin", "Administrators");
-
             context.SaveChanges();
         }
 

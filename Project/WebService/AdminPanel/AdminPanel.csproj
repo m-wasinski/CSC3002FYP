@@ -113,9 +113,13 @@
       <HintPath>..\packages\EntityFramework.6.0.1\lib\net40\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -144,8 +148,8 @@
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Models\Home\StartViewModel.cs" />
-    <Compile Include="Models\Users\EditViewModel.cs" />
-    <Compile Include="Models\Users\ListViewModel.cs" />
+    <Compile Include="Models\Users\UsersEditViewModel.cs" />
+    <Compile Include="Models\Users\UsersListViewModel.cs" />
     <Compile Include="Models\User\LoginViewModel.cs" />
     <Compile Include="Models\User\UserAndPrincipal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -226,6 +230,10 @@
     <ProjectReference Include="..\DomainObjects\DomainObjects.csproj">
       <Project>{2FE3E5E1-2D9F-4791-B60F-86FC293A8240}</Project>
       <Name>DomainObjects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Services\Services.csproj">
+      <Project>{FC80B470-8A56-4BF8-AFF6-BD33176F79A4}</Project>
+      <Name>Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\_ExternalComponents\_ExternalComponents.csproj">
       <Project>{4d041cb4-e345-4739-a1a3-e55cd4104c13}</Project>

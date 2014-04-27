@@ -8,17 +8,19 @@
                Style="{DynamicResource SimpleSearch}">
         <Image></Image>
         <Label>User Id:</Label>
-        <TextBox Text="{Binding SearchTerm1}" />
+        <TextBox Text="{Binding Path=SearchID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <Label>Username:</Label>
-        <TextBox Text="{Binding SearchTerm2}" />
+        <TextBox Text="{Binding SearchUsername}" />
         <Label>First Name:</Label>
-        <TextBox Text="{Binding SearchTerm3}" />
+        <TextBox Text="{Binding SearchFirstName}" />
         <Label>Last Name:</Label>
-        <TextBox Text="{Binding SearchTerm4}" />
+        <TextBox Text="{Binding SearchLastName}" />
         <Label>Email Address:</Label>
-        <TextBox Text="{Binding SearchTerm5}" />
+        <TextBox Text="{Binding SearchEmailAddress}" />
         <Button Command="{Binding SearchCustomers}"
                 Content="{Binding SearchCustomers.Caption}" />
+        <Button Command="{Binding ResetAll}"
+                Content="{Binding ResetAll.Caption}" />
     </mvvm:View>
     
     <ListBox ItemsSource="{Binding Users}"

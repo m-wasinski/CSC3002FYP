@@ -159,6 +159,8 @@
 
             modelBuilder.Entity<User>().Ignore(t => t.VotesCount);
 
+            modelBuilder.Entity<Session>().HasRequired(x => x.User);
+
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();   
         }
     }

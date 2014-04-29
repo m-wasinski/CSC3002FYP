@@ -10,6 +10,8 @@
 namespace Services.ServiceUtils
 {
     using System;
+    using System.Data.Entity;
+    using System.Linq;
     using System.Security.Cryptography;
     using System.ServiceModel.Web;
     using System.Text;
@@ -98,20 +100,20 @@ namespace Services.ServiceUtils
                 }
 
                 // Retrieve the actual session from the database.
-                var savedSession = this.findNDriveUnitOfWork.SessionRepository.Find(userId);
+                var savedSession = this.findNDriveUnitOfWork.SessionRepository.AsQueryable().Include(_ => _.User).FirstOrDefault(_ => _.UserId == userId);
 
                 // Perform all the checks to ensure that the session is valid.
                 if (savedSession != null)
                 {
                     if (savedSession.SessionType == SessionTypes.Temporary)
                     {
-                        if (randomId != savedSession.Uuid)
+                        if (randomId != savedSession.RandomID)
                         {
                             return false;
                         }
                     }
 
-                    if (!incomingSessionId.Equals(savedSession.SessionId))
+                    if (!incomingSessionId.Equals(savedSession.SessionString))
                     {
                         return false;
                     }
@@ -170,7 +172,7 @@ namespace Services.ServiceUtils
                 return false;
             }
 
-            var savedSession = this.findNDriveUnitOfWork.SessionRepository.Find(user.UserId);
+            var savedSession = this.findNDriveUnitOfWork.SessionRepository.AsQueryable().FirstOrDefault(_ => _.UserId == user.UserId);
 
             var result = DateTime.Compare(DateTime.Now, savedSession.ExpiryDate);
 
@@ -258,7 +260,7 @@ namespace Services.ServiceUtils
         /// <param name="userId">
         /// The user id.
         /// </param>
-        public void GenerateNewSession(int userId)
+        public void GenerateNewSession(User user)
         {
             var sessionType = SessionTypes.Temporary;
 
@@ -274,34 +276,35 @@ namespace Services.ServiceUtils
 
             // Set expiration date for the above token, initialy to 30 minutes.
             var validUntil = DateTime.Now.AddMinutes(30);
-            var sessionId = GenerateNewSessionId(userId);
+            var sessionToken = GenerateNewSessionId(user.UserId);
             var hashedDeviceId = EncryptValue(incomingDeviceId);
                 
             // Check if user has ticked the remember me checkbox.
             if (rememberUser != null)
             {
-                var savedSession = this.findNDriveUnitOfWork.SessionRepository.Find(userId);
+                var savedSession =
+                    this.findNDriveUnitOfWork.SessionRepository.AsQueryable().Include(_ => _.User).FirstOrDefault(_ => _.UserId == user.UserId);
 
                 if (rememberUser.Equals("true"))
                 {
                     // Make the token expire in two weeks.
                     validUntil = DateTime.Now.AddDays(14);
                     sessionType = SessionTypes.Permanent;
-                    sessionId = sessionId + "1";
+                    sessionToken = sessionToken + "1";
                 }
                 else
                 {
-                    sessionId = sessionId + "0";
+                    sessionToken = sessionToken + "0";
                     if (savedSession != null)
                     {
-                        savedSession.Uuid = randomId;
+                        savedSession.RandomID = randomId;
                     }
                 }
 
                 if (savedSession != null)
                 {
                     // Update existing session.
-                    savedSession.SessionId = sessionId;
+                    savedSession.SessionString = sessionToken;
                     savedSession.DeviceId = hashedDeviceId;
                     savedSession.ExpiryDate = validUntil;
                     savedSession.SessionType = sessionType;
@@ -311,12 +314,12 @@ namespace Services.ServiceUtils
                     // Create the new session.
                     var newSession = new Session
                                          {
-                                             Uuid = randomId,
+                                             RandomID = randomId,
                                              DeviceId = hashedDeviceId,
                                              ExpiryDate = validUntil,
                                              SessionType = sessionType,
-                                             SessionId = sessionId,
-                                             UserId = userId,
+                                             SessionString = sessionToken,
+                                             User = user
                                          };
 
                     this.findNDriveUnitOfWork.SessionRepository.Add(newSession);
@@ -325,7 +328,7 @@ namespace Services.ServiceUtils
                 this.findNDriveUnitOfWork.Commit();
 
                 // Attach the newly generated session id to the outgoing HTTP response as a header.
-                WebOperationContext.Current.OutgoingResponse.Headers.Add(SessionConstants.SESSION_ID, sessionId);
+                WebOperationContext.Current.OutgoingResponse.Headers.Add(SessionConstants.SESSION_ID, sessionToken);
             }
         }
 
@@ -356,7 +359,8 @@ namespace Services.ServiceUtils
                 }
             }
 
-            var savedSession = this.findNDriveUnitOfWork.SessionRepository.Find(userId);
+            var savedSession =
+                this.findNDriveUnitOfWork.SessionRepository.AsQueryable().Include(_ => _.User).FirstOrDefault(_ => _.UserId == id);
 
             if (userId == -1 || savedSession == null)
             {

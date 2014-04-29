@@ -109,8 +109,8 @@ namespace Tests.IntegrationTests
 
             // Add the necessary HTTP headers.
             webRequest.ContentType = "application/json";
-            webRequest.Headers.Add(SessionConstants.SESSION_ID, this.session.SessionId);
-            webRequest.Headers.Add(SessionConstants.UUID, this.session.Uuid);
+            webRequest.Headers.Add(SessionConstants.SESSION_ID, this.session.SessionString);
+            webRequest.Headers.Add(SessionConstants.UUID, this.session.RandomID);
             webRequest.Headers.Add(SessionConstants.DEVICE_ID, "test");
 
 
@@ -232,8 +232,8 @@ namespace Tests.IntegrationTests
 
             // Add the necessary HTTP headers.
             webRequest.ContentType = "application/json";
-            webRequest.Headers.Add(SessionConstants.SESSION_ID, this.session.SessionId);
-            webRequest.Headers.Add(SessionConstants.UUID, this.session.Uuid);
+            webRequest.Headers.Add(SessionConstants.SESSION_ID, this.session.SessionString);
+            webRequest.Headers.Add(SessionConstants.UUID, this.session.RandomID);
             webRequest.Headers.Add(SessionConstants.DEVICE_ID, "test");
 
 

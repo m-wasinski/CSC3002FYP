@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Interface Name="Services.Contracts.IFriendsService">
+    <Position X="0.5" Y="4.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAgAAAACAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Contracts\IFriendsService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Services.Contracts.IJourneyChatService">
+    <Position X="0.5" Y="10.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAgAAAAAAACAgABAACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\IJourneyChatService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Services.Contracts.IJourneyRequestService">
+    <Position X="3.25" Y="4.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAgAAAACAAAAAAAAIAAAAAACAAAA=</HashCode>
+      <FileName>Contracts\IJourneyRequestService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Services.Contracts.IJourneyService">
+    <Position X="6" Y="4.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAACAAAAAAAAAAAAAAAAgAAggAIBAAAAA=</HashCode>
+      <FileName>Contracts\IJourneyService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Services.Contracts.IJourneyTemplateService">
+    <Position X="6" Y="10.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAEAAAAAAAAAAAAAAAAAACAAAAEAAAAAAAAA=</HashCode>
+      <FileName>Contracts\IJourneyTemplateService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Services.Contracts.IMessengerService">
+    <Position X="6" Y="7.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIgAAAAAQAAAAAACAgABAAAAAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Contracts\IMessengerService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Services.Contracts.INotificationService">
+    <Position X="0.5" Y="7.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAIAABAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\INotificationService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Services.Contracts.IRatingService">
+    <Position X="3.25" Y="10.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAgAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\IRatingService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Services.Contracts.ISearchService">
+    <Position X="3.25" Y="12.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAA=</HashCode>
+      <FileName>Contracts\ISearchService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Services.Contracts.IUserService">
+    <Position X="3.25" Y="7.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAABAAAAAABAEAAAAAQAAAAIQEgAAAAAAACA=</HashCode>
+      <FileName>Contracts\IUserService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

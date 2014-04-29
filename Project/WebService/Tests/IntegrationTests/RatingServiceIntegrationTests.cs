@@ -87,8 +87,8 @@
 
             // Add the necessary HTTP headers.
             webRequest.ContentType = "application/json";
-            webRequest.Headers.Add(SessionConstants.SESSION_ID, this.ratingUserSession.SessionId);
-            webRequest.Headers.Add(SessionConstants.UUID, this.ratingUserSession.Uuid);
+            webRequest.Headers.Add(SessionConstants.SESSION_ID, this.ratingUserSession.SessionString);
+            webRequest.Headers.Add(SessionConstants.UUID, this.ratingUserSession.RandomID);
             webRequest.Headers.Add(SessionConstants.DEVICE_ID, "test");
 
 

@@ -11,6 +11,8 @@ namespace DataAccessLayer
 {
     using System;
     using System.Data.Entity;
+    using System.Data.Entity.Validation;
+    using System.Diagnostics;
 
     using DomainObjects.Domains;
 
@@ -174,10 +176,24 @@ namespace DataAccessLayer
             {
                 this.dbContext.SaveChanges();
             }
-            catch (Exception e)
+            catch (DbEntityValidationException dbEx)
             {
                 var file = new System.IO.StreamWriter("c:\\CSC3002FYP\\db_context_error.txt");
-                file.WriteLine(e);
+                var error = "";
+                foreach (var validationErrors in dbEx.EntityValidationErrors)
+                {
+                    foreach (var validationError in validationErrors.ValidationErrors)
+                    {
+                        error = error + " " + string.Format("Class: {0}, Property: {1}, Error: {2}", validationErrors.Entry.Entity.GetType().FullName,
+                        validationError.PropertyName, validationError.ErrorMessage);
+                    }
+                    
+                    
+                    
+
+                }
+
+                file.WriteLine(error);
                 file.Close();
             }
             

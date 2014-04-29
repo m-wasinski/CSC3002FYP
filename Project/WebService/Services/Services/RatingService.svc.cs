@@ -149,7 +149,7 @@ namespace Services.Services
                 newRating.RatingId);
 
             this.notificationManager.CreateAppNotification(
-                new Collection<User> { driver },
+                new Collection<User> { leavingUser },
                 "Rating left.",
                 string.Format(
                     "You have left a rating for user {0} {1} ({2}).",

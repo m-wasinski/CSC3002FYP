@@ -109,8 +109,8 @@
 
             // Add the necessary HTTP headers.
             webRequest.ContentType = "application/json";
-            webRequest.Headers.Add(SessionConstants.SESSION_ID, this.user1Session.SessionId);
-            webRequest.Headers.Add(SessionConstants.UUID, this.user1Session.Uuid);
+            webRequest.Headers.Add(SessionConstants.SESSION_ID, this.user1Session.SessionString);
+            webRequest.Headers.Add(SessionConstants.UUID, this.user1Session.RandomID);
             webRequest.Headers.Add(SessionConstants.DEVICE_ID, "test");
 
 
@@ -173,8 +173,8 @@
 
             // Add the necessary HTTP headers.
             webRequest.ContentType = "application/json";
-            webRequest.Headers.Add(SessionConstants.SESSION_ID, this.user1Session.SessionId);
-            webRequest.Headers.Add(SessionConstants.UUID, this.user1Session.Uuid);
+            webRequest.Headers.Add(SessionConstants.SESSION_ID, this.user1Session.SessionString);
+            webRequest.Headers.Add(SessionConstants.UUID, this.user1Session.RandomID);
             webRequest.Headers.Add(SessionConstants.DEVICE_ID, "test");
 
 
@@ -246,8 +246,8 @@
 
             // Add the necessary HTTP headers.
             webRequest.ContentType = "application/json";
-            webRequest.Headers.Add(SessionConstants.SESSION_ID, this.user1Session.SessionId);
-            webRequest.Headers.Add(SessionConstants.UUID, this.user1Session.Uuid);
+            webRequest.Headers.Add(SessionConstants.SESSION_ID, this.user1Session.SessionString);
+            webRequest.Headers.Add(SessionConstants.UUID, this.user1Session.RandomID);
             webRequest.Headers.Add(SessionConstants.DEVICE_ID, "test");
 
 

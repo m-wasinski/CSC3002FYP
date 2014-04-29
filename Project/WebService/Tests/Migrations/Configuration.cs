@@ -86,11 +86,11 @@ namespace Tests.Migrations
 
             var session = new Session()
             {
-                UserId = administrator.UserId,
+                User = administrator,
                 SessionType = SessionTypes.Permanent,
-                SessionId = GenerateNewSessionId(administrator.UserId),
+                SessionString = GenerateNewSessionId(administrator.UserId),
                 DeviceId = EncryptValue("admin"),
-                Uuid = "admin",
+                RandomID = "admin",
                 ExpiryDate = DateTime.Now.AddDays(999),
             };
 
@@ -148,9 +148,9 @@ namespace Tests.Migrations
             
             var session1 = new Session()
             {
-                UserId = userJohn.UserId,
+                User = userJohn,
                 SessionType = SessionTypes.Permanent,
-                SessionId = GenerateNewSessionId(userJohn.UserId),
+                SessionString = GenerateNewSessionId(userJohn.UserId),
                 DeviceId = "Test",
                 ExpiryDate = DateTime.Now.AddDays(14)
             };
@@ -191,9 +191,9 @@ namespace Tests.Migrations
 
             var session2 = new Session()
             {
-                UserId = userLaura.UserId,
+                User = userLaura,
                 SessionType = SessionTypes.Permanent,
-                SessionId = GenerateNewSessionId(userLaura.UserId),
+                SessionString = GenerateNewSessionId(userLaura.UserId),
                 DeviceId = "Test",
                 ExpiryDate = DateTime.Now.AddDays(14),
             };
@@ -242,11 +242,11 @@ namespace Tests.Migrations
 
             var session3 = new Session()
             {
-                UserId = userAlex.UserId,
+                User = userAlex,
                 SessionType = SessionTypes.Permanent,
-                SessionId = "4:Test1",
+                SessionString = "4:Test1",
                 DeviceId = Convert.ToBase64String(hash),
-                Uuid = "Test1",
+                RandomID = "Test1",
                 ExpiryDate = DateTime.Now.AddDays(14),
             };
 

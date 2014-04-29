@@ -118,7 +118,7 @@ namespace Services.Services
             }
 
             // Update current user status and save it to the database.
-            this.sessionManager.GenerateNewSession(loggedInUser.UserId);
+            this.sessionManager.GenerateNewSession(loggedInUser);
             loggedInUser.GCMRegistrationID = login.GCMRegistrationID;
             loggedInUser.Status = Status.Online;
             loggedInUser.LastLogon = DateTime.Now;
@@ -261,7 +261,7 @@ namespace Services.Services
                 this.findNDriveUnitOfWork.UserRepository.Add(newUser);
                 this.findNDriveUnitOfWork.Commit();
 
-                this.sessionManager.GenerateNewSession(newUser.UserId);
+                this.sessionManager.GenerateNewSession(newUser);
 
                 EmailUtils.SendEmail(
                     new[] { newUser.EmailAddress },

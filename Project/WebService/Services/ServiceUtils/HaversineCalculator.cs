@@ -57,13 +57,13 @@ namespace Services.ServiceUtils
 
              var distancelongitude = ConvertToRadian(geoAddress2.Longitude - geoAddress1.Longitude);
 
-             var a = 
+             var val1 = 
                 Math.Sin(distancelatitude / 2) * Math.Sin(distancelatitude / 2) +
                 Math.Cos(ConvertToRadian(geoAddress1.Latitude)) * Math.Cos(ConvertToRadian(geoAddress2.Latitude)) *
                 Math.Sin(distancelongitude / 2) * Math.Sin(distancelongitude / 2);
 
-            var c = 2 * Math.Asin(Math.Min(1, Math.Sqrt(a)));
-            var distance = radius * c;
+            var val2 = 2 * Math.Asin(Math.Min(1, Math.Sqrt(val1)));
+            var distance = radius * val2;
 
             return distance;
         }

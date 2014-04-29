@@ -116,9 +116,9 @@ namespace DataAccessLayer.Migrations
             {
                 UserId = administrator.UserId,
                 SessionType = SessionTypes.Permanent,
-                SessionId = GenerateNewSessionId(administrator.UserId),
+                SessionString = GenerateNewSessionId(administrator.UserId),
                 DeviceId = EncryptValue("admin"),
-                Uuid = "admin",
+                RandomID = "admin",
                 ExpiryDate = DateTime.Now.AddDays(999),
             };
 
@@ -179,7 +179,7 @@ namespace DataAccessLayer.Migrations
             {
                 UserId = userJohn.UserId,
                 SessionType = SessionTypes.Permanent,
-                SessionId = GenerateNewSessionId(userJohn.UserId),
+                SessionString = GenerateNewSessionId(userJohn.UserId),
                 DeviceId = "Test",
                 ExpiryDate = DateTime.Now.AddDays(14)
             };
@@ -222,7 +222,7 @@ namespace DataAccessLayer.Migrations
             {
                 UserId = userLaura.UserId,
                 SessionType = SessionTypes.Permanent,
-                SessionId = GenerateNewSessionId(userLaura.UserId),
+                SessionString = GenerateNewSessionId(userLaura.UserId),
                 DeviceId = "Test",
                 ExpiryDate = DateTime.Now.AddDays(14),
             };
@@ -273,9 +273,9 @@ namespace DataAccessLayer.Migrations
             {
                 UserId = userAlex.UserId,
                 SessionType = SessionTypes.Permanent,
-                SessionId = "4:Test1",
+                SessionString = "4:Test1",
                 DeviceId = Convert.ToBase64String(hash),
-                Uuid = "Test1",
+                RandomID = "Test1",
                 ExpiryDate = DateTime.Now.AddDays(14),
             };
 

@@ -123,8 +123,8 @@
 
             // Add the necessary HTTP headers.
             webRequest.ContentType = "application/json";
-            webRequest.Headers.Add(SessionConstants.SESSION_ID, this.driverSession.SessionId);
-            webRequest.Headers.Add(SessionConstants.UUID, this.driverSession.Uuid);
+            webRequest.Headers.Add(SessionConstants.SESSION_ID, this.driverSession.SessionString);
+            webRequest.Headers.Add(SessionConstants.UUID, this.driverSession.RandomID);
             webRequest.Headers.Add(SessionConstants.DEVICE_ID, "test");
 
 
@@ -173,8 +173,8 @@
 
                 // Add the necessary HTTP headers.
                 journeyRequestServiceWebRequest.ContentType = "application/json";
-                journeyRequestServiceWebRequest.Headers.Add(SessionConstants.SESSION_ID, this.participantSession.SessionId);
-                journeyRequestServiceWebRequest.Headers.Add(SessionConstants.UUID, this.participantSession.Uuid);
+                journeyRequestServiceWebRequest.Headers.Add(SessionConstants.SESSION_ID, this.participantSession.SessionString);
+                journeyRequestServiceWebRequest.Headers.Add(SessionConstants.UUID, this.participantSession.RandomID);
                 journeyRequestServiceWebRequest.Headers.Add(SessionConstants.DEVICE_ID, "test");
 
 
@@ -235,8 +235,8 @@
 
             // Add the necessary HTTP headers.
             webRequest.ContentType = "application/json";
-            webRequest.Headers.Add(SessionConstants.SESSION_ID, this.driverSession.SessionId);
-            webRequest.Headers.Add(SessionConstants.UUID, this.driverSession.Uuid);
+            webRequest.Headers.Add(SessionConstants.SESSION_ID, this.driverSession.SessionString);
+            webRequest.Headers.Add(SessionConstants.UUID, this.driverSession.RandomID);
             webRequest.Headers.Add(SessionConstants.DEVICE_ID, "test");
 
 
@@ -300,8 +300,8 @@
 
             // Add the necessary HTTP headers.
             webRequest.ContentType = "application/json";
-            webRequest.Headers.Add(SessionConstants.SESSION_ID, this.driverSession.SessionId);
-            webRequest.Headers.Add(SessionConstants.UUID, this.driverSession.Uuid);
+            webRequest.Headers.Add(SessionConstants.SESSION_ID, this.driverSession.SessionString);
+            webRequest.Headers.Add(SessionConstants.UUID, this.driverSession.RandomID);
             webRequest.Headers.Add(SessionConstants.DEVICE_ID, "test");
 
 

@@ -7,8 +7,8 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="C:\CSC3002FYP\Project\Client\MyApplicationProject" />
-            <option value="C:\CSC3002FYP\Project\Client\MyApplicationProject\MyApplication" />
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/MyApplication" />
           </set>
         </option>
       </GradleProjectSettings>

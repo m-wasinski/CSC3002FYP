@@ -143,7 +143,7 @@ namespace Services.ServiceUtils
         /// </param>
         /// <typeparam name="T">
         /// </typeparam>
-        public void SendMessage<T>(ICollection<User> users, GcmNotificationType gcmNotificationType, int pictureId, int collapsibleKey, T message, int targetObjectId)
+        public void SendNotification<T>(ICollection<User> users, GcmNotificationType gcmNotificationType, int pictureId, int collapsibleKey, T message, int targetObjectId)
         {
             // Determine which users are online.
             var onlineUsers = users.Where(_ => this.sessionManager.IsStillLoggedIn(_)).ToList();

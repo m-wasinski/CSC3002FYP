@@ -107,7 +107,7 @@ namespace Services.Services
                                      Read = false,
                                      SenderId = chatMessageDTO.SenderId,
                                      RecipientId = chatMessageDTO.RecipientId,
-                                     SentOnDate = chatMessageDTO.SentOnDate,
+                                     SentOnDate = DateTime.Now,
                                      SenderUserName = chatMessageDTO.SenderUserName,
                                      RecipientUserName = chatMessageDTO.RecipientUserName
                                  };
@@ -115,7 +115,7 @@ namespace Services.Services
             this.findNDriveUnitOfWork.ChatMessageRepository.Add(newMessage);
             this.findNDriveUnitOfWork.Commit();
 
-            this.notificationManager.SendMessage(
+            this.notificationManager.SendNotification(
                 new Collection<User> { targetUser },
                 GcmNotificationType.ChatMessage,
                 sendingUser.UserId,

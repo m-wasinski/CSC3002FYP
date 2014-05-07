@@ -571,12 +571,8 @@ namespace Services.Services
                 return ServiceResponseBuilder.Failure("Invalid Username or Password.");
             }
 
-            if (!System.Web.Security.Roles.GetRolesForUser(loginDTO.UserName).Contains("Administrators"))
-            {
-                return ServiceResponseBuilder.Failure("You are not an administrator.");
-            }
-
-            return ServiceResponseBuilder.Success();
+            return !System.Web.Security.Roles.GetRolesForUser(loginDTO.UserName).Contains("Administrators") ? 
+                ServiceResponseBuilder.Failure("You are not an administrator.") : ServiceResponseBuilder.Success();
         }   
     }
 }

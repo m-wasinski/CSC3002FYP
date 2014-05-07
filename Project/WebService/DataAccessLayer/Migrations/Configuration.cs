@@ -114,7 +114,7 @@ namespace DataAccessLayer.Migrations
 
             var session = new Session()
             {
-                UserId = administrator.UserId,
+                User = administrator,
                 SessionType = SessionTypes.Permanent,
                 SessionString = GenerateNewSessionId(administrator.UserId),
                 DeviceId = EncryptValue("admin"),
@@ -177,7 +177,7 @@ namespace DataAccessLayer.Migrations
             
             var session1 = new Session()
             {
-                UserId = userJohn.UserId,
+                User = userJohn,
                 SessionType = SessionTypes.Permanent,
                 SessionString = GenerateNewSessionId(userJohn.UserId),
                 DeviceId = "Test",
@@ -220,7 +220,7 @@ namespace DataAccessLayer.Migrations
 
             var session2 = new Session()
             {
-                UserId = userLaura.UserId,
+                User = userLaura,
                 SessionType = SessionTypes.Permanent,
                 SessionString = GenerateNewSessionId(userLaura.UserId),
                 DeviceId = "Test",
@@ -271,7 +271,7 @@ namespace DataAccessLayer.Migrations
 
             var session3 = new Session()
             {
-                UserId = userAlex.UserId,
+                User = userAlex,
                 SessionType = SessionTypes.Permanent,
                 SessionString = "4:Test1",
                 DeviceId = Convert.ToBase64String(hash),

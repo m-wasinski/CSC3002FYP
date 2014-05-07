@@ -22,7 +22,7 @@ namespace Services.ServiceUtils
     using DomainObjects.Domains;
 
     /// <summary>
-    /// The session manager.
+    /// Session manager is responsible for the creation and validation of a session between the client and the server.
     /// </summary>
     public class SessionManager
     {

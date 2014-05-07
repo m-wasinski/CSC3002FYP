@@ -45,14 +45,6 @@ namespace Services.DTOs
         public string MessageBody { get; set; }
 
         /// <summary>
-        /// Gets or sets the sent on date.
-        /// </summary>
-        [DataMember]
-        [DataType(DataType.Date)]
-        [Column(TypeName = "DateTime2")]
-        public DateTime SentOnDate { get; set; }
-
-        /// <summary>
         /// Gets or sets the recipient user name.
         /// </summary>
         [DataMember]

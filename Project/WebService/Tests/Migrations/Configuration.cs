@@ -36,7 +36,13 @@ namespace Tests.Migrations
             // Initialise the WebSecurity module.
             if (!WebSecurity.Initialized)
             {
-                WebSecurity.InitializeDatabaseConnection("TestConnectionString", "User", "Id", "UserName", true); 
+                WebSecurity.InitializeDatabaseConnection("TestConnectionString", "User", "Id", "UserName", true);
+            }
+
+            // Create the administrator role.
+            if (!System.Web.Security.Roles.RoleExists("Administrators"))
+            {
+                System.Web.Security.Roles.CreateRole("Administrators");
             }
 
             this.AddAdministrator(context, arr);
@@ -97,7 +103,7 @@ namespace Tests.Migrations
             context.Sessions.AddOrUpdate(_ => _.UserId, session);
 
             WebSecurity.CreateUserAndAccount("admin", "password");
-
+            System.Web.Security.Roles.AddUserToRole("admin", "Administrators");
             context.SaveChanges();
         }
 

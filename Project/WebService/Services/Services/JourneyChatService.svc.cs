@@ -125,7 +125,7 @@ namespace Services.Services
                 participants.Add(journey.Driver);
             }
 
-            this.notificationManager.SendMessage(
+            this.notificationManager.SendNotification(
                 participants,
                 GcmNotificationType.JourneyChatMessage,
                 -1,

@@ -38,7 +38,9 @@ namespace DomainObjects.Domains
         /// <summary>
         /// Gets or sets the user name.
         /// </summary>
-        [Required(ErrorMessage = "Username is required")]
+        [Required(ErrorMessage = "Username is required.")]
+        [StringLength(250, MinimumLength = 4, 
+            ErrorMessage = "Username must be at least 4 characters long.")]
         [DataMember]
         public string UserName { get; set; }
 

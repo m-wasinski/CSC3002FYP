@@ -11,6 +11,11 @@ import java.util.regex.Pattern;
  */
 public class Validators {
 
+    /**
+     * Validates the EmailAddress provided by the user using a regex pattern.
+     * @param editText - EditText containing the email address.
+     * @return
+     */
     public static Boolean validateEmailAddress(EditText editText)
     {
         Pattern rfc2822 = Pattern.compile(
@@ -27,6 +32,11 @@ public class Validators {
         }
     }
 
+    /**
+     * Validates the EmailAddress provided by the user using a regex pattern.
+     * @param textView - TextView containing the emaill address.
+     * @return
+     */
     public static Boolean validateEmailAddress(TextView textView)
     {
         Pattern rfc2822 = Pattern.compile(
@@ -43,6 +53,13 @@ public class Validators {
         }
     }
 
+    /**
+     * Validates passwords provided by the user to ensure
+     * that both are of correct length and that both match.
+     * @param password - EditText containing first password.
+     * @param confirmedPassword - EditText containing confirmed password.
+     * @return
+     */
     public static boolean validatePasswords(EditText password, EditText confirmedPassword)
     {
         if(!password.getText().toString().equals(confirmedPassword.getText().toString()))
@@ -70,13 +87,19 @@ public class Validators {
         return true;
     }
 
+    /**
+     * Validates the username provided by the user to ensure it's at least 4 characters long.
+     * @param userNameEditText - EditText containing the username.
+     * @return
+     */
     public static boolean validateUserName(EditText userNameEditText){
         Pattern pattern = Pattern.compile("[~#@*+%{}<>\\[\\]|\"\\ ^/[/\\\\]]");
         Matcher matcher = pattern.matcher(userNameEditText.getText().toString());
 
         if(userNameEditText.getText().toString().length() < 4 || matcher.find())
         {
-            userNameEditText.setError("Username must be at least 4 characters long, and cannot contain the following characters: ~, #, @, *, +, %, {, }, <, >, [, ], |, “, ”, \\, /, _, ^");
+            userNameEditText.setError("Username must be at least 4 characters long, " +
+                    "and cannot contain the following characters: ~, #, @, *, +, %, {, }, <, >, [, ], |, “, ”, \\, /, _, ^");
             return false;
         }
 

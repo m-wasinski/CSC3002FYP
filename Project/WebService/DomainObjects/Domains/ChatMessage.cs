@@ -43,6 +43,9 @@ namespace DomainObjects.Domains
         /// Gets or sets the message body.
         /// </summary>
         [DataMember]
+        [Required(ErrorMessage = "Message is required.")]
+        [StringLength(1, MinimumLength = 250,
+            ErrorMessage = "Message must be smaller than 250 characters.")]
         public string MessageBody { get; set; }
 
         /// <summary>
